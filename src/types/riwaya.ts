@@ -1,5 +1,16 @@
 export enum Riwaya {
   Hafs = 'حفص',
   Warsh = 'ورش',
-  Qalun = 'قالون',
+  Qaloon = 'قالون',
+  Khalaf = 'خلف',
+  AlBazzi = 'البزي',
+  Qunbul = 'قنبل',
+  AlSoosi = 'السوسي',
+  AlDooriKisai = 'الدوري-الكسائي',
+  AlDooriAbuAmr = 'الدوري-أبي-عمرو',
+  Shuaba = 'شعبة',
+  IbnZakwan = 'ابن-ذكوان',
+  Hisham = 'هشام',
+  IbnJammaz = 'ابن-جماز',
+  Yaqoub = 'يعقوب',
 }

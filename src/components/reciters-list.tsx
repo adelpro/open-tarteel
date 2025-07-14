@@ -1,11 +1,11 @@
 'use client';
 import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { RECITERS } from '@/constants';
 import { selectedReciterAtom } from '@/jotai/atom';
 import { Reciter, Riwaya } from '@/types';
+import { fetchReciters } from '@/utils/api';
 
 type Props = {
   setIsOpen: (isOpen: boolean) => void;
@@ -16,8 +16,11 @@ export default function RecitersList({ setIsOpen }: Props) {
   const [selectedRiwaya, setSelectedRiwaya] = React.useState<Riwaya | 'all'>(
     'all'
   );
-
+  const [reciters, setReciters] = useState<Reciter[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const setSelectedReciter = useSetAtom(selectedReciterAtom);
+
   const selectedReciterClickHandler = (reciter: Reciter) => {
     setSelectedReciter(reciter);
     setIsOpen(false);
@@ -25,7 +28,26 @@ export default function RecitersList({ setIsOpen }: Props) {
     navigate.push(`/reciter/${reciter.id}`);
   };
 
-  const filteredReciters = RECITERS.filter(
+  // Fetch reciters on component mount
+  useEffect(() => {
+    const loadReciters = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const fetchedReciters = await fetchReciters();
+        setReciters(fetchedReciters);
+      } catch (error) {
+        setError('فشل في تحميل القراء. يرجى المحاولة مرة أخرى.');
+        console.error('Error loading reciters:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadReciters();
+  }, []);
+
+  const filteredReciters = reciters.filter(
     (reciter) =>
       reciter.name.includes(searchTerm) &&
       (selectedRiwaya === 'all' || reciter.riwaya === selectedRiwaya)

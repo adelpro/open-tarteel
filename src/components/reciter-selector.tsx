@@ -4,8 +4,6 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 
 import { selectedReciterAtom } from '@/jotai/atom';
-import connectionSVG from '@/svgs/connection.svg';
-import connectionAnimatedSVG from '@/svgs/connection-animated.svg';
 import searchSVG from '@/svgs/search.svg';
 
 import ReciterSelectorDialog from './reciter-selector-dialog';

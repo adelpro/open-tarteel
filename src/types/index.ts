@@ -1,4 +1,4 @@
-export * from './magnet-link-source';
+export * from './link-source';
 export * from './reciter';
 export * from './riwaya';
 export * from './surah';
