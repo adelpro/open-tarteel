@@ -8,15 +8,14 @@ import dynamic from 'next/dynamic';
 import React, { useEffect } from 'react';
 
 import PwaUpdater from '@/components/pwa-updater';
+import ReciterSelector from '@/components/reciter-selector';
 import { RECITERS } from '@/constants';
 import { selectedReciterAtom } from '@/jotai/atom';
 import { Reciter } from '@/types';
 
-import ReciterSelector from '../../../components/reciter-selector';
-
 type Props = { id: number | undefined };
 export default function ReciterPage({ id }: Props) {
-  const Torrent = dynamic(() => import('@/components/torrrent'), {
+  const Player = dynamic(() => import('@/components/player'), {
     ssr: false,
   });
   const setSelectedReciter = useSetAtom(selectedReciterAtom);
@@ -39,7 +38,7 @@ export default function ReciterPage({ id }: Props) {
       <div className="flex w-full max-w-lg flex-col items-center justify-center gap-2">
         <DevTools />
         <ReciterSelector />
-        <Torrent />
+        <Player />
         <PwaUpdater />
       </div>
     </div>

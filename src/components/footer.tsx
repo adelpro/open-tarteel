@@ -9,7 +9,7 @@ import { FooterLink } from './footer-link';
 
 export default function Footer() {
   return (
-    <div className="mt-5 flex w-full items-center justify-center p-2">
+    <div className="m-4 mt-5 flex w-full items-center justify-center p-2">
       <div className="align-center flex w-full max-w-2xl flex-row-reverse justify-center gap-3">
         <FooterLink href="/">
           <div className="relative h-8 w-8 sm:h-5 sm:w-5">
