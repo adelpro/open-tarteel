@@ -1,0 +1,7 @@
+{
+    "path-intellisense.mappings": {      
+    "@components": "${workspaceRoot}/src/components",
+    "@utils": "${workspaceRoot}/src/utils"
+
+    }
+}

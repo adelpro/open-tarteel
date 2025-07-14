@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <title>connection animated</title>
+    <g fill="none" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Outer Arc Animation -->
+        <path d="M2.75 8.988A12.068 12.068 0 0 1 21.25 9" opacity="0">
+            <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.5;1" dur="1.5s" repeatCount="indefinite"
+                begin="0s" />
+        </path>
+        <!-- Middle Arc Animation -->
+        <path d="M5.64 11.964a8.297 8.297 0 0 1 12.72.01" opacity="0">
+            <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.5;1" dur="1.5s" repeatCount="indefinite"
+                begin="0.5s" />
+        </path>
+        <!-- Pulsating Inner Dot -->
+        <circle cx="12" cy="17.878" r="1.445" fill="#6B7280">
+            <animate attributeName="r" values="1.445;1.8;1.445" dur="1.5s" repeatCount="indefinite" />
+        </circle>
+    </g>
+</svg>

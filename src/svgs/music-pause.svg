@@ -1,0 +1,7 @@
+<svg fill="#6B7280" width="800" height="800" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+    focusable="false">
+    <g fill="none" stroke="#6B7280" stroke-linejoin="round" stroke-width="1.5">
+        <rect width="5" height="16.5" x="5" y="3.75" rx="2" />
+        <rect width="5" height="16.5" x="14" y="3.75" rx="2" />
+    </g>
+</svg>

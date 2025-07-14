@@ -1,0 +1,37 @@
+# Ignore artifacts:
+build
+coverage
+.next
+out
+dist
+
+# Ignore all node_modules directories
+node_modules
+
+# Ignore logs
+*.log
+
+# Ignore environment variable files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore lock files
+package-lock.json
+yarn.lock
+.pnpm-lock.yaml
+
+# Ignore editor directories and files
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Ignore miscellaneous files
+.DS_Store
+Thumbs.db

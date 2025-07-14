@@ -1,0 +1,81 @@
+{
+  "name": "open-quran",
+  "version": "1.2.2",
+  "description": "Quran streaming over webtorrent",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "dev:turbo": "next dev --turbopack",
+    "dev:inspect": "cross-env NODE_OPTIONS='--inspect' next dev",
+    "build": "next build",
+    "start": "next start",
+    "scan": "next dev & npx react-scan@latest localhost:3000",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc  --noemit",
+    "format": "prettier --write .",
+    "prepare": "husky || true"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,md,css}": "prettier --write"
+  },
+  "dependencies": {
+    "@next/bundle-analyzer": "^15.1.5",
+    "@serwist/next": "^9.0.12",
+    "clsx": "^2.1.1",
+    "commitizen": "^4.3.1",
+    "cross-env": "^7.0.3",
+    "cz-conventional-changelog": "^3.3.0",
+    "jotai": "^2.11.1",
+    "jotai-devtools": "^0.10.1",
+    "next": "^15.2.0",
+    "nodemailer": "^6.10.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@eslint/compat": "^1.2.5",
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.18.0",
+    "@svgr/webpack": "^8.1.0",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/node": "^20",
+    "@types/nodemailer": "^6.4.17",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@types/webtorrent": "^0.110.0",
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/parser": "^8.21.0",
+    "eslint": "^9.18.0",
+    "eslint-config-next": "^15.2.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-markdown": "^5.1.0",
+    "eslint-plugin-playwright": "^2.1.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unicorn": "^56.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.1",
+    "postcss": "^8",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.10",
+    "tailwindcss": "^3.4.1",
+    "tailwindcss-animated": "^1.1.2",
+    "typescript": "^5"
+  }
+}

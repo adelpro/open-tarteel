@@ -1,0 +1,19 @@
+{
+  "default": true,
+  "MD001": true,
+  "MD002": true,
+  "MD003": { "style": "atx" },
+  "MD004": { "style": "dash" },
+  "MD005": true,
+  "MD007": { "indent": 2 },
+  "MD012": true,
+  "MD013": {
+    "line_length": 80,
+    "code_blocks": false
+  },
+  "MD022": true,
+  "MD026": { "punctuation": ".,;:!?" },
+  "MD029": { "style": "ordered" },
+  "MD030": true,
+  "MD024": false
+}
