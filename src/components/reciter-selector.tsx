@@ -25,7 +25,7 @@ export default function ReciterSelector() {
       <div className="flex w-full max-w-md flex-row items-center justify-center gap-3 rounded-md border border-slate-200 p-2 shadow-md transition-transform hover:scale-105">
         {connectionIcon()}
         <button
-          className="flex w-full max-w-md flex-row-reverse items-center justify-between"
+          className="flex w-full max-w-md flex-row items-center justify-between"
           onClick={onButtonClick}
         >
           <span>

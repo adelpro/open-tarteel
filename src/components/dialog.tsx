@@ -48,7 +48,7 @@ export default function Dialog({
     >
       <main className="w-full rounded-xl bg-background p-2 pr-5 text-foreground">
         {!hideCloseButton && (
-          <div className="flex justify-start">
+          <div className="m-2 flex items-center justify-end">
             <button
               type="button"
               onClick={() => setIsOpen(false)}

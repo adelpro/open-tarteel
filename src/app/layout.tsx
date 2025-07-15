@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" suppressHydrationWarning>
-      <body className={`${tajawal.className} antialiased`}>
+      <body className={`${tajawal.className} antialiased`} dir="rtl">
         <main className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background text-foreground">
           <div className="w-full flex-grow">{children}</div>
           <Footer />
