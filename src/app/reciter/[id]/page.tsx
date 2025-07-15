@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
 import Logo from '@/app/logo';
 import ReciterPage from '@/app/reciter/[id]/reciter-page';
@@ -6,18 +7,14 @@ import { clientConfig, normalizeAppUrl } from '@/utils';
 import { getAllReciters } from '@/utils/api';
 
 type Props = {
-  params: Promise<{
-    id: string;
-  }>;
+  params: Promise<{ id: string }>;
 };
 
 export async function generateStaticParams() {
   try {
     const RECITERS = await getAllReciters();
     return RECITERS.map((reciter) => ({
-      params: {
-        id: reciter.id.toString(),
-      },
+      id: reciter.id.toString(),
     }));
   } catch (error) {
     console.error('Failed to generate static params:', error);
@@ -30,10 +27,11 @@ export async function generateMetadata({ params }: Props) {
   const RECITERS = await getAllReciters();
   const reciter = RECITERS.find((r) => r.id === Number(id));
 
-  if (!reciter)
+  if (!reciter) {
     return {
       title: clientConfig.APP_NAME,
     };
+  }
 
   return {
     metadataBase: new URL(clientConfig.APP_URL),
@@ -74,7 +72,6 @@ export default async function Page({ params }: Props) {
   const { id } = await params;
 
   let RECITERS = [];
-
   try {
     RECITERS = await getAllReciters();
   } catch (error) {
@@ -94,7 +91,7 @@ export default async function Page({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-            '@context': 'https://schema.org ',
+            '@context': 'https://schema.org',
             '@type': 'Person',
             name: reciter.name,
             url: `${normalizeAppUrl(clientConfig.APP_URL)}/reciter/${reciter.id}`,
@@ -103,7 +100,9 @@ export default async function Page({ params }: Props) {
       />
       <main className="flex w-full flex-col items-center justify-center bg-background text-foreground">
         <Logo />
-        <ReciterPage id={reciter.id} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <ReciterPage key={id} />
+        </Suspense>
       </main>
     </>
   );

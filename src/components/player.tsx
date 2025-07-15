@@ -127,7 +127,7 @@ export default function Player({ playlist }: Props) {
             onClick={handlePreviousTrack}
             className="m-2 rounded p-2 transition-colors duration-300 hover:bg-gray-200"
           >
-            <Image src={backwardSVG} alt="backward" width={30} height={30} />
+            <Image src={forwardSVG} alt="backward" width={30} height={30} />
           </button>
           <button
             onClick={togglePlayPause}
@@ -143,7 +143,7 @@ export default function Player({ playlist }: Props) {
             onClick={handleNextTrack}
             className="m-2 rounded p-2 transition-colors duration-300 hover:bg-gray-200"
           >
-            <Image src={forwardSVG} alt="forward" width={30} height={30} />
+            <Image src={backwardSVG} alt="forward" width={30} height={30} />
           </button>
           <button
             onClick={toggleShuffle}

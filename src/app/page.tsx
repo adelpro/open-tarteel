@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="flex w-full flex-col items-center justify-center bg-background text-foreground">
       <Logo />
-      <ReciterPage id={undefined} />
+      <ReciterPage />
       <UnderConstruction />
     </div>
   );

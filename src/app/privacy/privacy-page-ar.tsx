@@ -9,7 +9,7 @@ export default function PrivacyPageAr() {
       <div className="w-full max-w-2xl p-2 ps-6">
         {/* Title Section */}
         <div className="border-b pb-6">
-          <h1 className="text-3xl font-bold">سياسة خصوصية Open Quran</h1>
+          <h1 className="text-3xl font-bold">سياسة خصوصية Quran.us.kg</h1>
           <p className="mt-2 text-gray-600">تاريخ السريان: 14 فبراير 2025</p>
         </div>
 
@@ -18,7 +18,7 @@ export default function PrivacyPageAr() {
           <section className="space-y-4">
             <h2 className="text-2xl font-semibold">خصوصيتك مهمة بالنسبة لنا</h2>
             <p>
-              في Open Quran، نأخذ خصوصيتك على محمل الجد. تشرح هذه السياسة نهجنا
+              في Quran.us.kg، نأخذ خصوصيتك على محمل الجد. تشرح هذه السياسة نهجنا
               في الخصوصية وجمع البيانات في التطبيق.
             </p>
           </section>
@@ -28,7 +28,7 @@ export default function PrivacyPageAr() {
               ما المعلومات التي نجمعها؟
             </h2>
             <p>
-              تطبيق Open Quran{' '}
+              تطبيق Quran.us.kg{' '}
               <span className="font-semibold">لا تجمع أي معلومات شخصية</span> أو
               أي بيانات أخرى من المستخدمين. يعمل التطبيق بالكامل في وضع عدم
               الاتصال، ولا يتم نقل أي بيانات من جهازك.
@@ -47,7 +47,7 @@ export default function PrivacyPageAr() {
           <section className="space-y-4">
             <h2 className="text-2xl font-semibold">نحن نحترم خصوصية أطفالك</h2>
             <p>
-              تم تصميم Open Quran للأطفال الذين تتراوح أعمارهم بين 6 سنوات وما
+              تم تصميم Quran.us.kg للأطفال الذين تتراوح أعمارهم بين 6 سنوات وما
               فوق والذين يمكنهم قراءة العربية. نحن ملتزمون بحماية خصوصية
               الأطفال. نظرًا لأن تطبيقنا لا يجمع أي بيانات، فإن معلومات الأطفال
               آمنة تمامًا.
@@ -74,7 +74,7 @@ export default function PrivacyPageAr() {
           <section className="space-y-4">
             <h2 className="text-2xl font-semibold">خدمات الطرف الثالث</h2>
             <p>
-              لا يستخدم Open Quran أي خدمات طرف ثالث للتحليلات أو التتبع أو جمع
+              لا يستخدم Quran.us.kg أي خدمات طرف ثالث للتحليلات أو التتبع أو جمع
               البيانات. يعمل التطبيق بالكامل على جهازك دون إرسال أي معلومات
               خارجيًا.
             </p>
@@ -95,9 +95,12 @@ export default function PrivacyPageAr() {
               إذا كانت لديك أي أسئلة حول هذه السياسة، فلا تتردد في الاتصال بنا
               على:
               <br />
-              <span className="mt-2 inline-block font-semibold text-blue-600">
-                contact@openquran.us.kg
-              </span>
+              <a
+                href="mailto:contact@quran.us.kg"
+                className="mt-2 inline-block font-semibold text-blue-600"
+              >
+                contact@quran.us.kg
+              </a>
             </p>
           </section>
         </div>
