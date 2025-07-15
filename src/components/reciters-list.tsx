@@ -9,7 +9,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { BsStar, BsStarFill } from 'react-icons/bs'; // Importing Star icons from react-icons/bs
+import { BsStar, BsStarFill } from 'react-icons/bs';
 
 import { favoriteRecitersAtom, selectedReciterAtom } from '@/jotai/atom';
 import { Reciter, Riwaya } from '@/types';
@@ -170,9 +170,6 @@ export default function RecitersList({ setIsOpen }: Props) {
         }
       }
     };
-    // It's good practice to add event listeners to the document or a specific element
-    // instead of `window` if the listener is only relevant when the component is active.
-    // For a modal/dialog, `window` can be acceptable if it's meant to handle global keypresses.
     window.addEventListener('keydown', handleKeyDown as any);
     return () => window.removeEventListener('keydown', handleKeyDown as any);
   }, [filteredReciters, focusedIndex, handleSelectReciter, setIsOpen]);
@@ -184,7 +181,6 @@ export default function RecitersList({ setIsOpen }: Props) {
   ) => {
     const isFavorited = isReciterFavorited(reciter, favoriteReciters);
     return (
-      // The main card is a button
       <button
         key={`${reciter.id}-${reciter.moshaf.id}${isFavoriteSection ? '-fav' : ''}`}
         ref={(element) => {
@@ -193,22 +189,19 @@ export default function RecitersList({ setIsOpen }: Props) {
           }
         }}
         onClick={() => handleSelectReciter(reciter)}
-        className={`relative flex w-full flex-col items-start justify-between rounded-xl border border-gray-200 bg-white p-5 text-right shadow-md transition-all hover:scale-[1.02] hover:shadow-lg dark:border-gray-700 dark:bg-gray-800 ${
+        className={`relative flex w-full flex-col items-start justify-between rounded-xl border border-gray-200 p-5 text-right shadow-md transition-all hover:scale-[1.02] hover:shadow-lg ${
           !isFavoriteSection && focusedIndex === index
             ? 'scale-[1.02] transform ring-2 ring-blue-500'
             : ''
         } ${isFavorited ? 'ring-1 ring-yellow-200 dark:ring-yellow-800' : ''}`}
       >
-        <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
-          {reciter.name}
-        </h2>
+        <h2 className="mb-2 text-xl font-semibold">{reciter.name}</h2>
         <div className="flex w-full items-center justify-between">
           <div className="flex gap-2">
-            {/* This span acts as a filter button for Riwaya, ensure it stops propagation */}
             <span
-              role="button" // Use role="button" for accessibility if it's not a native button
+              role="button"
               onClick={(event) => {
-                event.stopPropagation(); // Prevent the parent button's onClick from firing
+                event.stopPropagation();
                 setSelectedRiwaya(reciter.moshaf.riwaya || Riwaya.Warsh);
               }}
               className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800"
@@ -216,24 +209,21 @@ export default function RecitersList({ setIsOpen }: Props) {
               {reciter.moshaf.riwaya}
             </span>
           </div>
-          {/* Changed this from <button> to <div> with role="button" for accessibility */}
           <div
-            role="button" // Important for accessibility, so screen readers treat it as a button
-            tabIndex={0} // Makes the div focusable
+            role="button"
+            tabIndex={0}
             onClick={(event) => {
-              event.stopPropagation(); // Prevent the parent button's onClick from firing
+              event.stopPropagation();
               toggleFavorite(reciter);
             }}
             onKeyDown={(event) => {
-              // Added keyboard accessibility for the star
               if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
                 event.stopPropagation();
-                event.preventDefault(); // Prevent default scroll behavior for spacebar
                 toggleFavorite(reciter);
               }
             }}
             className={`absolute left-3 top-3 cursor-pointer rounded-full p-1 transition-colors ${
-              // Added cursor-pointer
               isFavorited
                 ? 'text-yellow-500 hover:text-yellow-600'
                 : 'text-gray-400 hover:text-yellow-500 dark:text-gray-500 dark:hover:text-yellow-400'
@@ -264,7 +254,7 @@ export default function RecitersList({ setIsOpen }: Props) {
           placeholder="ابحث عن القارئ"
           value={searchTerm}
           onChange={handleSearchTerm}
-          className="w-full rounded-xl border border-gray-300 bg-white p-3 text-right shadow-sm transition focus:border-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800"
+          className="w-full rounded-xl border border-gray-300 p-3 text-right shadow-sm transition focus:border-blue-500 focus:outline-none"
         />
 
         {favoriteRecitersList.length > 0 && (
