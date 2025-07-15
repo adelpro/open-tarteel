@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import imagePlaceHolderSVG from '@/svgs/imagePlaceHolder.svg';
+import imagePlaceHolderSVG from '@/svgs/image-place-holder.svg';
 
 export default function Skeleton() {
   return (

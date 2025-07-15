@@ -1,3 +1,5 @@
+'use client';
+
 import { MetadataRoute } from 'next';
 import { useEffect, useState } from 'react';
 

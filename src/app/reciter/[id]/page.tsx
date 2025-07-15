@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 
 import Logo from '@/app/logo';
 import ReciterPage from '@/app/reciter/[id]/reciter-page';
+import SimpleSkeleton from '@/components/simple-skeleton';
 import { clientConfig, normalizeAppUrl } from '@/utils';
 import { getAllReciters } from '@/utils/api';
 
@@ -100,7 +101,13 @@ export default async function Page({ params }: Props) {
       />
       <main className="flex w-full flex-col items-center justify-center bg-background text-foreground">
         <Logo />
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense
+          fallback={
+            <div className="w-full px-10">
+              <SimpleSkeleton />
+            </div>
+          }
+        >
           <ReciterPage key={id} />
         </Suspense>
       </main>
