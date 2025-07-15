@@ -13,7 +13,7 @@ import React, {
 import { selectedReciterAtom } from '@/jotai/atom';
 import { Reciter, Riwaya } from '@/types';
 import { normalizeArabicText } from '@/utils';
-import { fetchReciters } from '@/utils/api';
+import { getAllReciters } from '@/utils/api';
 
 import SimpleSkeleton from './simple-skeleton';
 
@@ -41,7 +41,7 @@ export default function RecitersList({ setIsOpen }: Props) {
       try {
         setLoading(true);
         setError(null);
-        const data = await fetchReciters();
+        const data = await getAllReciters();
         setReciters(data);
       } catch (error_) {
         setError('فشل في تحميل القراء. يرجى المحاولة مرة أخرى.');
@@ -265,6 +265,8 @@ export default function RecitersList({ setIsOpen }: Props) {
                 </span>
               </button>
             ))
+          ) : error ? (
+            <></>
           ) : (
             <p className="col-span-full text-center text-gray-500 dark:text-gray-400">
               لا يوجد قراء مطابقين للبحث.

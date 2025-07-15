@@ -3,14 +3,14 @@ import { useEffect, useState } from 'react';
 
 import { Reciter } from '@/types';
 import { clientConfig } from '@/utils';
-import { fetchReciters } from '@/utils/api';
+import { getAllReciters } from '@/utils/api';
 export default function Sitemap(): MetadataRoute.Sitemap {
   const [reciters, setReciters] = useState<Reciter[]>([]);
   // Fetch reciters
   useEffect(() => {
     const loadReciters = async () => {
       try {
-        const data = await fetchReciters();
+        const data = await getAllReciters();
         setReciters(data);
       } catch {}
     };

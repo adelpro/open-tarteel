@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Logo from '@/app/logo';
 import ReciterPage from '@/app/reciter/[id]/reciter-page';
 import { clientConfig, normalizeAppUrl } from '@/utils';
-import { fetchReciters } from '@/utils/api';
+import { getAllReciters } from '@/utils/api';
 
 type Props = {
   params: Promise<{
@@ -13,7 +13,7 @@ type Props = {
 
 export async function generateStaticParams() {
   try {
-    const RECITERS = await fetchReciters();
+    const RECITERS = await getAllReciters();
     return RECITERS.map((reciter) => ({
       params: {
         id: reciter.id.toString(),
@@ -27,7 +27,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
-  const RECITERS = await fetchReciters();
+  const RECITERS = await getAllReciters();
   const reciter = RECITERS.find((r) => r.id === Number(id));
 
   if (!reciter)
@@ -76,7 +76,7 @@ export default async function Page({ params }: Props) {
   let RECITERS = [];
 
   try {
-    RECITERS = await fetchReciters();
+    RECITERS = await getAllReciters();
   } catch (error) {
     console.error('Error fetching reciters in page:', error);
     return notFound();

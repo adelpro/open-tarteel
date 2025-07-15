@@ -1,4 +1,4 @@
-import { LinkSource, Riwaya } from '@/types';
+import { LinkSource, Playlist, Riwaya } from '@/types';
 
 export type Moshaf = {
   id: string;
@@ -6,7 +6,7 @@ export type Moshaf = {
   riwaya: Riwaya;
   server: string;
   surah_total: string;
-  playlist: string[];
+  playlist: Playlist;
 };
 
 //TODO delete   riwaya: Riwaya; here

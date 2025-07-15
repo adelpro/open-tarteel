@@ -4,21 +4,19 @@ import {
   mp3QuranAPiResponse,
   Reciter,
 } from '@/types';
+import { Playlist } from '@/types/playlist';
 
 import { getRiwayaFromMoshafName } from './get-riwaya-from-mushaf-name';
 
-const generatePlaylist = (moshaf: MP3APIMoshaf) => {
-  const result = moshaf.surah_list
-    ? moshaf.surah_list
-        .split(',')
-        .map(
-          (surahId: string) => `${moshaf.server}${surahId.padStart(3, '0')}.mp3`
-        )
-    : [];
+const generatePlaylist = (moshaf: MP3APIMoshaf): Playlist => {
+  const result = moshaf.surah_list.split(',').map((surahId: string) => ({
+    surahId: surahId,
+    link: `${moshaf.server}${surahId.padStart(3, '0')}.mp3`,
+  }));
   return result;
 };
 // Function to fetch reciters from MP3Quran API
-export async function fetchReciters(): Promise<Reciter[]> {
+export async function getAllReciters(): Promise<Reciter[]> {
   try {
     const response = await fetch(
       'https://www.mp3quran.net/api/v3/reciters?language=ar',
@@ -69,7 +67,7 @@ type Props = {
 };
 
 // Fetch reciter data from API
-export async function getReciterFromApi(
+export async function getReciter(
   id: number,
   moshafId: number
 ): Promise<Reciter | undefined> {

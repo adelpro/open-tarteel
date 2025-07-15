@@ -6,7 +6,7 @@ import Playlist from '@/components/playlist';
 type Props = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  setCurrentTrack: React.Dispatch<React.SetStateAction<number>>;
+  setCurrentTrack: React.Dispatch<React.SetStateAction<number | undefined>>;
 };
 
 export default function PlaylistDialog({

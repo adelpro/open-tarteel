@@ -5,44 +5,38 @@ import playSVG from '@svgs/music-play.svg';
 import playlistSVG from '@svgs/music-playlist.svg';
 import repeatSVG from '@svgs/music-repeat.svg';
 import shuffleSVG from '@svgs/music-shuffle.svg';
-import { useAtomValue } from 'jotai';
 import Image from 'next/image';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { selectedReciterAtom } from '@/jotai/atom';
+import { Playlist } from '@/types';
 
 import PlaylistDialog from './playlist-dialog';
 import Range from './range';
 import TrackInfo from './track-info';
 
-export default function Player() {
+type Props = {
+  playlist: Playlist;
+};
+
+export default function Player({ playlist }: Props) {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
-  const [currentTrack, setCurrentTrack] = useState<number | undefined>();
+  const [currentTrack, setCurrentTrack] = useState<number | undefined>(0);
   const [isShuffled, setIsShuffled] = useState<boolean>(false);
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const selectedReciter = useAtomValue(selectedReciterAtom);
-
-  const playlist = selectedReciter?.moshaf.playlist;
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const shufflePlaylist = useCallback(() => {
-    if (!playlist) {
-      return;
-    }
     const indices = Array.from(
       { length: playlist.length },
-      (_, indice) => indice
+      (_, index) => index
     );
     for (let index = indices.length - 1; index > 0; index--) {
-      const randomIndex = Math.floor(Math.random() * (index + 1));
-      [indices[index], indices[randomIndex]] = [
-        indices[randomIndex],
-        indices[index],
-      ];
+      const index_ = Math.floor(Math.random() * (index + 1));
+      [indices[index], indices[index_]] = [indices[index_], indices[index]];
     }
     setShuffledIndices(indices);
   }, [playlist]);
@@ -67,10 +61,9 @@ export default function Player() {
       setIsPlaying(!isPlaying);
     }
   };
+
   const handleTimeUpdate = () => {
-    if (!audioRef?.current) {
-      return;
-    }
+    if (!audioRef?.current) return;
 
     if (!Number.isNaN(audioRef.current.duration)) {
       setDuration(audioRef.current.duration);
@@ -80,15 +73,17 @@ export default function Player() {
       setCurrentTime(audioRef.current.currentTime);
     }
   };
+
   const handlePreviousTrack = () => {
-    console.log('Previous track');
+    if (typeof currentTrack !== 'number') return;
     setCurrentTrack(getPreviousTrackIndex(currentTrack));
   };
 
   const handleNextTrack = () => {
-    console.log('Next track');
+    if (typeof currentTrack !== 'number') return;
     setCurrentTrack(getNextTrackIndex(currentTrack));
   };
+
   const toggleShuffle = () => {
     if (!isShuffled) {
       shufflePlaylist();
@@ -96,10 +91,7 @@ export default function Player() {
     setIsShuffled(!isShuffled);
   };
 
-  const getNextTrackIndex = (currentIndex: number | undefined) => {
-    if (!playlist || !currentIndex) {
-      return;
-    }
+  const getNextTrackIndex = (currentIndex: number) => {
     if (isShuffled) {
       const currentShuffledIndex = shuffledIndices.indexOf(currentIndex);
       return shuffledIndices[(currentShuffledIndex + 1) % playlist.length];
@@ -107,10 +99,7 @@ export default function Player() {
     return (currentIndex + 1) % playlist.length;
   };
 
-  const getPreviousTrackIndex = (currentIndex: number | undefined) => {
-    if (!currentIndex || !playlist) {
-      return;
-    }
+  const getPreviousTrackIndex = (currentIndex: number) => {
     if (isShuffled) {
       const currentShuffledIndex = shuffledIndices.indexOf(currentIndex);
       return shuffledIndices[
@@ -123,17 +112,16 @@ export default function Player() {
   return (
     <div className="flex w-full flex-col items-center justify-center gap-3">
       <div className="flex h-20 w-full max-w-md flex-col items-center justify-center rounded-t-md border border-slate-200 p-0 shadow-md transition-transform hover:scale-105">
-        {playlist && currentTrack ? (
+        {typeof currentTrack === 'number' ? (
           <audio
             ref={audioRef}
             onTimeUpdate={handleTimeUpdate}
             onDurationChange={handleTimeUpdate}
             onEnded={handleNextTrack}
-            src={playlist[currentTrack]}
+            src={playlist[currentTrack]?.link}
           />
-        ) : (
-          <></>
-        )}
+        ) : null}
+
         <div className="flex items-center justify-between gap-2 pt-5 md:gap-10">
           <button
             onClick={handlePreviousTrack}
@@ -151,7 +139,6 @@ export default function Player() {
               <Image src={playSVG} alt="play" width={30} height={30} />
             )}
           </button>
-
           <button
             onClick={handleNextTrack}
             className="m-2 rounded p-2 transition-colors duration-300 hover:bg-gray-200"
@@ -162,11 +149,12 @@ export default function Player() {
             onClick={toggleShuffle}
             className="m-2 rounded p-2 transition-colors duration-300 hover:bg-gray-200"
           >
-            {isShuffled ? (
-              <Image src={shuffleSVG} alt="shuffle" width={30} height={30} />
-            ) : (
-              <Image src={repeatSVG} alt="repeat" width={30} height={30} />
-            )}
+            <Image
+              src={isShuffled ? shuffleSVG : repeatSVG}
+              alt="shuffle/repeat"
+              width={30}
+              height={30}
+            />
           </button>
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -175,31 +163,28 @@ export default function Player() {
             <Image src={playlistSVG} alt="playlist" width={30} height={30} />
           </button>
         </div>
+
         <Range
           currentTime={currentTime}
           setCurrentTime={setCurrentTime}
           duration={duration}
           audioRef={audioRef}
         />
-        {/*  {setCurrentTrack === undefined ? (
-          <></>
-        ) : (
-          <PlaylistDialog
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            setCurrentTrack={setCurrentTrack}
-          /> 
-        )}*/}
+
+        <PlaylistDialog
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          setCurrentTrack={setCurrentTrack}
+        />
       </div>
-      {currentTrack ? (
+
+      {typeof currentTrack === 'number' ? (
         <TrackInfo
           currentTrackId={currentTrack}
           duration={duration}
           currentTime={currentTime}
         />
-      ) : (
-        <></>
-      )}
+      ) : null}
     </div>
   );
 }
