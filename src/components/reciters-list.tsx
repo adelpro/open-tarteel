@@ -100,12 +100,14 @@ export default function RecitersList({ setIsOpen }: Props) {
 
   // Filtered Riwayas that actually have reciters
   const availableRiwiyat = sortedRiwiyat.filter((riwaya) =>
-    reciters.some((r) => r.riwaya === riwaya)
+    reciters.some((r) => r.moshaf.riwaya === riwaya)
   );
 
   // Filter and sort reciters
   const filteredReciters = reciters
-    .filter((r) => selectedRiwaya === 'all' || r.riwaya === selectedRiwaya)
+    .filter(
+      (r) => selectedRiwaya === 'all' || r.moshaf.riwaya === selectedRiwaya
+    )
     .filter((r) =>
       normalizeArabicText(r.name).includes(searchTerm.toLowerCase())
     )
@@ -117,7 +119,7 @@ export default function RecitersList({ setIsOpen }: Props) {
     (reciter: Reciter) => {
       setSelectedReciter(reciter);
       setIsOpen(false);
-      router.push(`/reciter/${reciter.id}`);
+      router.push(`/reciter/${reciter.id}?moshafId=${reciter.moshaf.id}`);
     },
     [router, setIsOpen, setSelectedReciter]
   );
@@ -184,7 +186,7 @@ export default function RecitersList({ setIsOpen }: Props) {
   }, [filteredReciters, focusedIndex, handleSelectReciter, setIsOpen]);
 
   return (
-    <section className="mx-auto w-full max-w-4xl px-4" dir="rtl">
+    <section className="mx-auto w-full px-4">
       <div className="flex flex-col gap-4">
         {/* Search Input */}
         <input
@@ -225,9 +227,9 @@ export default function RecitersList({ setIsOpen }: Props) {
 
         {/* Loader or Error State */}
         {loading && (
-          <p className="text-center">
+          <div className="text-center">
             <SimpleSkeleton />
-          </p>
+          </div>
         )}
         {error && <p className="text-center text-red-500">{error}</p>}
 
@@ -236,7 +238,7 @@ export default function RecitersList({ setIsOpen }: Props) {
           {filteredReciters.length > 0 ? (
             filteredReciters.map((reciter, index) => (
               <button
-                key={reciter.id}
+                key={`${reciter.id} - ${reciter.moshaf.id}`}
                 ref={(element: HTMLButtonElement | null) => {
                   reciterReferences.current[index] = element;
                 }}
@@ -250,15 +252,17 @@ export default function RecitersList({ setIsOpen }: Props) {
                 <h2 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
                   {reciter.name}
                 </h2>
-                <button
+                <span
+                  role="button"
                   onClick={(event) => {
                     event.stopPropagation(); // Prevent triggering parent click
-                    handleRiwayaClick(reciter.riwaya);
+                    // TODO update this logic
+                    handleRiwayaClick(reciter.moshaf.riwaya || Riwaya.Warsh);
                   }}
                   className="self-end rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800"
                 >
-                  {reciter.riwaya}
-                </button>
+                  {reciter.moshaf.riwaya}
+                </span>
               </button>
             ))
           ) : (

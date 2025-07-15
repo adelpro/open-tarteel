@@ -13,6 +13,7 @@ const config = {
         'test', // Adding missing tests or correcting existing tests
         'docs', // Documentation changes
         'chore', // Changes to the build process or auxiliary tools and libraries such as documentation generation
+        'wip',
       ],
     ],
   },
