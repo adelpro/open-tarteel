@@ -9,7 +9,7 @@
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/270e870a48f342ef9ba384229681db23)](https://app.codacy.com/gh/adelpro/open-quran/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
-Open Quran is an open-source Quran application designed to provide an optimal quran audio streaming experience across various platforms. Built with modern web technologies, it ensures performance and responsive design.
+Open Tarteel is an open-source Quran application designed to provide an optimal quran audio streaming experience across various platforms. Built with modern web technologies, it ensures performance and responsive design.
 
 ## Features
 
