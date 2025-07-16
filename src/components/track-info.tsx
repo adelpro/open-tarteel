@@ -1,6 +1,8 @@
+import { useAtomValue } from 'jotai';
 import React from 'react';
 
-import { PLAYLIST, SURAHS } from '@/constants';
+import { SURAHS } from '@/constants';
+import { selectedReciterAtom } from '@/jotai/atom';
 import { formatTime } from '@/utils';
 
 type Props = {
@@ -14,12 +16,20 @@ export default function TrackInfo({
   duration,
   currentTime,
 }: Props) {
-  const currentTrack = PLAYLIST[currentTrackId];
+  const selectedReciter = useAtomValue(selectedReciterAtom);
+  const playlsit = selectedReciter?.moshaf.playlist;
+  if (!Array.isArray(playlsit)) return null;
+
+  if (currentTrackId < 0 || currentTrackId >= playlsit.length) return null;
+
+  const currentTrack = playlsit[currentTrackId];
 
   if (!currentTrack) return null;
 
   const { surahId } = currentTrack;
-  const surahName = SURAHS.find((surah) => surah.id === surahId)?.name;
+  const surahName = SURAHS.find(
+    (surah) => surah.id.toString() === surahId
+  )?.name;
 
   return (
     <div className="flex items-center justify-center gap-2 font-bold text-gray-500">

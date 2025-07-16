@@ -42,24 +42,33 @@ export default function Dialog({
         }
       }}
       className={cn(
-        'top-50 left-50 -translate-x-50 -translate-y-50 fixed z-10 mx-auto w-[98%] max-w-4xl origin-top animate-slideInWithFade overflow-auto rounded-xl backdrop:bg-zinc-800/50 dark:backdrop:bg-zinc-200/50',
+        'top-50 left-50 -translate-x-50 -translate-y-50 fixed z-10 mx-auto w-[98%] max-w-4xl origin-top animate-slideInWithFade backdrop:bg-zinc-800/50 dark:backdrop:bg-zinc-200/50',
         className
       )}
     >
-      <main className="w-full rounded-xl bg-background p-2 pr-5 text-foreground">
-        {!hideCloseButton && (
-          <div className="m-2 flex items-center justify-end">
-            <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              aria-label="Close"
-              className="transition-transform duration-200 hover:scale-110"
-            >
-              <Image src={close} alt="close" width={24} height={24} />
-            </button>
+      {/* Apply overflow and rounded corners to the main content container */}
+      <main className="h-full w-full overflow-hidden rounded-xl bg-background text-foreground">
+        <div className="h-full w-full overflow-y-auto pr-5">
+          {' '}
+          {/* Added pr-5 here for scrollbar space */}
+          {!hideCloseButton && (
+            <div className="m-2 flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                aria-label="Close"
+                className="transition-transform duration-200 hover:scale-110"
+              >
+                <Image src={close} alt="close" width={24} height={24} />
+              </button>
+            </div>
+          )}
+          <div className="p-2">
+            {' '}
+            {/* Added p-2 here for content padding */}
+            {children}
           </div>
-        )}
-        {children}
+        </div>
       </main>
     </dialog>
   );

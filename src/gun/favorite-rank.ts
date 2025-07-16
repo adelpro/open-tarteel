@@ -15,20 +15,16 @@ const favoriteCountsNode = gun.get(FAVORITE_COUNTS_KEY);
 export function fetchFavoriteCounts(): Promise<Record<string, number>> {
   return new Promise((resolve) => {
     const counts: Record<string, number> = {};
-    let pending = 0;
+    let timeout = setTimeout(() => resolve({ ...counts }), 1000);
 
     favoriteCountsNode.map().once((count, key) => {
       if (!key || typeof count !== 'number') return;
 
-      pending++;
       counts[key] = count;
 
-      // Short delay to wait for all keys to arrive
       clearTimeout(timeout);
       timeout = setTimeout(() => resolve({ ...counts }), 300);
     });
-
-    let timeout = setTimeout(() => resolve({ ...counts }), 1000); // fallback
   });
 }
 
