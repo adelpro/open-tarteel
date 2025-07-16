@@ -1,7 +1,9 @@
 import Gun from 'gun';
 
+import { GUN_PEERS } from '@/constants';
+
 const gun = Gun({
-  peers: ['https://gun-manhattan.herokuapp.com/gun'],
+  peers: [GUN_PEERS],
 });
 
 const VIEW_COUNTS_KEY = 'viewCounts';
