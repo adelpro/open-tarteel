@@ -91,7 +91,7 @@ export default function RecitersList({ setIsOpen }: Props) {
   };
 
   return (
-    <section className="mx-auto w-full px-4">
+    <section className="mx-auto w-full px-1">
       <div className="flex flex-col gap-4">
         <div className="relative flex w-full">
           <input
@@ -118,11 +118,11 @@ export default function RecitersList({ setIsOpen }: Props) {
               tabIndex={0}
             >
               {sortMode === 'alphabetical' ? (
-                <TbSortDescending2Filled className="h-5 w-5 text-yellow-500" />
+                <TbSortDescending2Filled className="size-5 text-yellow-500" />
               ) : sortMode === 'views' ? (
-                <TbSortDescendingNumbers className="h-5 w-5 text-purple-500" />
+                <TbSortDescendingNumbers className="size-5 text-purple-500" />
               ) : (
-                <TbSortDescendingLetters className="h-5 w-5 text-blue-500" />
+                <TbSortDescendingLetters className="size-5 text-blue-500" />
               )}
             </button>
             {favoriteRecitersList.length > 0 && (
@@ -133,16 +133,22 @@ export default function RecitersList({ setIsOpen }: Props) {
                 tabIndex={0}
               >
                 {showOnlyFavorites ? (
-                  <BsStarFill className="h-5 w-5" />
+                  <BsStarFill
+                    className="size-5"
+                    aria-label="favorite star icon"
+                  />
                 ) : (
-                  <BsStar className="h-5 w-5" />
+                  <BsStar
+                    className="size-5 text-black"
+                    aria-label="favorite star icon"
+                  />
                 )}
               </button>
             )}
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
+        <div className="flex w-full flex-wrap items-center justify-center gap-2">
           <button
             onClick={() => setSelectedRiwaya('all')}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${

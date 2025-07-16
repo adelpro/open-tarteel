@@ -48,9 +48,7 @@ export default function Dialog({
     >
       {/* Apply overflow and rounded corners to the main content container */}
       <main className="h-full w-full overflow-hidden rounded-xl bg-background text-foreground">
-        <div className="h-full w-full overflow-y-auto pr-5">
-          {' '}
-          {/* Added pr-5 here for scrollbar space */}
+        <div className="h-full w-full overflow-y-auto">
           {!hideCloseButton && (
             <div className="m-2 flex items-center justify-end">
               <button
@@ -64,7 +62,6 @@ export default function Dialog({
             </div>
           )}
           <div className="p-2">
-            {' '}
             {/* Added p-2 here for content padding */}
             {children}
           </div>
