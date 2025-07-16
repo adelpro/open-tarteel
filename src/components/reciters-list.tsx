@@ -105,6 +105,13 @@ export default function RecitersList({ setIsOpen }: Props) {
           <div className="absolute inset-y-0 left-2 flex items-center gap-2 pr-2">
             <button
               aria-label="تغيير الترتيب"
+              title={
+                sortMode === 'alphabetical'
+                  ? 'ترتيب أبجدي'
+                  : sortMode === 'views'
+                    ? 'ترتيب حسب المشاهدات'
+                    : 'ترتيب حسب الشعبية'
+              }
               onClick={() =>
                 setSortMode((previous) =>
                   previous === 'popular'
@@ -118,16 +125,17 @@ export default function RecitersList({ setIsOpen }: Props) {
               tabIndex={0}
             >
               {sortMode === 'alphabetical' ? (
-                <TbSortDescending2Filled className="size-5 text-yellow-500" />
+                <TbSortDescendingLetters className="size-5 text-blue-500" />
               ) : sortMode === 'views' ? (
                 <TbSortDescendingNumbers className="size-5 text-purple-500" />
               ) : (
-                <TbSortDescendingLetters className="size-5 text-blue-500" />
+                <TbSortDescending2Filled className="size-5 text-yellow-500" />
               )}
             </button>
             {favoriteRecitersList.length > 0 && (
               <button
                 aria-label={showOnlyFavorites ? 'عرض الكل' : 'المفضلة فقط'}
+                title={showOnlyFavorites ? 'عرض المفضلة فقط' : 'عرض الكل'}
                 onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
                 className={`rounded-full p-1.5 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:hover:bg-gray-700 ${showOnlyFavorites ? 'bg-yellow-500 text-white' : ''}`}
                 tabIndex={0}
