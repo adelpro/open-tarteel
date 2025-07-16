@@ -26,7 +26,8 @@
       "@assets/*": ["./src/assets/*"],
       "@utils/*": ["./src/utils/*"],
       "@svgs/*": ["./src/svgs/*"],
-      "@hooks/*": ["./src/hooks/*"]
+      "@hooks/*": ["./src/hooks/*"],
+      "@gun/*": ["./src/gun/*"]
     }
   },
   "include": [

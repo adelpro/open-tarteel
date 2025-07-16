@@ -31,6 +31,7 @@
     "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.3.0",
     "fuse.js": "^7.1.0",
+    "gun": "^0.2020.1241",
     "jotai": "^2.11.1",
     "jotai-devtools": "^0.10.1",
     "next": "^15.2.0",

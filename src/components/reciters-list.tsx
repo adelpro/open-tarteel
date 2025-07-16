@@ -2,19 +2,16 @@
 
 import { useAtom, useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
-import React, {
-  KeyboardEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { BsStar, BsStarFill } from 'react-icons/bs';
+import React, { useCallback, useRef, useState } from 'react';
+import { BsSortAlphaDown, BsStar, BsStarFill } from 'react-icons/bs';
 
-import { favoriteRecitersAtom, selectedReciterAtom } from '@/jotai/atom';
-import { Reciter, Riwaya } from '@/types';
-import { normalizeArabicText } from '@/utils';
-import { getAllReciters } from '@/utils/api';
+import ReciterCard from '@/components/reciter-card';
+import { useFavorites } from '@/hooks/use-favorites';
+import { useFilterSort } from '@/hooks/use-filter-sort';
+import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
+import { useReciters } from '@/hooks/use-reciters';
+import { selectedReciterAtom } from '@/jotai/atom';
+import { Reciter } from '@/types';
 
 import SimpleSkeleton from './simple-skeleton';
 
@@ -22,106 +19,46 @@ type Props = {
   setIsOpen: (isOpen: boolean) => void;
 };
 
-const generateFavoriteId = (reciter: Reciter): string =>
-  `${reciter.id}-${reciter.moshaf.id}`;
-
-const isReciterFavorited = (
-  reciter: Reciter,
-  favoriteReciters: string[]
-): boolean => favoriteReciters.includes(generateFavoriteId(reciter));
-
 export default function RecitersList({ setIsOpen }: Props) {
   const router = useRouter();
   const setSelectedReciter = useSetAtom(selectedReciterAtom);
-  const [favoriteReciters, setFavoriteReciters] = useAtom(favoriteRecitersAtom);
-  const [reciters, setReciters] = useState<Reciter[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRiwaya, setSelectedRiwaya] = useState<Riwaya | 'all'>('all');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
-  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const reciterReferences = useRef<(HTMLButtonElement | null)[]>([]);
-  const isUsingKeyboardRef = useRef(false);
+  // Reciters data & loading/error states from hook
+  const { reciters, loading, error } = useReciters();
 
-  const toggleFavorite = (reciter: Reciter) => {
-    const favId = generateFavoriteId(reciter);
-    setFavoriteReciters((previous) =>
-      previous.includes(favId)
-        ? previous.filter((id) => id !== favId)
-        : [...previous, favId]
-    );
-  };
+  // Favorites state & toggle handler from hook
+  const {
+    favoriteReciters,
+    globalCounts,
+    toggleFavorite,
+    showOnlyFavorites,
+    setShowOnlyFavorites,
+  } = useFavorites();
 
-  const getFavoriteReciters = useCallback(
-    () => reciters.filter((r) => isReciterFavorited(r, favoriteReciters)),
-    [reciters, favoriteReciters]
+  // Search, Riwaya, sort mode, filtered & sorted reciters from hook
+  const {
+    searchTerm,
+    setSearchTerm,
+    selectedRiwaya,
+    setSelectedRiwaya,
+    sortMode,
+    setSortMode,
+    filteredReciters,
+    availableRiwiyat,
+  } = useFilterSort({
+    reciters,
+    globalCounts,
+    favoriteReciters,
+    showOnlyFavorites,
+  });
+
+  // Keyboard navigation hook manages focused index & refs
+  const { focusedIndex, setFocusedIndex, reciterRefs, searchInputRef } =
+    useKeyboardNavigation(filteredReciters.length);
+
+  const favoriteRecitersList = reciters.filter((r) =>
+    favoriteReciters.includes(`${r.id}-${r.moshaf.id}`)
   );
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await getAllReciters();
-        setReciters(data);
-      } catch (error_) {
-        setError('فشل في تحميل القراء. يرجى المحاولة مرة أخرى.');
-        console.error('Error loading reciters:', error_);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => searchInputRef.current?.focus(), 300);
-    const keyHandler = () => (isUsingKeyboardRef.current = true);
-    const mouseHandler = () => (isUsingKeyboardRef.current = false);
-    window.addEventListener('keydown', keyHandler);
-    window.addEventListener('mousedown', mouseHandler);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('keydown', keyHandler);
-      window.removeEventListener('mousedown', mouseHandler);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (focusedIndex !== null) {
-      reciterReferences.current[focusedIndex]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'start',
-      });
-    }
-  }, [focusedIndex]);
-
-  const sortedRiwiyat = Object.values(Riwaya).sort((a, b) =>
-    a.localeCompare(b, 'ar', { sensitivity: 'base' })
-  );
-  const availableRiwiyat = sortedRiwiyat.filter((riwaya) =>
-    reciters.some((r) => r.moshaf.riwaya === riwaya)
-  );
-
-  const filteredReciters = reciters
-    .filter((r) => {
-      if (showOnlyFavorites && !isReciterFavorited(r, favoriteReciters))
-        return false;
-      if (selectedRiwaya !== 'all' && r.moshaf.riwaya !== selectedRiwaya)
-        return false;
-      return normalizeArabicText(r.name).includes(searchTerm.toLowerCase());
-    })
-    .sort((a, b) => {
-      const aFav = isReciterFavorited(a, favoriteReciters);
-      const bFav = isReciterFavorited(b, favoriteReciters);
-      if (aFav && !bFav) return -1;
-      if (!aFav && bFav) return 1;
-      return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
-    });
 
   const handleSelectReciter = useCallback(
     (reciter: Reciter) => {
@@ -133,117 +70,9 @@ export default function RecitersList({ setIsOpen }: Props) {
   );
 
   const handleSearchTerm = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(normalizeArabicText(event.target.value));
+    setSearchTerm(event.target.value);
     setFocusedIndex(null);
   };
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (filteredReciters.length === 0) return;
-      switch (event.key) {
-        case 'ArrowDown': {
-          event.preventDefault();
-          setFocusedIndex((previous) =>
-            previous === null || previous === filteredReciters.length - 1
-              ? 0
-              : previous + 1
-          );
-          break;
-        }
-        case 'ArrowUp': {
-          event.preventDefault();
-          setFocusedIndex((previous) =>
-            previous === null || previous === 0
-              ? filteredReciters.length - 1
-              : previous - 1
-          );
-          break;
-        }
-        case 'Enter': {
-          if (focusedIndex !== null)
-            handleSelectReciter(filteredReciters[focusedIndex]);
-          break;
-        }
-        case 'Escape': {
-          setIsOpen(false);
-          break;
-        }
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown as any);
-    return () => window.removeEventListener('keydown', handleKeyDown as any);
-  }, [filteredReciters, focusedIndex, handleSelectReciter, setIsOpen]);
-
-  const renderReciterCard = (
-    reciter: Reciter,
-    index: number,
-    isFavoriteSection = false
-  ) => {
-    const isFavorited = isReciterFavorited(reciter, favoriteReciters);
-    return (
-      <button
-        key={`${reciter.id}-${reciter.moshaf.id}${isFavoriteSection ? '-fav' : ''}`}
-        ref={(element) => {
-          if (!isFavoriteSection) {
-            reciterReferences.current[index] = element;
-          }
-        }}
-        onClick={() => handleSelectReciter(reciter)}
-        className={`relative flex w-full flex-col items-start justify-between rounded-xl border border-gray-200 p-5 text-right shadow-md transition-all hover:scale-[1.02] hover:shadow-lg ${
-          !isFavoriteSection && focusedIndex === index
-            ? 'scale-[1.02] transform ring-2 ring-blue-500'
-            : ''
-        } ${isFavorited ? 'ring-1 ring-yellow-200 dark:ring-yellow-800' : ''}`}
-      >
-        <h2 className="mb-2 text-xl font-semibold">{reciter.name}</h2>
-        <div className="flex w-full items-center justify-between">
-          <div className="flex gap-2">
-            <span
-              role="button"
-              onClick={(event) => {
-                event.stopPropagation();
-                setSelectedRiwaya(reciter.moshaf.riwaya || Riwaya.Warsh);
-              }}
-              className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800"
-            >
-              {reciter.moshaf.riwaya}
-            </span>
-          </div>
-          <div
-            role="button"
-            tabIndex={0}
-            onClick={(event) => {
-              event.stopPropagation();
-              toggleFavorite(reciter);
-            }}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                event.stopPropagation();
-                toggleFavorite(reciter);
-              }
-            }}
-            className={`absolute left-3 top-3 cursor-pointer rounded-full p-1 transition-colors ${
-              isFavorited
-                ? 'text-yellow-500 hover:text-yellow-600'
-                : 'text-gray-400 hover:text-yellow-500 dark:text-gray-500 dark:hover:text-yellow-400'
-            }`}
-            aria-label={
-              isFavorited ? 'Remove from favorites' : 'Add to favorites'
-            }
-          >
-            {isFavorited ? (
-              <BsStarFill className="h-6 w-6" />
-            ) : (
-              <BsStar className="h-6 w-6" />
-            )}
-          </div>
-        </div>
-      </button>
-    );
-  };
-
-  const favoriteRecitersList = getFavoriteReciters();
 
   return (
     <section className="mx-auto w-full px-4">
@@ -257,8 +86,29 @@ export default function RecitersList({ setIsOpen }: Props) {
           className="w-full rounded-xl border border-gray-300 p-3 text-right shadow-sm transition focus:border-blue-500 focus:outline-none"
         />
 
-        {favoriteRecitersList.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-2">
+        <div className="flex flex-wrap justify-center gap-2">
+          <button
+            onClick={() =>
+              setSortMode((previous) =>
+                previous === 'popular' ? 'alphabetical' : 'popular'
+              )
+            }
+            className="flex items-center gap-1 rounded-full bg-gray-200 px-4 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+          >
+            {sortMode === 'alphabetical' ? (
+              <>
+                <BsStarFill className="h-4 w-4 text-yellow-500" /> الأكثر
+                تفضيلاً
+              </>
+            ) : (
+              <>
+                <BsSortAlphaDown className="h-4 w-4 text-blue-500" /> الترتيب
+                الأبجدي
+              </>
+            )}
+          </button>
+
+          {favoriteRecitersList.length > 0 && (
             <button
               onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
               className={`flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
@@ -278,8 +128,8 @@ export default function RecitersList({ setIsOpen }: Props) {
                 </>
               )}
             </button>
-          </div>
-        )}
+          )}
+        </div>
 
         <div className="flex flex-wrap justify-center gap-2">
           <button
@@ -324,15 +174,33 @@ export default function RecitersList({ setIsOpen }: Props) {
         {error && <p className="text-center text-red-500">{error}</p>}
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredReciters.length > 0 ? (
-            filteredReciters.map((reciter, index) =>
-              renderReciterCard(reciter, index)
-            )
-          ) : error ? null : (
-            <p className="col-span-full text-center text-gray-500 dark:text-gray-400">
-              لا يوجد قراء مطابقين للبحث.
-            </p>
-          )}
+          {filteredReciters.length > 0
+            ? filteredReciters.map((reciter, index) => {
+                const favId = `${reciter.id}-${reciter.moshaf.id}`;
+                const isFavorited = favoriteReciters.includes(favId);
+
+                return (
+                  <ReciterCard
+                    key={favId}
+                    reciter={reciter}
+                    globalCount={globalCounts[favId] ?? 0}
+                    index={index}
+                    isFavorite={isFavorited}
+                    isFocused={focusedIndex === index}
+                    refCallback={(element) =>
+                      (reciterRefs.current[index] = element)
+                    }
+                    onSelect={handleSelectReciter}
+                    onFavoriteToggle={() => toggleFavorite(favId)}
+                    onSelectRiwaya={(riwaya) => setSelectedRiwaya(riwaya)}
+                  />
+                );
+              })
+            : !error && (
+                <p className="col-span-full text-center text-gray-500 dark:text-gray-400">
+                  لا يوجد قراء مطابقين للبحث.
+                </p>
+              )}
         </div>
       </div>
     </section>

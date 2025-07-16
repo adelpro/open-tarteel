@@ -4,7 +4,6 @@ export const getErrorMessage = (
   error: unknown,
   customMessage?: string
 ): string => {
-  console.log(clientConfig.DEBUG, process.env.DEBUG);
   if (clientConfig.DEBUG) {
     console.error(error);
   }
