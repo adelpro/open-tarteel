@@ -93,70 +93,56 @@ export default function RecitersList({ setIsOpen }: Props) {
   return (
     <section className="mx-auto w-full px-4">
       <div className="flex flex-col gap-4">
-        <input
-          ref={searchInputRef}
-          type="text"
-          placeholder="ابحث عن القارئ"
-          value={searchTerm}
-          onChange={handleSearchTerm}
-          className="w-full rounded-xl border border-gray-300 p-3 text-right shadow-sm transition focus:border-blue-500 focus:outline-none"
-        />
-
-        <div className="flex flex-wrap justify-center gap-2">
-          <button
-            onClick={() =>
-              setSortMode((previous) =>
-                previous === 'popular'
-                  ? 'alphabetical'
-                  : previous === 'alphabetical'
-                    ? 'views'
-                    : 'popular'
-              )
-            }
-            className="flex items-center gap-1 rounded-full bg-gray-200 px-4 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-          >
-            {sortMode === 'alphabetical' ? (
-              <>
-                <TbSortDescending2Filled className="h-4 w-4 text-yellow-500" />
-                الأكثر تفضيلاً
-              </>
-            ) : sortMode === 'views' ? (
-              <>
-                <TbSortDescendingNumbers className="h-4 w-4 text-purple-500" />
-                حسب المشاهدات
-              </>
-            ) : (
-              <>
-                <TbSortDescendingLetters className="h-4 w-4 text-blue-500" />
-                الترتيب الأبجدي
-              </>
-            )}
-          </button>
-
-          {favoriteRecitersList.length > 0 && (
+        <div className="relative flex w-full">
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder="ابحث عن القارئ"
+            value={searchTerm}
+            onChange={handleSearchTerm}
+            className="transitiont w-full rounded-full border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:outline-none"
+          />
+          <div className="absolute inset-y-0 left-2 flex items-center gap-2 pr-2">
             <button
-              onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
-              className={`flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
-                showOnlyFavorites
-                  ? 'bg-yellow-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
-              }`}
+              aria-label="تغيير الترتيب"
+              onClick={() =>
+                setSortMode((previous) =>
+                  previous === 'popular'
+                    ? 'alphabetical'
+                    : previous === 'alphabetical'
+                      ? 'views'
+                      : 'popular'
+                )
+              }
+              className="rounded-full p-1.5 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:bg-gray-700"
+              tabIndex={0}
             >
-              {showOnlyFavorites ? (
-                <>
-                  <BsStarFill className="h-4 w-4" /> عرض الكل
-                </>
+              {sortMode === 'alphabetical' ? (
+                <TbSortDescending2Filled className="h-5 w-5 text-yellow-500" />
+              ) : sortMode === 'views' ? (
+                <TbSortDescendingNumbers className="h-5 w-5 text-purple-500" />
               ) : (
-                <>
-                  <BsStar className="h-4 w-4" /> المفضلة فقط (
-                  {favoriteRecitersList.length})
-                </>
+                <TbSortDescendingLetters className="h-5 w-5 text-blue-500" />
               )}
             </button>
-          )}
+            {favoriteRecitersList.length > 0 && (
+              <button
+                aria-label={showOnlyFavorites ? 'عرض الكل' : 'المفضلة فقط'}
+                onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
+                className={`rounded-full p-1.5 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:hover:bg-gray-700 ${showOnlyFavorites ? 'bg-yellow-500 text-white' : ''}`}
+                tabIndex={0}
+              >
+                {showOnlyFavorites ? (
+                  <BsStarFill className="h-5 w-5" />
+                ) : (
+                  <BsStar className="h-5 w-5" />
+                )}
+              </button>
+            )}
+          </div>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-2">
+        <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
           <button
             onClick={() => setSelectedRiwaya('all')}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${

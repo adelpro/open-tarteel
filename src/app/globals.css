@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 :root {
+  direction: rtl;
   --background: #ffffff;
   --foreground: #171717;
 }
