@@ -9,7 +9,8 @@ type Props = {
   index: number;
   isFavorite: boolean;
   isFocused: boolean;
-  globalCount: number;
+  favoriteCount: number;
+  viewCount: number;
   refCallback: (element: HTMLButtonElement | null) => void;
   onSelect: (reciter: Reciter) => void;
   onFavoriteToggle: (reciter: Reciter) => void;
@@ -20,7 +21,8 @@ export default function ReciterCard({
   reciter,
   isFavorite,
   isFocused,
-  globalCount,
+  favoriteCount,
+  viewCount,
   refCallback,
   onSelect,
   onFavoriteToggle,
@@ -38,9 +40,10 @@ export default function ReciterCard({
     >
       <h2 className="mb-1 text-xl font-semibold">{reciter.name}</h2>
 
-      <span className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-        التقييم العام: {globalCount}
-      </span>
+      <div className="mb-2 flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400">
+        <span>المفضلة: {favoriteCount}</span>
+        <span>المشاهدات: {viewCount}</span>
+      </div>
 
       <div className="flex w-full items-center justify-between">
         <div className="flex gap-2">

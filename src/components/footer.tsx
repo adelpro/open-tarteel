@@ -1,21 +1,35 @@
+'use client';
 import homeSVG from '@svgs/home.svg';
 import aboutSVG from '@svgs/info.svg';
 import contactSVG from '@svgs/mail.svg';
 import privacySVG from '@svgs/privacy.svg';
+import { useSetAtom } from 'jotai';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React from 'react';
+
+import { selectedReciterAtom } from '@/jotai/atom';
 
 import { FooterLink } from './footer-link';
 
 export default function Footer() {
+  const router = useRouter();
+  const setSelectedReciter = useSetAtom(selectedReciterAtom);
+
+  const handleHomeClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    setSelectedReciter(undefined);
+    router.push('/');
+  };
   return (
     <div className="m-4 mt-5 flex w-full items-center justify-center p-2">
       <div className="align-center flex w-full max-w-2xl flex-row justify-center gap-3">
-        <FooterLink href="/">
+        <FooterLink href="/" onClick={(event) => handleHomeClick(event)}>
           <div className="relative h-8 w-8 sm:h-5 sm:w-5">
             <Image
               src={homeSVG}
               alt="Home page link"
+              onClick={handleHomeClick}
               fill
               className="object-contain"
             />

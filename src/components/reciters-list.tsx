@@ -1,11 +1,21 @@
 'use client';
 
-import { useAtom, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
-import React, { useCallback, useRef, useState } from 'react';
-import { BsSortAlphaDown, BsStar, BsStarFill } from 'react-icons/bs';
+import React, { useCallback, useEffect, useState } from 'react';
+import { BsStar, BsStarFill } from 'react-icons/bs';
+import {
+  TbSortDescending2Filled,
+  TbSortDescendingLetters,
+  TbSortDescendingNumbers,
+} from 'react-icons/tb';
 
 import ReciterCard from '@/components/reciter-card';
+import {
+  fetchViewCounts,
+  subscribeToViewCounts,
+  syncView,
+} from '@/gun/view-rank';
 import { useFavorites } from '@/hooks/use-favorites';
 import { useFilterSort } from '@/hooks/use-filter-sort';
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
@@ -23,19 +33,24 @@ export default function RecitersList({ setIsOpen }: Props) {
   const router = useRouter();
   const setSelectedReciter = useSetAtom(selectedReciterAtom);
 
-  // Reciters data & loading/error states from hook
   const { reciters, loading, error } = useReciters();
 
-  // Favorites state & toggle handler from hook
   const {
     favoriteReciters,
-    globalCounts,
+    favoriteCounts,
     toggleFavorite,
     showOnlyFavorites,
     setShowOnlyFavorites,
   } = useFavorites();
 
-  // Search, Riwaya, sort mode, filtered & sorted reciters from hook
+  const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    fetchViewCounts().then(setViewCounts);
+    const unsubscribe = subscribeToViewCounts(setViewCounts);
+    return () => unsubscribe();
+  }, []);
+
   const {
     searchTerm,
     setSearchTerm,
@@ -47,12 +62,12 @@ export default function RecitersList({ setIsOpen }: Props) {
     availableRiwiyat,
   } = useFilterSort({
     reciters,
-    globalCounts,
+    favoriteCounts,
+    viewCounts,
     favoriteReciters,
     showOnlyFavorites,
   });
 
-  // Keyboard navigation hook manages focused index & refs
   const { focusedIndex, setFocusedIndex, reciterRefs, searchInputRef } =
     useKeyboardNavigation(filteredReciters.length);
 
@@ -62,6 +77,7 @@ export default function RecitersList({ setIsOpen }: Props) {
 
   const handleSelectReciter = useCallback(
     (reciter: Reciter) => {
+      syncView(`${reciter.id}-${reciter.moshaf.id}`);
       setSelectedReciter(reciter);
       setIsOpen(false);
       router.push(`/reciter/${reciter.id}?moshafId=${reciter.moshaf.id}`);
@@ -90,20 +106,29 @@ export default function RecitersList({ setIsOpen }: Props) {
           <button
             onClick={() =>
               setSortMode((previous) =>
-                previous === 'popular' ? 'alphabetical' : 'popular'
+                previous === 'popular'
+                  ? 'alphabetical'
+                  : previous === 'alphabetical'
+                    ? 'views'
+                    : 'popular'
               )
             }
             className="flex items-center gap-1 rounded-full bg-gray-200 px-4 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
           >
             {sortMode === 'alphabetical' ? (
               <>
-                <BsStarFill className="h-4 w-4 text-yellow-500" /> الأكثر
-                تفضيلاً
+                <TbSortDescending2Filled className="h-4 w-4 text-yellow-500" />
+                الأكثر تفضيلاً
+              </>
+            ) : sortMode === 'views' ? (
+              <>
+                <TbSortDescendingNumbers className="h-4 w-4 text-purple-500" />
+                حسب المشاهدات
               </>
             ) : (
               <>
-                <BsSortAlphaDown className="h-4 w-4 text-blue-500" /> الترتيب
-                الأبجدي
+                <TbSortDescendingLetters className="h-4 w-4 text-blue-500" />
+                الترتيب الأبجدي
               </>
             )}
           </button>
@@ -183,7 +208,8 @@ export default function RecitersList({ setIsOpen }: Props) {
                   <ReciterCard
                     key={favId}
                     reciter={reciter}
-                    globalCount={globalCounts[favId] ?? 0}
+                    favoriteCount={favoriteCounts[favId] ?? 0}
+                    viewCount={viewCounts[favId] ?? 0}
                     index={index}
                     isFavorite={isFavorited}
                     isFocused={focusedIndex === index}

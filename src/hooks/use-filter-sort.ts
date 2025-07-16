@@ -7,20 +7,22 @@ type UseFilterSortParams = {
   reciters: Reciter[];
   favoriteReciters: string[];
   showOnlyFavorites: boolean;
-  globalCounts?: Record<string, number>;
+  favoriteCounts?: Record<string, number>;
+  viewCounts?: Record<string, number>;
 };
 
 export function useFilterSort({
   reciters,
   favoriteReciters,
   showOnlyFavorites,
-  globalCounts = {},
+  favoriteCounts = {},
+  viewCounts = {},
 }: UseFilterSortParams) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRiwaya, setSelectedRiwaya] = useState<Riwaya | 'all'>('all');
-  const [sortMode, setSortMode] = useState<'popular' | 'alphabetical'>(
-    'popular'
-  );
+  const [sortMode, setSortMode] = useState<
+    'popular' | 'alphabetical' | 'views'
+  >('popular');
 
   const availableRiwiyat = useMemo(() => {
     const sortedRiwiyat = Object.values(Riwaya).sort((a, b) =>
@@ -32,46 +34,43 @@ export function useFilterSort({
   }, [reciters]);
 
   const filteredReciters = useMemo(() => {
-    const generateFavoriteId = (reciter: Reciter) =>
+    const generateId = (reciter: Reciter) =>
       `${reciter.id}-${reciter.moshaf.id}`;
 
     return reciters
       .filter((r) => {
-        // Filter by favorites if showOnlyFavorites is true
-        if (
-          showOnlyFavorites &&
-          !favoriteReciters.includes(generateFavoriteId(r))
-        ) {
+        const id = generateId(r);
+        if (showOnlyFavorites && !favoriteReciters.includes(id)) return false;
+        if (selectedRiwaya !== 'all' && r.moshaf.riwaya !== selectedRiwaya)
           return false;
-        }
-
-        // Filter by riwaya
-        if (selectedRiwaya !== 'all' && r.moshaf.riwaya !== selectedRiwaya) {
-          return false;
-        }
-
-        // Filter by search term
         return normalizeArabicText(r.name).includes(
           normalizeArabicText(searchTerm)
         );
       })
       .sort((a, b) => {
+        const aId = generateId(a);
+        const bId = generateId(b);
+
         if (sortMode === 'alphabetical') {
           return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
         }
 
-        // Popular sort - by favorite count
-        const aId = generateFavoriteId(a);
-        const bId = generateFavoriteId(b);
-        const aCount = globalCounts[aId] ?? 0;
-        const bCount = globalCounts[bId] ?? 0;
+        if (sortMode === 'views') {
+          const aViews = viewCounts[aId] ?? 0;
+          const bViews = viewCounts[bId] ?? 0;
+          if (aViews === bViews) {
+            return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
+          }
+          return bViews - aViews;
+        }
 
-        // If counts are equal, fall back to alphabetical
+        // Default to 'popular'
+        const aCount = favoriteCounts[aId] ?? 0;
+        const bCount = favoriteCounts[bId] ?? 0;
         if (aCount === bCount) {
           return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
         }
-
-        return bCount - aCount; // Descending order (most popular first)
+        return bCount - aCount;
       });
   }, [
     reciters,
@@ -80,7 +79,8 @@ export function useFilterSort({
     selectedRiwaya,
     searchTerm,
     sortMode,
-    globalCounts,
+    favoriteCounts,
+    viewCounts,
   ]);
 
   return {

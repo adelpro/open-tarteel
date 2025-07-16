@@ -10,12 +10,14 @@ import { favoriteRecitersAtom } from '@/jotai/atom';
 
 export function useFavorites() {
   const [favoriteReciters, setFavoriteReciters] = useAtom(favoriteRecitersAtom);
-  const [globalCounts, setGlobalCounts] = useState<Record<string, number>>({});
+  const [favoriteCounts, setFavoriteCounts] = useState<Record<string, number>>(
+    {}
+  );
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
   useEffect(() => {
-    fetchFavoriteCounts().then(setGlobalCounts);
-    const unsubscribe = subscribeToFavoriteCounts(setGlobalCounts);
+    fetchFavoriteCounts().then(setFavoriteCounts);
+    const unsubscribe = subscribeToFavoriteCounts(setFavoriteCounts);
     return () => unsubscribe();
   }, []);
 
@@ -32,7 +34,7 @@ export function useFavorites() {
 
   return {
     favoriteReciters,
-    globalCounts,
+    favoriteCounts,
     toggleFavorite,
     showOnlyFavorites,
     setShowOnlyFavorites,
