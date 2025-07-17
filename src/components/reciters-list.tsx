@@ -22,6 +22,7 @@ import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
 import { useReciters } from '@/hooks/use-reciters';
 import { selectedReciterAtom } from '@/jotai/atom';
 import { Reciter } from '@/types';
+import { generateFavId } from '@/utils';
 
 import SimpleSkeleton from './simple-skeleton';
 
@@ -72,12 +73,12 @@ export default function RecitersList({ setIsOpen }: Props) {
     useKeyboardNavigation(filteredReciters.length);
 
   const favoriteRecitersList = reciters.filter((r) =>
-    favoriteReciters.includes(`${r.id}-${r.moshaf.id}`)
+    favoriteReciters.includes(generateFavId(r))
   );
 
   const handleSelectReciter = useCallback(
     (reciter: Reciter) => {
-      syncView(`${reciter.id}-${reciter.moshaf.id}`);
+      syncView(generateFavId(reciter));
       setSelectedReciter(reciter);
       setIsOpen(false);
       router.push(`/reciter/${reciter.id}?moshafId=${reciter.moshaf.id}`);
@@ -201,7 +202,7 @@ export default function RecitersList({ setIsOpen }: Props) {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredReciters.length > 0
             ? filteredReciters.map((reciter, index) => {
-                const favId = `${reciter.id}-${reciter.moshaf.id}`;
+                const favId = generateFavId(reciter);
                 const isFavorited = favoriteReciters.includes(favId);
 
                 return (

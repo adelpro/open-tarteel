@@ -1,7 +1,9 @@
+import { useAtom } from 'jotai';
 import { useMemo, useState } from 'react';
 
+import { selectedRiwayaAtom } from '@/jotai/atom';
 import { Reciter, Riwaya } from '@/types';
-import { normalizeArabicText } from '@/utils';
+import { generateFavId, normalizeArabicText } from '@/utils';
 
 type UseFilterSortParams = {
   reciters: Reciter[];
@@ -19,7 +21,9 @@ export function useFilterSort({
   viewCounts = {},
 }: UseFilterSortParams) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRiwaya, setSelectedRiwaya] = useState<Riwaya | 'all'>('all');
+  const [selectedRiwaya, setSelectedRiwaya] = useAtom<Riwaya | 'all'>(
+    selectedRiwayaAtom
+  );
   const [sortMode, setSortMode] = useState<
     'popular' | 'alphabetical' | 'views'
   >('popular');
@@ -34,12 +38,9 @@ export function useFilterSort({
   }, [reciters]);
 
   const filteredReciters = useMemo(() => {
-    const generateId = (reciter: Reciter) =>
-      `${reciter.id}-${reciter.moshaf.id}`;
-
     return reciters
       .filter((r) => {
-        const id = generateId(r);
+        const id = generateFavId(r);
         if (showOnlyFavorites && !favoriteReciters.includes(id)) return false;
         if (selectedRiwaya !== 'all' && r.moshaf.riwaya !== selectedRiwaya)
           return false;
@@ -48,8 +49,8 @@ export function useFilterSort({
         );
       })
       .sort((a, b) => {
-        const aId = generateId(a);
-        const bId = generateId(b);
+        const aId = generateFavId(a);
+        const bId = generateFavId(b);
 
         if (sortMode === 'alphabetical') {
           return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
