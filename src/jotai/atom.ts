@@ -12,6 +12,10 @@ export const selectedRiwayaAtom = createAtomWithStorage<Riwaya | 'all'>(
   'selected-riwaya',
   'all'
 );
+export const showVisualizerAtom = createAtomWithStorage<boolean>(
+  'show-visualizer',
+  true
+);
 export const recitersSortAtom = createAtomWithStorage<
   'popular' | 'alphabetical' | 'views'
 >('reciters-sort-atom', 'popular');

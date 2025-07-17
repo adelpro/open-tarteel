@@ -1,17 +1,11 @@
-import backwardSVG from '@svgs/music-backward.svg';
-import forwardSVG from '@svgs/music-forward.svg';
-import pauseSVG from '@svgs/music-pause.svg';
-import playSVG from '@svgs/music-play.svg';
-import playlistSVG from '@svgs/music-playlist.svg';
-import repeatSVG from '@svgs/music-repeat.svg';
-import shuffleSVG from '@svgs/music-shuffle.svg';
-import Image from 'next/image';
+import { useAtom, useAtomValue } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactAudioSpectrum from 'react-audio-spectrum';
-import { TbAntennaBars5, TbAntennaBarsOff } from 'react-icons/tb';
 
+import { showVisualizerAtom } from '@/jotai/atom';
 import { Playlist } from '@/types';
 
+import PlayerControls from './player-controls';
 import PlaylistDialog from './playlist-dialog';
 import Range from './range';
 import TrackInfo from './track-info';
@@ -28,8 +22,9 @@ export default function Player({ playlist }: Props) {
   const [isShuffled, setIsShuffled] = useState<boolean>(false);
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [showVisualizer, setShowVisualizer] = useState(true);
+  const showVisualizer = useAtomValue(showVisualizerAtom);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const volumeRef = useRef<HTMLInputElement>(null);
   const [visualizerWidth, setVisualizerWidth] = useState(400); // Initial fallback width
 
   useEffect(() => {
@@ -162,65 +157,13 @@ export default function Player({ playlist }: Props) {
             <></>
           )}
 
-          <div className="flex w-full items-center justify-between gap-2 pt-5 md:gap-6">
-            <button
-              onClick={handlePreviousTrack}
-              className="rounded p-2 hover:bg-gray-200"
-              aria-label="Previous track"
-            >
-              <Image src={backwardSVG} alt="previous" width={30} height={30} />
-            </button>
-            <button
-              onClick={togglePlayPause}
-              className="rounded p-2 hover:bg-gray-200"
-              aria-label={isPlaying ? 'Pause' : 'Play'}
-            >
-              {isPlaying ? (
-                <Image src={pauseSVG} alt="pause" width={30} height={30} />
-              ) : (
-                <Image src={playSVG} alt="play" width={30} height={30} />
-              )}
-            </button>
-            <button
-              onClick={handleNextTrack}
-              className="rounded p-2 hover:bg-gray-200"
-              aria-label="Next track"
-            >
-              <Image src={forwardSVG} alt="next" width={30} height={30} />
-            </button>
-            <button
-              onClick={toggleShuffle}
-              className="rounded p-2 hover:bg-gray-200"
-              aria-label="Shuffle"
-            >
-              <Image
-                src={isShuffled ? shuffleSVG : repeatSVG}
-                alt="shuffle/repeat"
-                width={30}
-                height={30}
-              />
-            </button>
-            {/* New toggle visualizer button */}
-            <button
-              onClick={() => setShowVisualizer((v) => !v)}
-              className="rounded p-2 hover:bg-gray-200"
-              aria-pressed={showVisualizer}
-              aria-label="Toggle Visualizer"
-            >
-              {showVisualizer ? (
-                <TbAntennaBars5 size={24} />
-              ) : (
-                <TbAntennaBarsOff size={24} />
-              )}
-            </button>
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="rounded p-2 hover:bg-gray-200"
-              aria-label="Playlist"
-            >
-              <Image src={playlistSVG} alt="playlist" width={30} height={30} />
-            </button>
-          </div>
+          <PlayerControls
+            isPlaying={isPlaying}
+            volumeRef={volumeRef}
+            togglePlayPause={togglePlayPause}
+            handlePreviousTrack={handlePreviousTrack}
+            handleNextTrack={handleNextTrack}
+          />
 
           <Range
             currentTime={currentTime}
