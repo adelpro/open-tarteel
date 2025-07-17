@@ -152,9 +152,9 @@ export default function Player({ playlist }: Props) {
                 audioId="audio"
                 height={100}
                 width={visualizerWidth}
-                capColor="#4ade80"
-                meterWidth={4}
-                meterColor="#10b981"
+                capColor="#0191e2"
+                meterWidth={10}
+                meterColor="#0191e2"
                 gap={4}
               />
             </div>

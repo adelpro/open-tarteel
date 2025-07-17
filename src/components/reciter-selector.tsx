@@ -23,13 +23,12 @@ export default function ReciterSelector() {
       return <></>;
     }
   };
-
   return (
     <div className="flex w-full flex-row items-center justify-center">
       <div className="flex w-full max-w-md flex-row items-center justify-center gap-3 rounded-md border border-slate-200 p-2 shadow-md transition-transform hover:scale-105">
         {connectionIcon()}
         <button className="flex w-full max-w-md flex-row items-center justify-between">
-          <span onClick={handleSearch} className="w-full">
+          <span onClick={handleSearch} className="w-full text-start">
             {selectedReciterValue ? selectedReciterValue.name : 'اختر القارئ'}
           </span>
 
