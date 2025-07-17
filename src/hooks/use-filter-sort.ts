@@ -1,7 +1,7 @@
 import { useAtom } from 'jotai';
 import { useMemo, useState } from 'react';
 
-import { selectedRiwayaAtom } from '@/jotai/atom';
+import { recitersSortAtom, selectedRiwayaAtom } from '@/jotai/atom';
 import { Reciter, Riwaya } from '@/types';
 import { generateFavId, normalizeArabicText } from '@/utils';
 
@@ -24,9 +24,7 @@ export function useFilterSort({
   const [selectedRiwaya, setSelectedRiwaya] = useAtom<Riwaya | 'all'>(
     selectedRiwayaAtom
   );
-  const [sortMode, setSortMode] = useState<
-    'popular' | 'alphabetical' | 'views'
-  >('popular');
+  const [sortMode, setSortMode] = useAtom(recitersSortAtom);
 
   const availableRiwiyat = useMemo(() => {
     const sortedRiwiyat = Object.values(Riwaya).sort((a, b) =>
