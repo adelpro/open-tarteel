@@ -1,5 +1,3 @@
-import { atom } from 'jotai';
-
 import { Reciter, Riwaya } from '@/types';
 
 import { createAtomWithStorage } from './create-atom-with-storage';
@@ -16,6 +14,8 @@ export const showVisualizerAtom = createAtomWithStorage<boolean>(
   'show-visualizer',
   true
 );
+export const volumeAtom = createAtomWithStorage<number>('volume-value', 1);
+
 export const recitersSortAtom = createAtomWithStorage<
   'popular' | 'alphabetical' | 'views'
 >('reciters-sort-atom', 'popular');

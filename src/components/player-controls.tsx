@@ -7,15 +7,19 @@ import repeatSVG from '@svgs/music-repeat.svg';
 import shuffleSVG from '@svgs/music-shuffle.svg';
 import { useAtom } from 'jotai';
 import Image from 'next/image';
-import React, { RefObject, useState } from 'react';
+import React, { RefObject, useEffect, useState } from 'react';
 import { BiVolumeFull, BiVolumeMute } from 'react-icons/bi';
 import { TbAntennaBars5, TbAntennaBarsOff } from 'react-icons/tb';
 
-import { showVisualizerAtom } from '@/jotai/atom';
+import { showVisualizerAtom, volumeAtom } from '@/jotai/atom';
+import { cn } from '@/utils';
 
 type Props = {
   handleNextTrack: () => void;
   togglePlayPause: () => void;
+  toggleShuffle: () => void;
+  togglePlaylistOpen: () => void;
+  isShuffled: boolean;
   isPlaying: boolean;
   handlePreviousTrack: () => void;
   volumeRef: RefObject<HTMLDivElement | null>;
@@ -24,22 +28,38 @@ type Props = {
 export default function PlayerControls({
   handleNextTrack,
   togglePlayPause,
+  toggleShuffle,
+  togglePlaylistOpen,
+  isShuffled,
   isPlaying,
   handlePreviousTrack,
   volumeRef,
 }: Props) {
-  const [volume, setVolume] = useState(1);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
-  const [isShuffled, setIsShuffled] = useState(false);
   const [showVisualizer, setShowVisualizer] = useAtom(showVisualizerAtom);
-  const [isOpen, setIsOpen] = useState(false);
+  const [volume, setVolume] = useAtom(volumeAtom);
 
-  function toggleShuffle() {
-    setIsShuffled((v) => !v);
-  }
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        volumeRef.current &&
+        !volumeRef.current.contains(event.target as Node)
+      ) {
+        setShowVolumeSlider(false);
+      }
+    }
+
+    if (showVolumeSlider) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showVolumeSlider, volumeRef]);
 
   return (
-    <div className="relative flex w-full items-center justify-between gap-2 pt-5 md:gap-4">
+    <div className="relative flex w-full items-center justify-between gap-2 md:gap-4">
       {/* Volume control */}
       <div className="relative flex items-center" ref={volumeRef}>
         <button
@@ -62,10 +82,12 @@ export default function PlayerControls({
             step={0.01}
             value={volume}
             onChange={(event) => setVolume(Number(event.target.value))}
-            className="absolute bottom-12 left-1/2 h-24 w-1.5 -translate-x-1/2 cursor-pointer appearance-none bg-slate-300 rtl:rotate-180"
+            className="absolute bottom-12 left-1/2 h-24 w-1.5 -translate-x-1/2 cursor-pointer appearance-none rtl:rotate-180"
             style={{
               writingMode: 'vertical-lr',
               WebkitAppearance: 'slider-vertical',
+              background: `linear-gradient(to top, #3b82f6 0%, #3b82f6 ${volume * 100}%, #cbd5e1 ${volume * 100}%, #cbd5e1 100%)`,
+              borderRadius: '9999px',
             }}
           />
         )}
@@ -115,7 +137,12 @@ export default function PlayerControls({
 
       <button
         onClick={() => setShowVisualizer((v) => !v)}
-        className="rounded p-2 hover:bg-gray-200"
+        className={cn(
+          'rounded p-2 hover:bg-gray-200',
+          isPlaying && 'pointer-events-none cursor-not-allowed opacity-30'
+        )}
+        disabled={isPlaying}
+        aria-disabled={isPlaying}
         aria-label="Toggle Visualizer"
       >
         {showVisualizer ? (
@@ -126,7 +153,7 @@ export default function PlayerControls({
       </button>
 
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={togglePlaylistOpen}
         className="rounded p-2 hover:bg-gray-200"
         aria-label="Playlist"
       >

@@ -1,8 +1,8 @@
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactAudioSpectrum from 'react-audio-spectrum';
 
-import { showVisualizerAtom } from '@/jotai/atom';
+import { showVisualizerAtom, volumeAtom } from '@/jotai/atom';
 import { Playlist } from '@/types';
 
 import PlayerControls from './player-controls';
@@ -26,7 +26,7 @@ export default function Player({ playlist }: Props) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const volumeRef = useRef<HTMLInputElement>(null);
   const [visualizerWidth, setVisualizerWidth] = useState(400); // Initial fallback width
-
+  const volumeValue = useAtomValue(volumeAtom);
   useEffect(() => {
     // This code only runs on the client-side after the component mounts
     const calculateWidth = () => {
@@ -44,6 +44,12 @@ export default function Player({ playlist }: Props) {
       window.removeEventListener('resize', calculateWidth);
     };
   }, []); // Empty dependency array means this runs once on mount and cleans up on unmount
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volumeValue;
+    }
+  }, [volumeValue]);
 
   const shufflePlaylist = useCallback(() => {
     const indices = Array.from(
@@ -107,6 +113,10 @@ export default function Player({ playlist }: Props) {
     setIsShuffled(!isShuffled);
   };
 
+  const togglePlaylistOpen = () => {
+    setIsOpen(!isOpen);
+  };
+
   const getNextTrackIndex = (currentIndex: number) => {
     if (isShuffled) {
       const currentShuffledIndex = shuffledIndices.indexOf(currentIndex);
@@ -162,7 +172,10 @@ export default function Player({ playlist }: Props) {
             volumeRef={volumeRef}
             togglePlayPause={togglePlayPause}
             handlePreviousTrack={handlePreviousTrack}
+            toggleShuffle={toggleShuffle}
             handleNextTrack={handleNextTrack}
+            togglePlaylistOpen={togglePlaylistOpen}
+            isShuffled={isShuffled}
           />
 
           <Range
