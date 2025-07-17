@@ -18,7 +18,7 @@ export default function Footer() {
 
   const handleHomeClick = (event: React.MouseEvent) => {
     event.preventDefault();
-    setSelectedReciter(undefined);
+    setSelectedReciter(null);
     router.push('/');
   };
   return (
