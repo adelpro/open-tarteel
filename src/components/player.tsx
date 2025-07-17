@@ -30,6 +30,25 @@ export default function Player({ playlist }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [showVisualizer, setShowVisualizer] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [visualizerWidth, setVisualizerWidth] = useState(400); // Initial fallback width
+
+  useEffect(() => {
+    // This code only runs on the client-side after the component mounts
+    const calculateWidth = () => {
+      setVisualizerWidth(Math.min(window.innerWidth * 0.8, 400));
+    };
+
+    // Set initial width
+    calculateWidth();
+
+    // Add event listener for window resize to update width dynamically
+    window.addEventListener('resize', calculateWidth);
+
+    // Clean up event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', calculateWidth);
+    };
+  }, []); // Empty dependency array means this runs once on mount and cleans up on unmount
 
   const shufflePlaylist = useCallback(() => {
     const indices = Array.from(
@@ -132,7 +151,7 @@ export default function Player({ playlist }: Props) {
                 id="audio-spectrum"
                 audioId="audio"
                 height={100}
-                width={Math.min(window.innerWidth * 0.9, 400)}
+                width={visualizerWidth}
                 capColor="#4ade80"
                 meterWidth={4}
                 meterColor="#10b981"
