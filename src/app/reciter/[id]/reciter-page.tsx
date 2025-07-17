@@ -28,7 +28,7 @@ export default function ReciterPage() {
         <DevTools />
         <ReciterSelector />
 
-        {selectedReciter && (
+        {selectedReciter && selectedReciter.moshaf && (
           <Suspense fallback={<SimpleSkeleton />}>
             <Player playlist={selectedReciter.moshaf.playlist} />
           </Suspense>

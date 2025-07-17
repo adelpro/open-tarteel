@@ -1,6 +1,9 @@
 import { Reciter } from '@/types';
 
 export const generateFavId = (reciter: Reciter): string => {
-  const favId = `${reciter.id}-${reciter.moshaf.id}`;
-  return favId;
+  if (!reciter.moshaf) {
+    throw new Error(`Missing moshaf for reciter ${reciter.id}`);
+  }
+
+  return `${reciter.id}-${reciter.moshaf.id}`;
 };
