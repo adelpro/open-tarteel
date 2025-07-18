@@ -5,11 +5,12 @@ import playSVG from '@svgs/music-play.svg';
 import playlistSVG from '@svgs/music-playlist.svg';
 import repeatSVG from '@svgs/music-repeat.svg';
 import shuffleSVG from '@svgs/music-shuffle.svg';
+import spectrumSVG from '@svgs/spectrum.svg';
+import spectrumDisabledSVG from '@svgs/spectrum-disabled.svg';
 import { useAtom } from 'jotai';
 import Image from 'next/image';
 import React, { RefObject, useEffect, useState } from 'react';
 import { BiVolumeFull, BiVolumeMute } from 'react-icons/bi';
-import { TbAntennaBars5, TbAntennaBarsOff } from 'react-icons/tb';
 
 import { showVisualizerAtom, volumeAtom } from '@/jotai/atom';
 import { cn } from '@/utils';
@@ -64,13 +65,19 @@ export default function PlayerControls({
       <div className="relative flex items-center" ref={volumeRef}>
         <button
           onClick={() => setShowVolumeSlider((v) => !v)}
-          className="rounded p-2 hover:bg-gray-200"
+          className="rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
           aria-label="Volume control"
         >
           {volume === 0 ? (
-            <BiVolumeMute size={24} />
+            <BiVolumeMute
+              size={24}
+              color="#6b7280"
+              className={cn({
+                'animate-slideInWithFade': isShuffled,
+              })}
+            />
           ) : (
-            <BiVolumeFull size={24} />
+            <BiVolumeFull size={24} color="#6b7280" />
           )}
         </button>
 
@@ -103,7 +110,7 @@ export default function PlayerControls({
 
       <button
         onClick={togglePlayPause}
-        className="rounded p-2 hover:bg-gray-200"
+        className="rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
         aria-label={isPlaying ? 'Pause' : 'Play'}
       >
         <Image
@@ -111,12 +118,15 @@ export default function PlayerControls({
           alt="play-pause"
           width={30}
           height={30}
+          className={cn({
+            'animate-slideInWithFade': isPlaying,
+          })}
         />
       </button>
 
       <button
         onClick={handlePreviousTrack}
-        className="rounded p-2 hover:bg-gray-200"
+        className="rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
         aria-label="Previous track"
       >
         <Image src={backwardSVG} alt="previous" width={30} height={30} />
@@ -124,7 +134,7 @@ export default function PlayerControls({
 
       <button
         onClick={toggleShuffle}
-        className="rounded p-2 hover:bg-gray-200"
+        className="rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
         aria-label="Shuffle"
       >
         <Image
@@ -132,29 +142,36 @@ export default function PlayerControls({
           alt="shuffle/repeat"
           width={30}
           height={30}
+          className={cn({
+            'animate-slideInWithFade': isShuffled,
+          })}
         />
       </button>
 
       <button
         onClick={() => setShowVisualizer((v) => !v)}
         className={cn(
-          'rounded p-2 hover:bg-gray-200',
+          'rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-700',
           isPlaying && 'pointer-events-none cursor-not-allowed opacity-30'
         )}
         disabled={isPlaying}
         aria-disabled={isPlaying}
         aria-label="Toggle Visualizer"
       >
-        {showVisualizer ? (
-          <TbAntennaBars5 size={24} />
-        ) : (
-          <TbAntennaBarsOff size={24} />
-        )}
+        <Image
+          src={showVisualizer ? spectrumSVG : spectrumDisabledSVG}
+          alt="spectrum disabled"
+          width={30}
+          height={30}
+          className={cn({
+            'animate-slideInWithFade': showVisualizer,
+          })}
+        />
       </button>
 
       <button
         onClick={togglePlaylistOpen}
-        className="rounded p-2 hover:bg-gray-200"
+        className="rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
         aria-label="Playlist"
       >
         <Image src={playlistSVG} alt="playlist" width={30} height={30} />
