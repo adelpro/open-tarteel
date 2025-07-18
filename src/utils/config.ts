@@ -1,6 +1,7 @@
 export const clientConfig = {
   APP_NAME: process.env.NEXT_PUBLIC_APP_NAME || 'App',
   APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION || 'N/A',
   DEBUG: process.env.NEXT_PUBLIC_DEBUG || false,
 };
 

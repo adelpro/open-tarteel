@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - feat: add player controls
 - feat: add visualizer
 - feat: add volum control
+- feat: add audio visualizer
 - refactor: add favorite in the reciter selector aria
 - refactor: refactor the search reciter input in the reciter list dialog
 

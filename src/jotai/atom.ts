@@ -14,6 +14,9 @@ export const showVisualizerAtom = createAtomWithStorage<boolean>(
   'show-visualizer',
   true
 );
+
+export const currentTimeAtom = createAtomWithStorage<number>('current-time', 0);
+
 export const volumeAtom = createAtomWithStorage<number>('volume-value', 1);
 
 export const recitersSortAtom = createAtomWithStorage<

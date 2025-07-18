@@ -82,7 +82,7 @@ export default function PlayerControls({
             step={0.01}
             value={volume}
             onChange={(event) => setVolume(Number(event.target.value))}
-            className="absolute bottom-12 left-1/2 h-24 w-1.5 -translate-x-1/2 cursor-pointer appearance-none rtl:rotate-180"
+            className="absolute bottom-12 left-1/2 h-24 w-4 -translate-x-1/2 cursor-pointer appearance-none md:w-1.5 rtl:rotate-180"
             style={{
               writingMode: 'vertical-lr',
               WebkitAppearance: 'slider-vertical',

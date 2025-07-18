@@ -1,10 +1,12 @@
-import { useAtomValue } from 'jotai';
+// components/Player.tsx
+import { useAtom, useAtomValue } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import ReactAudioSpectrum from 'react-audio-spectrum';
 
-import { showVisualizerAtom, volumeAtom } from '@/jotai/atom';
+// Removed: import ReactAudioSpectrum from 'react-audio-spectrum'; // No longer needed here
+import { currentTimeAtom, showVisualizerAtom, volumeAtom } from '@/jotai/atom';
 import { Playlist } from '@/types';
 
+import AudioVisualizer from './audio-visualizer'; // Import the new component
 import PlayerControls from './player-controls';
 import PlaylistDialog from './playlist-dialog';
 import Range from './range';
@@ -16,34 +18,19 @@ type Props = {
 
 export default function Player({ playlist }: Props) {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [currentTime, setCurrentTime] = useAtom(currentTimeAtom);
   const [duration, setDuration] = useState<number>(0);
   const [currentTrack, setCurrentTrack] = useState<number | undefined>(0);
   const [isShuffled, setIsShuffled] = useState<boolean>(false);
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const showVisualizer = useAtomValue(showVisualizerAtom);
+  // Removed: const showVisualizer = useAtomValue(showVisualizerAtom); // Still needed for PlayerControls logic, but not directly for visualizer rendering here
   const audioRef = useRef<HTMLAudioElement>(null);
   const volumeRef = useRef<HTMLInputElement>(null);
-  const [visualizerWidth, setVisualizerWidth] = useState(400); // Initial fallback width
+  // Removed: const [visualizerWidth, setVisualizerWidth] = useState(400); // Moved to AudioVisualizer
   const volumeValue = useAtomValue(volumeAtom);
-  useEffect(() => {
-    // This code only runs on the client-side after the component mounts
-    const calculateWidth = () => {
-      setVisualizerWidth(Math.min(window.innerWidth * 0.8, 400));
-    };
 
-    // Set initial width
-    calculateWidth();
-
-    // Add event listener for window resize to update width dynamically
-    window.addEventListener('resize', calculateWidth);
-
-    // Clean up event listener on component unmount
-    return () => {
-      window.removeEventListener('resize', calculateWidth);
-    };
-  }, []); // Empty dependency array means this runs once on mount and cleans up on unmount
+  // Removed: visualizerWidth useEffect // Moved to AudioVisualizer
 
   useEffect(() => {
     if (audioRef.current) {
@@ -68,10 +55,18 @@ export default function Player({ playlist }: Props) {
   }, [shufflePlaylist]);
 
   useEffect(() => {
+    if (typeof currentTrack !== 'number') return;
+
+    // Reset currentTime to 0 whenever the track changes (or on initial mount for track 0)
+    // This ensures consistency between server and client for the starting point of a track,
+    // preventing hydration errors and ensuring tracks restart on refresh.
+    setCurrentTime(0);
+
     if (audioRef.current && isPlaying) {
+      audioRef.current.currentTime = 0; // Ensure the actual audio element starts from 0 if playing
       audioRef.current.play();
     }
-  }, [currentTrack, isPlaying]);
+  }, [currentTrack, isPlaying, setCurrentTime]);
 
   const togglePlayPause = () => {
     if (audioRef.current) {
@@ -150,22 +145,8 @@ export default function Player({ playlist }: Props) {
             preload="auto"
             crossOrigin="anonymous"
           />
-          {showVisualizer ? (
-            <div className="mb-4 w-full">
-              <ReactAudioSpectrum
-                id="audio-spectrum"
-                audioId="audio"
-                height={100}
-                width={visualizerWidth}
-                capColor="#0191e2"
-                meterWidth={10}
-                meterColor="#0191e2"
-                gap={4}
-              />
-            </div>
-          ) : (
-            <></>
-          )}
+
+          <AudioVisualizer audioId="audio" isPlaying={isPlaying} />
 
           <PlayerControls
             isPlaying={isPlaying}
