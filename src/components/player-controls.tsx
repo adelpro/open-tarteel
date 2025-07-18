@@ -62,7 +62,11 @@ export default function PlayerControls({
   return (
     <div className="relative flex w-full items-center justify-between gap-2 md:gap-4">
       {/* Volume control */}
-      <div className="relative flex items-center" ref={volumeRef}>
+      <div
+        className="relative flex touch-none items-center"
+        ref={volumeRef}
+        style={{ touchAction: 'none' }} // prevent scroll during drag
+      >
         <button
           onClick={() => setShowVolumeSlider((v) => !v)}
           className="rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -82,21 +86,23 @@ export default function PlayerControls({
         </button>
 
         {showVolumeSlider && (
-          <input
-            type="range"
-            min={0}
-            max={1}
-            step={0.01}
-            value={volume}
-            onChange={(event) => setVolume(Number(event.target.value))}
-            className="absolute bottom-12 left-1/2 h-24 w-4 -translate-x-1/2 cursor-pointer appearance-none md:w-1.5 rtl:rotate-180"
-            style={{
-              writingMode: 'vertical-lr',
-              WebkitAppearance: 'slider-vertical',
-              background: `linear-gradient(to top, #3b82f6 0%, #3b82f6 ${volume * 100}%, #cbd5e1 ${volume * 100}%, #cbd5e1 100%)`,
-              borderRadius: '9999px',
-            }}
-          />
+          <div className="absolute bottom-12 left-1/2 flex h-24 w-10 -translate-x-1/2 items-center justify-center md:w-6">
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              value={volume}
+              onChange={(event) => setVolume(Number(event.target.value))}
+              className="h-full w-2 cursor-pointer appearance-none bg-transparent"
+              style={{
+                writingMode: 'vertical-lr',
+                WebkitAppearance: 'slider-vertical',
+                background: `linear-gradient(to top, #3b82f6 0%, #3b82f6 ${volume * 100}%, #cbd5e1 ${volume * 100}%, #cbd5e1 100%)`,
+                borderRadius: '9999px',
+              }}
+            />
+          </div>
         )}
       </div>
 

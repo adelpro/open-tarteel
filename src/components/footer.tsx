@@ -84,11 +84,11 @@ export default function Footer() {
         </FooterLink>
       </div>
 
-      <div className="mt-4 flex items-center justify-center gap-2 text-xs opacity-80">
-        <div className="flex flex-row-reverse items-center gap-1 font-mono">
-          <FaTag className="h-3 w-3" />v{appVersion}
-        </div>
-        <div className="flex flex-row-reverse items-center gap-1">
+      <div
+        className="mt-4 flex items-center justify-center gap-4 text-xs opacity-80"
+        dir="ltr"
+      >
+        <div className="flex items-center gap-0.5">
           <span>Made with</span>
           <span className="text-red-500">❤️</span>
           <span>by</span>
@@ -105,11 +105,14 @@ export default function Footer() {
           href="https://github.com/adelpro/open-tarteel"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-row-reverse items-center gap-2 text-blue-600 hover:underline dark:text-blue-400"
+          className="flex items-center gap-2 text-blue-600 hover:underline dark:text-blue-400"
         >
           <FaGithub className="h-4 w-4" />
           source
         </a>
+        <div className="flex items-center gap-1 font-mono">
+          <FaTag className="h-3 w-3" />v{appVersion}
+        </div>
       </div>
     </footer>
   );

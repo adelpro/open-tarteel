@@ -12,7 +12,8 @@ const tajawal = Tajawal({
 });
 export const metadata: Metadata = {
   title: clientConfig.APP_NAME,
-  description: 'استمع إلى تلاوات سيل القرآن',
+  description:
+    'القرآن كما يجب أن يكون، تلاوات تلامس القلب دون إعلانات، تتبع و لا إلهاء.',
 };
 
 export default function RootLayout({
