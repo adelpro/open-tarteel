@@ -1,5 +1,8 @@
+'use client';
+
 import { useAtomValue } from 'jotai';
 import React from 'react';
+import { useIntl } from 'react-intl';
 
 import { SURAHS } from '@/constants';
 import { selectedReciterAtom } from '@/jotai/atom';
@@ -17,6 +20,7 @@ export default function TrackInfo({
   currentTime,
 }: Props) {
   const selectedReciter = useAtomValue(selectedReciterAtom);
+  const language = useIntl().locale;
   const playlsit = selectedReciter?.moshaf.playlist;
   if (!Array.isArray(playlsit)) return null;
 
@@ -27,13 +31,18 @@ export default function TrackInfo({
   if (!currentTrack) return null;
 
   const { surahId } = currentTrack;
-  const surahName = SURAHS.find(
-    (surah) => surah.id.toString() === surahId
-  )?.name;
+  const surahName = () => {
+    if (language === 'en') {
+      return SURAHS.find((surah) => surah.id.toString() === surahId)
+        ?.englishName;
+    }
+
+    return SURAHS.find((surah) => surah.id.toString() === surahId)?.name;
+  };
 
   return (
     <div className="flex items-center justify-center gap-2 font-bold text-gray-500">
-      <span>{`${surahId} - ${surahName}`}</span>
+      <span>{`${surahId} - ${surahName()}`}</span>
       <span>{`(${formatTime(currentTime)} ${formatTime(duration)})`}</span>
     </div>
   );

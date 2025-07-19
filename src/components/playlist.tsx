@@ -1,5 +1,7 @@
+'use client';
 import { useAtomValue } from 'jotai';
 import React from 'react';
+import { useIntl } from 'react-intl';
 
 import { SURAHS } from '@/constants';
 import { selectedReciterAtom } from '@/jotai/atom';
@@ -12,11 +14,14 @@ type Props = {
 };
 
 export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
+  const language = useIntl().locale;
   const selectedReciter = useAtomValue(selectedReciterAtom);
   const handlePlylistItemClick = (index: number) => {
     setIsOpen(false);
     setCurrentTrack(index);
   };
+
+  const isEnlgish = language === 'en';
 
   if (!selectedReciter?.moshaf?.playlist) {
     return <></>;
@@ -44,11 +49,19 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                   <div className="flex-1">
                     <div className="flex items-baseline justify-between">
                       <span className="text-lg font-medium">
-                        {removeTashkeel(surah.name)}
+                        {isEnlgish
+                          ? surah.englishName
+                          : removeTashkeel(surah.name)}
                       </span>
                       <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
                         {surah.ayahCount}{' '}
-                        {surah.ayahCount === 1 ? 'آية' : 'آيات'}
+                        {isEnlgish
+                          ? surah.ayahCount === 1
+                            ? 'Aya'
+                            : 'Ayas'
+                          : surah.ayahCount === 1
+                            ? 'آية'
+                            : 'آيات'}
                       </span>
                     </div>
                   </div>
