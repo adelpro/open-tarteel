@@ -15,6 +15,8 @@ export const showVisualizerAtom = createAtomWithStorage<boolean>(
   true
 );
 
+export const localeAtom = createAtomWithStorage<'ar' | 'en'>('locale', 'ar');
+
 export const currentTimeAtom = createAtomWithStorage<number>('current-time', 0);
 
 export const volumeAtom = createAtomWithStorage<number>('volume-value', 1);

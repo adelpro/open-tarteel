@@ -8,12 +8,14 @@ import { useSetAtom } from 'jotai';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { FaGithub, FaGlobe, FaTag } from 'react-icons/fa';
+import { FaGithub, FaTag } from 'react-icons/fa';
+import { FormattedMessage } from 'react-intl';
 
 import { selectedReciterAtom } from '@/jotai/atom';
 import { clientConfig } from '@/utils';
 
 import { FooterLink } from './footer-link';
+import LanguageSwitcher from './language-switcher';
 
 export default function Footer() {
   const router = useRouter();
@@ -44,7 +46,7 @@ export default function Footer() {
             />
           </div>
           <p className="hidden truncate text-right sm:block">
-            الصفحة الرئيسية
+            <FormattedMessage id="footer.home" defaultMessage="Home" />
           </p>
         </FooterLink>
         <FooterLink href="/about">
@@ -57,7 +59,7 @@ export default function Footer() {
             />
           </div>
           <p className="hidden truncate text-right sm:block">
-            معلومات عن التطبيق
+            <FormattedMessage id="footer.about" defaultMessage="About" />
           </p>
         </FooterLink>
         <FooterLink href="/privacy">
@@ -69,7 +71,9 @@ export default function Footer() {
               className="object-contain"
             />
           </div>
-          <p className="hidden truncate text-right sm:block">سياسة الخصوصية</p>
+          <p className="hidden truncate text-right sm:block">
+            <FormattedMessage id="footer.privacy" defaultMessage="Privacy" />
+          </p>
         </FooterLink>
         <FooterLink href="/contact">
           <div className="relative h-8 w-8 sm:h-5 sm:w-5">
@@ -80,7 +84,9 @@ export default function Footer() {
               className="object-contain"
             />
           </div>
-          <p className="hidden truncate text-right sm:block">إتصل بنا</p>
+          <p className="hidden truncate text-right sm:block">
+            <FormattedMessage id="footer.contact" defaultMessage="contact us" />
+          </p>
         </FooterLink>
       </div>
 
@@ -113,6 +119,7 @@ export default function Footer() {
         <div className="flex items-center gap-1 font-mono">
           <FaTag className="h-3 w-3" />v{appVersion}
         </div>
+        <LanguageSwitcher />
       </div>
     </footer>
   );

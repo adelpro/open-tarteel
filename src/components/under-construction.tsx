@@ -1,4 +1,6 @@
+'use client';
 import Image from 'next/image';
+import { FormattedMessage } from 'react-intl';
 
 import underconstructionSVG from '@/svgs/underconstruction.svg';
 
@@ -11,7 +13,12 @@ export default function UnderConstruction() {
         width={30}
         alt="Underconstruction"
       />
-      <p>جاري تطوير التطبيق</p>
+      <p>
+        <FormattedMessage
+          id="underConstruction"
+          defaultMessage="The app is under development"
+        />
+      </p>
     </div>
   );
 }

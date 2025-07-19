@@ -4,6 +4,8 @@ import type { Metadata } from 'next';
 import { Tajawal } from 'next/font/google';
 
 import Footer from '@/components/footer';
+import IntlProviderWrapper from '@/components/intl-provider-wrapper';
+import LanguageSwitcher from '@/components/language-switcher';
 import { clientConfig } from '@/utils';
 const tajawal = Tajawal({
   weight: ['400', '700', '900'],
@@ -25,8 +27,10 @@ export default function RootLayout({
     <html lang="ar" suppressHydrationWarning>
       <body className={`${tajawal.className} antialiased`}>
         <main className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background text-foreground">
-          <div className="w-full flex-grow">{children}</div>
-          <Footer />
+          <IntlProviderWrapper>
+            <div className="w-full flex-grow">{children}</div>
+            <Footer />
+          </IntlProviderWrapper>
         </main>
       </body>
     </html>

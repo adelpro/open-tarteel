@@ -1,4 +1,6 @@
+'use client';
 import Image from 'next/image';
+import { FormattedMessage } from 'react-intl';
 
 export default function Hero() {
   return (
@@ -19,13 +21,13 @@ export default function Hero() {
         />
       </div>
       <h1 className="mb-3 text-4xl font-extrabold" itemProp="headline">
-        القرآن الكريم
+        <FormattedMessage id="appName" />
       </h1>
       <p
         className="max-w-lg text-lg text-gray-700 dark:text-gray-300"
         itemProp="description"
       >
-        تلاوات تلامس القلب دون إعلانات، تتبع، ولا إلهاء.
+        <FormattedMessage id="appDescription" />
       </p>
     </section>
   );
