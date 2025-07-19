@@ -2,6 +2,7 @@
 import { useAtom, useAtomValue } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useMediaSession } from '@/hooks/use-media-session';
 // Removed: import ReactAudioSpectrum from 'react-audio-spectrum'; // No longer needed here
 import { currentTimeAtom, showVisualizerAtom, volumeAtom } from '@/jotai/atom';
 import { Playlist } from '@/types';
@@ -129,6 +130,23 @@ export default function Player({ playlist }: Props) {
     }
     return (currentIndex - 1 + playlist.length) % playlist.length;
   };
+
+  useMediaSession({
+    audioRef,
+    playlist,
+    currentTrackId: currentTrack ?? 0,
+    isPlaying,
+    onPlay: () => {
+      audioRef.current?.play();
+      setIsPlaying(true);
+    },
+    onPause: () => {
+      audioRef.current?.pause();
+      setIsPlaying(false);
+    },
+    onNext: handleNextTrack,
+    onPrev: handlePreviousTrack,
+  });
 
   return (
     <div className="flex w-full max-w-md flex-col items-center justify-center gap-4 rounded-md border border-slate-200 p-4 shadow-md transition-transform hover:scale-105">
