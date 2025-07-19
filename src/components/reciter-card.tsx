@@ -1,6 +1,7 @@
 'use client';
 
 import { BsStar, BsStarFill } from 'react-icons/bs';
+import { FormattedMessage } from 'react-intl';
 
 import { Reciter, Riwaya } from '@/types';
 
@@ -41,8 +42,14 @@ export default function ReciterCard({
       <h2 className="mb-1 text-xl font-semibold">{reciter.name}</h2>
 
       <div className="mb-2 flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400">
-        <span>المفضلة: {favoriteCount}</span>
-        <span>المشاهدات: {viewCount}</span>
+        <span>
+          <FormattedMessage id="favorites" defaultMessage="favorite" />:
+          {favoriteCount}
+        </span>
+        <span>
+          {' '}
+          <FormattedMessage id="views" defaultMessage="views" />:{viewCount}
+        </span>
       </div>
 
       <div className="flex w-full items-center justify-between">

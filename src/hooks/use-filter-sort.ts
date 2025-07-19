@@ -1,5 +1,8 @@
+'use client';
+
 import { useAtom } from 'jotai';
 import { useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 import { recitersSortAtom, selectedRiwayaAtom } from '@/jotai/atom';
 import { Reciter, Riwaya } from '@/types';
@@ -25,15 +28,18 @@ export function useFilterSort({
     selectedRiwayaAtom
   );
   const [sortMode, setSortMode] = useAtom(recitersSortAtom);
-
+  const { formatMessage, locale } = useIntl();
   const availableRiwiyat = useMemo(() => {
-    const sortedRiwiyat = Object.values(Riwaya).sort((a, b) =>
-      a.localeCompare(b, 'ar', { sensitivity: 'base' })
-    );
-    return sortedRiwiyat.filter((riwaya) =>
-      reciters.some((r) => r.moshaf.riwaya === riwaya)
-    );
-  }, [reciters]);
+    return Object.entries(Riwaya)
+      .filter(([_, value]) => reciters.some((r) => r.moshaf.riwaya === value))
+      .map(([key, value]) => ({
+        value,
+        label: formatMessage({ id: `riwaya.${key}` }),
+      }))
+      .sort((a, b) =>
+        a.label.localeCompare(b.label, locale, { sensitivity: 'base' })
+      );
+  }, [reciters, formatMessage, locale]);
 
   const filteredReciters = useMemo(() => {
     return reciters

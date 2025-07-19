@@ -9,6 +9,7 @@ import {
   TbSortDescendingLetters,
   TbSortDescendingNumbers,
 } from 'react-icons/tb';
+import { useIntl } from 'react-intl';
 
 import ReciterCard from '@/components/reciter-card';
 import {
@@ -69,6 +70,53 @@ export default function RecitersList({ setIsOpen }: Props) {
     showOnlyFavorites,
   });
 
+  const { formatMessage } = useIntl();
+
+  const searchPlaceHolder = formatMessage({
+    id: 'searchPlaceHolder',
+    defaultMessage: 'Search A Reciter',
+  });
+
+  const sort = formatMessage({
+    id: 'sort',
+    defaultMessage: 'Sort',
+  });
+
+  const sortByAlphabet = formatMessage({
+    id: 'sort.byAlphabet',
+    defaultMessage: 'Sort by Alphabet',
+  });
+
+  const sortByFavorite = formatMessage({
+    id: 'sort.byFavorite',
+    defaultMessage: 'Sort by Favorite',
+  });
+
+  const sortByViews = formatMessage({
+    id: 'sort.byViews',
+    defaultMessage: 'Sort by Views',
+  });
+
+  const showAll = formatMessage({
+    id: 'showAll',
+    defaultMessage: 'Show All',
+  });
+
+  const showFavorite = formatMessage({
+    id: 'showFavorite',
+    defaultMessage: 'Show Favorite',
+  });
+
+  const noRecitersFound = formatMessage({
+    id: 'noRecitersFound',
+    defaultMessage: 'No reciters found.',
+  });
+
+  const allReciters = formatMessage({
+    id: 'allReciters',
+    defaultMessage: 'All Reciters',
+  });
+
   const { focusedIndex, setFocusedIndex, reciterRefs, searchInputRef } =
     useKeyboardNavigation(filteredReciters.length);
 
@@ -98,20 +146,20 @@ export default function RecitersList({ setIsOpen }: Props) {
           <input
             ref={searchInputRef}
             type="text"
-            placeholder="ابحث عن القارئ"
+            placeholder={searchPlaceHolder}
             value={searchTerm}
             onChange={handleSearchTerm}
             className="transitiont w-full rounded-full border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:outline-none"
           />
           <div className="absolute inset-y-0 left-2 flex items-center gap-2 pr-2">
             <button
-              aria-label="تغيير الترتيب"
+              aria-label={sort}
               title={
                 sortMode === 'alphabetical'
-                  ? 'ترتيب أبجدي'
+                  ? sortByAlphabet
                   : sortMode === 'views'
-                    ? 'ترتيب حسب المشاهدات'
-                    : 'ترتيب حسب الشعبية'
+                    ? sortByViews
+                    : sortByFavorite
               }
               onClick={() =>
                 setSortMode((previous) =>
@@ -135,8 +183,8 @@ export default function RecitersList({ setIsOpen }: Props) {
             </button>
             {favoriteRecitersList.length > 0 && (
               <button
-                aria-label={showOnlyFavorites ? 'عرض الكل' : 'المفضلة فقط'}
-                title={showOnlyFavorites ? 'عرض المفضلة فقط' : 'عرض الكل'}
+                aria-label={showOnlyFavorites ? showAll : showFavorite}
+                title={showOnlyFavorites ? showFavorite : showAll}
                 onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
                 className={`rounded-full p-1.5 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:hover:bg-gray-700 ${showOnlyFavorites ? 'bg-yellow-500 text-white' : ''}`}
                 tabIndex={0}
@@ -166,19 +214,19 @@ export default function RecitersList({ setIsOpen }: Props) {
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
             }`}
           >
-            جميع الروايات
+            {allReciters}
           </button>
           {availableRiwiyat.map((riwaya) => (
             <button
-              key={riwaya}
-              onClick={() => setSelectedRiwaya(riwaya)}
+              key={riwaya.value}
+              onClick={() => setSelectedRiwaya(riwaya.value)}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
-                selectedRiwaya === riwaya
+                selectedRiwaya === riwaya.value
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
               }`}
             >
-              {riwaya}
+              {riwaya.label}
             </button>
           ))}
         </div>
@@ -225,7 +273,7 @@ export default function RecitersList({ setIsOpen }: Props) {
               })
             : !error && (
                 <p className="col-span-full text-center text-gray-500 dark:text-gray-400">
-                  لا يوجد قراء مطابقين للبحث.
+                  {noRecitersFound}
                 </p>
               )}
         </div>

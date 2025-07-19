@@ -5,7 +5,6 @@ import { Tajawal } from 'next/font/google';
 
 import Footer from '@/components/footer';
 import IntlProviderWrapper from '@/components/intl-provider-wrapper';
-import LanguageSwitcher from '@/components/language-switcher';
 import { clientConfig } from '@/utils';
 const tajawal = Tajawal({
   weight: ['400', '700', '900'],
