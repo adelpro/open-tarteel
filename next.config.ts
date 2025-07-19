@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: !isProduction,
   poweredByHeader: !isProduction,
   transpilePackages: ['jotai-devtools'],
+  productionBrowserSourceMaps: isProduction,
   compiler: {
     removeConsole: isProduction && { exclude: ['error'] },
   },

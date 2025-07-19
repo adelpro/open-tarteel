@@ -15,8 +15,7 @@ export async function generateStaticParams() {
     return RECITERS.map((reciter) => ({
       id: reciter.id.toString(),
     }));
-  } catch (error) {
-    console.error('Failed to generate static params:', error);
+  } catch {
     return [];
   }
 }
@@ -73,8 +72,7 @@ export default async function Page({ params }: Props) {
   let RECITERS = [];
   try {
     RECITERS = await getAllReciters();
-  } catch (error) {
-    console.error('Error fetching reciters in page:', error);
+  } catch {
     return notFound();
   }
 

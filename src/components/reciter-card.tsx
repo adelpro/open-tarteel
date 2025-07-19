@@ -1,9 +1,10 @@
 'use client';
 
 import { BsStar, BsStarFill } from 'react-icons/bs';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { Reciter, Riwaya } from '@/types';
+import { getRiwayaKeyFromValue } from '@/utils/get-riwaya-from-mushaf';
 
 type Props = {
   reciter: Reciter;
@@ -29,7 +30,8 @@ export default function ReciterCard({
   onFavoriteToggle,
   onSelectRiwaya,
 }: Props) {
-  const riwaya = reciter.moshaf.riwaya || Riwaya.Warsh;
+  const riwaya = reciter.moshaf.riwaya;
+  const riwayaKey = getRiwayaKeyFromValue(riwaya);
 
   return (
     <button
@@ -47,7 +49,6 @@ export default function ReciterCard({
           {favoriteCount}
         </span>
         <span>
-          {' '}
           <FormattedMessage id="views" defaultMessage="views" />:{viewCount}
         </span>
       </div>
@@ -62,7 +63,10 @@ export default function ReciterCard({
             }}
             className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800"
           >
-            {riwaya}
+            <FormattedMessage
+              id={`riwaya.${riwayaKey}` || 'riwaya.Hafs'}
+              defaultMessage="Hafs"
+            />
           </span>
         </div>
 

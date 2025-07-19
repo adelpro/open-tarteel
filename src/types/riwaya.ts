@@ -4,7 +4,6 @@ export enum Riwaya {
   Qaloon = 'قالون',
   Khalaf = 'خلف',
   AlBazzi = 'البزي',
-  Qunbul = 'قنبل',
   AlSoosi = 'السوسي',
   AlDooriKisai = 'الدوري-الكسائي',
   AlDooriAbuAmr = 'الدوري-أبي-عمرو',

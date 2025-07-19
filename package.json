@@ -34,7 +34,7 @@
     "gun": "^0.2020.1241",
     "jotai": "^2.11.1",
     "jotai-devtools": "^0.10.1",
-    "next": "^15.4.1",
+    "next": "^15.4.2",
     "nodemailer": "^6.10.0",
     "react": "^19.1.0",
     "react-audio-spectrum": "^0.1.5",

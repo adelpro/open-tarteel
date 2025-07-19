@@ -22,7 +22,7 @@ import { useFilterSort } from '@/hooks/use-filter-sort';
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
 import { useReciters } from '@/hooks/use-reciters';
 import { selectedReciterAtom } from '@/jotai/atom';
-import { Reciter } from '@/types';
+import { Reciter, Riwaya } from '@/types';
 import { generateFavId } from '@/utils';
 
 import SimpleSkeleton from './simple-skeleton';
@@ -216,19 +216,25 @@ export default function RecitersList({ setIsOpen }: Props) {
           >
             {allReciters}
           </button>
-          {availableRiwiyat.map((riwaya) => (
-            <button
-              key={riwaya.value}
-              onClick={() => setSelectedRiwaya(riwaya.value)}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
-                selectedRiwaya === riwaya.value
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
-              }`}
-            >
-              {riwaya.label}
-            </button>
-          ))}
+          {availableRiwiyat.map(({ value, label }) => {
+            const isSelected = selectedRiwaya === value;
+            return (
+              <button
+                key={value}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setSelectedRiwaya(value as Riwaya | 'all');
+                }}
+                className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
+                  isSelected
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
+                }`}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
 
         {showOnlyFavorites && favoriteRecitersList.length > 0 && (

@@ -19,9 +19,8 @@ export function useReciters() {
         setError(null);
         const data = await getAllReciters(language);
         setReciters(data);
-      } catch (error_) {
+      } catch {
         setError('فشل في تحميل القراء. يرجى المحاولة مرة أخرى.');
-        console.error('Error loading reciters:', error_);
       } finally {
         setLoading(false);
       }

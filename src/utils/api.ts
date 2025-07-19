@@ -3,10 +3,11 @@ import {
   MP3APIMoshaf,
   mp3QuranAPiResponse,
   Reciter,
+  Riwaya,
 } from '@/types';
 import { Playlist } from '@/types/playlist';
 
-import { getRiwayaFromMoshafName } from './get-riwaya-from-mushaf-name';
+import { getRiwayaKeyFromMoshafName } from './get-riwaya-from-mushaf';
 
 const generatePlaylist = (moshaf: MP3APIMoshaf): Playlist => {
   const result = moshaf.surah_list.split(',').map((surahId: string) => ({
@@ -33,7 +34,8 @@ export async function getAllReciters(
     for (const apiReciter of data.reciters) {
       for (const apiMoshaf of apiReciter.moshaf) {
         const playlist = generatePlaylist(apiMoshaf);
-        const riwaya = getRiwayaFromMoshafName(apiMoshaf.name);
+        const riwayaKey = getRiwayaKeyFromMoshafName(apiMoshaf.name, locale);
+        const riwaya = Riwaya[riwayaKey];
 
         reciters.push({
           id: apiReciter.id,
@@ -52,8 +54,7 @@ export async function getAllReciters(
     }
 
     return reciters;
-  } catch (error) {
-    console.error('Error fetching reciters:', error);
+  } catch {
     return [];
   }
 }
@@ -83,8 +84,8 @@ export async function getReciter(
     if (!apiMoshaf) return undefined;
 
     const playlist = generatePlaylist(apiMoshaf);
-    const riwaya = getRiwayaFromMoshafName(apiMoshaf.name);
-
+    const riwayaKey = getRiwayaKeyFromMoshafName(apiMoshaf.name, locale);
+    const riwaya = Riwaya[riwayaKey];
     return {
       id: apiReciter.id,
       name: apiReciter.name,
@@ -98,8 +99,7 @@ export async function getReciter(
         playlist,
       },
     };
-  } catch (error) {
-    console.error('Error fetching reciter from API:', error);
+  } catch {
     return undefined;
   }
 }
