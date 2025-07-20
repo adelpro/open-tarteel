@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file.
 - feat: add audio visualizer
 - refactor: add favorite in the reciter selector aria
 - refactor: refactor the search reciter input in the reciter list dialog
+- feat: add meddia session to the player
+- fix: multiple bugs fix
 
 ## V0.0.1
 
