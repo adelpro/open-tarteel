@@ -4,9 +4,9 @@ import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
+import { ImSortAmountDesc } from 'react-icons/im';
 import {
-  TbSortDescending2Filled,
-  TbSortDescendingLetters,
+  TbSortAscendingLetters,
   TbSortDescendingNumbers,
 } from 'react-icons/tb';
 import { useIntl } from 'react-intl';
@@ -180,11 +180,11 @@ export default function RecitersList({ setIsOpen }: Props) {
               tabIndex={0}
             >
               {sortMode === 'alphabetical' ? (
-                <TbSortDescendingLetters className="size-5 text-blue-500" />
+                <TbSortAscendingLetters className="size-5 text-blue-500" />
               ) : sortMode === 'views' ? (
                 <TbSortDescendingNumbers className="size-5 text-purple-500" />
               ) : (
-                <TbSortDescending2Filled className="size-5 text-yellow-500" />
+                <ImSortAmountDesc className="size-5 text-yellow-500" />
               )}
             </button>
             {favoriteRecitersList.length > 0 && (

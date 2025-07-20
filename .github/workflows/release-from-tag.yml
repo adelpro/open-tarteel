@@ -18,9 +18,11 @@ jobs:
         run: |
           TAG_NAME="${GITHUB_REF#refs/tags/}"
           echo "Extracting changelog for $TAG_NAME"
-
           CONTENT=$(awk "/^##\s*\[?$TAG_NAME\]?/,/^##\s*\[?[^$TAG_NAME]\]?/" CHANGELOG.md | head -n -1 || true)
-          echo "::set-output name=body::$CONTENT"
+          CONTENT="${CONTENT//'%'/'%25'}"
+          CONTENT="${CONTENT//$'\n'/'%0A'}"
+          CONTENT="${CONTENT//$'\r'/'%0D'}"
+          echo "body=$CONTENT" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1

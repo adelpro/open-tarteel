@@ -23,7 +23,7 @@ export const volumeAtom = createAtomWithStorage<number>('volume-value', 1);
 
 export const recitersSortAtom = createAtomWithStorage<
   'popular' | 'alphabetical' | 'views'
->('reciters-sort-atom', 'popular');
+>('reciters-sort-atom', 'alphabetical');
 export const selectedReciterAtom = createAtomWithStorage<Reciter | null>(
   'selected-reciter',
   null
