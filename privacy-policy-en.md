@@ -1,14 +1,14 @@
-# Open Quran Privacy Policy
+# Open Tarteel Privacy Policy
 
 **Effective Date:** february 14, 2025
 
 ## Your Privacy Matters
 
-At Open Quran, we take your privacy seriously. This policy explains our approach to privacy and data collection in the app.
+At Open Tarteel, we take your privacy seriously. This policy explains our approach to privacy and data collection in the app.
 
 ## What Information Do We Collect?
 
-Open Quran **does not collect any personal information** or any other data from users. The app runs completely offline, and no data is transmitted from your device.
+Open Tarteel **does not collect any personal information** or any other data from users. The app runs completely offline, and no data is transmitted from your device.
 
 **Why Do We Not Collect Data?**
 
@@ -16,7 +16,7 @@ Our primary goal is to provide a seamless, offline experience for users. Since t
 
 ## We Respect Your Child's Privacy
 
-Open Quran is designed for children aged 6 and above who can read Arabic. We are committed to protecting children's privacy. Since our app does not collect any data, children's information is completely safe.
+Open Tarteel is designed for children aged 6 and above who can read Arabic. We are committed to protecting children's privacy. Since our app does not collect any data, children's information is completely safe.
 
 ## Keeping Your Data Secure
 
@@ -24,7 +24,7 @@ Since we do not collect any data, there is no personal information to protect. H
 
 ## We Don't Share Your Data
 
-As Open Quran collects no data, there is nothing to share with third parties. Your privacy is fully protected.
+As Open Tarteel collects no data, there is nothing to share with third parties. Your privacy is fully protected.
 
 ## Your Privacy Rights
 
@@ -32,7 +32,7 @@ Since no personal data is collected, there is no need for data deletion requests
 
 ## Third-Party Services
 
-Open Quran does not use any third-party services for analytics, tracking, or data collection. The app runs entirely on your device without sending any information externally.
+Open Tarteel does not use any third-party services for analytics, tracking, or data collection. The app runs entirely on your device without sending any information externally.
 
 ## Updates to this Policy
 
@@ -42,4 +42,4 @@ We may update this policy periodically. If significant changes are made, we will
 
 If you have any questions about this policy, feel free to contact us at:
 
-**Email**: <contact@openquran.us.kg>
+**Email**: <contact@openTarteel.us.kg>

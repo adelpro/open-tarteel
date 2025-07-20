@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
     display: 'standalone',
     scope: '/',
     start_url: '/',
-    name: 'Open Quran',
-    short_name: 'Open Quran',
+    name: 'Open Tarteel',
+    short_name: 'Open Tarteel',
     description: 'Quran streaming application',
 
     dir: 'auto',
@@ -50,7 +50,7 @@ export default function manifest(): MetadataRoute.Manifest {
         // @ts-expect-error
         platform: 'wide',
         form_factor: 'wide',
-        label: 'Open Quran - Desktop',
+        label: 'Open Tarteel - Desktop',
       },
       {
         src: '/screenshots/mobile.png',
@@ -59,7 +59,7 @@ export default function manifest(): MetadataRoute.Manifest {
         // @ts-expect-error
         platform: 'narrow',
         form_factor: 'narrow',
-        label: 'Open Quran - Mobile',
+        label: 'Open Tarteel - Mobile',
       },
     ],
 

@@ -1,25 +1,24 @@
-# Contributing to Open-quran
+# Contributing to Open Tarteel
 
-Thank you for considering contributing to **Open-quran**! We appreciate your help in making this project better.
+Thank you for considering contributing to **Open-Tarteel**! We appreciate your help in making this project better.
 
 ## How to Contribute
 
 ### Reporting Issues
 
-- If you find a bug or have a feature request, please open an issue on the [GitHub Issues page](https://github.com/adelpro/open-quran/issues).
+- If you find a bug or have a feature request, please open an issue on the [GitHub Issues page](https://github.com/adelpro/open-tarteel/issues).
 - Provide as much detail as possible, including steps to reproduce the issue and any relevant screenshots.
 
 ### Pull Requests
 
 1. **Fork the Repository**
-
    - Click the "Fork" button at the top right of the repository page.
 
 2. **Clone Your Fork**
 
    ```bash
-   git clone https://github.com/your-username/open-quran.git
-   cd open-quran
+   git clone https://github.com/your-username/open-tarteel.git
+   cd open-tarteel
    ```
 
 3. Create a Branch
