@@ -1,13 +1,11 @@
-// components/Player.tsx
 import { useAtom, useAtomValue } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useMediaSession } from '@/hooks/use-media-session';
-// Removed: import ReactAudioSpectrum from 'react-audio-spectrum'; // No longer needed here
-import { currentTimeAtom, showVisualizerAtom, volumeAtom } from '@/jotai/atom';
+import { currentTimeAtom, volumeAtom } from '@/jotai/atom';
 import { Playlist } from '@/types';
 
-import AudioVisualizer from './audio-visualizer'; // Import the new component
+import AudioVisualizer from './audio-visualizer';
 import PlayerControls from './player-controls';
 import PlaylistDialog from './playlist-dialog';
 import Range from './range';

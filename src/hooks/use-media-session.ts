@@ -1,9 +1,10 @@
 import { useAtomValue } from 'jotai';
 import { useEffect } from 'react';
 
+import { SURAHS } from '@/constants';
 import { selectedReciterAtom } from '@/jotai/atom';
 import { Playlist } from '@/types';
-
+import { removeTashkeel } from '@/utils';
 type Props = {
   audioRef: React.RefObject<HTMLAudioElement | null>;
   playlist: Playlist;
@@ -32,14 +33,16 @@ export function useMediaSession({
 
     const track = playlist[currentTrackId];
     if (!track || !selectedReciter) return;
-
+    const surahName = removeTashkeel(
+      SURAHS.find((surah) => surah.id.toString() === track.surahId)?.name || ''
+    );
     navigator.mediaSession.metadata = new MediaMetadata({
-      title: `Surah ${track.surahId}`,
+      title: `${track.surahId} - ${surahName}`,
       artist: selectedReciter.name,
       album: selectedReciter.moshaf.name,
       artwork: [
         {
-          src: '/512x512.png',
+          src: '/images/512x512.png',
           sizes: '512x512',
           type: 'image/png',
         },

@@ -139,6 +139,12 @@ export default function RecitersList({ setIsOpen }: Props) {
     setFocusedIndex(null);
   };
 
+  useEffect(() => {
+    if (favoriteRecitersList.length === 0) {
+      setShowOnlyFavorites(false);
+    }
+  }, [favoriteRecitersList.length, setShowOnlyFavorites]);
+
   return (
     <section className="mx-auto w-full px-1">
       <div className="flex flex-col gap-4">
