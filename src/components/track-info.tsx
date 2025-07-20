@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 
 import { SURAHS } from '@/constants';
 import { selectedReciterAtom } from '@/jotai/atom';
-import { formatTime } from '@/utils';
+import { formatTime, removeTashkeel } from '@/utils';
 
 type Props = {
   currentTrackId: number;
@@ -37,7 +37,9 @@ export default function TrackInfo({
         ?.englishName;
     }
 
-    return SURAHS.find((surah) => surah.id.toString() === surahId)?.name;
+    return removeTashkeel(
+      SURAHS.find((surah) => surah.id.toString() === surahId)?.name || ''
+    );
   };
 
   return (
