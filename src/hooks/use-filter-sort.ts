@@ -25,7 +25,6 @@ export function useFilterSort({
 }: UseFilterSortParams) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRiwaya, setSelectedRiwaya] = useAtom(selectedRiwayaAtom);
-  console.log({ selectedRiwaya });
   const [sortMode, setSortMode] = useAtom(recitersSortAtom);
   const { formatMessage, locale } = useIntl();
   const availableRiwiyat = useMemo(() => {

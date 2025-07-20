@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0]
+
+### Fixes
+
+- Fixed selected riwaya default value in reciter list
+
 ## [0.1.0]
 
 ### Features

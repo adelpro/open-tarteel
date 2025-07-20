@@ -20,12 +20,7 @@ import LanguageSwitcher from './language-switcher';
 export default function Footer() {
   const router = useRouter();
   const setSelectedReciter = useSetAtom(selectedReciterAtom);
-  const [appVersion, setAppVersion] = useState('');
-
-  useEffect(() => {
-    setAppVersion(clientConfig.APP_VERSION);
-  }, []);
-
+  const appVersion = clientConfig.APP_VERSION;
   const handleHomeClick = (event: React.MouseEvent) => {
     event.preventDefault();
     setSelectedReciter(null);
@@ -95,9 +90,7 @@ export default function Footer() {
         dir="ltr"
       >
         <div className="flex items-center gap-0.5">
-          <span>Made with</span>
-          <span className="text-red-500">❤️</span>
-          <span>by</span>
+          <span>Made by</span>
           <a
             href="https://adelpro.us.kg/"
             target="_blank"
