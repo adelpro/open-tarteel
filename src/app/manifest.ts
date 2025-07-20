@@ -11,6 +11,24 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'Open Quran',
     short_name: 'Open Quran',
     description: 'Quran streaming application',
+
+    dir: 'auto',
+    lang: 'auto',
+    orientation: 'portrait',
+    launch_handler: {
+      client_mode: 'auto',
+    },
+    handle_links: [
+      {
+        url: 'https://tarteel.quran.us.kg',
+        action: 'navigate',
+      },
+    ],
+    categories: ['education', 'books', 'religion'],
+    prefer_related_applications: false,
+    related_applications: [],
+    scope_extensions: ['/'],
+
     icons: [
       {
         src: 'images/192x192.png',
@@ -23,6 +41,7 @@ export default function manifest(): MetadataRoute.Manifest {
         type: 'image/png',
       },
     ],
+
     screenshots: [
       {
         src: '/screenshots/desktop.png',
@@ -43,10 +62,10 @@ export default function manifest(): MetadataRoute.Manifest {
         label: 'Open Quran - Mobile',
       },
     ],
+
     shortcuts: [
       {
         name: 'Contact us',
-
         url: '/contact',
         description: 'Contact us page',
         icons: [
