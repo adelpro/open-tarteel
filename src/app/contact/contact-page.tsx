@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { useIntl } from 'react-intl';
 
 import Loader from '@/components/loader';
 import sendSVG from '@/svgs/send.svg';
@@ -28,6 +29,7 @@ const sendFeedback = async (
 };
 
 export default function ContactPage() {
+  const { formatMessage } = useIntl();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -37,19 +39,19 @@ export default function ContactPage() {
 
   const validateAndSend = (): void => {
     if (name === '') {
-      setError('الرجاء إدخال الاسم.');
+      setError(formatMessage({ id: 'contact.please_enter_name' }));
       return;
     }
     if (email === '') {
-      setError('الرجاء إدخال البريد الإلكتروني.');
+      setError(formatMessage({ id: 'contact.please_enter_email' }));
       return;
     }
     if (!isValidEmail(email)) {
-      setError('الرجاء إدخال بريد إلكتروني صالح.');
+      setError(formatMessage({ id: 'contact.please_enter_valid_email' }));
       return;
     }
     if (message === '') {
-      setError('الرجاء إدخال الرسالة.');
+      setError(formatMessage({ id: 'contact.please_enter_message' }));
       return;
     }
     setLoading(true);
@@ -59,20 +61,27 @@ export default function ContactPage() {
         if (response?.status === 200) {
           setFormSubmitted(true);
         } else {
-          setError('حدث خطأ ما، الرجاء المحاولة مرة أخرى.');
+          setError(formatMessage({ id: 'contact.error_sending_message' }));
         }
       })
-      .catch((error_) => {
-        setError(JSON.stringify(error_));
+      .catch(() => {
+        setError(formatMessage({ id: 'contact.error_sending_message' }));
       });
   };
 
   const buttonContent = loading ? (
-    <Loader message="جاري الإرسال" rightIcon />
+    <Loader message={formatMessage({ id: 'contact.sending' })} rightIcon />
   ) : (
     <div className="flex flex-row-reverse gap-2">
-      <span className="mr-2 text-3xl font-bold">إرسال</span>
-      <Image src={sendSVG} alt="إرسال" width={40} height={40} />
+      <span className="mr-2 text-3xl font-bold">
+        {formatMessage({ id: 'contact.send' })}
+      </span>
+      <Image
+        src={sendSVG}
+        alt={formatMessage({ id: 'contact.send' })}
+        width={40}
+        height={40}
+      />
     </div>
   );
 
@@ -84,17 +93,19 @@ export default function ContactPage() {
           dir="rtl"
         >
           <p className="mb-10 text-center text-5xl" role="alert">
-            شكراً لتواصلك معنا. سنتواصل معك قريباً!
+            {formatMessage({ id: 'contact.thank_you_for_contacting' })}
           </p>
           <Link href="/" className="mt-4 flex items-center space-x-2">
             <button className="text-2xl font-bold hover:underline">
-              العودة إلى الصفحة الرئيسية
+              {formatMessage({ id: 'contact.back_to_home' })}
             </button>
           </Link>
         </div>
       ) : (
         <div className="p-2 md:p-8">
-          <h1 className="mb-20 text-center text-5xl font-bold">إتصل بنا</h1>
+          <h1 className="mb-20 text-center text-5xl font-bold">
+            {formatMessage({ id: 'contact.contact_us' })}
+          </h1>
           <section className="container mx-auto max-w-2xl" dir="rtl">
             <form className="flex flex-col">
               <input
@@ -102,7 +113,7 @@ export default function ContactPage() {
                 required
                 className="mb-4 border-b-2 border-gray-400 px-8 py-2 text-3xl ring-black focus:ring-4"
                 id="name"
-                placeholder="الإسم"
+                placeholder={formatMessage({ id: 'contact.name' })}
                 value={name}
                 onChange={(event) => {
                   setError('');
@@ -115,7 +126,7 @@ export default function ContactPage() {
                 required
                 className="mb-4 border-b-2 border-gray-400 px-8 py-2 text-3xl ring-black focus:ring-4"
                 id="email"
-                placeholder="البريد الإلكتروني"
+                placeholder={formatMessage({ id: 'contact.email' })}
                 value={email}
                 onChange={(event) => {
                   setError('');
@@ -128,7 +139,7 @@ export default function ContactPage() {
                 id="message"
                 rows={3}
                 required
-                placeholder="الرسالة"
+                placeholder={formatMessage({ id: 'contact.message' })}
                 value={message}
                 onChange={(event) => {
                   setError('');
@@ -144,8 +155,8 @@ export default function ContactPage() {
               )}
               <button
                 type="submit"
-                aria-label="Send"
-                title="Send"
+                aria-label={formatMessage({ id: 'contact.send' })}
+                title={formatMessage({ id: 'contact.send' })}
                 role="button"
                 aria-disabled={loading}
                 onClick={(event) => {

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { clientConfig } from '@/utils';
 
-import PrivacyPageAr from './privacy-page-ar';
+import PrivacyPageAr from './privacy-page';
 
 export async function generateMetadata() {
   const title = 'Privacy Policy - Arabic - ' + clientConfig.APP_NAME;

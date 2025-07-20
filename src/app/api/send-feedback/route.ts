@@ -1,3 +1,4 @@
+import escapeHtml from 'escape-html';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { clientConfig, isValidEmail } from '@/utils';
@@ -14,20 +15,28 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const safeName = escapeHtml(name);
+  const safeEmail = escapeHtml(email);
+  const safeMessage = escapeHtml(message);
+
   try {
     await transporter.sendMail({
       ...mailOptions,
       subject: `${clientConfig.APP_NAME} - feedback`,
-      text: `Contact form submitted on MD-Popme\n
-               Name: ${name}\n
-               Email: ${email}\n
-              Message: ${message}`,
-      html: `<div style="font-family: 'Arial', sans-serif; color: #333; padding: 20px;">
-              <h1 style="color: #0066cc;">Contact form submitted from MD-Popme</h1>
-              <p style="margin-bottom: 10px;"><strong>Name:</strong> ${name}</p>
-              <p style="margin-bottom: 10px;"><strong>Email:</strong> ${email}</p>
-              <p style="margin-bottom: 10px;"><strong>Message:</strong> ${message}</p>
-             </div>`,
+      text: `Contact form submitted from ${clientConfig.APP_NAME}\n
+    Name: ${safeName}\n
+    Email: ${safeEmail}\n
+    Message: ${safeMessage}`,
+      html: `
+        <section style="font-family: Arial, sans-serif; color: #333; padding: 20px;">
+          <header>
+            <h1 style="color: #0066cc;">Contact form submitted from ${clientConfig.APP_NAME}</h1>
+          </header>
+          <p><strong>Name:</strong> ${safeName}</p>
+          <p><strong>Email:</strong> ${safeEmail}</p>
+          <p><strong>Message:</strong> ${safeMessage}</p>
+        </section>
+      `,
     });
     return NextResponse.json({ message: 'Feedback sent successfully' });
   } catch {

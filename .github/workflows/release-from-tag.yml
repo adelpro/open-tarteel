@@ -1,0 +1,30 @@
+name: Release from Tag
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract release notes from CHANGELOG.md
+        id: changelog
+        run: |
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          echo "Extracting changelog for $TAG_NAME"
+
+          CONTENT=$(awk "/^##\s*\[?$TAG_NAME\]?/,/^##\s*\[?[^$TAG_NAME]\]?/" CHANGELOG.md | head -n -1 || true)
+          echo "::set-output name=body::$CONTENT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: ${{ steps.changelog.outputs.body }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
