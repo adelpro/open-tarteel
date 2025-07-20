@@ -10,8 +10,10 @@ All notable changes to this project will be documented in this file.
 - feat: add audio visualizer
 - refactor: add favorite in the reciter selector aria
 - refactor: refactor the search reciter input in the reciter list dialog
-- feat: add meddia session to the player
-- fix: multiple bugs fix
+- feat: add media session to the player
+- fix: fixed tachkeel bug in the track info
+- fix: fixed rciter name in reciter selector
+- fix: fixed rtl layout when switching between ar and en
 
 ## V0.0.1
 

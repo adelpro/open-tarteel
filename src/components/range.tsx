@@ -1,5 +1,7 @@
 import React from 'react';
 
+import useDirection from '@/hooks/use-direction';
+
 type Props = {
   currentTime: number;
   duration: number;
@@ -7,14 +9,13 @@ type Props = {
   audioRef: React.RefObject<HTMLAudioElement | null>;
 };
 
-const isRTL = true; // or get from context / props
-
 export default function Range({
   currentTime,
   duration,
   setCurrentTime,
   audioRef,
 }: Props) {
+  const { isRTL } = useDirection();
   return (
     <div className="inset-0 flex h-1 w-full items-center justify-between">
       <input

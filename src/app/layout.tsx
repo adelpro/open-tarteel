@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Tajawal } from 'next/font/google';
 
 import Footer from '@/components/footer';
+import HtmlWrapper from '@/components/html-wrapper';
 import IntlProviderWrapper from '@/components/intl-provider-wrapper';
 import { clientConfig } from '@/utils';
 const tajawal = Tajawal({
@@ -23,15 +24,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" suppressHydrationWarning>
-      <body className={`${tajawal.className} antialiased`}>
-        <main className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background text-foreground">
-          <IntlProviderWrapper>
+    <IntlProviderWrapper>
+      <HtmlWrapper>
+        <body className={`${tajawal.className} antialiased`}>
+          <main className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background text-foreground">
             <div className="w-full flex-grow">{children}</div>
             <Footer />
-          </IntlProviderWrapper>
-        </main>
-      </body>
-    </html>
+          </main>
+        </body>
+      </HtmlWrapper>
+    </IntlProviderWrapper>
   );
 }
