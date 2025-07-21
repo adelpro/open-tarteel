@@ -1,7 +1,6 @@
-import escapeHtml from 'escape-html';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { clientConfig, isValidEmail } from '@/utils';
+import { clientConfig, isValidEmail, sanitizeHTML } from '@/utils';
 import { mailOptions, transporter } from '@/utils/node-mailer';
 
 export async function POST(request: NextRequest) {
@@ -15,9 +14,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const safeName = escapeHtml(name);
-  const safeEmail = escapeHtml(email);
-  const safeMessage = escapeHtml(message);
+  const safeName = sanitizeHTML(name);
+  const safeEmail = sanitizeHTML(email);
+  const safeMessage = sanitizeHTML(message);
 
   try {
     await transporter.sendMail({

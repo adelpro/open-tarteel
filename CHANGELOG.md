@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixes
 
+- Chore: replace escape-html by sanitize-html
+- Fixed player reload in reciter page
 - Fixed generate changelog for releases
 - Fixed mainfest errors
 - Fixed perforamance issues is reciter-list

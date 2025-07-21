@@ -11,8 +11,10 @@ import SimpleSkeleton from '@/components/simple-skeleton';
 import { syncView } from '@/gun/view-rank';
 import { selectedReciterAtom } from '@/jotai/atom';
 
+// ✅ Move dynamic import outside the component
+const Player = dynamic(() => import('@/components/player'), { ssr: false });
+
 export default function ReciterPage() {
-  const Player = dynamic(() => import('@/components/player'), { ssr: false });
   const selectedReciter = useAtomValue(selectedReciterAtom);
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export default function ReciterPage() {
         <DevTools />
         <ReciterSelector />
 
-        {selectedReciter && selectedReciter.moshaf && (
+        {selectedReciter?.moshaf && (
           <Suspense fallback={<SimpleSkeleton />}>
             <Player playlist={selectedReciter.moshaf.playlist} />
           </Suspense>

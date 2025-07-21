@@ -7,4 +7,5 @@ export * from './get-error-message';
 export * from './is-valid-email';
 export * from './is-valid-magnet-uri';
 export * from './normalize-app-url';
+export * from './sanitize-html';
 export * from './search';
