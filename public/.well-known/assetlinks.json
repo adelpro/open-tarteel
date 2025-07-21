@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "kg.us.quran.tarteel.twa",
+      "sha256_cert_fingerprints": [
+        "15:7F:BD:EA:D5:83:81:FF:25:12:60:CD:CF:65:55:9C:3F:A0:DC:C6:F4:2F:78:77:C7:ED:B1:71:A9:6F:57:FD"
+      ]
+    }
+  }
+]
