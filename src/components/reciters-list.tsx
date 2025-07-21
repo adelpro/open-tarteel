@@ -2,7 +2,7 @@
 
 import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
 import { ImSortAmountDesc } from 'react-icons/im';
 import {
@@ -120,8 +120,9 @@ export default function RecitersList({ setIsOpen }: Props) {
   const { focusedIndex, setFocusedIndex, reciterRefs, searchInputRef } =
     useKeyboardNavigation(filteredReciters.length);
 
-  const favoriteRecitersList = reciters.filter((r) =>
-    favoriteReciters.includes(generateFavId(r))
+  const favoriteRecitersList = useMemo(
+    () => reciters.filter((r) => favoriteReciters.includes(generateFavId(r))),
+    [reciters, favoriteReciters]
   );
 
   const handleSelectReciter = useCallback(
@@ -134,10 +135,13 @@ export default function RecitersList({ setIsOpen }: Props) {
     [router, setIsOpen, setSelectedReciter]
   );
 
-  const handleSearchTerm = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-    setFocusedIndex(null);
-  };
+  const handleSearchTerm = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(event.target.value);
+      setFocusedIndex(null);
+    },
+    [setSearchTerm, setFocusedIndex]
+  );
 
   useEffect(() => {
     if (favoriteRecitersList.length === 0) {

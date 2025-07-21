@@ -78,5 +78,9 @@
   "privacy.section7.title": "Third-Party Services",
   "privacy.section7.body": "Quran.us.kg does not use any third-party services for analytics, tracking, or data collection. The app works entirely on your device without sending any information externally.",
   "privacy.section8.title": "Contact Us",
-  "privacy.section8.body": "If you have any questions about this policy, feel free to contact us at:"
+  "privacy.section8.body": "If you have any questions about this policy, feel free to contact us at:",
+
+  "share.message": "Listen to this reciter on Tarteel",
+  "share.fallback": "Link copied to clipboard!",
+  "share.fallback.error": "Failed to copy link."
 }

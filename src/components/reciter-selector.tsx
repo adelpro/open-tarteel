@@ -3,13 +3,14 @@
 import { useAtomValue } from 'jotai';
 import Image from 'next/image';
 import React, { useState } from 'react';
-import { BsStar, BsStarFill } from 'react-icons/bs';
+import { BsShare, BsStar, BsStarFill } from 'react-icons/bs';
 import { useIntl } from 'react-intl';
 
 import { useFavorites } from '@/hooks/use-favorites';
 import { selectedReciterAtom } from '@/jotai/atom';
 import searchSVG from '@/svgs/search.svg';
 import { generateFavId } from '@/utils';
+import { useShareReciter } from '@/utils/share';
 
 import ReciterSelectorDialog from './reciter-selector-dialog';
 
@@ -17,9 +18,10 @@ export default function ReciterSelector() {
   const [isOpen, setIsOpen] = useState(false);
   const selectedReciterValue = useAtomValue(selectedReciterAtom);
   const { toggleFavorite, favoriteReciters } = useFavorites();
+  const { formatMessage } = useIntl();
+  const { shareReciter } = useShareReciter();
 
   const handleSearch = () => setIsOpen(true);
-  const { formatMessage } = useIntl();
 
   const displayedReciterName =
     selectedReciterValue?.name ??
@@ -29,6 +31,13 @@ export default function ReciterSelector() {
     ? generateFavId(selectedReciterValue)
     : null;
   const isFavorite = favId ? favoriteReciters.includes(favId) : false;
+
+  const handleShare = async (event: React.MouseEvent | React.KeyboardEvent) => {
+    event.stopPropagation();
+
+    if (!selectedReciterValue) return;
+    shareReciter(selectedReciterValue);
+  };
 
   return (
     <div className="flex w-full justify-center">
@@ -41,6 +50,24 @@ export default function ReciterSelector() {
         >
           <span>{displayedReciterName}</span>
           <div className="flex items-center gap-2">
+            {/* Share */}
+            {selectedReciterValue && (
+              <BsShare
+                size={22}
+                className="cursor-pointer text-gray-500 hover:text-blue-600"
+                onClick={handleShare}
+                tabIndex={0}
+                role="button"
+                aria-label="Share reciter"
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    handleShare(event);
+                  }
+                }}
+              />
+            )}
+
+            {/* Favorite */}
             {selectedReciterValue &&
               favId &&
               (isFavorite ? (
@@ -70,6 +97,8 @@ export default function ReciterSelector() {
                   aria-label="Add to favorites"
                 />
               ))}
+
+            {/* Search icon */}
             <Image
               src={searchSVG}
               alt="Search reciters"

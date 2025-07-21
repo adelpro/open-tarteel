@@ -1,10 +1,11 @@
 'use client';
 
-import { BsStar, BsStarFill } from 'react-icons/bs';
+import { BsShare, BsStar, BsStarFill } from 'react-icons/bs';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { Reciter, Riwaya } from '@/types';
 import { getRiwayaKeyFromValue } from '@/utils/get-riwaya-from-mushaf';
+import { useShareReciter } from '@/utils/share';
 
 type Props = {
   reciter: Reciter;
@@ -30,8 +31,14 @@ export default function ReciterCard({
   onFavoriteToggle,
   onSelectRiwaya,
 }: Props) {
+  const { shareReciter } = useShareReciter();
   const riwaya = reciter.moshaf.riwaya;
   const riwayaKey = getRiwayaKeyFromValue(riwaya);
+
+  const handleShare = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    shareReciter(reciter);
+  };
 
   return (
     <button
@@ -70,6 +77,23 @@ export default function ReciterCard({
           </span>
         </div>
 
+        {/* Share */}
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={handleShare}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              handleShare(event as unknown as React.MouseEvent);
+            }
+          }}
+          className="absolute bottom-3 left-3 cursor-pointer rounded-full p-1 text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400"
+          aria-label="Share reciter"
+        >
+          <BsShare className="h-5 w-5" />
+        </div>
+
+        {/* Favorite */}
         <div
           role="button"
           tabIndex={0}

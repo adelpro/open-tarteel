@@ -27,7 +27,13 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ['education', 'books', 'religion'],
     prefer_related_applications: false,
     related_applications: [],
-    scope_extensions: ['/'],
+
+    web_apps: [
+      {
+        web_app_identity: 'https://tarteel.quran.us.kg/',
+      },
+    ],
+    scope_extensions: [{ origin: 'tarteel.quran.us.kg' }],
 
     icons: [
       {
@@ -70,7 +76,7 @@ export default function manifest(): MetadataRoute.Manifest {
         description: 'Contact us page',
         icons: [
           {
-            src: 'shortcuts/contact.png',
+            src: 'images/shortcuts/contact.png',
             sizes: '96x96',
             type: 'image/png',
           },
@@ -82,7 +88,7 @@ export default function manifest(): MetadataRoute.Manifest {
         description: 'About us page',
         icons: [
           {
-            src: 'shortcuts/contact.png',
+            src: 'images/shortcuts/about.png',
             sizes: '96x96',
             type: 'image/png',
           },

@@ -6,10 +6,10 @@
   "scripts": {
     "dev": "next dev",
     "dev:turbo": "next dev --turbopack",
+    "dev:scan": "npx react-scan@latest localhost:3000",
     "dev:inspect": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
-    "scan": "next dev & npx react-scan@latest localhost:3000",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "type-check": "tsc  --noemit",
