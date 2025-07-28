@@ -1,9 +1,12 @@
+'use client';
+
 import { useAtom, useAtomValue } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useMediaSession } from '@/hooks/use-media-session';
-import { currentTimeAtom, volumeAtom } from '@/jotai/atom';
+import { currentTimeAtom, fullscreenAtom, volumeAtom } from '@/jotai/atom';
 import { Playlist } from '@/types';
+import { cn } from '@/utils';
 
 import AudioVisualizer from './audio-visualizer';
 import PlayerControls from './player-controls';
@@ -16,20 +19,19 @@ type Props = {
 };
 
 export default function Player({ playlist }: Props) {
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const isFullscreen = useAtomValue(fullscreenAtom);
+
+  const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useAtom(currentTimeAtom);
-  const [duration, setDuration] = useState<number>(0);
+  const [duration, setDuration] = useState(0);
   const [currentTrack, setCurrentTrack] = useState<number | undefined>(0);
-  const [isShuffled, setIsShuffled] = useState<boolean>(false);
+  const [isShuffled, setIsShuffled] = useState(false);
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  // Removed: const showVisualizer = useAtomValue(showVisualizerAtom); // Still needed for PlayerControls logic, but not directly for visualizer rendering here
+  const [isOpen, setIsOpen] = useState(false);
+
   const audioRef = useRef<HTMLAudioElement>(null);
   const volumeRef = useRef<HTMLInputElement>(null);
-  // Removed: const [visualizerWidth, setVisualizerWidth] = useState(400); // Moved to AudioVisualizer
   const volumeValue = useAtomValue(volumeAtom);
-
-  // Removed: visualizerWidth useEffect // Moved to AudioVisualizer
 
   useEffect(() => {
     if (audioRef.current) {
@@ -55,39 +57,45 @@ export default function Player({ playlist }: Props) {
 
   useEffect(() => {
     if (typeof currentTrack !== 'number') return;
-
-    // Reset currentTime to 0 whenever the track changes (or on initial mount for track 0)
-    // This ensures consistency between server and client for the starting point of a track,
-    // preventing hydration errors and ensuring tracks restart on refresh.
     setCurrentTime(0);
-
     if (audioRef.current && isPlaying) {
-      audioRef.current.currentTime = 0; // Ensure the actual audio element starts from 0 if playing
+      audioRef.current.currentTime = 0;
       audioRef.current.play();
     }
   }, [currentTrack, isPlaying, setCurrentTime]);
 
   const togglePlayPause = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
+    if (!audioRef.current) return;
+    isPlaying ? audioRef.current.pause() : audioRef.current.play();
+    setIsPlaying(!isPlaying);
   };
 
   const handleTimeUpdate = () => {
-    if (!audioRef?.current) return;
-
+    if (!audioRef.current) return;
     if (!Number.isNaN(audioRef.current.duration)) {
       setDuration(audioRef.current.duration);
     }
-
     if (!Number.isNaN(audioRef.current.currentTime)) {
       setCurrentTime(audioRef.current.currentTime);
     }
+  };
+
+  const getNextTrackIndex = (index: number) =>
+    isShuffled
+      ? shuffledIndices[(shuffledIndices.indexOf(index) + 1) % playlist.length]
+      : (index + 1) % playlist.length;
+
+  const getPreviousTrackIndex = (index: number) =>
+    isShuffled
+      ? shuffledIndices[
+          (shuffledIndices.indexOf(index) - 1 + playlist.length) %
+            playlist.length
+        ]
+      : (index - 1 + playlist.length) % playlist.length;
+
+  const handleNextTrack = () => {
+    if (typeof currentTrack !== 'number') return;
+    setCurrentTrack(getNextTrackIndex(currentTrack));
   };
 
   const handlePreviousTrack = () => {
@@ -95,38 +103,13 @@ export default function Player({ playlist }: Props) {
     setCurrentTrack(getPreviousTrackIndex(currentTrack));
   };
 
-  const handleNextTrack = () => {
-    if (typeof currentTrack !== 'number') return;
-    setCurrentTrack(getNextTrackIndex(currentTrack));
-  };
-
   const toggleShuffle = () => {
-    if (!isShuffled) {
-      shufflePlaylist();
-    }
+    if (!isShuffled) shufflePlaylist();
     setIsShuffled(!isShuffled);
   };
 
   const togglePlaylistOpen = () => {
     setIsOpen(!isOpen);
-  };
-
-  const getNextTrackIndex = (currentIndex: number) => {
-    if (isShuffled) {
-      const currentShuffledIndex = shuffledIndices.indexOf(currentIndex);
-      return shuffledIndices[(currentShuffledIndex + 1) % playlist.length];
-    }
-    return (currentIndex + 1) % playlist.length;
-  };
-
-  const getPreviousTrackIndex = (currentIndex: number) => {
-    if (isShuffled) {
-      const currentShuffledIndex = shuffledIndices.indexOf(currentIndex);
-      return shuffledIndices[
-        (currentShuffledIndex - 1 + playlist.length) % playlist.length
-      ];
-    }
-    return (currentIndex - 1 + playlist.length) % playlist.length;
   };
 
   useMediaSession({
@@ -147,7 +130,14 @@ export default function Player({ playlist }: Props) {
   });
 
   return (
-    <div className="flex w-full max-w-md flex-col items-center justify-center gap-4 rounded-md border border-slate-200 p-4 shadow-md transition-transform hover:scale-105">
+    <div
+      className={cn(
+        'flex w-full flex-col items-center justify-center',
+        isFullscreen
+          ? 'text-forground w-full bg-background'
+          : 'max-w-md rounded-md border border-slate-200 p-4 shadow-md transition-transform hover:scale-105'
+      )}
+    >
       {typeof currentTrack === 'number' && (
         <>
           <audio
@@ -164,38 +154,66 @@ export default function Player({ playlist }: Props) {
 
           <AudioVisualizer audioId="audio" isPlaying={isPlaying} />
 
-          <PlayerControls
-            isPlaying={isPlaying}
-            volumeRef={volumeRef}
-            togglePlayPause={togglePlayPause}
-            handlePreviousTrack={handlePreviousTrack}
-            toggleShuffle={toggleShuffle}
-            handleNextTrack={handleNextTrack}
-            togglePlaylistOpen={togglePlaylistOpen}
-            isShuffled={isShuffled}
-          />
+          {isFullscreen ? (
+            <>
+              {/* Minimal fullscreen controls */}
+              <PlayerControls
+                isPlaying={isPlaying}
+                volumeRef={volumeRef}
+                togglePlayPause={togglePlayPause}
+                handlePreviousTrack={handlePreviousTrack}
+                toggleShuffle={toggleShuffle}
+                handleNextTrack={handleNextTrack}
+                togglePlaylistOpen={togglePlaylistOpen}
+                isShuffled={isShuffled}
+              />
+              <Range
+                currentTime={currentTime}
+                setCurrentTime={setCurrentTime}
+                duration={duration}
+                audioRef={audioRef}
+              />
 
-          <Range
-            currentTime={currentTime}
-            setCurrentTime={setCurrentTime}
-            duration={duration}
-            audioRef={audioRef}
-          />
+              <TrackInfo
+                currentTrackId={currentTrack}
+                duration={duration}
+                currentTime={currentTime}
+              />
+            </>
+          ) : (
+            <>
+              <PlayerControls
+                isPlaying={isPlaying}
+                volumeRef={volumeRef}
+                togglePlayPause={togglePlayPause}
+                handlePreviousTrack={handlePreviousTrack}
+                toggleShuffle={toggleShuffle}
+                handleNextTrack={handleNextTrack}
+                togglePlaylistOpen={togglePlaylistOpen}
+                isShuffled={isShuffled}
+              />
 
-          <PlaylistDialog
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            setCurrentTrack={setCurrentTrack}
-          />
+              <Range
+                currentTime={currentTime}
+                setCurrentTime={setCurrentTime}
+                duration={duration}
+                audioRef={audioRef}
+              />
+
+              <PlaylistDialog
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                setCurrentTrack={setCurrentTrack}
+              />
+
+              <TrackInfo
+                currentTrackId={currentTrack}
+                duration={duration}
+                currentTime={currentTime}
+              />
+            </>
+          )}
         </>
-      )}
-
-      {typeof currentTrack === 'number' && (
-        <TrackInfo
-          currentTrackId={currentTrack}
-          duration={duration}
-          currentTime={currentTime}
-        />
       )}
     </div>
   );

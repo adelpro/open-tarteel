@@ -12,7 +12,6 @@ import HtmlWrapper from '@/components/html-wrapper';
 import IntlProviderWrapper from '@/components/intl-provider-wrapper';
 import LanguageSwitcher from '@/components/language-switcher';
 import { fullscreenAtom } from '@/jotai/atom';
-import { clientConfig } from '@/utils';
 const tajawal = Tajawal({
   weight: ['400', '700', '900'],
   subsets: ['arabic'],
@@ -38,10 +37,12 @@ export default function RootLayout({
     <IntlProviderWrapper>
       <HtmlWrapper>
         <body className={`${tajawal.className} antialiased`}>
-          <main className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background text-foreground">
+          <main className="relative flex min-h-dvh w-full flex-col items-center justify-center text-foreground">
             {isFullscreen ? <ExitFullscreen /> : <></>}
             {isFullscreen ? <></> : <LanguageSwitcher />}
-            <div className="w-full flex-grow">{children}</div>
+            <div className="flex w-full flex-grow items-center justify-center">
+              {children}
+            </div>
             {isFullscreen ? <></> : <Footer />}
           </main>
         </body>

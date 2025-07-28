@@ -72,6 +72,41 @@ export default function PlayerControls({
     }
   };
 
+  if (isFullscreen) {
+    // Minimal fullscreen controls UI
+    return (
+      <div className="flex items-center justify-center gap-8 py-6">
+        <button
+          onClick={handleNextTrack}
+          className="rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+          aria-label="Next track"
+        >
+          <Image src={forwardSVG} alt="next" width={50} height={50} />
+        </button>
+        <button
+          onClick={togglePlayPause}
+          className="rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+          aria-label={isPlaying ? 'Pause' : 'Play'}
+        >
+          <Image
+            src={isPlaying ? pauseSVG : playSVG}
+            alt="play/pause"
+            width={60}
+            height={60}
+          />
+        </button>
+        <button
+          onClick={handlePreviousTrack}
+          className="rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+          aria-label="Previous track"
+        >
+          <Image src={backwardSVG} alt="previous" width={50} height={50} />
+        </button>
+      </div>
+    );
+  }
+
+  // Default controls UI (non-fullscreen)
   return (
     <div className="relative flex w-full items-center justify-between gap-2 md:gap-4">
       {/* Volume control */}
@@ -83,7 +118,7 @@ export default function PlayerControls({
         <button
           onClick={toggleFullscreen}
           className="rounded p-2 hover:bg-gray-200"
-          aria-label="Next track"
+          aria-label="Toggle fullscreen"
         >
           <Image
             src={isFullscreen ? fullscreenExitSVG : fullScreenSVG}
@@ -123,7 +158,9 @@ export default function PlayerControls({
               style={{
                 writingMode: 'vertical-lr',
                 WebkitAppearance: 'slider-vertical',
-                background: `linear-gradient(to top, #3b82f6 0%, #3b82f6 ${volume * 100}%, #cbd5e1 ${volume * 100}%, #cbd5e1 100%)`,
+                background: `linear-gradient(to top, #3b82f6 0%, #3b82f6 ${
+                  volume * 100
+                }%, #cbd5e1 ${volume * 100}%, #cbd5e1 100%)`,
                 borderRadius: '9999px',
               }}
             />

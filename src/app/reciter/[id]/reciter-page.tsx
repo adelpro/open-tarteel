@@ -29,7 +29,13 @@ export default function ReciterPage() {
       <div className="flex w-full max-w-lg flex-col items-center justify-center gap-4">
         <DevTools />
         {isFullscreen ? <></> : <ReciterSelector />}
-
+        {isFullscreen ? (
+          <p className="mb-10 flex items-center justify-center gap-2 text-4xl font-bold text-gray-500">
+            {selectedReciter?.name}
+          </p>
+        ) : (
+          <></>
+        )}
         {selectedReciter?.moshaf && (
           <Suspense fallback={<SimpleSkeleton />}>
             <Player playlist={selectedReciter.moshaf.playlist} />

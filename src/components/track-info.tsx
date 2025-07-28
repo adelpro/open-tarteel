@@ -43,7 +43,7 @@ export default function TrackInfo({
   };
 
   return (
-    <div className="flex items-center justify-center gap-2 font-bold text-gray-500">
+    <div className="mt-3 flex items-center justify-center gap-2 font-bold text-gray-500">
       <span>{`${surahId} - ${surahName()}`}</span>
       <span>{`(${formatTime(currentTime)} ${formatTime(duration)})`}</span>
     </div>
