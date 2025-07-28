@@ -1,3 +1,5 @@
+import fullScreenSVG from '@svgs/fullscreen.svg';
+import fullscreenExitSVG from '@svgs/fullscreen-exit.svg';
 import backwardSVG from '@svgs/music-backward.svg';
 import forwardSVG from '@svgs/music-forward.svg';
 import pauseSVG from '@svgs/music-pause.svg';
@@ -12,7 +14,7 @@ import Image from 'next/image';
 import React, { RefObject, useEffect, useState } from 'react';
 import { BiVolumeFull, BiVolumeMute } from 'react-icons/bi';
 
-import { showVisualizerAtom, volumeAtom } from '@/jotai/atom';
+import { fullscreenAtom, showVisualizerAtom, volumeAtom } from '@/jotai/atom';
 import { cn } from '@/utils';
 
 type Props = {
@@ -39,6 +41,7 @@ export default function PlayerControls({
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [showVisualizer, setShowVisualizer] = useAtom(showVisualizerAtom);
   const [volume, setVolume] = useAtom(volumeAtom);
+  const [isFullscreen, setIsFullscreen] = useAtom(fullscreenAtom);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -59,6 +62,16 @@ export default function PlayerControls({
     };
   }, [showVolumeSlider, volumeRef]);
 
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    } else {
+      document.documentElement.requestFullscreen();
+      setIsFullscreen(true);
+    }
+  };
+
   return (
     <div className="relative flex w-full items-center justify-between gap-2 md:gap-4">
       {/* Volume control */}
@@ -67,6 +80,18 @@ export default function PlayerControls({
         ref={volumeRef}
         style={{ touchAction: 'none' }} // prevent scroll during drag
       >
+        <button
+          onClick={toggleFullscreen}
+          className="rounded p-2 hover:bg-gray-200"
+          aria-label="Next track"
+        >
+          <Image
+            src={isFullscreen ? fullscreenExitSVG : fullScreenSVG}
+            alt="fullscreen"
+            width={30}
+            height={30}
+          />
+        </button>
         <button
           onClick={() => setShowVolumeSlider((v) => !v)}
           className="rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-700"

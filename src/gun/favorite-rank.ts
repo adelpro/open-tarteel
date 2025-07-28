@@ -1,12 +1,11 @@
 import Gun from 'gun';
 
-import { GUN_PEERS } from '@/constants';
+import { FAVORITE_COUNTS_KEY, GUN_PEERS } from '@/constants';
 
 const gun = Gun({
   peers: [GUN_PEERS],
 });
 
-const FAVORITE_COUNTS_KEY = 'favoriteCounts';
 const favoriteCountsNode = gun.get(FAVORITE_COUNTS_KEY);
 
 /**

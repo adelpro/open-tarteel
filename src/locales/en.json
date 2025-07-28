@@ -1,6 +1,9 @@
 {
   "appName": "The Holy Quran",
   "appDescription": "Heartfelt recitations without ads, tracking, or distractions.",
+
+  "close": "Close",
+
   "footer.home": "Home",
   "footer.about": "About the app",
   "footer.privacy": "Privacy Policy",
@@ -82,5 +85,9 @@
 
   "share.message": "Listen to this reciter on Tarteel",
   "share.fallback": "Link copied to clipboard!",
-  "share.fallback.error": "Failed to copy link."
+  "share.fallback.error": "Failed to copy link.",
+
+  "underConstruction.message": "The app is under development",
+  "underConstruction.doNotShowAgain": "Do not show this message again",
+  "underConstruction.title": "Under Construction"
 }

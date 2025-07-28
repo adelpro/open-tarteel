@@ -10,6 +10,14 @@ export const selectedRiwayaAtom = createAtomWithStorage<Riwaya | 'all'>(
   'selected-riwaya',
   'all'
 );
+export const hideUnderConstructionAtom = createAtomWithStorage<boolean>(
+  'hide-under-construction',
+  false
+);
+export const fullscreenAtom = createAtomWithStorage<boolean>(
+  'fullscreen',
+  false
+);
 export const showVisualizerAtom = createAtomWithStorage<boolean>(
   'show-visualizer',
   true

@@ -1,6 +1,9 @@
 {
   "appName": "القرآن الكريم",
   "appDescription": "تلاوات تلامس القلب دون إعلانات، تتبع، ولا إلهاء.",
+
+  "close": "إغلاق",
+
   "footer.home": "الصفحة الرئيسية",
   "footer.about": "معلومات عن التطبيق",
   "footer.privacy": "سياسة الخصوصية",
@@ -82,5 +85,9 @@
 
   "share.message": "استمع إلى هذا القارئ على Tarteel",
   "share.fallback": "تم نسخ الرابط إلى الحافظة!",
-  "share.fallback.error": "فشل نسخ الرابط."
+  "share.fallback.error": "فشل نسخ الرابط.",
+
+  "underConstruction.message": "التطبيق قيد التطوير",
+  "underConstruction.doNotShowAgain": "لا تعرض هذا مرة أخرى",
+  "underConstruction.title": "قيد الإنشاء"
 }

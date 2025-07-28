@@ -1,12 +1,11 @@
 import Gun from 'gun';
 
-import { GUN_PEERS } from '@/constants';
+import { GUN_PEERS, VIEW_COUNTS_KEY } from '@/constants';
 
 const gun = Gun({
   peers: [GUN_PEERS],
 });
 
-const VIEW_COUNTS_KEY = 'viewCounts';
 const viewCountsNode = gun.get(VIEW_COUNTS_KEY);
 
 export async function fetchViewCounts(): Promise<Record<string, number>> {
