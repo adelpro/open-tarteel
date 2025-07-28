@@ -24,15 +24,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const [isFullscreen, setIsFullscreen] = useAtom(fullscreenAtom);
+
+  // Sync atom with actual fullscreen state (handles ESC key, user exit)
   useEffect(() => {
-    if (isFullscreen) {
-      document.documentElement.requestFullscreen();
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
+    function onFullscreenChange() {
+      const isFull = !!document.fullscreenElement;
+      setIsFullscreen(isFull);
     }
-  }, [isFullscreen, setIsFullscreen]);
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    return () =>
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+  }, [setIsFullscreen]);
+
   return (
     <IntlProviderWrapper>
       <HtmlWrapper>

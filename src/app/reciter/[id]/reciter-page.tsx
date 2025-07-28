@@ -1,6 +1,6 @@
 'use client';
 
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { DevTools } from 'jotai-devtools';
 import dynamic from 'next/dynamic';
 import { Suspense, useEffect } from 'react';
@@ -16,13 +16,20 @@ const Player = dynamic(() => import('@/components/player'), { ssr: false });
 
 export default function ReciterPage() {
   const selectedReciter = useAtomValue(selectedReciterAtom);
-  const isFullscreen = useAtomValue(fullscreenAtom);
+  const [isFullscreen, setFullscreen] = useAtom(fullscreenAtom);
+
   useEffect(() => {
-    if (selectedReciter) {
-      const key = `${selectedReciter.id}-${selectedReciter.moshaf.id}`;
-      syncView(key);
+    console.log('test');
+    function handleKeyDown(event: KeyboardEvent) {
+      console.log(event.key);
+      if (event.key === 'Escape' && isFullscreen) {
+        setFullscreen(false);
+      }
     }
-  }, [selectedReciter]);
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen, setFullscreen]);
 
   return (
     <div className="flex w-full items-center justify-center p-4 md:p-6">

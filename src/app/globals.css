@@ -19,18 +19,35 @@ body {
   background: var(--background);
 }
 
+.square-thumb {
+  -webkit-appearance: none;
+}
+
 .square-thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 32px;
+  height: 32px;
+  background-color: #d3d3d3;
+  /* light gray bg */
+  border: 1.5px solid #aaa;
+  /* subtle border */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='blue'%3E%3Cpath d='M6 4h4v16H6V4zm8 0h4v16h-4V4z'/%3E%3C/svg%3E");
-  background-size: 50%;
+  background-size: 60% 60%;
   background-position: center;
   background-repeat: no-repeat;
   cursor: pointer;
+  border-radius: 4px;
 }
 
 .square-thumb::-moz-range-thumb {
+  width: 32px;
+  height: 32px;
+  background-color: #d3d3d3;
+  border: 1.5px solid #aaa;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='blue'%3E%3Cpath d='M6 4h4v16H6V4zm8 0h4v16h-4V4z'/%3E%3C/svg%3E");
-  background-size: 50%;
+  background-size: 60% 60%;
   background-position: center;
   background-repeat: no-repeat;
   cursor: pointer;
+  border-radius: 4px;
 }
