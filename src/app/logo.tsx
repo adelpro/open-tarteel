@@ -1,8 +1,12 @@
 'use client';
+import { useAtom, useAtomValue } from 'jotai';
 import Image from 'next/image';
 import { FormattedMessage } from 'react-intl';
 
+import { fullscreenAtom } from '@/jotai/atom';
+
 export default function Hero() {
+  const isFullscreen = useAtomValue(fullscreenAtom);
   return (
     <section
       className="mt-10 flex flex-col items-center justify-center px-4 text-center"
@@ -20,15 +24,23 @@ export default function Hero() {
           itemProp="image"
         />
       </div>
-      <h1 className="mb-3 text-4xl font-extrabold" itemProp="headline">
-        <FormattedMessage id="appName" />
-      </h1>
-      <p
-        className="max-w-lg text-lg text-gray-700 dark:text-gray-300"
-        itemProp="description"
-      >
-        <FormattedMessage id="appDescription" />
-      </p>
+      {isFullscreen ? (
+        <></>
+      ) : (
+        <h1 className="mb-3 text-4xl font-extrabold" itemProp="headline">
+          <FormattedMessage id="appName" />
+        </h1>
+      )}
+      {isFullscreen ? (
+        <></>
+      ) : (
+        <p
+          className="max-w-lg text-lg text-gray-700 dark:text-gray-300"
+          itemProp="description"
+        >
+          <FormattedMessage id="appDescription" />
+        </p>
+      )}
     </section>
   );
 }

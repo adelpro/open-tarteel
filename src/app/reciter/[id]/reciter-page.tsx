@@ -9,14 +9,14 @@ import PwaUpdater from '@/components/pwa-updater';
 import ReciterSelector from '@/components/reciter-selector';
 import SimpleSkeleton from '@/components/simple-skeleton';
 import { syncView } from '@/gun/view-rank';
-import { selectedReciterAtom } from '@/jotai/atom';
+import { fullscreenAtom, selectedReciterAtom } from '@/jotai/atom';
 
 // ✅ Move dynamic import outside the component
 const Player = dynamic(() => import('@/components/player'), { ssr: false });
 
 export default function ReciterPage() {
   const selectedReciter = useAtomValue(selectedReciterAtom);
-
+  const isFullscreen = useAtomValue(fullscreenAtom);
   useEffect(() => {
     if (selectedReciter) {
       const key = `${selectedReciter.id}-${selectedReciter.moshaf.id}`;
@@ -28,7 +28,7 @@ export default function ReciterPage() {
     <div className="flex w-full items-center justify-center p-4 md:p-6">
       <div className="flex w-full max-w-lg flex-col items-center justify-center gap-4">
         <DevTools />
-        <ReciterSelector />
+        {isFullscreen ? <></> : <ReciterSelector />}
 
         {selectedReciter?.moshaf && (
           <Suspense fallback={<SimpleSkeleton />}>
