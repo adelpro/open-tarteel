@@ -1,47 +1,82 @@
 'use client';
 
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { DevTools } from 'jotai-devtools';
 import dynamic from 'next/dynamic';
-import { Suspense, useEffect } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import React, { Suspense, useEffect } from 'react';
 
 import PwaUpdater from '@/components/pwa-updater';
 import ReciterSelector from '@/components/reciter-selector';
 import SimpleSkeleton from '@/components/simple-skeleton';
-import { syncView } from '@/gun/view-rank';
+import { useReciters } from '@/hooks/use-reciters';
 import { fullscreenAtom, selectedReciterAtom } from '@/jotai/atom';
 
-// ✅ Move dynamic import outside the component
 const Player = dynamic(() => import('@/components/player'), { ssr: false });
 
-export default function ReciterPage() {
+function ReciterContent() {
+  const { reciters } = useReciters();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   const selectedReciter = useAtomValue(selectedReciterAtom);
+  const setSelectedReciter = useSetAtom(selectedReciterAtom);
   const [isFullscreen, setFullscreen] = useAtom(fullscreenAtom);
 
+  const reciterId = pathname.split('/')[2];
+  const moshafId = searchParams.get('moshafId');
+
   useEffect(() => {
-    console.log('test');
-    function handleKeyDown(event: KeyboardEvent) {
-      console.log(event.key);
-      if (event.key === 'Escape' && isFullscreen) {
-        setFullscreen(false);
+    if (!reciterId || !moshafId || reciters.length === 0) return;
+
+    const fullReciter = reciters.find(
+      (r) => r.id.toString() === reciterId && r.moshaf?.id === moshafId
+    );
+
+    if (fullReciter) {
+      if (
+        !selectedReciter ||
+        selectedReciter.id !== fullReciter.id ||
+        selectedReciter.moshaf.id !== fullReciter.moshaf.id
+      ) {
+        setSelectedReciter(fullReciter);
       }
+    } else {
+      router.replace('/');
     }
+  }, [
+    reciterId,
+    moshafId,
+    reciters,
+    selectedReciter,
+    setSelectedReciter,
+    router,
+  ]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setFullscreen(false);
+    };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreen, setFullscreen]);
+  }, [setFullscreen]);
+
+  if (!selectedReciter) {
+    // Still no selected reciter: show skeleton (prevents hydration mismatch)
+    return <SimpleSkeleton />;
+  }
 
   return (
     <div className="flex w-full items-center justify-center p-4 md:p-6">
       <div className="flex w-full max-w-lg flex-col items-center justify-center gap-4">
-        <DevTools />
-        {isFullscreen ? <></> : <ReciterSelector />}
-        {isFullscreen ? (
+        {process.env.NODE_ENV === 'development' && <DevTools />}
+        {!isFullscreen && <ReciterSelector />}
+        {isFullscreen && (
           <p className="mb-10 flex items-center justify-center gap-2 text-4xl font-bold text-gray-500">
             {selectedReciter?.name}
           </p>
-        ) : (
-          <></>
         )}
         {selectedReciter?.moshaf && (
           <Suspense fallback={<SimpleSkeleton />}>
@@ -51,5 +86,13 @@ export default function ReciterPage() {
         <PwaUpdater />
       </div>
     </div>
+  );
+}
+
+export default function ReciterPage() {
+  return (
+    <Suspense fallback={<SimpleSkeleton />}>
+      <ReciterContent />
+    </Suspense>
   );
 }
