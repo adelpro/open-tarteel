@@ -4,6 +4,7 @@ import { GUN_PEERS, VIEW_COUNTS_KEY } from '@/constants';
 
 const gun = Gun({
   peers: [GUN_PEERS],
+  radisk: false,
 });
 
 const viewCountsNode = gun.get(VIEW_COUNTS_KEY);

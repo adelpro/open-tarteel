@@ -15,44 +15,9 @@ import { fullscreenAtom, selectedReciterAtom } from '@/jotai/atom';
 const Player = dynamic(() => import('@/components/player'), { ssr: false });
 
 function ReciterContent() {
-  const { reciters } = useReciters();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
   const selectedReciter = useAtomValue(selectedReciterAtom);
-  const setSelectedReciter = useSetAtom(selectedReciterAtom);
+
   const [isFullscreen, setFullscreen] = useAtom(fullscreenAtom);
-
-  const reciterId = pathname.split('/')[2];
-  const moshafId = searchParams.get('moshafId');
-
-  useEffect(() => {
-    if (!reciterId || !moshafId || reciters.length === 0) return;
-
-    const fullReciter = reciters.find(
-      (r) => r.id.toString() === reciterId && r.moshaf?.id === moshafId
-    );
-
-    if (fullReciter) {
-      if (
-        !selectedReciter ||
-        selectedReciter.id !== fullReciter.id ||
-        selectedReciter.moshaf.id !== fullReciter.moshaf.id
-      ) {
-        setSelectedReciter(fullReciter);
-      }
-    } else {
-      router.replace('/');
-    }
-  }, [
-    reciterId,
-    moshafId,
-    reciters,
-    selectedReciter,
-    setSelectedReciter,
-    router,
-  ]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -63,10 +28,10 @@ function ReciterContent() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [setFullscreen]);
 
-  if (!selectedReciter) {
+  /*   if (!selectedReciter) {
     // Still no selected reciter: show skeleton (prevents hydration mismatch)
     return <SimpleSkeleton />;
-  }
+  } */
 
   return (
     <div className="flex w-full items-center justify-center p-4 md:p-6">

@@ -4,6 +4,7 @@ import { FAVORITE_COUNTS_KEY, GUN_PEERS } from '@/constants';
 
 const gun = Gun({
   peers: [GUN_PEERS],
+  radisk: false,
 });
 
 const favoriteCountsNode = gun.get(FAVORITE_COUNTS_KEY);
