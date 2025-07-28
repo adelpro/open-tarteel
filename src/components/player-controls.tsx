@@ -93,6 +93,9 @@ export default function PlayerControls({
             alt="play/pause"
             width={60}
             height={60}
+            className={cn({
+              'animate-slideInWithFade': isPlaying,
+            })}
           />
         </button>
         <button
