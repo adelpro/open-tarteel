@@ -196,18 +196,20 @@ export default function RecitersList({ setIsOpen }: Props) {
                 aria-label={showOnlyFavorites ? showAll : showFavorite}
                 title={showOnlyFavorites ? showFavorite : showAll}
                 onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
-                className={`rounded-full p-1.5 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:hover:bg-gray-700 ${showOnlyFavorites ? 'bg-yellow-500 text-white' : ''}`}
+                className="rounded-full p-1.5 hover:bg-gray-200 focus:outline-none focus:ring-2 dark:hover:bg-gray-700"
                 tabIndex={0}
               >
                 {showOnlyFavorites ? (
                   <BsStarFill
                     className="size-5"
                     aria-label="favorite star icon"
+                    color="#f59e0b"
                   />
                 ) : (
                   <BsStar
                     className="size-5 text-black"
                     aria-label="favorite star icon"
+                    color="#6B7280"
                   />
                 )}
               </button>
