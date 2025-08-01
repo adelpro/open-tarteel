@@ -86,6 +86,7 @@ export default function ReciterSelector() {
               ) : (
                 <BsStar
                   size={25}
+                  color="#6B7280"
                   className="cursor-pointer"
                   onClick={(event) => {
                     event.stopPropagation();

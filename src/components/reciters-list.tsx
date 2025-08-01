@@ -161,7 +161,7 @@ export default function RecitersList({ setIsOpen }: Props) {
             onChange={handleSearchTerm}
             className="transitiont w-full rounded-full border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:outline-none"
           />
-          <div className="absolute inset-y-0 left-2 flex items-center gap-2 pr-2">
+          <div className="absolute inset-y-0 end-2 flex items-center gap-2 pr-2">
             <button
               aria-label={sort}
               title={
