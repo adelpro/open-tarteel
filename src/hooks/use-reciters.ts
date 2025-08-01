@@ -9,9 +9,7 @@ import type { Reciter } from '@/types';
 import { getAllReciters } from '@/utils/api';
 
 export function useReciters() {
-  const intlLanguage = useIntl().locale;
-  const language = intlLanguage === 'en' ? 'en' : 'ar';
-
+  const locale = useIntl().locale as 'ar' | 'en';
   const [reciters, setReciters] = useState<Reciter[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -19,32 +17,39 @@ export function useReciters() {
   const [selectedReciter, setSelectedReciter] = useAtom(selectedReciterAtom);
 
   useEffect(() => {
-    async function load() {
+    let isMounted = true;
+
+    const fetchReciters = async () => {
       try {
         setLoading(true);
-        setError(null);
-        const data = await getAllReciters(language);
+        const data = await getAllReciters(locale);
+        if (!isMounted) return;
+
         setReciters(data);
 
-        const oldReciterId = selectedReciter?.id;
-        const newSelectedReciter = data.find(
-          (item) => item.id === oldReciterId
-        );
-
-        // Update only if different or not set
-        if (newSelectedReciter && oldReciterId !== newSelectedReciter.id) {
-          setSelectedReciter(newSelectedReciter);
+        if (selectedReciter) {
+          const matched = data.find((r) => r.id === selectedReciter.id);
+          setSelectedReciter(matched ?? null); // Reset if not found
         }
       } catch {
-        setError('فشل في تحميل القراء. يرجى المحاولة مرة أخرى.');
+        if (isMounted) {
+          setError(
+            locale === 'ar'
+              ? 'فشل في تحميل القراء. يرجى المحاولة مرة أخرى.'
+              : 'Failed to load reciters. Please try again.'
+          );
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
-    }
+    };
 
-    load();
-    // Removed selectedReciter?.id from deps to avoid loop
-  }, [language, selectedReciter?.id, setSelectedReciter]);
+    fetchReciters();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [locale]);
 
   return { reciters, loading, error };
 }

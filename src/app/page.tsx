@@ -22,7 +22,6 @@ export default function Home() {
     const targetPath = `/reciter/${selectedReciter.id}?moshafId=${selectedReciter.moshaf.id}`;
 
     if (currentPath !== targetPath) {
-      console.log(targetPath);
       router.push(targetPath);
     }
   }, [selectedReciter, pathname, searchParams, router]);

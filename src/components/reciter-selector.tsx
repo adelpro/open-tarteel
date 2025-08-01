@@ -2,7 +2,7 @@
 
 import { useAtomValue } from 'jotai';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { BsShare, BsStar, BsStarFill } from 'react-icons/bs';
 import { useIntl } from 'react-intl';
 
@@ -16,27 +16,23 @@ import ReciterSelectorDialog from './reciter-selector-dialog';
 
 export default function ReciterSelector() {
   const [isOpen, setIsOpen] = useState(false);
-  const selectedReciterValue = useAtomValue(selectedReciterAtom);
+  const selectedReciter = useAtomValue(selectedReciterAtom);
   const { toggleFavorite, favoriteReciters } = useFavorites();
-  const { formatMessage } = useIntl();
+  const { formatMessage, locale } = useIntl();
   const { shareReciter } = useShareReciter();
 
   const handleSearch = () => setIsOpen(true);
 
   const displayedReciterName =
-    selectedReciterValue?.name ??
+    selectedReciter?.name ??
     formatMessage({ id: 'reciter.select', defaultMessage: 'Select A Reciter' });
 
-  const favId = selectedReciterValue
-    ? generateFavId(selectedReciterValue)
-    : null;
+  const favId = selectedReciter ? generateFavId(selectedReciter) : null;
   const isFavorite = favId ? favoriteReciters.includes(favId) : false;
 
   const handleShare = async (event: React.MouseEvent | React.KeyboardEvent) => {
     event.stopPropagation();
-
-    if (!selectedReciterValue) return;
-    shareReciter(selectedReciterValue);
+    if (selectedReciter) shareReciter(selectedReciter);
   };
 
   return (
@@ -49,9 +45,10 @@ export default function ReciterSelector() {
           aria-label="Open reciter selector"
         >
           <span>{displayedReciterName}</span>
+
           <div className="flex items-center gap-2">
             {/* Share */}
-            {selectedReciterValue && (
+            {selectedReciter && (
               <BsShare
                 size={22}
                 className="cursor-pointer text-gray-500 hover:text-blue-600"
@@ -68,7 +65,7 @@ export default function ReciterSelector() {
             )}
 
             {/* Favorite */}
-            {selectedReciterValue &&
+            {selectedReciter &&
               favId &&
               (isFavorite ? (
                 <BsStarFill
