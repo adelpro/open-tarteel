@@ -154,6 +154,8 @@ export default function Player({ playlist }: Props) {
 
           <AudioBarsVisualizer audioId="audio" isPlaying={isPlaying} />
 
+          {/* <AudioWavesVisualizer audioId="audio" isPlaying={isPlaying} /> */}
+
           {isFullscreen ? (
             <>
               {/* Minimal fullscreen controls */}

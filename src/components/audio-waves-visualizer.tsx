@@ -1,5 +1,3 @@
-'use client';
-
 import { useAtomValue } from 'jotai';
 import { useEffect, useRef } from 'react';
 
@@ -49,7 +47,7 @@ type FrameSnapshot = {
   phase: number;
 };
 
-export default function EchoWaveVisualizer({
+export default function AudioWaveVisualizer({
   audioId,
   isPlaying,
 }: AudioVisualizerProps) {

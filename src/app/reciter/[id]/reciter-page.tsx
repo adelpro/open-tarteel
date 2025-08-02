@@ -56,7 +56,13 @@ function ReciterContent() {
 
 export default function ReciterPage() {
   return (
-    <Suspense fallback={<SimpleSkeleton />}>
+    <Suspense
+      fallback={
+        <div className="flex w-full max-w-md items-center justify-center p-4 md:p-6">
+          <SimpleSkeleton />
+        </div>
+      }
+    >
       <ReciterContent />
     </Suspense>
   );

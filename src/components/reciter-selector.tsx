@@ -3,7 +3,8 @@
 import { useAtomValue } from 'jotai';
 import Image from 'next/image';
 import { useState } from 'react';
-import { BsShare, BsStar, BsStarFill } from 'react-icons/bs';
+import { BsStar, BsStarFill } from 'react-icons/bs';
+import { FaRegShareFromSquare } from 'react-icons/fa6';
 import { useIntl } from 'react-intl';
 
 import { useFavorites } from '@/hooks/use-favorites';
@@ -18,7 +19,7 @@ export default function ReciterSelector() {
   const [isOpen, setIsOpen] = useState(false);
   const selectedReciter = useAtomValue(selectedReciterAtom);
   const { toggleFavorite, favoriteReciters } = useFavorites();
-  const { formatMessage, locale } = useIntl();
+  const { formatMessage } = useIntl();
   const { shareReciter } = useShareReciter();
 
   const handleSearch = () => setIsOpen(true);
@@ -49,7 +50,7 @@ export default function ReciterSelector() {
           <div className="flex items-center gap-2">
             {/* Share */}
             {selectedReciter && (
-              <BsShare
+              <FaRegShareFromSquare
                 size={22}
                 className="cursor-pointer text-gray-500 hover:text-blue-600"
                 onClick={handleShare}
