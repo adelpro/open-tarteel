@@ -31,7 +31,7 @@ export default function AudioBarsVisualizer({
     };
   }, []);
 
-  if (!showVisualizer || !isPlaying) {
+  if (!showVisualizer) {
     return null;
   }
 
@@ -46,6 +46,7 @@ export default function AudioBarsVisualizer({
         meterWidth={10}
         meterColor="#0191e2"
         gap={4}
+        silent={!isPlaying}
       />
     </div>
   );
