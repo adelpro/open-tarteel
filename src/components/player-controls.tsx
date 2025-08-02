@@ -12,7 +12,13 @@ import spectrumDisabledSVG from '@svgs/spectrum-disabled.svg';
 import { useAtom } from 'jotai';
 import Image from 'next/image';
 import React, { RefObject, useEffect, useState } from 'react';
-import { BiVolumeFull, BiVolumeMute } from 'react-icons/bi';
+import {
+  BiExitFullscreen,
+  BiFullscreen,
+  BiVolumeFull,
+  BiVolumeMute,
+} from 'react-icons/bi';
+import { BsFullscreen, BsFullscreenExit } from 'react-icons/bs';
 
 import { fullscreenAtom, showVisualizerAtom, volumeAtom } from '@/jotai/atom';
 import { cn } from '@/utils';
@@ -126,12 +132,7 @@ export default function PlayerControls({
           className="rounded p-2 hover:bg-gray-200"
           aria-label="Toggle fullscreen"
         >
-          <Image
-            src={isFullscreen ? fullscreenExitSVG : fullScreenSVG}
-            alt="fullscreen"
-            width={30}
-            height={30}
-          />
+          {isFullscreen ? <BsFullscreenExit /> : <BsFullscreen />}
         </button>
         <button
           onClick={() => setShowVolumeSlider((v) => !v)}

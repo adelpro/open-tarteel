@@ -9,12 +9,12 @@ export default function Hero() {
   const isFullscreen = useAtomValue(fullscreenAtom);
   return (
     <section
-      className="mt-10 flex flex-col items-center justify-center px-4 text-center"
+      className="mt-2 flex flex-col items-center justify-center px-4 text-center"
       aria-label="Hero section"
       itemScope
       itemType="https://schema.org/WebPage"
     >
-      <div className="mb-6 flex justify-center">
+      <div className="mb-2 flex justify-center">
         <Image
           src="/images/logo.png"
           alt="القرآن الكريم Logo"
@@ -34,10 +34,7 @@ export default function Hero() {
       {isFullscreen ? (
         <></>
       ) : (
-        <p
-          className="max-w-lg text-lg text-gray-700 dark:text-gray-300"
-          itemProp="description"
-        >
+        <p className="max-w-lg text-lg" itemProp="description">
           <FormattedMessage id="appDescription" />
         </p>
       )}
