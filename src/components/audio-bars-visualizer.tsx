@@ -11,7 +11,7 @@ type AudioVisualizerProps = {
   isPlaying: boolean;
 };
 
-export default function AudioVisualizer({
+export default function AudioBarsVisualizer({
   audioId,
   isPlaying,
 }: AudioVisualizerProps) {

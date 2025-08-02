@@ -7627,6 +7627,21 @@ vfile@^5.0.0:
     unist-util-stringify-position "^3.0.0"
     vfile-message "^3.0.0"
 
+wavesurfer-react@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/wavesurfer-react/-/wavesurfer-react-3.0.4.tgz#018c0c3928c688a5064b487cf8256d5a96c3fce7"
+  integrity sha512-Eq+9ihd28UhX23ZVRrg9llpfo4ejUbYZ8oMEx+XwoymHiwLw44GwYVAo+iUPl9W8aVxuoncBKjbslukvqv0kFw==
+
+wavesurfer.js@^7.10.1:
+  version "7.10.1"
+  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-7.10.1.tgz#c2f799a05d939cbb1e5df8aa7e0485ab44ad7594"
+  integrity sha512-tF1ptFCAi8SAqKbM1e7705zouLC3z4ulXCg15kSP5dQ7VDV30Q3x/xFRcuVIYTT5+jB/PdkhiBRCfsMshZG1Ug==
+
+wavesurfer@^1.3.4:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/wavesurfer/-/wavesurfer-1.3.4.tgz#17908abd20da11a8db460c5a176679621d519bfa"
+  integrity sha512-Td6t6x8vtBWHQu8ijX+OW5O1z3uDOmHrvOl2P7l1638Cy+8MWLM6kYYp7UDNQc3OZgukm8T6Z5+Dnvie9Rjw0w==
+
 wcwidth@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/wcwidth/-/wcwidth-1.0.1.tgz"

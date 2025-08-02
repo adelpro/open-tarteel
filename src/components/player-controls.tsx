@@ -111,7 +111,10 @@ export default function PlayerControls({
 
   // Default controls UI (non-fullscreen)
   return (
-    <div className="relative flex w-full items-center justify-between gap-2 md:gap-4">
+    <div
+      className="relative flex w-full items-center justify-between gap-2 md:gap-4"
+      dir="rtl"
+    >
       {/* Volume control */}
       <div
         className="relative flex touch-none items-center"
