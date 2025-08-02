@@ -40,7 +40,7 @@ export default function AudioBarsVisualizer({
       <ReactAudioSpectrum
         id="audio-spectrum"
         audioId={audioId}
-        height={100}
+        height={90}
         width={visualizerWidth}
         capColor="#0191e2"
         meterWidth={10}
