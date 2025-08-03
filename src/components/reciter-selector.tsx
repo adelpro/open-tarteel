@@ -38,7 +38,7 @@ export default function ReciterSelector() {
 
   return (
     <div className="flex w-full justify-center">
-      <div className="flex w-full max-w-md items-center justify-between gap-3 rounded-md border border-slate-200 p-2 shadow-md transition-transform hover:scale-105">
+      <div className="flex w-full max-w-lg items-center justify-between gap-3 rounded-md border border-slate-200 p-2 shadow-md transition-transform hover:scale-105">
         <button
           type="button"
           onClick={handleSearch}

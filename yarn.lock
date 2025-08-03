@@ -7627,6 +7627,11 @@ vfile@^5.0.0:
     unist-util-stringify-position "^3.0.0"
     vfile-message "^3.0.0"
 
+wavesurfer.js@^7.10.1:
+  version "7.10.1"
+  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-7.10.1.tgz#c2f799a05d939cbb1e5df8aa7e0485ab44ad7594"
+  integrity sha512-tF1ptFCAi8SAqKbM1e7705zouLC3z4ulXCg15kSP5dQ7VDV30Q3x/xFRcuVIYTT5+jB/PdkhiBRCfsMshZG1Ug==
+
 wcwidth@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/wcwidth/-/wcwidth-1.0.1.tgz"
