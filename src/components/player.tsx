@@ -132,14 +132,14 @@ export default function Player({ playlist }: Props) {
   return (
     <div
       className={cn(
-        'flex w-full flex-col items-center justify-center',
+        'flex w-full max-w-xl flex-col items-center justify-center',
         isFullscreen
           ? 'text-forground w-full bg-background'
-          : 'max-w-md rounded-md border border-slate-200 p-2 shadow-md transition-transform hover:scale-105'
+          : 'max-w-xl rounded-md border border-slate-200 p-2 shadow-md transition-transform hover:scale-105'
       )}
     >
       {typeof currentTrack === 'number' && (
-        <>
+        <div className="flex w-full flex-col items-center justify-center">
           <audio
             ref={audioRef}
             id="audio"
@@ -184,6 +184,7 @@ export default function Player({ playlist }: Props) {
             </>
           ) : (
             <>
+              {/* Full player controls */}
               <PlayerControls
                 isPlaying={isPlaying}
                 volumeRef={volumeRef}
@@ -215,7 +216,7 @@ export default function Player({ playlist }: Props) {
               />
             </>
           )}
-        </>
+        </div>
       )}
     </div>
   );

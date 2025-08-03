@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 
 import { fullscreenAtom } from '@/jotai/atom';
 
-export default function Hero() {
+export default function Logo() {
   const isFullscreen = useAtomValue(fullscreenAtom);
   return (
     <section

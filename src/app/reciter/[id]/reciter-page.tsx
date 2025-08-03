@@ -1,15 +1,12 @@
 'use client';
 
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { DevTools } from 'jotai-devtools';
+import { useAtom, useAtomValue } from 'jotai';
 import dynamic from 'next/dynamic';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect } from 'react';
 
 import PwaUpdater from '@/components/pwa-updater';
 import ReciterSelector from '@/components/reciter-selector';
 import SimpleSkeleton from '@/components/simple-skeleton';
-import { useReciters } from '@/hooks/use-reciters';
 import { fullscreenAtom, selectedReciterAtom } from '@/jotai/atom';
 
 const Player = dynamic(() => import('@/components/player'), { ssr: false });
@@ -28,18 +25,17 @@ function ReciterContent() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [setFullscreen]);
 
-  /*   if (!selectedReciter) {
+  if (!selectedReciter) {
     // Still no selected reciter: show skeleton (prevents hydration mismatch)
     return <SimpleSkeleton />;
-  } */
+  }
 
   return (
-    <div className="flex w-full items-center justify-center p-4 md:p-6">
-      <div className="flex w-full max-w-lg flex-col items-center justify-center gap-4">
-        {process.env.NODE_ENV === 'development' && <DevTools />}
+    <div className="flex w-full items-center justify-center p-4 md:p-2">
+      <div className="flex w-full flex-col items-center justify-center gap-4">
         {!isFullscreen && <ReciterSelector />}
         {isFullscreen && (
-          <p className="mb-10 flex items-center justify-center gap-2 text-4xl font-bold text-gray-500">
+          <p className="mb-5 flex items-center justify-center gap-2 text-4xl font-bold text-gray-500">
             {selectedReciter?.name}
           </p>
         )}
@@ -56,14 +52,10 @@ function ReciterContent() {
 
 export default function ReciterPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex w-full max-w-md items-center justify-center p-4 md:p-6">
-          <SimpleSkeleton />
-        </div>
-      }
-    >
-      <ReciterContent />
+    <Suspense fallback={<SimpleSkeleton />}>
+      <div className="flex w-full max-w-lg items-center justify-center p-4 md:p-6">
+        <ReciterContent />
+      </div>
     </Suspense>
   );
 }
