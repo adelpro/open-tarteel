@@ -8,7 +8,7 @@ import { currentTimeAtom, fullscreenAtom, volumeAtom } from '@/jotai/atom';
 import { Playlist } from '@/types';
 import { cn } from '@/utils';
 
-import AudioVisualizer from './audio-visualizer';
+import AudioBarsVisualizer from './audio-bars-visualizer';
 import PlayerControls from './player-controls';
 import PlaylistDialog from './playlist-dialog';
 import Range from './range';
@@ -135,7 +135,7 @@ export default function Player({ playlist }: Props) {
         'flex w-full flex-col items-center justify-center',
         isFullscreen
           ? 'text-forground w-full bg-background'
-          : 'max-w-md rounded-md border border-slate-200 p-4 shadow-md transition-transform hover:scale-105'
+          : 'max-w-md rounded-md border border-slate-200 p-2 shadow-md transition-transform hover:scale-105'
       )}
     >
       {typeof currentTrack === 'number' && (
@@ -152,7 +152,9 @@ export default function Player({ playlist }: Props) {
             crossOrigin="anonymous"
           />
 
-          <AudioVisualizer audioId="audio" isPlaying={isPlaying} />
+          <AudioBarsVisualizer audioId="audio" isPlaying={isPlaying} />
+
+          {/* <AudioWavesVisualizer audioId="audio" isPlaying={isPlaying} /> */}
 
           {isFullscreen ? (
             <>

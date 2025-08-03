@@ -12,7 +12,7 @@ type AudioVisualizerProps = {
   isPlaying: boolean; // Prop to indicate if audio is currently playing
 };
 
-export default function AudioVisualizer({
+export default function AudioBarsVisualizer({
   audioId,
   isPlaying,
 }: AudioVisualizerProps) {
