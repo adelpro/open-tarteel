@@ -1,16 +1,23 @@
 'use client';
 
-import { ReactNode } from 'react';
-import { useIntl } from 'react-intl';
+import { Tajawal } from 'next/font/google';
 
-import useDirection from '@/hooks/use-direction';
+const tajawal = Tajawal({
+  weight: ['400', '700', '900'],
+  subsets: ['arabic'],
+  preload: true,
+});
 
-export default function HtmlWrapper({ children }: { children: ReactNode }) {
-  const { locale } = useIntl();
-  const { isRTL } = useDirection();
+type Props = {
+  lang: string;
+  children: React.ReactNode;
+};
+
+export default function HtmlWrapper({ lang, children }: Props) {
+  const isRTL = lang === 'ar';
   return (
-    <html lang={locale} suppressHydrationWarning dir={isRTL ? 'rtl' : 'ltr'}>
-      {children}
+    <html lang={lang} suppressHydrationWarning dir={isRTL ? 'rtl' : 'ltr'}>
+      <body className={`${tajawal.className} antialiased`}>{children}</body>
     </html>
   );
 }

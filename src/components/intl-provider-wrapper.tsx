@@ -1,25 +1,24 @@
 'use client';
-
-import { useAtomValue } from 'jotai';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { IntlProvider } from 'react-intl';
 
-import { localeAtom } from '@/jotai/atom';
-
-import ar from '../locales/ar.json';
-import en from '../locales/en.json';
-
-const messages = { en, ar };
-
-interface Props {
+type Props = {
+  locale: string;
+  messages: Record<string, string>;
   children: ReactNode;
-}
+};
 
-export default function IntlProviderWrapper({ children }: Props) {
-  const locale = useAtomValue(localeAtom);
-
+export default function IntlProviderWrapper({
+  locale,
+  messages,
+  children,
+}: Props) {
   return (
-    <IntlProvider locale={locale} messages={messages[locale]}>
+    <IntlProvider
+      locale={locale === 'en' ? 'en' : 'ar'}
+      defaultLocale="ar"
+      messages={messages}
+    >
       {children}
     </IntlProvider>
   );

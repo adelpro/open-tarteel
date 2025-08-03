@@ -7,13 +7,16 @@ import React, { Suspense, useEffect } from 'react';
 import PwaUpdater from '@/components/pwa-updater';
 import ReciterSelector from '@/components/reciter-selector';
 import SimpleSkeleton from '@/components/simple-skeleton';
+import { useReciterFromUrl } from '@/hooks/use-reciter-from-url';
 import { fullscreenAtom, selectedReciterAtom } from '@/jotai/atom';
 
 const Player = dynamic(() => import('@/components/player'), { ssr: false });
 
 function ReciterContent() {
-  const selectedReciter = useAtomValue(selectedReciterAtom);
+  // Initialize selectedReciter from URL parameters
+  useReciterFromUrl();
 
+  const selectedReciter = useAtomValue(selectedReciterAtom);
   const [isFullscreen, setFullscreen] = useAtom(fullscreenAtom);
 
   useEffect(() => {
