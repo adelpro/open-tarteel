@@ -161,7 +161,7 @@ export default function RecitersList({ setIsOpen }: Props) {
             onChange={handleSearchTerm}
             className="transitiont w-full rounded-full border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:outline-none"
           />
-          <div className="absolute inset-y-0 left-2 flex items-center gap-2 pr-2">
+          <div className="absolute inset-y-0 end-2 flex items-center gap-2 pr-2">
             <button
               aria-label={sort}
               title={
@@ -196,18 +196,20 @@ export default function RecitersList({ setIsOpen }: Props) {
                 aria-label={showOnlyFavorites ? showAll : showFavorite}
                 title={showOnlyFavorites ? showFavorite : showAll}
                 onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
-                className={`rounded-full p-1.5 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:hover:bg-gray-700 ${showOnlyFavorites ? 'bg-yellow-500 text-white' : ''}`}
+                className="rounded-full p-1.5 hover:bg-gray-200 focus:outline-none focus:ring-2 dark:hover:bg-gray-700"
                 tabIndex={0}
               >
                 {showOnlyFavorites ? (
                   <BsStarFill
                     className="size-5"
                     aria-label="favorite star icon"
+                    color="#f59e0b"
                   />
                 ) : (
                   <BsStar
                     className="size-5 text-black"
                     aria-label="favorite star icon"
+                    color="#6B7280"
                   />
                 )}
               </button>

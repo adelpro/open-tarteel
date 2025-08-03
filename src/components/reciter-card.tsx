@@ -87,7 +87,7 @@ export default function ReciterCard({
               handleShare(event as unknown as React.MouseEvent);
             }
           }}
-          className="absolute bottom-3 left-3 cursor-pointer rounded-full p-1 text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400"
+          className="absolute bottom-3 end-3 cursor-pointer rounded-full p-1 text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400"
           aria-label="Share reciter"
         >
           <BsShare className="h-5 w-5" />
@@ -110,7 +110,7 @@ export default function ReciterCard({
               onFavoriteToggle(reciter);
             }
           }}
-          className={`absolute left-3 top-3 cursor-pointer rounded-full p-1 transition-colors ${
+          className={`absolute end-3 top-3 cursor-pointer rounded-full p-1 transition-colors ${
             isFavorite
               ? 'text-yellow-500 hover:text-yellow-600'
               : 'text-gray-400 hover:text-yellow-500 dark:text-gray-500 dark:hover:text-yellow-400'
