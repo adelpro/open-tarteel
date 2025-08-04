@@ -20,7 +20,7 @@ type Props = {
 
 export default function Player({ playlist }: Props) {
   const isFullscreen = useAtomValue(fullscreenAtom);
-
+  const previousTrackRef = useRef<number | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useAtom(currentTimeAtom);
   const [duration, setDuration] = useState(0);
@@ -56,13 +56,25 @@ export default function Player({ playlist }: Props) {
   }, [shufflePlaylist]);
 
   useEffect(() => {
+    const previousTrack = previousTrackRef.current;
+    previousTrackRef.current = currentTrack;
+
     if (typeof currentTrack !== 'number') return;
+    if (previousTrack === currentTrack) return;
+
     setCurrentTime(0);
-    if (audioRef.current && isPlaying) {
+    if (audioRef.current) {
       audioRef.current.currentTime = 0;
-      audioRef.current.play();
+      if (isPlaying) {
+        void audioRef.current.play();
+      }
     }
   }, [currentTrack, isPlaying, setCurrentTime]);
+
+  useEffect(() => {
+    if (!audioRef.current) return;
+    isPlaying ? void audioRef.current.play() : audioRef.current.pause();
+  }, [isPlaying]);
 
   const togglePlayPause = () => {
     if (!audioRef.current) return;
