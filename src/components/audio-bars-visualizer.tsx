@@ -31,12 +31,18 @@ export default function AudioBarsVisualizer({
       window.removeEventListener('resize', calculateWidth);
     };
   }, []);
-  if (!showVisualizer || !isPlaying) {
-    return null;
+
+  if (!showVisualizer) {
+    return <></>;
+  }
+  if (!isPlaying) {
+    return (
+      <div className="mb-4 flex h-[90px] w-full max-w-md justify-center" />
+    );
   }
 
   return (
-    <div className="mb-4 flex w-full max-w-md justify-center">
+    <div className="mb-4 flex h-[90px] w-full max-w-md justify-center">
       <ReactAudioSpectrum
         id="audio-spectrum"
         audioId={audioId}
