@@ -8,7 +8,7 @@ import ReciterSelector from '@/components/reciter-selector';
 import UnderConstruction from '@/components/under-construction';
 import { selectedReciterAtom } from '@/jotai/atom';
 
-import Logo from './logo';
+import Logo from '../components/logo';
 
 export default function Home() {
   const selectedReciter = useAtomValue(selectedReciterAtom);

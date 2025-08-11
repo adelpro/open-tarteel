@@ -12,7 +12,7 @@ export default function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => setLocale(locale === 'ar' ? 'en' : 'ar')}
-        className="relative grid h-7 w-32 grid-cols-2 overflow-hidden rounded-full border border-gray-300 bg-white text-sm font-semibold shadow-sm transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="relative flex h-8 w-32 cursor-pointer items-center overflow-hidden rounded-full border border-gray-300 bg-white text-sm font-semibold leading-none shadow-sm transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         aria-label="Switch language"
       >
         {/* Moving background indicator */}
@@ -22,21 +22,24 @@ export default function LanguageSwitcher() {
           }`}
         />
 
-        {/* EN - Always on the left */}
+        {/* EN */}
         <span
-          className={`z-10 flex items-center justify-center transition-colors duration-200 ${
-            locale === 'en' ? 'text-white' : 'text-gray-600'
+          className={`z-10 flex h-full w-1/2 items-center justify-center transition-colors duration-200 ${
+            locale === 'en'
+              ? 'bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent'
+              : 'text-gray-600'
           }`}
         >
           English
         </span>
 
-        {/* ع - Always on the right */}
+        {/* ع */}
         <span
-          className={`z-10 flex items-center justify-center leading-none transition-colors duration-200 ${
-            locale === 'ar' ? 'text-white' : 'text-gray-600'
+          className={`z-10 flex h-full w-1/2 items-center justify-center transition-colors duration-200 ${
+            locale === 'ar'
+              ? 'bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent'
+              : 'text-gray-600'
           }`}
-          style={{ paddingTop: '1px' }}
         >
           عربية
         </span>

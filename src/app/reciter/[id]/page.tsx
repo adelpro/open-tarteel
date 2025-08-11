@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 
-import Logo from '@/app/logo';
 import ReciterPage from '@/app/reciter/[id]/reciter-page';
+import Logo from '@/components/logo';
 import { clientConfig, normalizeAppUrl } from '@/utils';
 import { getAllReciters } from '@/utils/api';
 

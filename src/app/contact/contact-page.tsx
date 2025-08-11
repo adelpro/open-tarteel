@@ -163,7 +163,7 @@ export default function ContactPage() {
                   event.preventDefault();
                   validateAndSend();
                 }}
-                className="hover:scale-101 mb-4 flex transform items-center justify-center rounded bg-blue-500 px-2 py-4 text-gray-100 duration-200 ease-in-out hover:opacity-90 dark:bg-blue-200 dark:text-gray-500"
+                className="hover:scale-101 mb-4 flex transform items-center justify-center rounded bg-gradient-to-r from-blue-600 to-blue-500 px-2 py-4 text-gray-100 duration-200 ease-in-out hover:from-blue-700 hover:to-blue-600 dark:from-blue-400 dark:to-blue-300 dark:text-gray-800 dark:hover:from-blue-500 dark:hover:to-blue-400"
                 disabled={loading}
               >
                 {buttonContent}

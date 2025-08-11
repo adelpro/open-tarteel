@@ -28,7 +28,7 @@ export default function Error({ error, reset }: Props): React.ReactElement {
             </button>
             <Link
               href="/"
-              className="mx-2 w-full rounded-md bg-blue-500 py-2 text-white transition-colors duration-300 ease-in-out hover:bg-blue-600"
+              className="mx-2 w-full rounded-md bg-gradient-to-r from-blue-600 to-blue-500 py-2 text-white transition-colors duration-300 ease-in-out hover:from-blue-700 hover:to-blue-600"
             >
               Return to the Home page
             </Link>
