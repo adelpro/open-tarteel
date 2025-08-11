@@ -163,7 +163,7 @@ export default function ContactPage() {
                   event.preventDefault();
                   validateAndSend();
                 }}
-                className="hover:scale-101 mb-4 flex transform items-center justify-center rounded bg-gradient-to-r from-blue-600 to-blue-500 px-2 py-4 text-gray-100 duration-200 ease-in-out hover:from-blue-700 hover:to-blue-600 dark:from-blue-400 dark:to-blue-300 dark:text-gray-800 dark:hover:from-blue-500 dark:hover:to-blue-400"
+                className="hover:scale-101 hover:from-brand-CTA-blue-700 dark:from-brand-CTA-blue-400 dark:to-brand-CTA-blue-300 dark:hover:to-brand-CTA-blue-400 mb-4 flex transform items-center justify-center rounded bg-gradient-to-r from-brand-CTA-blue-600 to-brand-CTA-blue-500 px-2 py-4 text-gray-100 duration-200 ease-in-out hover:to-brand-CTA-blue-600 dark:text-gray-800 dark:hover:from-brand-CTA-blue-500"
                 disabled={loading}
               >
                 {buttonContent}

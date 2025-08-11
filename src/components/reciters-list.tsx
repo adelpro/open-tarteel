@@ -11,7 +11,6 @@ import {
 } from 'react-icons/tb';
 import { useIntl } from 'react-intl';
 
-import ReciterCard from '@/components/reciter-card';
 import {
   fetchViewCounts,
   subscribeToViewCounts,
@@ -25,6 +24,7 @@ import { selectedReciterAtom } from '@/jotai/atom';
 import { Reciter, Riwaya } from '@/types';
 import { generateFavId } from '@/utils';
 
+import ReciterCard from './reciter-card';
 import SimpleSkeleton from './simple-skeleton';
 
 type Props = {
@@ -159,7 +159,7 @@ export default function RecitersList({ setIsOpen }: Props) {
             placeholder={searchPlaceHolder}
             value={searchTerm}
             onChange={handleSearchTerm}
-            className="transitiont w-full rounded-full border border-gray-300 p-3 shadow-sm focus:border-blue-500 focus:outline-none"
+            className="w-full rounded-full border border-gray-300 p-3 shadow-sm focus:border-brand-CTA-blue-500 focus:outline-none"
           />
           <div className="absolute inset-y-0 end-2 flex items-center gap-2 pr-2">
             <button
@@ -180,37 +180,29 @@ export default function RecitersList({ setIsOpen }: Props) {
                       : 'popular'
                 )
               }
-              className="rounded-full p-1.5 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:bg-gray-700"
+              className="hover:bg-brand-CTA-blue-50 dark:hover:bg-brand-CTA-blue-900/30 dark:hover:text-brand-CTA-blue-400 rounded-full p-2.5 text-gray-500 transition-all duration-200 hover:text-brand-CTA-blue-600 focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500/50"
               tabIndex={0}
             >
               {sortMode === 'alphabetical' ? (
-                <TbSortAscendingLetters className="size-5 text-blue-500" />
+                <TbSortAscendingLetters className="size-5" />
               ) : sortMode === 'views' ? (
-                <TbSortDescendingNumbers className="size-5 text-purple-500" />
+                <TbSortDescendingNumbers className="size-5" />
               ) : (
-                <ImSortAmountDesc className="size-5 text-yellow-500" />
+                <ImSortAmountDesc className="size-5" />
               )}
             </button>
             {favoriteRecitersList.length > 0 && (
               <button
                 aria-label={showOnlyFavorites ? showAll : showFavorite}
-                title={showOnlyFavorites ? showFavorite : showAll}
+                title={showOnlyFavorites ? showAll : showFavorite}
                 onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
-                className="rounded-full p-1.5 hover:bg-gray-200 focus:outline-none focus:ring-2 dark:hover:bg-gray-700"
+                className="rounded-lg p-2.5 transition-all duration-200 hover:bg-yellow-50 hover:text-yellow-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 dark:hover:bg-yellow-900/30 dark:hover:text-yellow-400"
                 tabIndex={0}
               >
                 {showOnlyFavorites ? (
-                  <BsStarFill
-                    className="size-5"
-                    aria-label="favorite star icon"
-                    color="#f59e0b"
-                  />
+                  <BsStarFill className="size-5 text-yellow-500" />
                 ) : (
-                  <BsStar
-                    className="size-5 text-black"
-                    aria-label="favorite star icon"
-                    color="#6B7280"
-                  />
+                  <BsStar className="size-5 text-gray-400" />
                 )}
               </button>
             )}
@@ -220,10 +212,10 @@ export default function RecitersList({ setIsOpen }: Props) {
         <div className="flex w-full flex-wrap items-center justify-center gap-2">
           <button
             onClick={() => setSelectedRiwaya('all')}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
+            className={`rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 ${
               selectedRiwaya === 'all'
-                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
+                ? 'bg-gradient-to-r from-brand-CTA-blue-600 to-brand-CTA-blue-500 text-white shadow-lg shadow-brand-CTA-blue-500/25'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
             }`}
           >
             {allReciters}
@@ -237,10 +229,10 @@ export default function RecitersList({ setIsOpen }: Props) {
                   event.stopPropagation();
                   setSelectedRiwaya(value as Riwaya | 'all');
                 }}
-                className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
+                className={`rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 ${
                   isSelected
-                    ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
+                    ? 'bg-gradient-to-r from-brand-CTA-blue-600 to-brand-CTA-blue-500 text-white shadow-lg shadow-brand-CTA-blue-500/25'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 }`}
               >
                 {label}

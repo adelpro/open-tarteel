@@ -22,7 +22,7 @@ export default function NotFound() {
         <div className="mt-6">
           <Link
             href="/"
-            className="inline-block w-full rounded-md bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2 font-medium text-white hover:from-blue-700 hover:to-blue-600"
+            className="hover:from-brand-CTA-blue-700 inline-block w-full rounded-md bg-gradient-to-r from-brand-CTA-blue-600 to-brand-CTA-blue-500 px-4 py-2 font-medium text-white hover:to-brand-CTA-blue-600"
           >
             العودة إلى الصفحة الرئيسية
           </Link>

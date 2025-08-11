@@ -159,7 +159,7 @@ export default function PrivacyPage() {
               <br />
               <a
                 href="mailto:contact@quran.us.kg"
-                className="mt-2 inline-block font-semibold text-blue-600"
+                className="mt-2 inline-block font-semibold text-brand-CTA-blue-600"
               >
                 contact@quran.us.kg
               </a>

@@ -12,7 +12,7 @@ export default function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => setLocale(locale === 'ar' ? 'en' : 'ar')}
-        className="relative flex h-8 w-32 cursor-pointer items-center overflow-hidden rounded-full border border-gray-300 bg-white text-sm font-semibold leading-none shadow-sm transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="relative flex h-8 w-32 cursor-pointer items-center overflow-hidden rounded-full border border-gray-300 bg-white text-sm font-semibold leading-none shadow-sm transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500"
         aria-label="Switch language"
       >
         {/* Moving background indicator */}
@@ -25,9 +25,7 @@ export default function LanguageSwitcher() {
         {/* EN */}
         <span
           className={`z-10 flex h-full w-1/2 items-center justify-center transition-colors duration-200 ${
-            locale === 'en'
-              ? 'bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent'
-              : 'text-gray-600'
+            locale === 'en' ? 'text-white' : 'text-gray-600'
           }`}
         >
           English
@@ -36,9 +34,7 @@ export default function LanguageSwitcher() {
         {/* ع */}
         <span
           className={`z-10 flex h-full w-1/2 items-center justify-center transition-colors duration-200 ${
-            locale === 'ar'
-              ? 'bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent'
-              : 'text-gray-600'
+            locale === 'ar' ? 'text-white' : 'text-gray-600'
           }`}
         >
           عربية

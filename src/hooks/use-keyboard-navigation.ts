@@ -3,7 +3,7 @@ import { RefObject, useEffect, useRef, useState } from 'react';
 export function useKeyboardNavigation(itemCount: number): {
   focusedIndex: number | null;
   setFocusedIndex: (index: number | null) => void;
-  reciterRefs: RefObject<(HTMLButtonElement | null)[]>;
+  reciterRefs: RefObject<(HTMLElement | null)[]>;
   searchInputRef: RefObject<HTMLInputElement | null>;
 } {
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
