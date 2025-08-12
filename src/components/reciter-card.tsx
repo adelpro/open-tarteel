@@ -46,7 +46,7 @@ export default function ReciterCard({
       role="button"
       tabIndex={0}
       onClick={() => onSelect(reciter)}
-      className={`group relative flex w-full cursor-pointer flex-col rounded-2xl border bg-white p-6 transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
+      className={`group relative flex w-full cursor-pointer flex-col rounded-2xl border bg-card p-6 transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
         isFocused
           ? 'border-blue-500 shadow-md ring-2 ring-blue-500/20'
           : isFavorite
@@ -56,7 +56,7 @@ export default function ReciterCard({
     >
       {/* Header */}
       <div className="mb-6 flex items-start justify-between">
-        <h2 className="pr-2 text-lg font-semibold leading-tight text-gray-900 dark:text-white">
+        <h2 className="pr-2 text-lg font-semibold leading-tight">
           {reciter.name}
         </h2>
 
@@ -69,7 +69,7 @@ export default function ReciterCard({
             onFavoriteToggle(reciter);
           }}
           className={`flex-shrink-0 rounded-full p-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
-            isFavorite ? 'text-amber-500' : 'text-gray-400 hover:text-amber-500'
+            isFavorite ? 'text-amber-500' : 'text-gray-100 hover:text-amber-500'
           }`}
           aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
         >
@@ -82,7 +82,7 @@ export default function ReciterCard({
       </div>
 
       {/* Stats */}
-      <div className="mb-6 flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+      <div className="mb-6 flex items-center gap-4 text-sm">
         <div className="flex items-center gap-1.5">
           <BsStar className="h-3.5 w-3.5" />
           <span className="font-medium">{favoriteCount.toLocaleString()}</span>

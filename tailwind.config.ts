@@ -16,6 +16,7 @@ const config: Config = {
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
+        card: 'var(--card)',
         'brand-dark-100': '#f5f6f7',
         'brand-CTA-dark-200': '#e5e7eb',
         'brand-CTA-dark-500': '#6B7280',
