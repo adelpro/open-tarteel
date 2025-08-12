@@ -57,7 +57,7 @@ export default function Logo() {
       </p>
 
       {/* Decorative elements */}
-      <div className="mt-8 flex items-center justify-center space-x-2">
+      <div className="mt-8 hidden items-center justify-center space-x-2 md:flex">
         <div className="h-px w-12 bg-gradient-to-r from-transparent via-brand-CTA-blue-500 to-transparent" />
         <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-CTA-blue-500" />
         <div className="h-px w-12 bg-gradient-to-r from-transparent via-blue-500 to-transparent" />

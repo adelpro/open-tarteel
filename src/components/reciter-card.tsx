@@ -56,18 +56,18 @@ export default function ReciterCard({
         {reciter.name}
       </h2>
 
-      <div className="mb-5 flex flex-wrap items-center gap-1 text-sm">
-        <span className="flex items-center gap-0.5 font-medium text-gray-600 dark:text-gray-400">
-          <BsStar className="mr-2.5 h-4 w-4 flex-shrink-0" />
-          {favoriteCount}
+      <div className="gap 0.5 mb-5 flex flex-wrap items-center gap-1 text-sm">
+        <span className="flex h-4 items-center gap-0.5 font-medium text-gray-600 dark:text-gray-400">
+          <BsStar className="mr-2.5 w-4 flex-shrink-0" />
+          <span className=""> {favoriteCount}</span>
         </span>
         <span className="flex items-center gap-0.5 text-gray-500 dark:text-gray-400">
           <BsEye className="mr-2.5 h-4 w-4 flex-shrink-0" />
-          {viewCount}
+          <span className="">{viewCount}</span>
         </span>
       </div>
 
-      <div className="flex w-full items-center justify-between">
+      <div className="flex w-full items-center justify-between gap-0.5">
         <span
           role="button"
           tabIndex={0}
