@@ -31,7 +31,7 @@ function ReciterContent() {
   }
 
   return (
-    <div className="flex w-full items-center justify-center p-4 md:p-2">
+    <div className="flex w-full items-center justify-center p-1 md:p-2">
       <div className="flex w-full flex-col items-center justify-center gap-4">
         {!isFullscreen && <ReciterSelector />}
         {isFullscreen && (
@@ -53,7 +53,7 @@ function ReciterContent() {
 export default function ReciterPage() {
   return (
     <Suspense fallback={<SimpleSkeleton />}>
-      <div className="flex w-full max-w-lg items-center justify-center p-4 md:p-6">
+      <div className="flex w-full max-w-lg items-center justify-center p-1 md:p-4">
         <ReciterContent />
       </div>
     </Suspense>

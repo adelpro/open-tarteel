@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 
 import { fullscreenAtom } from '@/jotai/atom';
 
-export default function Logo() {
+export default function Hero() {
   const isFullscreen = useAtomValue(fullscreenAtom);
 
   if (isFullscreen) {
@@ -14,7 +14,7 @@ export default function Logo() {
 
   return (
     <section
-      className="relative flex flex-col items-center justify-center p-4 text-center"
+      className="relative flex flex-col items-center justify-center p-1 text-center md:p-4"
       aria-label="Hero section"
       itemScope
       itemType="https://schema.org/WebPage"

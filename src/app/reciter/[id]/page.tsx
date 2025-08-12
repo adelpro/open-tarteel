@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import ReciterPage from '@/app/reciter/[id]/reciter-page';
-import Logo from '@/components/logo';
+import Hero from '@/components/hero';
 import { clientConfig, normalizeAppUrl } from '@/utils';
 import { getAllReciters } from '@/utils/api';
 
@@ -96,8 +96,7 @@ export default async function Page({ params }: Props) {
         }}
       />
       <main className="flex w-full flex-col items-center justify-center bg-background text-foreground">
-        <Logo />
-
+        <Hero />
         <ReciterPage key={id} />
       </main>
     </>
