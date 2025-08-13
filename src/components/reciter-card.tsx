@@ -69,7 +69,7 @@ export default function ReciterCard({
             onFavoriteToggle(reciter);
           }}
           className={`flex-shrink-0 rounded-full p-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
-            isFavorite ? 'text-amber-500' : 'text-gray-100 hover:text-amber-500'
+            isFavorite ? 'text-amber-500' : 'text-gray-400 hover:text-amber-500'
           }`}
           aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
         >
