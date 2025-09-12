@@ -90,7 +90,7 @@ export default function AboutPage() {
           <div className="px-4 py-2 text-sm">
             Made by{' '}
             <a
-              href="https://adelpro.dev"
+              href="https://adelpro.us.kg"
               target="_blank"
               rel="noopener noreferrer"
               className="underline"
