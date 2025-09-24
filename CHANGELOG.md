@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2]
+
+### Features
+
+- Add Playback speed toggle
+- Add "Shuffle / Repeat / off" mode toggle
+- Add tooltips for all player controls
+
 ## [0.2.1]
 
 ### Features
