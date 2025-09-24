@@ -89,5 +89,22 @@
 
   "underConstruction.message": "The app is under development",
   "underConstruction.doNotShowAgain": "Do not show this message again",
-  "underConstruction.title": "Under Construction"
+  "underConstruction.title": "Under Construction",
+
+  "player.play": "Play",
+  "player.pause": "Pause",
+  "player.nextTrack": "Next Track",
+  "player.previousTrack": "Previous Track",
+  "player.enterFullscreen": "Enter Fullscreen",
+  "player.exitFullscreen": "Exit Fullscreen",
+  "player.muteVolume": "Mute Volume",
+  "player.unmuteVolume": "Unmute Volume",
+  "player.shuffleEnabled": "Shuffle Mode",
+  "player.repeatOne": "Repeat One",
+  "player.allOff": "All Off",
+  "player.hideVisualizer": "Hide Visualizer",
+  "player.showVisualizer": "Show Visualizer",
+  "player.togglePlaylist": "Toggle Playlist",
+  "player.playbackSpeed": "Playback speed: {speed}x",
+  "player.volumeControl": "Volume control"
 }

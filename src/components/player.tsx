@@ -4,7 +4,13 @@ import { useAtom, useAtomValue } from 'jotai';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useMediaSession } from '@/hooks/use-media-session';
-import { currentTimeAtom, fullscreenAtom, volumeAtom } from '@/jotai/atom';
+import {
+  currentTimeAtom,
+  fullscreenAtom,
+  playbackModeAtom,
+  playbackSpeedAtom,
+  volumeAtom,
+} from '@/jotai/atom';
 import { Playlist } from '@/types';
 import { cn } from '@/utils';
 
@@ -20,25 +26,35 @@ type Props = {
 
 export default function Player({ playlist }: Props) {
   const isFullscreen = useAtomValue(fullscreenAtom);
+  const [playbackMode] = useAtom(playbackModeAtom);
   const previousTrackRef = useRef<number | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useAtom(currentTimeAtom);
   const [duration, setDuration] = useState(0);
   const [currentTrack, setCurrentTrack] = useState<number | undefined>(0);
-  const [isShuffled, setIsShuffled] = useState(false);
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const volumeRef = useRef<HTMLInputElement>(null);
   const volumeValue = useAtomValue(volumeAtom);
+  const playbackSpeed = useAtomValue(playbackSpeedAtom);
 
+  // Sync volume
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volumeValue;
     }
   }, [volumeValue]);
 
+  // Sync playback speed
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = playbackSpeed;
+    }
+  }, [playbackSpeed]);
+
+  // Generate shuffled indices
   const shufflePlaylist = useCallback(() => {
     const indices = Array.from(
       { length: playlist.length },
@@ -49,12 +65,16 @@ export default function Player({ playlist }: Props) {
       [indices[index], indices[index_]] = [indices[index_], indices[index]];
     }
     setShuffledIndices(indices);
-  }, [playlist]);
+  }, [playlist.length]);
 
+  // Re-shuffle when entering shuffle mode
   useEffect(() => {
-    shufflePlaylist();
-  }, [shufflePlaylist]);
+    if (playbackMode === 'shuffle') {
+      shufflePlaylist();
+    }
+  }, [playbackMode, shufflePlaylist]);
 
+  // Load new track when currentTrack changes
   useEffect(() => {
     const previousTrack = previousTrackRef.current;
     previousTrackRef.current = currentTrack;
@@ -71,6 +91,7 @@ export default function Player({ playlist }: Props) {
     }
   }, [currentTrack, isPlaying, setCurrentTime]);
 
+  // Sync play/pause with audio element
   useEffect(() => {
     if (!audioRef.current) return;
     isPlaying ? void audioRef.current.play() : audioRef.current.pause();
@@ -92,18 +113,23 @@ export default function Player({ playlist }: Props) {
     }
   };
 
-  const getNextTrackIndex = (index: number) =>
-    isShuffled
-      ? shuffledIndices[(shuffledIndices.indexOf(index) + 1) % playlist.length]
-      : (index + 1) % playlist.length;
+  const getNextTrackIndex = (index: number) => {
+    if (playbackMode === 'shuffle') {
+      return shuffledIndices[
+        (shuffledIndices.indexOf(index) + 1) % playlist.length
+      ];
+    }
+    return (index + 1) % playlist.length;
+  };
 
-  const getPreviousTrackIndex = (index: number) =>
-    isShuffled
-      ? shuffledIndices[
-          (shuffledIndices.indexOf(index) - 1 + playlist.length) %
-            playlist.length
-        ]
-      : (index - 1 + playlist.length) % playlist.length;
+  const getPreviousTrackIndex = (index: number) => {
+    if (playbackMode === 'shuffle') {
+      return shuffledIndices[
+        (shuffledIndices.indexOf(index) - 1 + playlist.length) % playlist.length
+      ];
+    }
+    return (index - 1 + playlist.length) % playlist.length;
+  };
 
   const handleNextTrack = () => {
     if (typeof currentTrack !== 'number') return;
@@ -115,9 +141,20 @@ export default function Player({ playlist }: Props) {
     setCurrentTrack(getPreviousTrackIndex(currentTrack));
   };
 
-  const toggleShuffle = () => {
-    if (!isShuffled) shufflePlaylist();
-    setIsShuffled(!isShuffled);
+  const handleTrackEnded = () => {
+    if (playbackMode === 'repeat-one') {
+      // Reset UI and audio to start
+      setCurrentTime(0);
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        if (isPlaying) {
+          void audioRef.current.play();
+        }
+      }
+    } else {
+      // Proceed to next track
+      handleNextTrack();
+    }
   };
 
   const togglePlaylistOpen = () => {
@@ -158,7 +195,7 @@ export default function Player({ playlist }: Props) {
             className="sr-only"
             onTimeUpdate={handleTimeUpdate}
             onDurationChange={handleTimeUpdate}
-            onEnded={handleNextTrack}
+            onEnded={handleTrackEnded}
             src={playlist[currentTrack]?.link}
             preload="auto"
             crossOrigin="anonymous"
@@ -166,20 +203,15 @@ export default function Player({ playlist }: Props) {
 
           <AudioBarsVisualizer audioId="audio" isPlaying={isPlaying} />
 
-          {/* <AudioWavesVisualizer audioId="audio" isPlaying={isPlaying} /> */}
-
           {isFullscreen ? (
             <>
-              {/* Minimal fullscreen controls */}
               <PlayerControls
                 isPlaying={isPlaying}
                 volumeRef={volumeRef}
                 togglePlayPause={togglePlayPause}
                 handlePreviousTrack={handlePreviousTrack}
-                toggleShuffle={toggleShuffle}
                 handleNextTrack={handleNextTrack}
                 togglePlaylistOpen={togglePlaylistOpen}
-                isShuffled={isShuffled}
               />
               <Range
                 currentTime={currentTime}
@@ -187,7 +219,6 @@ export default function Player({ playlist }: Props) {
                 duration={duration}
                 audioRef={audioRef}
               />
-
               <TrackInfo
                 currentTrackId={currentTrack}
                 duration={duration}
@@ -196,31 +227,25 @@ export default function Player({ playlist }: Props) {
             </>
           ) : (
             <>
-              {/* Full player controls */}
               <PlayerControls
                 isPlaying={isPlaying}
                 volumeRef={volumeRef}
                 togglePlayPause={togglePlayPause}
                 handlePreviousTrack={handlePreviousTrack}
-                toggleShuffle={toggleShuffle}
                 handleNextTrack={handleNextTrack}
                 togglePlaylistOpen={togglePlaylistOpen}
-                isShuffled={isShuffled}
               />
-
               <Range
                 currentTime={currentTime}
                 setCurrentTime={setCurrentTime}
                 duration={duration}
                 audioRef={audioRef}
               />
-
               <PlaylistDialog
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
                 setCurrentTrack={setCurrentTrack}
               />
-
               <TrackInfo
                 currentTrackId={currentTrack}
                 duration={duration}

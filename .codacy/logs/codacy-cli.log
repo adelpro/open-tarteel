@@ -1,0 +1,2 @@
+2025-09-24T20:58:41+01:00 [INFO] (codacy-cli-v2/cli-v2.go:27) Starting Codacy CLI version=1.0.0-main.358.sha.7cb05d0 (7cb05d0) built at 2025-09-19T09:27:42Z
+2025-09-24T20:58:41+01:00 [INFO] (codacy-cli-v2/cmd/root.go:34) Executing CLI command command=init full_command=[/home/adelpro/.cache/codacy/codacy-cli-v2/1.0.0-main.358.sha.7cb05d0/codacy-cli-v2 init --provider gh --organization adelpro --repository open-tarteel --api-token ***] args=[]

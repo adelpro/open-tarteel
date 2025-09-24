@@ -27,6 +27,17 @@ export const localeAtom = createAtomWithStorage<'ar' | 'en'>('locale', 'ar');
 
 export const currentTimeAtom = createAtomWithStorage<number>('current-time', 0);
 
+export const playbackSpeedAtom = createAtomWithStorage<number>(
+  'playback-speed-value',
+  1
+);
+
+export type PlaybackMode = 'off' | 'shuffle' | 'repeat-one';
+export const playbackModeAtom = createAtomWithStorage<PlaybackMode>(
+  'playback-mode',
+  'off'
+);
+
 export const volumeAtom = createAtomWithStorage<number>('volume-value', 1);
 
 export const recitersSortAtom = createAtomWithStorage<

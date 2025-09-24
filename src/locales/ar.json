@@ -89,5 +89,22 @@
 
   "underConstruction.message": "التطبيق قيد التطوير",
   "underConstruction.doNotShowAgain": "لا تعرض هذا مرة أخرى",
-  "underConstruction.title": "قيد الإنشاء"
+  "underConstruction.title": "قيد الإنشاء",
+
+  "player.play": "تشغيل",
+  "player.pause": "إيقاف",
+  "player.nextTrack": "التالي",
+  "player.previousTrack": "السابق",
+  "player.enterFullscreen": "دخول وضع ملء الشاشة",
+  "player.exitFullscreen": "خروج من وضع ملء الشاشة",
+  "player.muteVolume": "كتم الصوت",
+  "player.unmuteVolume": "إلغاء كتم الصوت",
+  "player.shuffleEnabled": "الوضع العشوائي",
+  "player.repeatOne": "تكرار المقطع الحالي",
+  "player.allOff": "تشغيل مباشر",
+  "player.hideVisualizer": "إخفاء المخطط الصوتي",
+  "player.showVisualizer": "إظهار المخطط الصوتي",
+  "player.togglePlaylist": "تبديل قائمة التشغيل",
+  "player.playbackSpeed": "سرعة التشغيل: {speed}x",
+  "player.volumeControl": "تحكم بمستوى الصوت"
 }
