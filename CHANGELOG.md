@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 ### Fix
 
 - Fix Language toggle left marging
+- Clean up player controls component
 
 ## [0.2.1]
 
