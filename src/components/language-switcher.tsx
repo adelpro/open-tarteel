@@ -8,11 +8,13 @@ export default function LanguageSwitcher() {
   const [locale, setLocale] = useAtom(localeAtom);
 
   return (
-    <div className="fixed right-0 top-0 z-50 m-2" dir="ltr">
+    <div className="fixed right-2 top-2 z-50" dir="ltr">
+      {' '}
+      {/* ← changed from right-0 m-2 to right-2 top-2 */}
       <button
         type="button"
         onClick={() => setLocale(locale === 'ar' ? 'en' : 'ar')}
-        className="relative flex h-8 w-32 cursor-pointer items-center overflow-hidden rounded-full border border-gray-300 bg-white text-sm font-semibold leading-none shadow-sm transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500"
+        className="relative flex h-8 w-24 cursor-pointer items-center overflow-hidden rounded-full border border-gray-300 bg-white text-[10px] font-semibold leading-none shadow-sm transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500 sm:w-32 sm:text-sm"
         aria-label="Switch language"
       >
         {/* Moving background indicator */}

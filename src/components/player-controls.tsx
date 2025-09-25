@@ -57,14 +57,27 @@ export default function PlayerControls({
   const [isClient, setIsClient] = useState(false);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [showDesktopSleepMenu, setShowDesktopSleepMenu] = useState(false);
   const [showVisualizer, setShowVisualizer] = useAtom(showVisualizerAtom);
   const [volume, setVolume] = useAtom(volumeAtom);
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackSpeed, setPlaybackSpeed] = useAtom(playbackSpeedAtom);
   const [playbackMode, setPlaybackMode] = useAtom(playbackModeAtom);
-  const { formatMessage } = useIntl();
+  const [sleepTimerId, setSleepTimerId] = useState<NodeJS.Timeout | null>(null);
+  const [remainingTime, setRemainingTime] = useState<number | null>(null); // in seconds
 
   const moreMenuRef = useRef<HTMLDivElement>(null);
+  const desktopSleepMenuRef = useRef<HTMLDivElement>(null);
+  const { formatMessage } = useIntl();
+
+  // Cleanup sleep timer on unmount
+  useEffect(() => {
+    return () => {
+      if (sleepTimerId) {
+        clearTimeout(sleepTimerId);
+      }
+    };
+  }, [sleepTimerId]);
 
   const togglePlaybackMode = () => {
     if (playbackMode === 'off') {
@@ -82,6 +95,30 @@ export default function PlayerControls({
     else if (playbackSpeed === 1.5) nextSpeed = 2;
     else nextSpeed = 1;
     setPlaybackSpeed(nextSpeed);
+  };
+
+  const setSleepTimer = (minutes: number | 'end') => {
+    if (sleepTimerId) {
+      clearTimeout(sleepTimerId);
+    }
+
+    const durationInSeconds = minutes === 'end' ? 120 * 60 : minutes * 60;
+    const id = setTimeout(() => {
+      togglePlayPause(); // pause playback
+      setSleepTimerId(null);
+      setRemainingTime(null);
+    }, durationInSeconds * 1000);
+
+    setSleepTimerId(id);
+    setRemainingTime(durationInSeconds);
+  };
+
+  const clearSleepTimer = () => {
+    if (sleepTimerId) {
+      clearTimeout(sleepTimerId);
+      setSleepTimerId(null);
+      setRemainingTime(null);
+    }
   };
 
   useEffect(() => {
@@ -107,7 +144,7 @@ export default function PlayerControls({
     };
   }, [showVolumeSlider, volumeRef]);
 
-  // Close "More" menu on outside click
+  // Close mobile "More" menu on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -125,6 +162,25 @@ export default function PlayerControls({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showMoreMenu]);
+
+  // Close desktop sleep menu on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        desktopSleepMenuRef.current &&
+        !desktopSleepMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowDesktopSleepMenu(false);
+      }
+    };
+
+    if (showDesktopSleepMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDesktopSleepMenu]);
 
   const renderImageButton = (
     source: string,
@@ -212,6 +268,14 @@ export default function PlayerControls({
     id: 'player.more',
     defaultMessage: 'More options',
   });
+  const sleepTimerLabel = formatMessage({
+    id: 'player.sleepTimer',
+    defaultMessage: 'Sleep timer',
+  });
+  const untilEnd = formatMessage({
+    id: 'player.untilEnd',
+    defaultMessage: 'Until end',
+  });
 
   if (!isClient) {
     return (
@@ -246,9 +310,9 @@ export default function PlayerControls({
       className="relative flex w-full items-center justify-between gap-2 md:gap-3"
       dir="rtl"
     >
-      {/* Volume Control */}
+      {/* Volume Control - NOW RELATIVE FOR SLIDER ANCHORING */}
       <div
-        className="flex shrink-0 items-center gap-2"
+        className="relative flex shrink-0 items-center gap-2" // ← "relative" added
         ref={volumeRef}
         style={{ touchAction: 'none' }}
       >
@@ -267,7 +331,7 @@ export default function PlayerControls({
         </Tooltip>
 
         {showVolumeSlider && (
-          <div className="absolute bottom-10 left-1/2 flex h-20 w-6 -translate-x-1/2 items-center justify-center">
+          <div className="absolute bottom-full left-1/2 mb-2 flex h-20 w-6 -translate-x-1/2 items-center justify-center">
             <input
               type="range"
               min={0}
@@ -344,6 +408,15 @@ export default function PlayerControls({
         </button>
       </Tooltip>
 
+      {/* Sleep Timer Indicator (Mobile ONLY) */}
+      {remainingTime !== null && (
+        <div className="flex items-center sm:hidden">
+          <span className="text-xs text-blue-500 dark:text-blue-400">
+            💤 {Math.floor(remainingTime / 60)}m
+          </span>
+        </div>
+      )}
+
       {/* === MORE BUTTON (mobile only) === */}
       <div className="relative sm:hidden" ref={moreMenuRef}>
         <Tooltip content={moreOptions}>
@@ -359,7 +432,48 @@ export default function PlayerControls({
         </Tooltip>
 
         {showMoreMenu && (
-          <div className="absolute bottom-10 left-0 z-10 w-52 flex-col gap-1 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
+          <div className="absolute bottom-10 left-0 z-10 flex w-52 flex-col gap-1 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
+            {/* === Sleep Timer Section === */}
+            <div className="px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+              💤 {sleepTimerLabel}
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {[5, 10, 15, 30, 60].map((minutes) => (
+                <button
+                  key={minutes}
+                  onClick={() => {
+                    setSleepTimer(minutes);
+                    setShowMoreMenu(false);
+                  }}
+                  className="rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+                >
+                  {minutes}m
+                </button>
+              ))}
+              <button
+                onClick={() => {
+                  setSleepTimer('end');
+                  setShowMoreMenu(false);
+                }}
+                className="rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+              >
+                {untilEnd}
+              </button>
+              {remainingTime && (
+                <button
+                  onClick={() => {
+                    clearSleepTimer();
+                    setShowMoreMenu(false);
+                  }}
+                  className="w-full rounded bg-red-100 px-2 py-1 text-xs text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
+                >
+                  Cancel Timer
+                </button>
+              )}
+            </div>
+
+            <div className="my-1 h-px bg-gray-200 dark:bg-gray-700" />
+
             {/* Fullscreen */}
             <button
               onClick={() => {
@@ -467,6 +581,82 @@ export default function PlayerControls({
             )}
           </button>
         </Tooltip>
+
+        {/* Sleep Timer (Desktop/Tablet) */}
+        <div className="relative" ref={desktopSleepMenuRef}>
+          <Tooltip
+            content={
+              remainingTime
+                ? formatMessage(
+                    {
+                      id: 'player.sleepTimerActive',
+                      defaultMessage: 'Sleep timer: {time}m',
+                    },
+                    { time: Math.floor(remainingTime / 60) }
+                  )
+                : sleepTimerLabel
+            }
+          >
+            <button
+              onClick={() => setShowDesktopSleepMenu((previous) => !previous)}
+              className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+              aria-label={
+                remainingTime
+                  ? `Sleep timer active: ${Math.floor(remainingTime / 60)} minutes remaining`
+                  : sleepTimerLabel
+              }
+            >
+              <span className="text-sm">💤</span>
+              {remainingTime && (
+                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[8px] font-bold text-white">
+                  {Math.floor(remainingTime / 60)}
+                </span>
+              )}
+            </button>
+          </Tooltip>
+
+          {showDesktopSleepMenu && (
+            <div className="absolute bottom-10 right-0 z-10 w-40 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
+              <div className="mb-1 px-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+                {sleepTimerLabel}
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {[5, 10, 15, 30, 60].map((minutes) => (
+                  <button
+                    key={minutes}
+                    onClick={() => {
+                      setSleepTimer(minutes);
+                      setShowDesktopSleepMenu(false);
+                    }}
+                    className="rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+                  >
+                    {minutes}m
+                  </button>
+                ))}
+                <button
+                  onClick={() => {
+                    setSleepTimer('end');
+                    setShowDesktopSleepMenu(false);
+                  }}
+                  className="rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+                >
+                  {untilEnd}
+                </button>
+                {remainingTime && (
+                  <button
+                    onClick={() => {
+                      clearSleepTimer();
+                      setShowDesktopSleepMenu(false);
+                    }}
+                    className="w-full rounded bg-red-100 px-2 py-1 text-xs text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
+                  >
+                    Cancel Timer
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Playlist */}
         {renderImageButton(playlistSVG, togglePlaylist, togglePlaylistOpen)}

@@ -10,6 +10,11 @@ All notable changes to this project will be documented in this file.
 - Add "Shuffle / Repeat / off" mode toggle
 - Add tooltips for all player controls
 - Add "More options" menu
+- Add "Sleep timer" menu
+
+### Fix
+
+- Fix Language toggle left marging
 
 ## [0.2.1]
 
@@ -24,7 +29,7 @@ All notable changes to this project will be documented in this file.
 - Fixed player reload in reciter page
 - Fixed generate changelog for releases
 - Fixed mainfest errors
-- Fixed perforamance issues is reciter-list
+- Fixed performance issues in reciter-list
 
 ## [0.2.0]
 
