@@ -108,5 +108,9 @@
   "player.playbackSpeed": "سرعة التشغيل: {speed}x",
   "player.volumeControl": "تحكم بمستوى الصوت",
 
-  "player.more": "المزيد"
+  "player.more": "المزيد",
+
+  "player.sleepTimerActive": "مؤقت النوم نشط",
+  "player.sleepTimer": "مؤقت النوم",
+  "player.untilEnd": "حتى نهاية التلاوة"
 }

@@ -7,6 +7,7 @@ import playSVG from '@svgs/music-play.svg';
 import playlistSVG from '@svgs/music-playlist.svg';
 import shuffleSVG from '@svgs/music-shuffle.svg';
 import shuffleDisabledSVG from '@svgs/music-shuffle-disabled.svg';
+import sleepSVG from '@svgs/sleep.svg';
 import spectrumSVG from '@svgs/spectrum.svg';
 import spectrumDisabledSVG from '@svgs/spectrum-disabled.svg';
 import { useAtom, useAtomValue } from 'jotai';
@@ -18,6 +19,8 @@ import { MdRepeatOne, MdSpeed } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import Tooltip from '@/components/tooltip';
+import { ICON_SIZE, SLEEP_MINUTES } from '@/constants';
+import { useSleepTimer } from '@/hooks/use-sleep-timer';
 import {
   fullscreenAtom,
   playbackModeAtom,
@@ -26,6 +29,9 @@ import {
   volumeAtom,
 } from '@/jotai/atom';
 import { cn } from '@/utils';
+
+// ─── Helpers ─────────────────────────────────────────
+const getCurrentMinute = (seconds: number): number => Math.ceil(seconds / 60);
 
 const toggleFullscreen = () => {
   if (document.fullscreenElement) {
@@ -44,8 +50,6 @@ type Props = {
   volumeRef: RefObject<HTMLDivElement | null>;
 };
 
-const ICON_SIZE = 24;
-
 export default function PlayerControls({
   handleNextTrack,
   togglePlayPause,
@@ -54,6 +58,7 @@ export default function PlayerControls({
   handlePreviousTrack,
   volumeRef,
 }: Props) {
+  // ── State ───────────────────────────────────────────
   const [isClient, setIsClient] = useState(false);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
@@ -63,69 +68,21 @@ export default function PlayerControls({
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackSpeed, setPlaybackSpeed] = useAtom(playbackSpeedAtom);
   const [playbackMode, setPlaybackMode] = useAtom(playbackModeAtom);
-  const [sleepTimerId, setSleepTimerId] = useState<NodeJS.Timeout | null>(null);
-  const [remainingTime, setRemainingTime] = useState<number | null>(null); // in seconds
 
   const moreMenuRef = useRef<HTMLDivElement>(null);
   const desktopSleepMenuRef = useRef<HTMLDivElement>(null);
   const { formatMessage } = useIntl();
 
-  // Cleanup sleep timer on unmount
-  useEffect(() => {
-    return () => {
-      if (sleepTimerId) {
-        clearTimeout(sleepTimerId);
-      }
-    };
-  }, [sleepTimerId]);
+  // ── Custom Hook ─────────────────────────────────────
+  const { remainingTime, setSleepTimer, clearSleepTimer } =
+    useSleepTimer(togglePlayPause);
 
-  const togglePlaybackMode = () => {
-    if (playbackMode === 'off') {
-      setPlaybackMode('shuffle');
-    } else if (playbackMode === 'shuffle') {
-      setPlaybackMode('repeat-one');
-    } else {
-      setPlaybackMode('off');
-    }
-  };
-
-  const togglePlaybackSpeed = () => {
-    let nextSpeed = 1;
-    if (playbackSpeed === 1) nextSpeed = 1.5;
-    else if (playbackSpeed === 1.5) nextSpeed = 2;
-    else nextSpeed = 1;
-    setPlaybackSpeed(nextSpeed);
-  };
-
-  const setSleepTimer = (minutes: number | 'end') => {
-    if (sleepTimerId) {
-      clearTimeout(sleepTimerId);
-    }
-
-    const durationInSeconds = minutes === 'end' ? 120 * 60 : minutes * 60;
-    const id = setTimeout(() => {
-      togglePlayPause(); // pause playback
-      setSleepTimerId(null);
-      setRemainingTime(null);
-    }, durationInSeconds * 1000);
-
-    setSleepTimerId(id);
-    setRemainingTime(durationInSeconds);
-  };
-
-  const clearSleepTimer = () => {
-    if (sleepTimerId) {
-      clearTimeout(sleepTimerId);
-      setSleepTimerId(null);
-      setRemainingTime(null);
-    }
-  };
-
+  // ── Effects ──────────────────────────────────────────
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Close volume slider on outside click
+  // Close menus on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -135,16 +92,11 @@ export default function PlayerControls({
         setShowVolumeSlider(false);
       }
     };
-
-    if (showVolumeSlider) {
+    if (showVolumeSlider)
       document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showVolumeSlider, volumeRef]);
 
-  // Close mobile "More" menu on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -154,16 +106,11 @@ export default function PlayerControls({
         setShowMoreMenu(false);
       }
     };
-
-    if (showMoreMenu) {
+    if (showMoreMenu)
       document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showMoreMenu]);
 
-  // Close desktop sleep menu on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -173,14 +120,27 @@ export default function PlayerControls({
         setShowDesktopSleepMenu(false);
       }
     };
-
-    if (showDesktopSleepMenu) {
+    if (showDesktopSleepMenu)
       document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showDesktopSleepMenu]);
+
+  // ── Handlers ─────────────────────────────────────────
+  const togglePlaybackMode = () => {
+    setPlaybackMode((previous) =>
+      previous === 'off'
+        ? 'shuffle'
+        : previous === 'shuffle'
+          ? 'repeat-one'
+          : 'off'
+    );
+  };
+
+  const togglePlaybackSpeed = () => {
+    setPlaybackSpeed((previous) =>
+      previous === 1 ? 1.5 : previous === 1.5 ? 2 : 1
+    );
+  };
 
   const renderImageButton = (
     source: string,
@@ -198,85 +158,92 @@ export default function PlayerControls({
           extraClass
         )}
         aria-label={alt}
-        title={alt}
       >
         <Image src={source} alt="" width={ICON_SIZE} height={ICON_SIZE} />
       </button>
     </Tooltip>
   );
 
-  // Messages
-  const nextTrack = formatMessage({
-    id: 'player.nextTrack',
-    defaultMessage: 'Next track',
-  });
-  const previousTrack = formatMessage({
-    id: 'player.previousTrack',
-    defaultMessage: 'Previous track',
-  });
-  const play = formatMessage({ id: 'player.play', defaultMessage: 'Play' });
-  const pause = formatMessage({ id: 'player.pause', defaultMessage: 'Pause' });
-  const enterFullscreen = formatMessage({
-    id: 'player.enterFullscreen',
-    defaultMessage: 'Enter fullscreen',
-  });
-  const exitFullscreen = formatMessage({
-    id: 'player.exitFullscreen',
-    defaultMessage: 'Exit fullscreen',
-  });
-  const muteVolume = formatMessage({
-    id: 'player.muteVolume',
-    defaultMessage: 'Mute volume',
-  });
-  const unmuteVolume = formatMessage({
-    id: 'player.unmuteVolume',
-    defaultMessage: 'Unmute volume',
-  });
-  const shuffleEnabled = formatMessage({
-    id: 'player.shuffleEnabled',
-    defaultMessage: 'Shuffle enabled',
-  });
-  const repeatOne = formatMessage({
-    id: 'player.repeatOne',
-    defaultMessage: 'Repeat one track',
-  });
-  const allOff = formatMessage({
-    id: 'player.allOff',
-    defaultMessage: 'All off',
-  });
-  const hideVisualizer = formatMessage({
-    id: 'player.hideVisualizer',
-    defaultMessage: 'Hide visualizer',
-  });
-  const showVisualizerText = formatMessage({
-    id: 'player.showVisualizer',
-    defaultMessage: 'Show visualizer',
-  });
-  const togglePlaylist = formatMessage({
-    id: 'player.togglePlaylist',
-    defaultMessage: 'Toggle playlist',
-  });
-  const playbackSpeedLabel = formatMessage(
-    { id: 'player.playbackSpeed', defaultMessage: 'Playback speed: {speed}x' },
-    { speed: playbackSpeed }
-  );
-  const volumeControlLabel = formatMessage({
-    id: 'player.volumeControl',
-    defaultMessage: 'Volume control',
-  });
-  const moreOptions = formatMessage({
-    id: 'player.more',
-    defaultMessage: 'More options',
-  });
-  const sleepTimerLabel = formatMessage({
-    id: 'player.sleepTimer',
-    defaultMessage: 'Sleep timer',
-  });
-  const untilEnd = formatMessage({
-    id: 'player.untilEnd',
-    defaultMessage: 'Until end',
-  });
+  // ── Messages ─────────────────────────────────────────
+  const messages = {
+    nextTrack: formatMessage({
+      id: 'player.nextTrack',
+      defaultMessage: 'Next track',
+    }),
+    previousTrack: formatMessage({
+      id: 'player.previousTrack',
+      defaultMessage: 'Previous track',
+    }),
+    play: formatMessage({ id: 'player.play', defaultMessage: 'Play' }),
+    pause: formatMessage({ id: 'player.pause', defaultMessage: 'Pause' }),
+    enterFullscreen: formatMessage({
+      id: 'player.enterFullscreen',
+      defaultMessage: 'Enter fullscreen',
+    }),
+    exitFullscreen: formatMessage({
+      id: 'player.exitFullscreen',
+      defaultMessage: 'Exit fullscreen',
+    }),
+    muteVolume: formatMessage({
+      id: 'player.muteVolume',
+      defaultMessage: 'Mute volume',
+    }),
+    unmuteVolume: formatMessage({
+      id: 'player.unmuteVolume',
+      defaultMessage: 'Unmute volume',
+    }),
+    shuffleEnabled: formatMessage({
+      id: 'player.shuffleEnabled',
+      defaultMessage: 'Shuffle enabled',
+    }),
+    repeatOne: formatMessage({
+      id: 'player.repeatOne',
+      defaultMessage: 'Repeat one track',
+    }),
+    allOff: formatMessage({ id: 'player.allOff', defaultMessage: 'All off' }),
+    hideVisualizer: formatMessage({
+      id: 'player.hideVisualizer',
+      defaultMessage: 'Hide visualizer',
+    }),
+    showVisualizer: formatMessage({
+      id: 'player.showVisualizer',
+      defaultMessage: 'Show visualizer',
+    }),
+    togglePlaylist: formatMessage({
+      id: 'player.togglePlaylist',
+      defaultMessage: 'Toggle playlist',
+    }),
+    playbackSpeed: formatMessage(
+      {
+        id: 'player.playbackSpeed',
+        defaultMessage: 'Playback speed: {speed}x',
+      },
+      { speed: playbackSpeed }
+    ),
+    volumeControl: formatMessage({
+      id: 'player.volumeControl',
+      defaultMessage: 'Volume control',
+    }),
+    more: formatMessage({ id: 'player.more', defaultMessage: 'More options' }),
+    sleepTimer: formatMessage({
+      id: 'player.sleepTimer',
+      defaultMessage: 'Sleep timer',
+    }),
+    untilEnd: formatMessage({
+      id: 'player.untilEnd',
+      defaultMessage: 'Until end',
+    }),
+    sleepTimerActive: (minutes: number) =>
+      formatMessage(
+        {
+          id: 'player.sleepTimerActive',
+          defaultMessage: 'Sleep timer: {minutes}m',
+        },
+        { minutes }
+      ),
+  };
 
+  // ── Render ───────────────────────────────────────────
   if (!isClient) {
     return (
       <div
@@ -293,14 +260,18 @@ export default function PlayerControls({
   if (isFullscreen) {
     return (
       <div className="flex items-center justify-center gap-4 py-4">
-        {renderImageButton(forwardSVG, nextTrack, handleNextTrack)}
+        {renderImageButton(forwardSVG, messages.nextTrack, handleNextTrack)}
         {renderImageButton(
           isPlaying ? pauseSVG : playSVG,
-          isPlaying ? pause : play,
+          isPlaying ? messages.pause : messages.play,
           togglePlayPause,
           isPlaying ? 'animate-slideInWithFade' : ''
         )}
-        {renderImageButton(backwardSVG, previousTrack, handlePreviousTrack)}
+        {renderImageButton(
+          backwardSVG,
+          messages.previousTrack,
+          handlePreviousTrack
+        )}
       </div>
     );
   }
@@ -310,17 +281,21 @@ export default function PlayerControls({
       className="relative flex w-full items-center justify-between gap-2 md:gap-3"
       dir="rtl"
     >
-      {/* Volume Control - NOW RELATIVE FOR SLIDER ANCHORING */}
+      {/* Volume Control */}
       <div
-        className="relative flex shrink-0 items-center gap-2" // ← "relative" added
+        className="relative flex shrink-0 items-center gap-2"
         ref={volumeRef}
         style={{ touchAction: 'none' }}
       >
-        <Tooltip content={volume > 0 ? muteVolume : unmuteVolume}>
+        <Tooltip
+          content={volume > 0 ? messages.muteVolume : messages.unmuteVolume}
+        >
           <button
             onClick={() => setShowVolumeSlider((previous) => !previous)}
             className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-            aria-label={volume > 0 ? muteVolume : unmuteVolume}
+            aria-label={
+              volume > 0 ? messages.muteVolume : messages.unmuteVolume
+            }
           >
             {volume > 0 ? (
               <BiVolumeFull size={ICON_SIZE} color="#6b7280" />
@@ -348,30 +323,34 @@ export default function PlayerControls({
                 background: `linear-gradient(to top, #3b82f6 0%, #3b82f6 ${volume * 100}%, #cbd5e1 ${volume * 100}%, #cbd5e1 100%)`,
                 borderRadius: '9999px',
               }}
-              aria-label={volumeControlLabel}
+              aria-label={messages.volumeControl}
             />
           </div>
         )}
       </div>
 
-      {/* Core Playback Controls */}
-      {renderImageButton(forwardSVG, nextTrack, handleNextTrack)}
+      {/* Core Controls */}
+      {renderImageButton(forwardSVG, messages.nextTrack, handleNextTrack)}
       {renderImageButton(
         isPlaying ? pauseSVG : playSVG,
-        isPlaying ? pause : play,
+        isPlaying ? messages.pause : messages.play,
         togglePlayPause,
         isPlaying ? 'animate-slideInWithFade' : ''
       )}
-      {renderImageButton(backwardSVG, previousTrack, handlePreviousTrack)}
+      {renderImageButton(
+        backwardSVG,
+        messages.previousTrack,
+        handlePreviousTrack
+      )}
 
       {/* Playback Mode */}
       <Tooltip
         content={
           playbackMode === 'off'
-            ? allOff
+            ? messages.allOff
             : playbackMode === 'shuffle'
-              ? shuffleEnabled
-              : repeatOne
+              ? messages.shuffleEnabled
+              : messages.repeatOne
         }
       >
         <button
@@ -382,10 +361,10 @@ export default function PlayerControls({
           )}
           aria-label={
             playbackMode === 'off'
-              ? allOff
+              ? messages.allOff
               : playbackMode === 'shuffle'
-                ? shuffleEnabled
-                : repeatOne
+                ? messages.shuffleEnabled
+                : messages.repeatOne
           }
         >
           {playbackMode === 'off' ? (
@@ -408,22 +387,29 @@ export default function PlayerControls({
         </button>
       </Tooltip>
 
-      {/* Sleep Timer Indicator (Mobile ONLY) */}
-      {remainingTime !== null && (
-        <div className="flex items-center sm:hidden">
-          <span className="text-xs text-blue-500 dark:text-blue-400">
-            💤 {Math.floor(remainingTime / 60)}m
+      {/* Mobile Sleep Timer */}
+      {remainingTime !== null && remainingTime > 0 && (
+        <div className="flex h-9 w-9 items-center justify-center sm:hidden">
+          <span className="flex items-center text-xs font-bold text-blue-500 dark:text-blue-400">
+            <Image
+              src={sleepSVG}
+              alt=""
+              width={12}
+              height={12}
+              className="me-0.5"
+            />
+            {getCurrentMinute(remainingTime)}
           </span>
         </div>
       )}
 
-      {/* === MORE BUTTON (mobile only) === */}
+      {/* Mobile More Menu */}
       <div className="relative sm:hidden" ref={moreMenuRef}>
-        <Tooltip content={moreOptions}>
+        <Tooltip content={messages.more}>
           <button
             onClick={() => setShowMoreMenu((previous) => !previous)}
             className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-            aria-label={moreOptions}
+            aria-label={messages.more}
           >
             <span className="text-lg font-bold text-gray-600 dark:text-gray-300">
               ⋯
@@ -433,19 +419,25 @@ export default function PlayerControls({
 
         {showMoreMenu && (
           <div className="absolute bottom-10 left-0 z-10 flex w-52 flex-col gap-1 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
-            {/* === Sleep Timer Section === */}
             <div className="px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400">
-              💤 {sleepTimerLabel}
+              <Image
+                src={sleepSVG}
+                alt=""
+                width={12}
+                height={12}
+                className="me-0.5 inline"
+              />
+              {messages.sleepTimer}
             </div>
             <div className="flex flex-wrap gap-1">
-              {[5, 10, 15, 30, 60].map((minutes) => (
+              {SLEEP_MINUTES.map((minutes) => (
                 <button
                   key={minutes}
                   onClick={() => {
                     setSleepTimer(minutes);
                     setShowMoreMenu(false);
                   }}
-                  className="rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+                  className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                 >
                   {minutes}m
                 </button>
@@ -455,9 +447,9 @@ export default function PlayerControls({
                   setSleepTimer('end');
                   setShowMoreMenu(false);
                 }}
-                className="rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+                className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
               >
-                {untilEnd}
+                {messages.untilEnd}
               </button>
               {remainingTime && (
                 <button
@@ -474,23 +466,25 @@ export default function PlayerControls({
 
             <div className="my-1 h-px bg-gray-200 dark:bg-gray-700" />
 
-            {/* Fullscreen */}
             <button
               onClick={() => {
                 toggleFullscreen();
                 setShowMoreMenu(false);
               }}
-              className="flex items-center gap-2 rounded px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
             >
               {isFullscreen ? (
                 <BsFullscreenExit size={16} color="#6b7280" />
               ) : (
                 <BsFullscreen size={16} color="#6b7280" />
               )}
-              <span>{isFullscreen ? exitFullscreen : enterFullscreen}</span>
+              <span>
+                {isFullscreen
+                  ? messages.exitFullscreen
+                  : messages.enterFullscreen}
+              </span>
             </button>
 
-            {/* Visualizer */}
             <button
               onClick={() => {
                 setShowVisualizer((previous) => !previous);
@@ -498,7 +492,7 @@ export default function PlayerControls({
               }}
               disabled={isPlaying}
               className={cn(
-                'flex items-center gap-2 rounded px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700',
+                'flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700',
                 isPlaying && 'cursor-not-allowed opacity-50'
               )}
             >
@@ -509,45 +503,50 @@ export default function PlayerControls({
                 height={16}
               />
               <span>
-                {showVisualizer ? hideVisualizer : showVisualizerText}
+                {showVisualizer
+                  ? messages.hideVisualizer
+                  : messages.showVisualizer}
               </span>
             </button>
 
-            {/* Playback Speed */}
             <button
               onClick={() => {
                 togglePlaybackSpeed();
                 setShowMoreMenu(false);
               }}
-              className="flex items-center gap-2 rounded px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
             >
               <MdSpeed size={16} color="#6b7280" />
-              <span>{playbackSpeedLabel}</span>
+              <span>{messages.playbackSpeed}</span>
             </button>
 
-            {/* Playlist */}
             <button
               onClick={() => {
                 togglePlaylistOpen();
                 setShowMoreMenu(false);
               }}
-              className="flex items-center gap-2 rounded px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
             >
               <Image src={playlistSVG} alt="" width={16} height={16} />
-              <span>{togglePlaylist}</span>
+              <span>{messages.togglePlaylist}</span>
             </button>
           </div>
         )}
       </div>
 
-      {/* === DESKTOP ONLY CONTROLS === */}
+      {/* Desktop Controls */}
       <div className="hidden items-center gap-2 sm:flex">
-        {/* Fullscreen */}
-        <Tooltip content={isFullscreen ? exitFullscreen : enterFullscreen}>
+        <Tooltip
+          content={
+            isFullscreen ? messages.exitFullscreen : messages.enterFullscreen
+          }
+        >
           <button
             onClick={toggleFullscreen}
             className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-            aria-label={isFullscreen ? exitFullscreen : enterFullscreen}
+            aria-label={
+              isFullscreen ? messages.exitFullscreen : messages.enterFullscreen
+            }
           >
             {isFullscreen ? (
               <BsFullscreenExit size={ICON_SIZE} color="#6b7280" />
@@ -557,21 +556,19 @@ export default function PlayerControls({
           </button>
         </Tooltip>
 
-        {/* Visualizer */}
         {renderImageButton(
           showVisualizer ? spectrumSVG : spectrumDisabledSVG,
-          showVisualizer ? hideVisualizer : showVisualizerText,
+          showVisualizer ? messages.hideVisualizer : messages.showVisualizer,
           () => setShowVisualizer((previous) => !previous),
           isPlaying ? 'pointer-events-none cursor-not-allowed opacity-30' : '',
           isPlaying
         )}
 
-        {/* Playback Speed */}
-        <Tooltip content={playbackSpeedLabel}>
+        <Tooltip content={messages.playbackSpeed}>
           <button
             onClick={togglePlaybackSpeed}
             className="relative flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-            aria-label={playbackSpeedLabel}
+            aria-label={messages.playbackSpeed}
           >
             <MdSpeed size={ICON_SIZE} color="#6b7280" />
             {playbackSpeed !== 1 && (
@@ -582,19 +579,12 @@ export default function PlayerControls({
           </button>
         </Tooltip>
 
-        {/* Sleep Timer (Desktop/Tablet) */}
         <div className="relative" ref={desktopSleepMenuRef}>
           <Tooltip
             content={
               remainingTime
-                ? formatMessage(
-                    {
-                      id: 'player.sleepTimerActive',
-                      defaultMessage: 'Sleep timer: {time}m',
-                    },
-                    { time: Math.floor(remainingTime / 60) }
-                  )
-                : sleepTimerLabel
+                ? messages.sleepTimerActive(getCurrentMinute(remainingTime))
+                : messages.sleepTimer
             }
           >
             <button
@@ -602,14 +592,14 @@ export default function PlayerControls({
               className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
               aria-label={
                 remainingTime
-                  ? `Sleep timer active: ${Math.floor(remainingTime / 60)} minutes remaining`
-                  : sleepTimerLabel
+                  ? `Sleep timer active: ${getCurrentMinute(remainingTime)} minutes remaining`
+                  : messages.sleepTimer
               }
             >
-              <span className="text-sm">💤</span>
-              {remainingTime && (
+              <Image src={sleepSVG} alt="" width={16} height={16} />
+              {remainingTime !== null && remainingTime > 0 && (
                 <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[8px] font-bold text-white">
-                  {Math.floor(remainingTime / 60)}
+                  {getCurrentMinute(remainingTime)}
                 </span>
               )}
             </button>
@@ -618,17 +608,24 @@ export default function PlayerControls({
           {showDesktopSleepMenu && (
             <div className="absolute bottom-10 right-0 z-10 w-40 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
               <div className="mb-1 px-2 text-xs font-medium text-gray-500 dark:text-gray-400">
-                {sleepTimerLabel}
+                <Image
+                  src={sleepSVG}
+                  alt=""
+                  width={12}
+                  height={12}
+                  className="mr-1 inline"
+                />
+                {messages.sleepTimer}
               </div>
               <div className="flex flex-wrap gap-1">
-                {[5, 10, 15, 30, 60].map((minutes) => (
+                {SLEEP_MINUTES.map((minutes) => (
                   <button
                     key={minutes}
                     onClick={() => {
                       setSleepTimer(minutes);
                       setShowDesktopSleepMenu(false);
                     }}
-                    className="rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+                    className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                   >
                     {minutes}m
                   </button>
@@ -638,9 +635,9 @@ export default function PlayerControls({
                     setSleepTimer('end');
                     setShowDesktopSleepMenu(false);
                   }}
-                  className="rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+                  className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                 >
-                  {untilEnd}
+                  {messages.untilEnd}
                 </button>
                 {remainingTime && (
                   <button
@@ -658,8 +655,11 @@ export default function PlayerControls({
           )}
         </div>
 
-        {/* Playlist */}
-        {renderImageButton(playlistSVG, togglePlaylist, togglePlaylistOpen)}
+        {renderImageButton(
+          playlistSVG,
+          messages.togglePlaylist,
+          togglePlaylistOpen
+        )}
       </div>
     </div>
   );

@@ -108,5 +108,9 @@
   "player.playbackSpeed": "Playback speed: {speed}x",
   "player.volumeControl": "Volume control",
 
-  "player.more": "More options"
+  "player.more": "More options",
+
+  "player.sleepTimerActive": "Sleep timer active",
+  "player.sleepTimer": "Sleep Timer",
+  "player.untilEnd": "Until the end of the recitation"
 }
