@@ -104,7 +104,9 @@
   "player.allOff": "All Off",
   "player.hideVisualizer": "Hide Visualizer",
   "player.showVisualizer": "Show Visualizer",
-  "player.togglePlaylist": "Toggle Playlist",
+  "player.togglePlaylist": "Playlist",
   "player.playbackSpeed": "Playback speed: {speed}x",
-  "player.volumeControl": "Volume control"
+  "player.volumeControl": "Volume control",
+
+  "player.more": "More options"
 }

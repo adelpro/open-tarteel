@@ -184,7 +184,7 @@ export default function Player({ playlist }: Props) {
         'flex w-full max-w-xl flex-col items-center justify-center',
         isFullscreen
           ? 'text-forground w-full bg-background'
-          : 'max-w-xl rounded-md border border-slate-200 p-2 shadow-md transition-transform hover:scale-105'
+          : 'max-w-xl rounded-md border border-slate-200 p-2 shadow-md transition-transform md:hover:scale-105'
       )}
     >
       {typeof currentTrack === 'number' && (

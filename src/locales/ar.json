@@ -104,7 +104,9 @@
   "player.allOff": "تشغيل مباشر",
   "player.hideVisualizer": "إخفاء المخطط الصوتي",
   "player.showVisualizer": "إظهار المخطط الصوتي",
-  "player.togglePlaylist": "تبديل قائمة التشغيل",
+  "player.togglePlaylist": "قائمة التشغيل",
   "player.playbackSpeed": "سرعة التشغيل: {speed}x",
-  "player.volumeControl": "تحكم بمستوى الصوت"
+  "player.volumeControl": "تحكم بمستوى الصوت",
+
+  "player.more": "المزيد"
 }
