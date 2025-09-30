@@ -26,7 +26,8 @@ export async function getAllReciters(
       { next: { revalidate: 3600 } }
     );
 
-    if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+    if (!response.ok)
+      throw new Error(`Failed to fetch reciters:: ${response.status}`);
 
     const data: mp3QuranAPiResponse = await response.json();
     const reciters: Reciter[] = [];

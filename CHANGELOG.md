@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.3]
+
+### Features
+
+- Add audio files caching (up to 20 audio files)
+
 ## [0.2.2]
 
 ### Features
