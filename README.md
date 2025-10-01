@@ -9,6 +9,8 @@
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/270e870a48f342ef9ba384229681db23)](https://app.codacy.com/gh/adelpro/open-tarteel/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
+[<img src="./assets/svgs/explore-in-deepwiki.svg" title="Explore in DeepWiki" width="150" height="25" alt="DeepWiki">](https://deepwiki.com/adelpro/open-tarteel)
+
 Open Tarteel is an open-source Quran application designed to provide an optimal Quran audio streaming experience across various platforms. Recent updates include significant UI/UX improvements for a more intuitive and engaging user interface, enhanced audio player controls, and smoother navigation. Built with modern web technologies, it ensures performance and responsive design.
 
 ## Features
