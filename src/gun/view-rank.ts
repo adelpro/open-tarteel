@@ -1,13 +1,9 @@
 'use client';
 import Gun from 'gun';
 
-import { GUN_PEERS, VIEW_COUNTS_KEY } from '@/constants';
+import { GUNCONFIG, VIEW_COUNTS_KEY } from '@/constants';
 
-const gun = Gun({
-  peers: [GUN_PEERS],
-  radisk: false,
-  localStorage: false,
-});
+const gun = Gun(GUNCONFIG);
 
 const viewCountsNode = gun.get(VIEW_COUNTS_KEY);
 
