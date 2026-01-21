@@ -21,7 +21,15 @@ Thank you for considering contributing to **Open-Tarteel**! We appreciate your h
    cd open-tarteel
    ```
 
-3. Create a Branch
+3. **Development Setup**
+
+   ```bash
+   corepack enable
+   yarn install
+   yarn dev
+   ```
+
+4. **Create a Branch**
 
    Use a descriptive name for your branch.
 
@@ -29,18 +37,24 @@ Thank you for considering contributing to **Open-Tarteel**! We appreciate your h
    git checkout -b feature/your-feature-name
    ```
 
-4. Make Your Changes
+5. **Make Your Changes**
 
    Implement your feature or fix the bug. Ensure that your code follows the project's style guidelines.
 
-5. Commit Your Changes
+6. **Coding Standards**
+
+   - Use TypeScript and functional components.
+   - Follow the existing linting and formatting rules (`yarn lint`, `yarn format`).
+   - Write meaningful commit messages following [Conventional Commits](https://www.conventionalcommits.org/).
+
+7. **Commit Your Changes**
 
    ```bash
    git add .
-   git commit -m "Add your feature or fix"
+   git commit -m "feat: add your feature"
    ```
 
-6. Push to Your Fork
+8. **Push to Your Fork**
 
    ```bash
    git push origin feature/your-feature-name
