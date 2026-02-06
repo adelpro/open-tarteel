@@ -3,11 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { clientConfig, isValidEmail, sanitizeHTML } from '@/utils';
 import { mailOptions, transporter } from '@/utils/node-mailer';
 
-// --- إضافة نظام الـ Rate Limiting ---
-// تخزين مؤقت للـ IPs وعدد الطلبات (بحد أقصى 5 طلبات في الدقيقة لكل مستخدم)
+// In-memory store for IPs and request counts (Limit: 5 requests per minute per user)
 const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
 const LIMIT = 5;
-const WINDOW_MS = 60 * 1000; // دقيقة واحدة
+const WINDOW_MS = 60 * 1000;
 
 export async function POST(request: NextRequest) {
   const forwarded = request.headers.get('x-forwarded-for');
@@ -15,13 +14,13 @@ export async function POST(request: NextRequest) {
   const now = Date.now();
   const userData = rateLimitMap.get(ip) || { count: 0, lastReset: now };
 
-  // إعادة تصغير العداد لو مر وقت أكثر من دقيقة
+  // Reset counter if the time window has passed
   if (now - userData.lastReset > WINDOW_MS) {
     userData.count = 0;
     userData.lastReset = now;
   }
 
-  // إذا تخطى المستخدم الحد المسموح (أكثر من 5 طلبات)
+  // Check if user exceeded the limit
   if (userData.count >= LIMIT) {
     return NextResponse.json(
       { message: 'Too many requests, please try again later.' },
@@ -29,15 +28,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // تحديث بيانات العداد للمستخدم
   userData.count++;
   rateLimitMap.set(ip, userData);
 
-  // --- تكملة الكود الأصلي بعد الحماية ---
   try {
     const { name, email, message } = await request.json();
 
-    // التحقق من صحة البيانات
     if (!name || !email || !isValidEmail(email) || !message) {
       return NextResponse.json(
         { message: 'Invalid data' },
