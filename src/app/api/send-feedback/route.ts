@@ -3,22 +3,52 @@ import { NextRequest, NextResponse } from 'next/server';
 import { clientConfig, isValidEmail, sanitizeHTML } from '@/utils';
 import { mailOptions, transporter } from '@/utils/node-mailer';
 
-export async function POST(request: NextRequest) {
-  const { name, email, message } = await request.json();
+// --- إضافة نظام الـ Rate Limiting ---
+// تخزين مؤقت للـ IPs وعدد الطلبات (بحد أقصى 5 طلبات في الدقيقة لكل مستخدم)
+const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
+const LIMIT = 5;
+const WINDOW_MS = 60 * 1000; // دقيقة واحدة
 
-  //Validating the data
-  if (!name || !email || !isValidEmail(email) || !message) {
+export async function POST(request: NextRequest) {
+  const forwarded = request.headers.get('x-forwarded-for');
+  const ip = forwarded ? forwarded.split(',')[0] : '127.0.0.1';
+  const now = Date.now();
+  const userData = rateLimitMap.get(ip) || { count: 0, lastReset: now };
+
+  // إعادة تصغير العداد لو مر وقت أكثر من دقيقة
+  if (now - userData.lastReset > WINDOW_MS) {
+    userData.count = 0;
+    userData.lastReset = now;
+  }
+
+  // إذا تخطى المستخدم الحد المسموح (أكثر من 5 طلبات)
+  if (userData.count >= LIMIT) {
     return NextResponse.json(
-      { message: 'Invalid data' },
-      { status: 422, statusText: 'Unprocessable Entity' }
+      { message: 'Too many requests, please try again later.' },
+      { status: 429, statusText: 'Too Many Requests' }
     );
   }
 
-  const safeName = sanitizeHTML(name);
-  const safeEmail = sanitizeHTML(email);
-  const safeMessage = sanitizeHTML(message);
+  // تحديث بيانات العداد للمستخدم
+  userData.count++;
+  rateLimitMap.set(ip, userData);
 
+  // --- تكملة الكود الأصلي بعد الحماية ---
   try {
+    const { name, email, message } = await request.json();
+
+    // التحقق من صحة البيانات
+    if (!name || !email || !isValidEmail(email) || !message) {
+      return NextResponse.json(
+        { message: 'Invalid data' },
+        { status: 422, statusText: 'Unprocessable Entity' }
+      );
+    }
+
+    const safeName = sanitizeHTML(name);
+    const safeEmail = sanitizeHTML(email);
+    const safeMessage = sanitizeHTML(message);
+
     await transporter.sendMail({
       ...mailOptions,
       subject: `${clientConfig.APP_NAME} - feedback`,
@@ -37,6 +67,7 @@ export async function POST(request: NextRequest) {
         </section>
       `,
     });
+
     return NextResponse.json({ message: 'Feedback sent successfully' });
   } catch {
     return NextResponse.json(
