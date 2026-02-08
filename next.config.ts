@@ -31,6 +31,46 @@ const nextConfig: NextConfig = {
   experimental: {
     // nextScriptWorkers: true,
   },
+  webpack: (config, { isServer, webpack }) => {
+    // Gun.js imports server-side modules that shouldn't be bundled in the client
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+        stream: false,
+        url: false,
+        zlib: false,
+        http: false,
+        https: false,
+        assert: false,
+        os: false,
+        path: false,
+        'aws-sdk': false,
+      };
+
+      // Ignore Gun.js server-side modules to suppress warnings
+      config.plugins.push(
+        new webpack.IgnorePlugin({
+          resourceRegExp: /^aws-sdk$/,
+          contextRegExp: /gun/,
+        })
+      );
+    }
+
+    // Suppress warnings for Gun.js server imports
+    config.ignoreWarnings = [
+      ...(config.ignoreWarnings || []),
+      {
+        module: /node_modules\/gun\/lib\/rs3\.js/,
+        message: /Can't resolve 'aws-sdk'/,
+      },
+    ];
+
+    return config;
+  },
 };
 
 // Wrap your Next.js config with serwist.

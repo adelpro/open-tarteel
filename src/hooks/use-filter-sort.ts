@@ -1,12 +1,25 @@
 'use client';
 
 import { useAtom } from 'jotai';
-import { useMemo, useState } from 'react';
+import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
-import { recitersSortAtom, selectedRiwayaAtom } from '@/jotai/atom';
+import { recitersSortAtom } from '@/jotai/atom';
 import { Reciter, Riwaya } from '@/types';
 import { fuzzySearch, generateFavId } from '@/utils';
+
+// Define parsers for URL state management
+// Using shorter keys (q, r) for cleaner URLs
+// Define all possible Riwaya values plus 'all'
+const riwayaValues = ['all', ...Object.values(Riwaya)] as const;
+
+const filterSearchParsers = {
+  searchQuery: parseAsString.withDefault(''),
+  selectedRiwaya: parseAsStringLiteral(riwayaValues).withDefault(
+    'all' as const
+  ),
+};
 
 type UseFilterSortParams = {
   reciters: Reciter[];
@@ -23,8 +36,18 @@ export function useFilterSort({
   favoriteCounts = {},
   viewCounts = {},
 }: UseFilterSortParams) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRiwaya, setSelectedRiwaya] = useAtom(selectedRiwayaAtom);
+  // Use nuqs for URL state management with shorter keys
+  const [{ searchQuery: searchTerm, selectedRiwaya }, setFilters] =
+    useQueryStates(filterSearchParsers, {
+      urlKeys: {
+        searchQuery: 'q',
+        selectedRiwaya: 'r',
+      },
+      history: 'push',
+      shallow: false, // Allow server to track state changes
+    });
+
+  // Keep sortMode in Jotai for non-URL state
   const [sortMode, setSortMode] = useAtom(recitersSortAtom);
   const { formatMessage, locale } = useIntl();
   const availableRiwiyat = useMemo(() => {
@@ -93,9 +116,10 @@ export function useFilterSort({
 
   return {
     searchTerm,
-    setSearchTerm,
+    setSearchTerm: (value: string) => setFilters({ searchQuery: value }),
     selectedRiwaya,
-    setSelectedRiwaya,
+    setSelectedRiwaya: (value: Riwaya | 'all') =>
+      setFilters({ selectedRiwaya: value }),
     sortMode,
     setSortMode,
     filteredReciters,
