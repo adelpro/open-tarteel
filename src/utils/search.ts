@@ -1,3 +1,8 @@
+import Fuse, {
+  type FuseResult,
+  type IFuseOptions,
+} from 'fuse.js';
+
 export const removeTashkeel = (text: string): string => {
   return (
     text
@@ -28,3 +33,52 @@ export const normalizeArabicText = (text: string): string => {
 
   return normalizedText;
 };
+
+/**
+ * Fuzzy search configuration for Fuse.js
+ */
+const fuseOptions: IFuseOptions<{ name: string }> = {
+  keys: ['name'],
+  threshold: 0.4, // 0 = perfect match, 1 = match anything
+  distance: 100, // Maximum distance between characters
+  minMatchCharLength: 2, // Minimum characters that must match
+  ignoreLocation: true, // Search entire string, not just beginning
+  includeScore: true,
+  useExtendedSearch: false,
+};
+
+/**
+ * Performs fuzzy search on items with Arabic text normalization
+ * @param items - Array of items to search (must have a 'name' property)
+ * @param searchTerm - The search term to match against
+ * @returns Filtered array of items that match the search term
+ */
+export function fuzzySearch<T extends { name: string }>(
+  items: T[],
+  searchTerm: string
+): T[] {
+  if (!searchTerm || searchTerm.trim() === '') {
+    return items;
+  }
+
+  const normalizedSearchTerm = normalizeArabicText(searchTerm);
+
+  // Normalize all item names for search
+  const normalizedItems = items.map((item) => ({
+    ...item,
+    name: normalizeArabicText(item.name),
+  }));
+
+  // Create Fuse instance with normalized items
+  const fuse = new Fuse(normalizedItems, fuseOptions);
+
+  // Perform search with normalized search term
+  const results = fuse.search(normalizedSearchTerm);
+
+  // Return original items (not normalized ones, not FuseResult objects)
+  // Map back to original items using index
+  return results.map((result: FuseResult<typeof normalizedItems[0]>) => {
+    const index = normalizedItems.indexOf(result.item);
+    return items[index];
+  });
+}
