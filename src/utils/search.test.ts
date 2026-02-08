@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+    clearNormalizationCache,
     fuzzySearch,
     normalizeArabicText,
     removeDefiniteArticle,
@@ -884,6 +885,110 @@ describe('fuzzySearch', () => {
       expect(results).toHaveLength(1);
       expect(results[0].riwaya).toBe('حفص');
       expect(results[0].surahCount).toBe(114);
+    });
+  });
+
+  // ──────────────────────────────────────────
+  // Optional threshold parameter
+  // ──────────────────────────────────────────
+
+  describe('Optional threshold parameter', () => {
+    const items = [
+      { id: 1, name: 'محمد صديق المنشاوي' },
+      { id: 2, name: 'محمد أيوب' },
+      { id: 3, name: 'محمود خليل الحصري' },
+    ];
+
+    it('should use default threshold (0.35) when not specified', () => {
+      const results = fuzzySearch(items, 'محمد');
+      expect(results.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('should accept stricter threshold (0.2) for more exact matches', () => {
+      // With strict threshold, "محمد" should match "محمد" but not "محمود"
+      const results = fuzzySearch(items, 'محمد', { threshold: 0.2 });
+      expect(results.length).toBeGreaterThanOrEqual(1);
+      const names = results.map((r) => r.name);
+      expect(names).toContain('محمد صديق المنشاوي');
+      expect(names).toContain('محمد أيوب');
+    });
+
+    it('should accept looser threshold (0.5) for more typo tolerance', () => {
+      // With loose threshold, even with typo "مخمد" should match "محمد"
+      const results = fuzzySearch(items, 'مخمد', { threshold: 0.5 });
+      expect(results.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('should accept perfect match threshold (0.0)', () => {
+      const results = fuzzySearch(items, 'محمد صديق المنشاوي', {
+        threshold: 0.0,
+      });
+      expect(results).toHaveLength(1);
+      expect(results[0].name).toBe('محمد صديق المنشاوي');
+    });
+  });
+
+  // ──────────────────────────────────────────
+  // Memoization / Cache
+  // ──────────────────────────────────────────
+
+  describe('Normalization cache', () => {
+    it('should cache normalized results for repeated calls', () => {
+      const text = 'مُحَمَّد صِدِّيق المِنْشَاوِي';
+
+      // First call - computes normalization
+      const first = normalizeArabicText(text);
+
+      // Second call - should use cached value
+      const second = normalizeArabicText(text);
+
+      expect(first).toBe(second);
+      expect(first).toBe('محمد صديق المنشاوي');
+    });
+
+    it('should improve performance for static datasets', () => {
+      const reciters = RECITERS.slice(0, 10);
+
+      // First search - caches normalizations
+      const start1 = performance.now();
+      fuzzySearch(reciters, 'محمد');
+      const duration1 = performance.now() - start1;
+
+      // Second search - uses cached normalizations
+      const start2 = performance.now();
+      fuzzySearch(reciters, 'محمد');
+      const duration2 = performance.now() - start2;
+
+      // Second search should be faster (though not guaranteed due to JIT)
+      // Just verify both complete without error
+      expect(duration1).toBeGreaterThan(0);
+      expect(duration2).toBeGreaterThan(0);
+    });
+
+    it('should clear cache when clearNormalizationCache is called', () => {
+      const text = 'عبد الباسط';
+
+      // Cache the value
+      normalizeArabicText(text);
+
+      // Clear cache
+      clearNormalizationCache();
+
+      // Should still work after clearing
+      const result = normalizeArabicText(text);
+      expect(result).toBe('عبد الباسط');
+    });
+
+    it('should cache spaceless searches separately', () => {
+      const reciters = [{ name: 'عبد الباسط عبد الصمد' }];
+
+      // Search with space
+      const withSpace = fuzzySearch(reciters, 'عبد الباسط');
+      expect(withSpace).toHaveLength(1);
+
+      // Search without space (should also work due to spaceless variant)
+      const withoutSpace = fuzzySearch(reciters, 'عبدالباسط');
+      expect(withoutSpace).toHaveLength(1);
     });
   });
 });

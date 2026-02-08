@@ -1,5 +1,24 @@
 import Fuse, { type FuseResult, type IFuseOptions } from 'fuse.js';
 
+// ──────────────────────────────────────────
+// Normalization cache for performance optimization
+// ──────────────────────────────────────────
+
+/**
+ * Cache for normalized text to avoid recomputing the same values.
+ * Useful for static datasets (e.g., Surah names, reciter lists).
+ * Clear cache if memory becomes a concern: `clearNormalizationCache()`
+ */
+const normalizationCache = new Map<string, string>();
+
+/**
+ * Clears the normalization cache. Call this if memory usage is a concern
+ * or when dataset changes significantly.
+ */
+export const clearNormalizationCache = (): void => {
+  normalizationCache.clear();
+};
+
 /**
  * Comprehensive Arabic text normalization and fuzzy search utilities.
  *
@@ -87,6 +106,10 @@ export const removeTashkeel = (text: string): string => {
 export const normalizeArabicText = (text: string): string => {
   if (!text) return '';
 
+  // Check cache first
+  const cached = normalizationCache.get(text);
+  if (cached !== undefined) return cached;
+
   let result = removeTashkeel(text);
 
   result = result
@@ -115,6 +138,8 @@ export const normalizeArabicText = (text: string): string => {
     // Lowercase for mixed Arabic/English names (e.g. "Sheikh Ahmad")
     .toLowerCase();
 
+  // Cache the result for future lookups
+  normalizationCache.set(text, result);
   return result;
 };
 
@@ -139,20 +164,29 @@ const removeSpaces = (text: string): string => {
 // ──────────────────────────────────────────
 
 /**
- * Fuse.js configuration optimized for Arabic reciter name search.
+ * Creates Fuse.js configuration optimized for Arabic reciter name search.
  *
- * - threshold 0.35: Balanced — catches typos but avoids false positives
+ * - threshold: Controls fuzziness (0.0 = exact, 1.0 = match anything)
  * - distance 200: Arabic names can be long (عبد الباسط عبد الصمد)
  * - minMatchCharLength 2: Allow 2-char Arabic matches (عم, حص)
  * - ignoreLocation: Names can match anywhere in the string
  * - isCaseSensitive false: Handle mixed Arabic/English names
+ *
+ * @param threshold - Fuzzy match threshold (default: 0.35)
+ *   - 0.0 = perfect match only
+ *   - 0.2 = strict (minimal typos)
+ *   - 0.35 = balanced (recommended for Arabic)
+ *   - 0.5 = loose (generous typo tolerance)
+ *   - 1.0 = match everything
  */
-const fuseOptions: IFuseOptions<{
+const createFuseOptions = (
+  threshold = 0.35
+): IFuseOptions<{
   normalizedName: string;
   spacelessName: string;
-}> = {
+}> => ({
   keys: ['normalizedName', 'spacelessName'],
-  threshold: 0.35,
+  threshold,
   distance: 200,
   minMatchCharLength: 2,
   ignoreLocation: true,
@@ -160,7 +194,7 @@ const fuseOptions: IFuseOptions<{
   isCaseSensitive: false,
   shouldSort: true,
   findAllMatches: true,
-};
+});
 
 /**
  * Internal type for search-indexed items with normalized variants.
@@ -175,13 +209,19 @@ type SearchableItem<T> = T & {
  * Performs fuzzy search on Arabic text items with comprehensive normalization.
  *
  * Search strategy (multi-pass for best UX):
- * 1. Normalize both search term and item names
+ * 1. Normalize both search term and item names (with caching for performance)
  * 2. Create spaceless variants for spacing-variation matching
  * 3. Use Fuse.js fuzzy matching against both normal and spaceless variants
  * 4. Deduplicate and return results ranked by relevance
  *
  * @param items - Array of items with a `name` property
  * @param searchTerm - User's search input (may contain typos, tashkeel, etc.)
+ * @param options - Optional search configuration
+ * @param options.threshold - Fuzzy match sensitivity (default: 0.35)
+ *   - 0.0 = perfect match only
+ *   - 0.2 = strict (minimal typos)
+ *   - 0.35 = balanced (recommended)
+ *   - 0.5 = loose (generous typos)
  * @returns Filtered and ranked array of matching items (original objects preserved)
  *
  * @example
@@ -190,11 +230,15 @@ type SearchableItem<T> = T & {
  * fuzzySearch(reciters, 'عبدالباسط');  // finds عبد الباسط
  * fuzzySearch(reciters, 'عبض الباسط');  // finds عبد الباسط (typo tolerance)
  * fuzzySearch(reciters, 'المنشاوى');    // finds المنشاوي (ى → ي normalization)
+ *
+ * // Custom threshold for stricter matching
+ * fuzzySearch(reciters, 'محمد', { threshold: 0.2 });
  * ```
  */
 export function fuzzySearch<T extends { name: string }>(
   items: T[],
-  searchTerm: string
+  searchTerm: string,
+  options?: { threshold?: number }
 ): T[] {
   if (!searchTerm || searchTerm.trim() === '') {
     return items;
@@ -217,7 +261,7 @@ export function fuzzySearch<T extends { name: string }>(
   }));
 
   // Fuse.js fuzzy search on normalized names
-  const fuse = new Fuse(searchableItems, fuseOptions);
+  const fuse = new Fuse(searchableItems, createFuseOptions(options?.threshold));
 
   // Search with both normal and spaceless variants
   const normalResults = fuse.search(normalizedSearchTerm);
