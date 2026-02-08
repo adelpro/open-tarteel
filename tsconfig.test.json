@@ -1,0 +1,17 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "types": [
+            "vitest/globals",
+            "vitest/jsdom",
+            "@serwist/next/typings"
+        ]
+    },
+    "include": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+        "src/test/**/*.ts"
+    ]
+}

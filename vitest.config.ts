@@ -18,10 +18,9 @@ export default defineConfig({
       '@hooks': path.resolve(__dirname, './src/hooks'),
       '@utils': path.resolve(__dirname, './src/utils'),
       '@types': path.resolve(__dirname, './src/types'),
+      '@assets': path.resolve(__dirname, './src/assets'),
       '@svgs': path.resolve(__dirname, './src/svgs'),
       '@gun': path.resolve(__dirname, './src/gun'),
-      '@constants': path.resolve(__dirname, './src/constants'),
-      '@jotai': path.resolve(__dirname, './src/jotai'),
     },
   },
 });

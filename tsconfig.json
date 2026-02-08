@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
     "types": [
-      "vitest/globals",
-      "vitest/jsdom",
       "@serwist/next/typings"
     ],
     "allowJs": true,
@@ -60,8 +58,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "types/**/*.d.ts",
-    "src/app/opengraph-image.alt.tst",
-    "src/constants/trackers.-listts"
+    "src/app/opengraph-image.alt.txt"
   ],
   "exclude": [
     "node_modules",

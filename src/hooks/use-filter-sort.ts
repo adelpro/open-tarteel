@@ -43,8 +43,7 @@ export function useFilterSort({
         searchQuery: 'q',
         selectedRiwaya: 'r',
       },
-      history: 'push',
-      shallow: false, // Allow server to track state changes
+      history: 'replace', // Replace instead of push to avoid history spam
     });
 
   // Keep sortMode in Jotai for non-URL state

@@ -8,7 +8,7 @@ import { useShareReciter } from '@/utils/share';
 import { useAtomValue } from 'jotai';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
 import { FaRegShareFromSquare } from 'react-icons/fa6';
 import { useIntl } from 'react-intl';
@@ -18,6 +18,7 @@ import ReciterSelectorDialog from './reciter-selector-dialog';
 export default function ReciterSelector() {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const autoOpenedRef = useRef(false);
 
   const selectedReciter = useAtomValue(selectedReciterAtom);
   const { toggleFavorite, favoriteReciters } = useFavorites();
@@ -28,10 +29,11 @@ export default function ReciterSelector() {
   useEffect(() => {
     setMounted(true);
 
-    // Auto-open dialog if there's a search query in URL
+    // Auto-open dialog if there's a search query in URL (only once)
     const searchQuery = searchParams.get('q');
-    if (searchQuery && searchQuery.trim() !== '') {
+    if (searchQuery && searchQuery.trim() !== '' && !autoOpenedRef.current) {
       setIsOpen(true);
+      autoOpenedRef.current = true;
     }
   }, [searchParams]);
 
