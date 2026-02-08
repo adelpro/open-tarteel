@@ -33,6 +33,7 @@
 ## Executive Summary
 
 ### Current Stack (2026)
+
 ```json
 {
   "packageManager": "npm",
@@ -51,6 +52,7 @@
 ```
 
 ### Recommended Stack (2026)
+
 ```json
 {
   "packageManager": "pnpm 10.x",
@@ -88,9 +90,10 @@
 
 ## Package Manager Migration (npm → pnpm)
 
-### Why pnpm?
+### Why pnpm
 
 **Performance & Efficiency:**
+
 - **3x faster installs** than npm/yarn
 - **Disk space savings**: Content-addressable storage (single copy of packages)
 - **Strict by default**: No phantom dependencies
@@ -98,6 +101,7 @@
 - **Built-in caching**: Fast CI/CD pipelines
 
 **Modern Features:**
+
 - Supports all npm/yarn commands
 - Superior workspace management
 - Patch package support built-in
@@ -108,11 +112,13 @@
 #### 1. Install pnpm
 
 **Windows (PowerShell):**
+
 ```powershell
 iwr https://get.pnpm.io/install.ps1 -useb | iex
 ```
 
 **Or via npm (will be removed later):**
+
 ```bash
 npm install -g pnpm@latest
 ```
@@ -120,6 +126,7 @@ npm install -g pnpm@latest
 #### 2. Configure pnpm
 
 **Create `.npmrc`:**
+
 ```ini
 # Strict peer dependencies (catches issues early)
 strict-peer-dependencies=true
@@ -139,6 +146,7 @@ lockfile-version=v9
 ```
 
 **Update `package.json`:**
+
 ```json
 {
   "packageManager": "pnpm@10.9.0",
@@ -168,6 +176,7 @@ pnpm install
 #### 4. Update Scripts
 
 **package.json** - No changes needed! All scripts work as-is:
+
 ```json
 {
   "scripts": {
@@ -179,6 +188,7 @@ pnpm install
 ```
 
 But you can use pnpm-specific features:
+
 ```json
 {
   "scripts": {
@@ -194,6 +204,7 @@ But you can use pnpm-specific features:
 #### 5. Update CI/CD
 
 **GitHub Actions (`.github/workflows/ci.yml`):**
+
 ```yaml
 name: CI
 
@@ -222,6 +233,7 @@ jobs:
 #### 6. Update Documentation
 
 **README.md:**
+
 ```markdown
 ## Installation
 
@@ -240,6 +252,7 @@ pnpm dev
 ### Common Issues & Solutions
 
 **Phantom Dependencies:**
+
 ```bash
 # If you have import errors for packages not in package.json
 # Option 1: Add them explicitly
@@ -250,12 +263,14 @@ echo "shamefully-hoist=true" >> .npmrc
 ```
 
 **Peer Dependency Warnings:**
+
 ```bash
 # pnpm is stricter - fix actual issues
 pnpm why <package-name>
 ```
 
 **Migration Checklist:**
+
 - [x] Install pnpm globally
 - [x] Create/update `.npmrc`
 - [x] Update `package.json` with `packageManager` field
@@ -273,6 +288,7 @@ pnpm why <package-name>
 ### What's New in Next.js 16
 
 **Major Features:**
+
 - **Turbopack Stable**: Default for `dev` and `build`
 - **React Server Components v2**: Better streaming and suspense
 - **Enhanced `fetch` caching**: More granular control
@@ -300,6 +316,7 @@ pnpm add -D @types/react@^19.0.10 @types/react-dom@^19.0.4
 #### 2. Update `next.config.ts`
 
 **Before:**
+
 ```typescript
 import type { NextConfig } from 'next';
 
@@ -311,14 +328,16 @@ export default nextConfig;
 ```
 
 **After (Turbopack native):**
+
 ```typescript
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   // Turbopack is default, no flag needed
 
-  // For PWA with Serwist
+  // Experimental features
   experimental: {
+    // For PWA with Serwist
     turbo: {
       rules: {
         '*.svg': {
@@ -327,10 +346,7 @@ const nextConfig: NextConfig = {
         },
       },
     },
-  },
-
-  // Enable PPR (optional but recommended)
-  experimental: {
+    // Enable PPR (optional but recommended)
     ppr: true, // Partial Prerendering
   },
 };
@@ -341,6 +357,7 @@ export default nextConfig;
 #### 3. Update Scripts
 
 **package.json:**
+
 ```json
 {
   "scripts": {
@@ -372,6 +389,7 @@ pnpm dlx @next/codemod@latest upgrade latest
 ```
 
 This will:
+
 - Update `next.config.js/ts`
 - Fix deprecated APIs
 - Update metadata exports
@@ -384,6 +402,7 @@ This will:
 ### What's New in Tailwind v4
 
 **Major Changes:**
+
 - **CSS-first configuration**: `@config` directive in CSS
 - **Native CSS variables**: Better browser DevTools integration
 - **Lightning CSS**: 10x faster build times
@@ -411,6 +430,7 @@ pnpm add -D tailwindcss@^4.0.0 @tailwindcss/postcss@^4.0.0
 **Delete `tailwind.config.ts`**
 
 **Create `src/app/globals.css` (or update existing):**
+
 ```css
 @import "tailwindcss";
 
@@ -472,6 +492,7 @@ pnpm add -D tailwindcss@^4.0.0 @tailwindcss/postcss@^4.0.0
 #### 3. Update PostCSS Config
 
 **postcss.config.mjs:**
+
 ```javascript
 export default {
   plugins: {
@@ -483,11 +504,13 @@ export default {
 #### 4. Update Component Classes (if needed)
 
 **Before (v3):**
+
 ```tsx
 <div className="bg-blue-500/50"> {/* Opacity with slash */}
 ```
 
 **After (v4 - same syntax, better performance):**
+
 ```tsx
 <div className="bg-blue-500/50"> {/* Works the same */}
 ```
@@ -495,6 +518,7 @@ export default {
 #### 5. Migrate Custom Plugins
 
 **Before (`tailwind.config.ts`):**
+
 ```typescript
 import plugin from 'tailwindcss/plugin';
 
@@ -514,6 +538,7 @@ export default {
 ```
 
 **After (`globals.css`):**
+
 ```css
 @utility rtl-flip {
   [dir="rtl"] & {
@@ -525,6 +550,7 @@ export default {
 #### 6. Update IntelliSense
 
 **`.vscode/settings.json`:**
+
 ```json
 {
   "tailwindCSS.experimental.configFile": "src/app/globals.css",
@@ -542,6 +568,7 @@ pnpm dlx @tailwindcss/upgrade@next
 ```
 
 This will:
+
 - Convert `tailwind.config.js` to CSS `@theme`
 - Update `postcss.config.js`
 - Migrate plugins to CSS utilities
@@ -554,6 +581,7 @@ This will:
 ### What's New in Zod v4
 
 **Major Improvements:**
+
 - **Better TypeScript inference**: More accurate types
 - **Improved error messages**: Clearer validation errors
 - **Performance optimizations**: 2x faster parsing
@@ -577,6 +605,7 @@ pnpm add zod@^4.0.0
 #### 2. Update Schemas (Minimal Changes)
 
 **Before (v3):**
+
 ```typescript
 import { z } from 'zod';
 
@@ -593,6 +622,7 @@ export const ReciterSchema = z.object({
 ```
 
 **After (v4 - mostly compatible):**
+
 ```typescript
 import { z } from 'zod';
 
@@ -611,6 +641,7 @@ export const ReciterSchema = z.object({
 #### 3. Update Error Handling
 
 **Before:**
+
 ```typescript
 try {
   ReciterSchema.parse(data);
@@ -622,6 +653,7 @@ try {
 ```
 
 **After (better error formatting):**
+
 ```typescript
 const result = ReciterSchema.safeParse(data);
 
@@ -639,6 +671,7 @@ if (!result.success) {
 #### 4. Use New Features
 
 **Coercion (new in v4):**
+
 ```typescript
 const SurahIdSchema = z.coerce.number().int().min(1).max(114);
 
@@ -647,6 +680,7 @@ SurahIdSchema.parse('42'); // Returns: 42 (number)
 ```
 
 **Better discriminated unions:**
+
 ```typescript
 const TrackSchema = z.discriminatedUnion('type', [
   z.object({
@@ -671,9 +705,10 @@ pnpm dlx zod-migrate@latest
 
 ## i18n Migration (react-intl → next-intl)
 
-### Why next-intl?
+### Why next-intl
 
 **Advantages over react-intl:**
+
 - **Built for Next.js**: Works seamlessly with App Router and RSC
 - **Server Component support**: Use translations in Server Components
 - **Type-safe translations**: Full TypeScript autocomplete
@@ -693,6 +728,7 @@ pnpm add next-intl@^4.0.0
 #### 2. Setup Configuration
 
 **Create `src/i18n/request.ts`:**
+
 ```typescript
 import { getRequestConfig } from 'next-intl/server';
 import { headers } from 'next/headers';
@@ -709,6 +745,7 @@ export default getRequestConfig(async () => {
 ```
 
 **Update `next.config.ts`:**
+
 ```typescript
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
@@ -725,6 +762,7 @@ export default withNextIntl(nextConfig);
 #### 3. Create Middleware
 
 **Create `src/middleware.ts`:**
+
 ```typescript
 import createMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './i18n/config';
@@ -743,6 +781,7 @@ export const config = {
 #### 4. Update Layout
 
 **Before (`src/app/layout.tsx`):**
+
 ```typescript
 'use client';
 import { IntlProvider } from 'react-intl';
@@ -766,6 +805,7 @@ export default function RootLayout({ children }) {
 ```
 
 **After (`src/app/[locale]/layout.tsx`):**
+
 ```typescript
 // Server Component! No 'use client'
 import { NextIntlClientProvider } from 'next-intl';
@@ -806,6 +846,7 @@ export default async function LocaleLayout({ children, params }) {
 #### 5. Migrate Components
 
 **Before (react-intl):**
+
 ```typescript
 'use client';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -828,6 +869,7 @@ export function Hero() {
 ```
 
 **After (next-intl) - Server Component:**
+
 ```typescript
 import { getTranslations } from 'next-intl/server';
 
@@ -844,6 +886,7 @@ export async function Hero() {
 ```
 
 **After (next-intl) - Client Component:**
+
 ```typescript
 'use client';
 import { useTranslations } from 'next-intl';
@@ -863,11 +906,13 @@ export function Hero() {
 #### 6. Type-Safe Translations
 
 **Generate types from JSON:**
+
 ```bash
 pnpm add -D next-intl-types
 ```
 
 **Update `tsconfig.json`:**
+
 ```json
 {
   "compilerOptions": {
@@ -882,6 +927,7 @@ pnpm add -D next-intl-types
 ```
 
 **Now you get autocomplete!**
+
 ```typescript
 const t = useTranslations('hero');
 t('title'); // ✅ Autocomplete!
@@ -891,6 +937,7 @@ t('invalid'); // ❌ TypeScript error
 #### 7. Update JSON Structure (Optional)
 
 **Before (`src/locales/ar.json`):**
+
 ```json
 {
   "hero.title": "مرحباً",
@@ -899,6 +946,7 @@ t('invalid'); // ❌ TypeScript error
 ```
 
 **After (nested, recommended):**
+
 ```json
 {
   "hero": {
@@ -954,9 +1002,10 @@ export function LanguageSwitcher() {
 
 ## UI Components with shadcn/ui
 
-### Why shadcn/ui?
+### Why shadcn/ui
 
 **Philosophy:**
+
 - **Not a component library**: Copy-paste components into your codebase
 - **Full ownership**: Customize without limits
 - **Built on Radix UI**: Accessible by default (WCAG 2.1 AA)
@@ -974,6 +1023,7 @@ pnpm dlx shadcn@latest init
 ```
 
 **Configuration prompts:**
+
 ```
 ✔ Would you like to use TypeScript? … yes
 ✔ Which style would you like to use? › New York
@@ -988,6 +1038,7 @@ pnpm dlx shadcn@latest init
 ```
 
 **This creates:**
+
 - `components/ui/` folder
 - `lib/utils.ts` (cn helper - you already have this!)
 - Updated `globals.css` with theme variables
@@ -1007,6 +1058,7 @@ pnpm dlx shadcn@latest add skeleton
 #### 3. Customize Theme for Open Tarteel
 
 **Update `src/app/globals.css`:**
+
 ```css
 @theme {
   /* Open Tarteel Brand Colors */
@@ -1041,6 +1093,7 @@ pnpm dlx shadcn@latest add skeleton
 #### 4. Migrate Existing Components
 
 **Before (Custom Button):**
+
 ```typescript
 // components/button.tsx
 export function Button({ children, onClick }) {
@@ -1056,6 +1109,7 @@ export function Button({ children, onClick }) {
 ```
 
 **After (shadcn Button):**
+
 ```typescript
 import { Button } from '@/components/ui/button';
 
@@ -1070,11 +1124,13 @@ export function PlayButton({ onClick }) {
 ```
 
 **Available variants:**
+
 - `default`, `destructive`, `outline`, `secondary`, `ghost`, `link`
 
 #### 5. Example: Reciter Selection Dialog
 
 **Install required components:**
+
 ```bash
 pnpm dlx shadcn@latest add dialog
 pnpm dlx shadcn@latest add input
@@ -1082,6 +1138,7 @@ pnpm dlx shadcn@latest add scroll-area
 ```
 
 **Migrate `reciter-selector-dialog.tsx`:**
+
 ```typescript
 'use client';
 import { useState } from 'react';
@@ -1321,6 +1378,7 @@ pnpm dlx shadcn@latest add badge avatar table
 ### Serwist 10 with Next.js 16 & Turbopack
 
 **What's New:**
+
 - **Native Turbopack support**: No Webpack config needed
 - **Better service worker generation**: Smaller, faster
 - **Improved caching strategies**: More granular control
@@ -1337,6 +1395,7 @@ pnpm add -D @serwist/next@^10.0.0 serwist@^10.0.0
 #### 2. New Configuration (Turbopack-native)
 
 **Create `serwist.config.ts` (new location):**
+
 ```typescript
 import type { SerwistConfig } from '@serwist/next';
 
@@ -1394,6 +1453,7 @@ export default config;
 ```
 
 **Update `next.config.ts`:**
+
 ```typescript
 import type { NextConfig } from 'next';
 import withSerwist from '@serwist/next';
@@ -1414,6 +1474,7 @@ export default withSerwist({
 #### 3. Update Service Worker
 
 **`src/sw.ts`:**
+
 ```typescript
 import { defaultCache } from '@serwist/next/worker';
 import type { PrecacheEntry, SerwistGlobalConfig } from 'serwist';
@@ -1455,6 +1516,7 @@ serwist.addEventListeners();
 #### 4. Register Service Worker (Client)
 
 **`src/app/layout.tsx`:**
+
 ```typescript
 import { PWAUpdater } from '@/components/pwa-updater';
 
@@ -1471,6 +1533,7 @@ export default function RootLayout({ children }) {
 ```
 
 **`src/components/pwa-updater.tsx`:**
+
 ```typescript
 'use client';
 import { useEffect, useState } from 'react';
@@ -1518,6 +1581,7 @@ export function PWAUpdater() {
 #### 5. Offline Fallback Page
 
 **`public/offline.html`:**
+
 ```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -1550,6 +1614,7 @@ export function PWAUpdater() {
 ```
 
 **Add to `sw.ts`:**
+
 ```typescript
 self.addEventListener('fetch', (event) => {
   if (event.request.mode === 'navigate') {
@@ -1569,11 +1634,13 @@ self.addEventListener('fetch', (event) => {
 ### Current: Jotai 2.11.1
 
 **Pros:**
+
 - Atomic, minimalist API
 - Good TypeScript support
 - Small bundle size (~3KB)
 
 **Cons:**
+
 - Client-side only (no SSR hydration)
 - Requires `'use client'` for all atom-consuming components
 - Limited DevTools compared to alternatives
@@ -1583,6 +1650,7 @@ self.addEventListener('fetch', (event) => {
 ### Recommended: Zustand 5.x
 
 **Why Zustand?**
+
 - **Better SSR/RSC story**: Can hydrate state from server
 - **Simpler mental model**: Single store vs atomic atoms
 - **Middleware ecosystem**: persist, devtools, immer, subscribeWithSelector
@@ -1593,6 +1661,7 @@ self.addEventListener('fetch', (event) => {
 ### Migration Strategy
 
 #### 1. Install Zustand
+
 ```bash
 npm install zustand
 ```
@@ -1600,6 +1669,7 @@ npm install zustand
 #### 2. Convert Atoms to Store
 
 **Before (Jotai):**
+
 ```typescript
 // src/jotai/atom.ts
 import { createAtomWithStorage } from '@/jotai/create-atom-with-storage';
@@ -1616,6 +1686,7 @@ export const isPlayingAtom = createAtomWithStorage<boolean>(
 ```
 
 **After (Zustand):**
+
 ```typescript
 // src/stores/player-store.ts
 import { create } from 'zustand';
@@ -1650,6 +1721,7 @@ export const usePlayerStore = create<PlayerState>()(
 #### 3. Update Component Usage
 
 **Before:**
+
 ```typescript
 'use client';
 import { useAtom } from 'jotai';
@@ -1662,6 +1734,7 @@ export function Player() {
 ```
 
 **After:**
+
 ```typescript
 'use client';
 import { usePlayerStore } from '@/stores/player-store';
@@ -1704,12 +1777,12 @@ export function HydrationProvider({ children }: { children: React.ReactNode }) {
 }
 ```
 
-
 ## PWA & Offline-First Improvements
 
 ### Current: Serwist 9.0.12
 
 **Issues:**
+
 - Configuration complexity
 - Limited control over caching strategies
 - Next.js integration sometimes breaks
@@ -1719,6 +1792,7 @@ export function HydrationProvider({ children }: { children: React.ReactNode }) {
 ### Current: Plain HTML5 Audio Element
 
 **Issues:**
+
 - No buffering visualization
 - Limited control over streaming
 - No gapless playback
@@ -1732,6 +1806,7 @@ npm install --save-dev @types/howler
 ```
 
 **Why Howler?**
+
 - HTML5 Audio + Web Audio API hybrid
 - Cross-browser compatibility (Safari issues handled)
 - Gapless playback support
@@ -1813,12 +1888,12 @@ npm install tone
 
 ---
 
-
 ## P2P Sync Alternatives
 
 ### Current: Gun.js 0.2020.1241
 
 **Issues:**
+
 - Very outdated (2020 version)
 - Poor TypeScript support
 - Large bundle size (~150KB)
@@ -1828,6 +1903,7 @@ npm install tone
 ### Recommended: Y.js + y-indexeddb
 
 **Why Y.js?**
+
 - Industry standard CRDT (Notion, Figma use it)
 - Excellent TypeScript support
 - Smaller bundle (~30KB with providers)
@@ -1953,12 +2029,14 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
 Already available via `npm run dev:turbo`
 
 **Benefits:**
+
 - 10x faster than Webpack
 - Built in Rust
 - Better HMR
 - Incremental compilation
 
 **Make it default:**
+
 ```json
 // package.json
 {
@@ -1969,16 +2047,17 @@ Already available via `npm run dev:turbo`
 }
 ```
 
-
 ### 3. Upgrade Testing Stack
 
 **Add Playwright for E2E:**
+
 ```bash
 npm install --save-dev @playwright/test
 npx playwright install
 ```
 
 **playwright.config.ts:**
+
 ```typescript
 import { defineConfig, devices } from '@playwright/test';
 
@@ -2006,6 +2085,7 @@ export default defineConfig({
 ```
 
 **Example E2E Test:**
+
 ```typescript
 // e2e/player.spec.ts
 import { test, expect } from '@playwright/test';
@@ -2040,6 +2120,7 @@ test('can select reciter and play audio', async ({ page }) => {
 ### 1. Enable Strict Mode Fully
 
 **tsconfig.json:**
+
 ```json
 {
   "compilerOptions": {
@@ -2060,6 +2141,7 @@ npm install zod
 ```
 
 **src/types/reciter.ts:**
+
 ```typescript
 import { z } from 'zod';
 
@@ -2112,6 +2194,7 @@ const bad: AudioUrl = 'http://server.mp3quran.net/surah.mp3'; // ❌ Type error
 ### 1. Image Optimization (Missing)
 
 **Add `next/image` for reciter photos:**
+
 ```typescript
 import Image from 'next/image';
 
@@ -2135,6 +2218,7 @@ export function ReciterCard({ reciter }: { reciter: Reciter }) {
 ### 2. Route Prefetching Strategy
 
 **app/layout.tsx:**
+
 ```typescript
 export default function RootLayout({ children }) {
   return (
@@ -2157,6 +2241,7 @@ npm install @tanstack/react-virtual
 ```
 
 **components/reciters-list-virtualized.tsx:**
+
 ```typescript
 'use client';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -2327,11 +2412,13 @@ npm uninstall gun
 ### State Management Migration
 
 **Breaking Changes:**
+
 - All `useAtom` calls must be replaced with `usePlayerStore`
 - Storage keys may change (can migrate with a one-time script)
 - Jotai DevTools no longer work (use Redux DevTools for Zustand)
 
 **Migration Path:**
+
 ```typescript
 // src/utils/migrate-storage.ts
 export function migrateJotaiToZustand() {
@@ -2357,6 +2444,7 @@ export function migrateJotaiToZustand() {
 ### Audio Migration
 
 **Breaking Changes:**
+
 - Audio element refs will be different (Howl instance instead of HTMLAudioElement)
 - Some browser APIs may behave differently
 - Need to test extensively on Safari/iOS
@@ -2364,6 +2452,7 @@ export function migrateJotaiToZustand() {
 ### i18n Migration (Optional)
 
 **react-intl → next-intl:**
+
 ```typescript
 // Before
 <FormattedMessage id="home.title" defaultMessage="Home" />
@@ -2373,6 +2462,7 @@ export function migrateJotaiToZustand() {
 ```
 
 **Benefits:**
+
 - Better Next.js integration
 - Server Component support
 - Smaller bundle size
@@ -2402,6 +2492,7 @@ export function migrateJotaiToZustand() {
 ```
 
 **Coverage Goals:**
+
 - Unit: 80%+
 - Integration: 60%+
 - E2E: Critical paths (5-10 scenarios)
@@ -2428,6 +2519,7 @@ This comprehensive modernization guide provides a strategic roadmap for upgradin
 **Estimated Total Effort**: 14-18 weeks (can be done incrementally)
 
 **Expected Outcomes:**
+
 - **40% faster builds** (pnpm + Turbopack + Tailwind v4)
 - **50% smaller bundle** (Zustand, next-intl, Howler, Y.js vs current stack)
 - **Better TypeScript DX** (Zod v4, next-intl type-safety)
@@ -2437,6 +2529,7 @@ This comprehensive modernization guide provides a strategic roadmap for upgradin
 - **Future-proof architecture** (Next.js 16, React 19 patterns)
 
 **Quick Start Checklist** (Do these first):
+
 - [ ] Week 1: Migrate to pnpm
 - [ ] Week 1: Upgrade to Next.js 16
 - [ ] Week 1: Add Zod v4 validation
@@ -2447,6 +2540,7 @@ This comprehensive modernization guide provides a strategic roadmap for upgradin
 - [ ] Week 3-4: Migrate to Zustand
 
 **Breaking Changes to Prepare For:**
+
 - Next.js 16: Turbopack is default (no Webpack fallback)
 - Tailwind v4: Config moves from JS to CSS
 - next-intl: Layout structure changes to `[locale]`

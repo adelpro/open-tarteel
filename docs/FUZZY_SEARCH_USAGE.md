@@ -173,11 +173,18 @@ fuzzySearch(reciters, 'الغامد');
 
 ```typescript
 // src/hooks/use-filter-sort.ts
+// Note: This is a simplified illustration. The actual implementation uses nuqs.
+import { parseAsString, useQueryStates } from 'nuqs';
 import { fuzzySearch } from '@/utils/search';
 
 export function useFilterSort({ reciters, showOnlyFavorites, selectedRiwaya }) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchMode, setSearchMode] = useState<'normal' | 'strict'>('normal');
+  // URL-driven state management with nuqs
+  const [{ searchQuery: searchTerm }, setFilters] = useQueryStates({
+    searchQuery: parseAsString.withDefault('')
+  }, {
+    urlKeys: { searchQuery: 'q' },
+    history: 'replace',
+  });
 
   const filteredReciters = useMemo(() => {
     // Apply filters
@@ -187,16 +194,16 @@ export function useFilterSort({ reciters, showOnlyFavorites, selectedRiwaya }) {
       return true;
     });
 
-    // Apply fuzzy search with dynamic threshold
+    // Apply fuzzy search with configurable threshold
     if (searchTerm.trim()) {
-      const threshold = searchMode === 'strict' ? 0.2 : 0.35;
-      filtered = fuzzySearch(filtered, searchTerm, { threshold });
+      // Default threshold: 0.35, or use custom threshold
+      filtered = fuzzySearch(filtered, searchTerm, { threshold: 0.35 });
     }
 
     return filtered;
-  }, [reciters, searchTerm, searchMode, favorites, selectedRiwaya]);
+  }, [reciters, searchTerm, favorites, selectedRiwaya]);
 
-  return { filteredReciters, setSearchTerm, setSearchMode };
+  return { filteredReciters, searchTerm, setFilters };
 }
 ```
 
