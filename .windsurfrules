@@ -1,0 +1,51 @@
+# Open Tarteel — Windsurf AI Rules
+
+## Identity
+Quran audio streaming PWA — Next.js 15 App Router, React 19, TypeScript strict, Tailwind CSS, Jotai, Gun.js, react-intl
+
+## Rules
+
+### Directives
+- Always `'use client'` in component files (root layout is client component)
+- Exception: `src/app/reciter/[id]/page.tsx` is a server component
+
+### Imports
+- Path aliases required: `@/`, `@components/`, `@hooks/`, `@utils/`, `@types/`, `@svgs/`, `@gun/`
+- Import order: external → aliased → relative (enforced by simple-import-sort)
+
+### State
+- Persisted: `createAtomWithStorage` from `@/jotai/create-atom-with-storage`
+- Transient: `useState` only for component-local UI state (isOpen, mounted, etc.)
+- Never: React Context for state management
+
+### Styling
+- Tailwind CSS only — no inline styles
+- Conditional: `cn()` from `@/utils` (clsx + tailwind-merge)
+- Dark mode: `dark:` variant, class strategy
+- RTL: logical properties (ps-, pe-, ms-, me-)
+
+### i18n
+- JSX: `<FormattedMessage id="key" defaultMessage="Fallback" />`
+- Logic: `formatMessage({ id: 'key' })`
+- Files: `src/locales/ar.json` + `src/locales/en.json` — always update both
+
+### Naming
+- No abbreviations (unicorn plugin) — exceptions: props, ref, params
+- Files: kebab-case, Components: PascalCase, Variables: camelCase
+
+### Commits
+- Conventional: `type(scope): description`
+- Types: feat, fix, docs, style, refactor, test, chore
+
+## Key Files
+- Player: `src/components/player.tsx`
+- API: `src/utils/api.ts`
+- Atoms: `src/jotai/atom.ts`
+- Types: `src/types/reciter.ts`, `src/types/playlist.ts`
+- Hooks: `src/hooks/use-*.ts`
+
+## Gotchas
+- `selectedReciter` can be null — always handle
+- Gun.js is client-only — no server imports
+- Audio needs `crossOrigin="anonymous"` for visualizer
+- PWA disabled in development

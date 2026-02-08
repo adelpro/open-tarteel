@@ -1,0 +1,177 @@
+# Open Tarteel — Extended LLM Context
+
+> Full version of llms.txt with detailed code examples and patterns.
+
+## Project Summary
+
+Open Tarteel is an open-source Quran audio streaming PWA built with Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS, Jotai, Gun.js, and react-intl. It streams Quran audio from the MP3Quran API, supports bilingual UI (Arabic RTL default, English LTR), and provides offline capability via Serwist service workers.
+
+## Repository
+
+- GitHub: https://github.com/adelpro/open-tarteel
+- Production: https://tarteel.quran.us.kg
+- License: MIT
+
+## Directory Map
+
+```
+src/app/                    → Next.js pages and API routes
+src/components/             → React components (flat, no nesting)
+src/hooks/                  → Custom React hooks (use-*.ts)
+src/jotai/                  → Jotai atoms and factory
+src/gun/                    → Gun.js modules (favorite-rank, view-rank)
+src/types/                  → TypeScript types with barrel exports
+src/utils/                  → Utility functions with barrel exports
+src/constants/              → Static data (surahs, gun config, etc.)
+src/locales/                → i18n JSON files (ar.json, en.json)
+src/svgs/                   → SVG icon assets
+```
+
+## Core Patterns
+
+### Creating a New Component
+
+```typescript
+'use client';
+
+import { useAtomValue } from 'jotai';
+import { FormattedMessage } from 'react-intl';
+
+import { someAtom } from '@/jotai/atom';
+import { cn } from '@/utils';
+
+type Properties = {
+  title: string;
+  isActive: boolean;
+};
+
+export default function MyComponent({ title, isActive }: Properties) {
+  const value = useAtomValue(someAtom);
+
+  return (
+    <div className={cn('base-class', isActive && 'active-class')}>
+      <h2>{title}</h2>
+      <p><FormattedMessage id="my.message" defaultMessage="Fallback" /></p>
+    </div>
+  );
+}
+```
+
+### Creating a New Atom
+
+```typescript
+// In src/jotai/atom.ts
+import { createAtomWithStorage } from './create-atom-with-storage';
+
+export const myNewAtom = createAtomWithStorage<string>('my-storage-key', 'default');
+```
+
+### Creating a New Hook
+
+```typescript
+// In src/hooks/use-my-feature.ts
+'use client';
+
+import { useAtom } from 'jotai';
+import { useEffect, useState } from 'react';
+
+import { myAtom } from '@/jotai/atom';
+
+export function useMyFeature() {
+  const [value, setValue] = useAtom(myAtom);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // setup logic
+    setLoading(false);
+    return () => { /* cleanup */ };
+  }, []);
+
+  return { value, setValue, loading };
+}
+```
+
+### Adding Translations
+
+```json
+// src/locales/ar.json — Add Arabic text
+{
+  "myFeature.title": "العنوان"
+}
+
+// src/locales/en.json — Add English text
+{
+  "myFeature.title": "Title"
+}
+```
+
+### Creating a New Page
+
+```typescript
+// src/app/my-route/page.tsx (minimal server wrapper)
+import MyRoutePage from '@/app/my-route/my-route-page';
+
+export default function Page() {
+  return <MyRoutePage />;
+}
+
+// src/app/my-route/my-route-page.tsx (client component)
+'use client';
+
+import { FormattedMessage } from 'react-intl';
+
+export default function MyRoutePage() {
+  return (
+    <div className="flex flex-col items-center justify-center">
+      <h1><FormattedMessage id="myRoute.title" /></h1>
+    </div>
+  );
+}
+```
+
+## Type System
+
+### Core Types
+
+```typescript
+type Reciter = { id: number; name: string; moshaf: Moshaf; source: LinkSource };
+type Moshaf = { id: string; name: string; riwaya: Riwaya; server: string; surah_total: string; playlist: Playlist };
+type PlaylistItem = { surahId: string; link: string };
+type Playlist = PlaylistItem[];
+type Surah = { id: number; name: string; englishName: string; revelationType: 'Meccan' | 'Medinan'; ayahCount: number };
+enum Riwaya { Hafs, Warsh, Qaloon, Khalaf, AlBazzi, AlSoosi, AlDooriKisai, AlDooriAbuAmr, Shuaba, IbnZakwan, Hisham, IbnJammaz, Yaqoub }
+enum LinkSource { MP3QURAN = 'mp3quran.net', ISLAMHOUSE = 'islamhouse.com', INTERNETARCHIVE = 'archive.org', UNKNOWN = 'unknown' }
+```
+
+### Jotai Atoms
+
+```
+selectedReciterAtom: Reciter | null
+selectedRiwayaAtom: Riwaya | 'all'
+favoriteRecitersAtom: string[]
+localeAtom: 'ar' | 'en'
+fullscreenAtom: boolean
+showVisualizerAtom: boolean
+currentTimeAtom: number
+playbackSpeedAtom: number
+playbackModeAtom: 'off' | 'shuffle' | 'repeat-one'
+volumeAtom: number
+recitersSortAtom: 'popular' | 'alphabetical' | 'views'
+hideUnderConstructionAtom: boolean
+```
+
+## ESLint Rules
+
+- `simple-import-sort/imports`: error — auto-sorted imports
+- `simple-import-sort/exports`: error — auto-sorted exports
+- `unicorn/prevent-abbreviations`: error — no abbreviations (props/ref/params allowed)
+- `unicorn/no-null`: off — null is allowed
+- `unicorn/no-array-reduce`: off — reduce is allowed
+- `unicorn/prefer-global-this`: off
+- Plugin chain: `next/core-web-vitals`, `unicorn/recommended`, `import/recommended`, `prettier/recommended`
+
+## Commit Convention
+
+Format: `type(scope): description`
+Types: feat, fix, docs, style, refactor, test, chore
+Example: `feat(player): add shuffle mode support`

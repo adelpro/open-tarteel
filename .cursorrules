@@ -1,0 +1,97 @@
+# Open Tarteel — Cursor AI Rules
+
+# Project: Quran audio streaming PWA
+
+# Stack: Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS, Jotai, Gun.js, react-intl
+
+# Always include 'use client' at the top of component files
+
+# The root layout is a client component — this is intentional
+
+# Use path aliases for all imports
+
+# @/ → src/
+
+# @components/ → src/components/
+
+# @hooks/ → src/hooks/
+
+# @utils/ → src/utils/
+
+# @types/ → src/types/
+
+# @svgs/ → src/svgs/
+
+# @gun/ → src/gun/
+
+# State management: Use Jotai atoms with createAtomWithStorage for persisted state
+
+# Never use useState for data that should survive page refresh
+
+# Import from: @/jotai/create-atom-with-storage
+
+# Internationalization: Use react-intl
+
+# JSX: <FormattedMessage id="key" defaultMessage="Fallback" />
+
+# Logic: formatMessage({ id: 'key', defaultMessage: 'Fallback' })
+
+# Always add strings to BOTH src/locales/ar.json AND src/locales/en.json
+
+# Arabic is the default locale (RTL)
+
+# Styling: Tailwind CSS only, no inline styles
+
+# Use cn() helper from @/utils for conditional classes
+
+# Support dark mode with dark: variant
+
+# Support RTL with logical properties (ps-, pe-, ms-, me-)
+
+# No abbreviations in variable names (eslint-plugin-unicorn)
+
+# Exceptions: props, ref, params (React conventions)
+
+# Component pattern: functional only, no class components
+
+# Heavy components use dynamic import: dynamic(() => import(...), { ssr: false })
+
+# Client-only content uses mounted pattern: useState(false) + useEffect
+
+# Type exports: named exports, barrel via index.ts
+
+# No 'any' type — TypeScript strict mode
+
+# Commits: Conventional Commits — type(scope): description
+
+# Types: feat, fix, docs, style, refactor, test, chore
+
+# Key files to understand
+
+# - src/components/player.tsx (core audio player)
+
+# - src/utils/api.ts (MP3Quran API client)
+
+# - src/jotai/atom.ts (all state atoms)
+
+# - src/types/reciter.ts (core domain types)
+
+# - src/hooks/ (all custom hooks)
+
+# Domain: Reciter (قارئ), Moshaf (مصحف), Riwaya (رواية), Surah (سورة)
+
+# API: <https://www.mp3quran.net/api/v3/reciters>
+
+# Audio: {server}{surahId.padStart(3,'0')}.mp3
+
+# Gotchas
+
+# - selectedReciter can be null — always handle it
+
+# - Gun.js is client-only — never import in server components
+
+# - Audio crossOrigin="anonymous" required for visualizer
+
+# - PWA disabled in development
+
+# - reciter/[id]/page.tsx is a SERVER component (no 'use client')

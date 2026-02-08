@@ -1,10 +1,13 @@
 {
-    "path-intellisense.mappings": {      
+    "path-intellisense.mappings": {
     "@components": "${workspaceRoot}/src/components",
     "@utils": "${workspaceRoot}/src/utils",
      "@hooks/*": "${workspaceRoot}/src/hooks",
      "@gun/*": "${workspaceRoot}/src/gun",
 
     },
-    "postman.settings.dotenv-detection-notification-visibility": false
+    "postman.settings.dotenv-detection-notification-visibility": false,
+    "i18n-ally.localesPaths": [
+        "src/locales"
+    ]
 }

@@ -1,0 +1,54 @@
+# Open Tarteel — LLM Context
+
+> This file provides context for large language models about the Open Tarteel project.
+> See PROJECT.md for full details and ARCHITECTURE.md for system design.
+
+## What is this project?
+
+Open Tarteel is an open-source Quran audio streaming PWA. Users browse Quran reciters, pick a recitation style (riwaya), and listen to surahs with a full-featured audio player. It supports Arabic (RTL) and English (LTR), works offline via service workers, and syncs favorites globally via Gun.js.
+
+## Tech Stack
+
+- Next.js 15 (App Router) + React 19 + TypeScript (strict)
+- Tailwind CSS 3 + CSS variables for theming
+- Jotai for state management (localStorage persisted)
+- Gun.js for decentralized real-time data (favorites/views)
+- react-intl for i18n (Arabic default, English supported)
+- Serwist for PWA service worker
+- MP3Quran API for reciter/audio data
+
+## Key Files
+
+- `src/app/layout.tsx` — Root layout (client component, Jotai + IntlProvider)
+- `src/app/page.tsx` — Home page (reciter selection)
+- `src/app/reciter/[id]/page.tsx` — Server page with SSG + SEO metadata
+- `src/app/reciter/[id]/reciter-page.tsx` — Client player page
+- `src/components/player.tsx` — Core audio player component
+- `src/utils/api.ts` — MP3Quran API client
+- `src/jotai/atom.ts` — All Jotai atoms
+- `src/types/` — TypeScript types (Reciter, Moshaf, Riwaya, Surah, Playlist)
+- `src/hooks/` — Custom hooks (useReciters, useFavorites, useFilterSort, etc.)
+- `src/locales/ar.json`, `src/locales/en.json` — Translation files
+
+## Coding Rules
+
+1. Always use `'use client'` directive — root layout is a client component
+2. Use path aliases (`@/`, `@components/`, `@hooks/`, `@utils/`, `@types/`, `@svgs/`, `@gun/`)
+3. Use Jotai atoms with `createAtomWithStorage` — never `useState` for persisted state
+4. All UI strings via react-intl — add to BOTH ar.json and en.json
+5. No abbreviations (ESLint unicorn) — exceptions: `props`, `ref`, `params`
+6. Tailwind CSS only — use `cn()` helper for conditional classes
+7. Functional components only, TypeScript strict, no `any`
+8. Conventional Commits: `type(scope): description`
+
+## Domain Terms
+
+- Reciter (قارئ) — a Quran reciter
+- Moshaf (مصحف) — a specific recording set
+- Riwaya (رواية) — recitation style (Hafs, Warsh, Qaloon, etc.)
+- Surah (سورة) — a chapter of the Quran (114 total)
+
+## External API
+
+- Base: `https://www.mp3quran.net/api/v3/reciters`
+- Audio: `{moshaf.server}{surahId.padStart(3,'0')}.mp3`

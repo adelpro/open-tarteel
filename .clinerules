@@ -1,0 +1,47 @@
+# Open Tarteel — Cline AI Rules
+
+## Project Context
+
+Open Tarteel is a Quran audio streaming PWA built with Next.js 15 (App Router), React 19, TypeScript (strict), Tailwind CSS, Jotai, Gun.js, and react-intl.
+
+## Critical Instructions
+
+### Always Do
+
+- Add `'use client'` to all component files (root layout is a client component)
+- Use path aliases: `@/`, `@components/`, `@hooks/`, `@utils/`, `@types/`, `@svgs/`, `@gun/`
+- Use `createAtomWithStorage` from `@/jotai/create-atom-with-storage` for persisted state
+- Use `react-intl` (`<FormattedMessage>` or `formatMessage()`) for all user-facing strings
+- Add translations to BOTH `src/locales/ar.json` AND `src/locales/en.json`
+- Use `cn()` from `@/utils` for conditional Tailwind classes
+- Use full variable names (no abbreviations — enforced by eslint-plugin-unicorn)
+- Follow Conventional Commits: `type(scope): description`
+
+### Never Do
+
+- Never use `useState` for persisted state — use Jotai atoms
+- Never use relative imports across directories — use path aliases
+- Never use inline styles — use Tailwind CSS
+- Never use class components — functional only
+- Never use `any` type — TypeScript strict mode
+- Never import Gun.js in server components — it's client-only
+- Never add `'use client'` to `src/app/reciter/[id]/page.tsx` — it's a server component
+
+### Key Architecture
+
+- Pages: `src/app/{route}/page.tsx` (server wrapper) + `{route}-page.tsx` (client)
+- State: Jotai atoms in `src/jotai/atom.ts`
+- API: `src/utils/api.ts` → MP3Quran API (`https://www.mp3quran.net/api/v3/reciters`)
+- Types: `src/types/` with barrel exports via `index.ts`
+- i18n: Arabic default (RTL), English supported (LTR)
+
+### Domain Terms
+
+- Reciter (قارئ), Moshaf (مصحف), Riwaya (رواية), Surah (سورة), Playlist
+
+### Before Committing
+
+```bash
+npm run type-check
+npm run lint:fix
+```

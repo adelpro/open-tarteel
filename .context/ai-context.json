@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json.schemastore.org/ai-context.json",
+  "name": "Open Tarteel",
+  "description": "Open-source Quran audio streaming PWA with bilingual support (Arabic/English)",
+  "version": "0.2.2",
+  "repository": "https://github.com/adelpro/open-tarteel",
+  "technologies": {
+    "framework": "Next.js 15 (App Router)",
+    "ui": "React 19",
+    "language": "TypeScript (strict)",
+    "styling": "Tailwind CSS 3",
+    "stateManagement": "Jotai (localStorage persisted)",
+    "i18n": "react-intl (Arabic default, English)",
+    "realtimeData": "Gun.js (decentralized P2P)",
+    "pwa": "Serwist (service worker)",
+    "api": "MP3Quran API (https://www.mp3quran.net/api/v3)"
+  },
+  "conventions": {
+    "clientDirective": "Always 'use client' in component files",
+    "imports": "Path aliases (@/, @components/, @hooks/, @utils/, @types/, @svgs/, @gun/)",
+    "stateRule": "Use createAtomWithStorage for persisted state, useState for transient only",
+    "styling": "Tailwind CSS only, cn() helper for conditional classes",
+    "naming": "No abbreviations (unicorn), kebab-case files, PascalCase components",
+    "i18n": "All UI strings via react-intl, update both ar.json and en.json",
+    "commits": "Conventional Commits: type(scope): description"
+  },
+  "entryPoints": [
+    "src/app/layout.tsx",
+    "src/app/page.tsx",
+    "src/app/reciter/[id]/page.tsx"
+  ],
+  "keyFiles": {
+    "player": "src/components/player.tsx",
+    "api": "src/utils/api.ts",
+    "atoms": "src/jotai/atom.ts",
+    "types": "src/types/",
+    "hooks": "src/hooks/",
+    "translations": ["src/locales/ar.json", "src/locales/en.json"],
+    "serviceWorker": "src/sw.ts"
+  },
+  "domainConcepts": {
+    "reciter": "قارئ — A Quran reciter",
+    "moshaf": "مصحف — A specific recording set by a reciter",
+    "riwaya": "رواية — Recitation style/transmission chain (Hafs, Warsh, etc.)",
+    "surah": "سورة — A chapter of the Quran (114 total)",
+    "playlist": "Array of {surahId, link} for audio playback"
+  }
+}
