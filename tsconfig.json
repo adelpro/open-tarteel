@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext", "webworker"],
-    "types": ["@serwist/next/typings"],
+    "types": [
+      "vitest/globals",
+      "vitest/jsdom",
+      "@serwist/next/typings"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -20,14 +22,30 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"],
-      "@types/*": ["./src/types/*"],
-      "@assets/*": ["./src/assets/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@svgs/*": ["./src/svgs/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@gun/*": ["./src/gun/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@types/*": [
+        "./src/types/*"
+      ],
+      "@assets/*": [
+        "./src/assets/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+      "@svgs/*": [
+        "./src/svgs/*"
+      ],
+      "@hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@gun/*": [
+        "./src/gun/*"
+      ]
     }
   },
   "include": [
@@ -39,5 +57,8 @@
     "src/app/opengraph-image.alt.tst",
     "src/constants/trackers.-listts"
   ],
-  "exclude": ["node_modules", "public/sw.js"]
+  "exclude": [
+    "node_modules",
+    "public/sw.js"
+  ]
 }
