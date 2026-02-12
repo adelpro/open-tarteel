@@ -1,16 +1,17 @@
 'use client';
 import './globals.css';
 
+import { useAtom } from 'jotai';
+import { Tajawal } from 'next/font/google';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { useEffect } from 'react';
+
 import ExitFullscreen from '@/components/exit-fullscreen';
 import Footer from '@/components/footer';
 import HtmlWrapper from '@/components/html-wrapper';
 import IntlProviderWrapper from '@/components/intl-provider-wrapper';
 import LanguageSwitcher from '@/components/language-switcher';
 import { fullscreenAtom } from '@/jotai/atom';
-import { useAtom } from 'jotai';
-import { Tajawal } from 'next/font/google';
-import { NuqsAdapter } from 'nuqs/adapters/next/app';
-import { useEffect } from 'react';
 const tajawal = Tajawal({
   weight: ['400', '700', '900'],
   subsets: ['arabic'],

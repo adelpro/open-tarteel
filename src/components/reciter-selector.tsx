@@ -1,10 +1,5 @@
 'use client';
 
-import { useFavorites } from '@/hooks/use-favorites';
-import { selectedReciterAtom } from '@/jotai/atom';
-import searchSVG from '@/svgs/search.svg';
-import { generateFavId } from '@/utils';
-import { useShareReciter } from '@/utils/share';
 import { useAtomValue } from 'jotai';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
@@ -12,6 +7,12 @@ import { useEffect, useRef, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
 import { FaRegShareFromSquare } from 'react-icons/fa6';
 import { useIntl } from 'react-intl';
+
+import { useFavorites } from '@/hooks/use-favorites';
+import { selectedReciterAtom } from '@/jotai/atom';
+import searchSVG from '@/svgs/search.svg';
+import { generateFavId } from '@/utils';
+import { useShareReciter } from '@/utils/share';
 
 import ReciterSelectorDialog from './reciter-selector-dialog';
 
