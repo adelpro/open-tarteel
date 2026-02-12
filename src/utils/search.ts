@@ -81,7 +81,7 @@ const ARABIC_INDIC_DIGIT_PATTERN = /[\u0660-\u0669]/g;
  */
 export const removeTashkeel = (text: string): string => {
   return text
-    .replaceAll(/ٱ/g, '\u0627') // Wasl sign → regular Alef
+    .replaceAll('ٱ', '\u0627') // Wasl sign → regular Alef
     .replaceAll(TASHKEEL_PATTERN, '')
     .replaceAll(QURANIC_MARKS_PATTERN, '');
 };
@@ -116,13 +116,13 @@ export const normalizeArabicText = (text: string): string => {
     // Normalize Alef variations → ا
     .replaceAll(/[\u0622\u0623\u0625]/g, '\u0627') // آ أ إ → ا
     // Normalize Hamza on Waw → و
-    .replaceAll(/\u0624/g, '\u0648') // ؤ → و
+    .replaceAll('ؤ', '\u0648') // ؤ → و
     // Normalize Hamza on Yaa → ي
-    .replaceAll(/\u0626/g, '\u064A') // ئ → ي
+    .replaceAll('ئ', '\u064A') // ئ → ي
     // Normalize Alef Maqsura → Yaa
-    .replaceAll(/\u0649/g, '\u064A') // ى → ي
+    .replaceAll('ى', '\u064A') // ى → ي
     // Normalize Taa Marbouta → Haa
-    .replaceAll(/\u0629/g, '\u0647') // ة → ه
+    .replaceAll('ة', '\u0647') // ة → ه
     // Remove tatweel (kashida)
     .replaceAll(new RegExp(TATWEEL, 'g'), '')
     // Normalize standalone hamza marks
@@ -133,7 +133,7 @@ export const normalizeArabicText = (text: string): string => {
       (match: string) => ARABIC_INDIC_DIGITS[match] ?? match
     )
     // Normalize whitespace: trim and collapse multiple spaces
-    .replace(/\s+/g, ' ')
+    .replaceAll(/\s+/g, ' ')
     .trim()
     // Lowercase for mixed Arabic/English names (e.g. "Sheikh Ahmad")
     .toLowerCase();
