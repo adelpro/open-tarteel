@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 
 import { recitersSortAtom, selectedRiwayaAtom } from '@/jotai/atom';
 import { Reciter, Riwaya } from '@/types';
-import { generateFavId, normalizeArabicText } from '@/utils';
+import { fuzzySearch, generateFavId } from '@/utils';
 
 type UseFilterSortParams = {
   reciters: Reciter[];
@@ -40,41 +40,46 @@ export function useFilterSort({
   }, [reciters, formatMessage, locale]);
 
   const filteredReciters = useMemo(() => {
-    return reciters
-      .filter((r) => {
-        const id = generateFavId(r);
-        if (showOnlyFavorites && !favoriteReciters.includes(id)) return false;
-        if (selectedRiwaya !== 'all' && r.moshaf.riwaya !== selectedRiwaya)
-          return false;
-        return normalizeArabicText(r.name).includes(
-          normalizeArabicText(searchTerm)
-        );
-      })
-      .sort((a, b) => {
-        const aId = generateFavId(a);
-        const bId = generateFavId(b);
+    // Apply favorite and riwaya filters first
+    let filtered = reciters.filter((r) => {
+      const id = generateFavId(r);
+      if (showOnlyFavorites && !favoriteReciters.includes(id)) return false;
+      if (selectedRiwaya !== 'all' && r.moshaf.riwaya !== selectedRiwaya)
+        return false;
+      return true;
+    });
 
-        if (sortMode === 'alphabetical') {
+    // Apply fuzzy search if there's a search term
+    if (searchTerm && searchTerm.trim() !== '') {
+      filtered = fuzzySearch(filtered, searchTerm);
+    }
+
+    // Sort the filtered results
+    return filtered.sort((a, b) => {
+      const aId = generateFavId(a);
+      const bId = generateFavId(b);
+
+      if (sortMode === 'alphabetical') {
+        return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
+      }
+
+      if (sortMode === 'views') {
+        const aViews = viewCounts[aId] ?? 0;
+        const bViews = viewCounts[bId] ?? 0;
+        if (aViews === bViews) {
           return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
         }
+        return bViews - aViews;
+      }
 
-        if (sortMode === 'views') {
-          const aViews = viewCounts[aId] ?? 0;
-          const bViews = viewCounts[bId] ?? 0;
-          if (aViews === bViews) {
-            return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
-          }
-          return bViews - aViews;
-        }
-
-        // Default to 'popular'
-        const aCount = favoriteCounts[aId] ?? 0;
-        const bCount = favoriteCounts[bId] ?? 0;
-        if (aCount === bCount) {
-          return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
-        }
-        return bCount - aCount;
-      });
+      // Default to 'popular'
+      const aCount = favoriteCounts[aId] ?? 0;
+      const bCount = favoriteCounts[bId] ?? 0;
+      if (aCount === bCount) {
+        return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
+      }
+      return bCount - aCount;
+    });
   }, [
     reciters,
     favoriteReciters,

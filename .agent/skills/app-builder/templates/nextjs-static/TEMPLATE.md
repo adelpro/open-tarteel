@@ -7,14 +7,14 @@ description: Next.js static site template principles. Landing pages, portfolios,
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Framework | Next.js 14 (Static Export) |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
-| Animations | Framer Motion |
-| Icons | Lucide React |
-| SEO | Next SEO |
+| Component  | Technology                 |
+| ---------- | -------------------------- |
+| Framework  | Next.js 14 (Static Export) |
+| Language   | TypeScript                 |
+| Styling    | Tailwind CSS               |
+| Animations | Framer Motion              |
+| Icons      | Lucide React               |
+| SEO        | Next SEO                   |
 
 ---
 
@@ -56,24 +56,24 @@ const nextConfig = {
 
 ## Landing Page Sections
 
-| Section | Purpose |
-|---------|---------|
-| Hero | Main headline, CTA |
-| Features | Product benefits |
-| Testimonials | Social proof |
-| Pricing | Plans |
-| CTA | Final conversion |
+| Section      | Purpose            |
+| ------------ | ------------------ |
+| Hero         | Main headline, CTA |
+| Features     | Product benefits   |
+| Testimonials | Social proof       |
+| Pricing      | Plans              |
+| CTA          | Final conversion   |
 
 ---
 
 ## Animation Patterns
 
-| Pattern | Use |
-|---------|-----|
-| Fade up | Content entry |
-| Stagger | List items |
-| Scroll reveal | On viewport |
-| Hover | Interactive feedback |
+| Pattern       | Use                  |
+| ------------- | -------------------- |
+| Fade up       | Content entry        |
+| Stagger       | List items           |
+| Scroll reveal | On viewport          |
+| Hover         | Interactive feedback |
 
 ---
 
@@ -89,12 +89,12 @@ const nextConfig = {
 
 ## Deployment
 
-| Platform | Method |
-|----------|--------|
-| Vercel | Auto |
-| Netlify | Auto |
-| GitHub Pages | gh-pages branch |
-| Any host | Upload `out` folder |
+| Platform     | Method              |
+| ------------ | ------------------- |
+| Vercel       | Auto                |
+| Netlify      | Auto                |
+| GitHub Pages | gh-pages branch     |
+| Any host     | Upload `out` folder |
 
 ---
 

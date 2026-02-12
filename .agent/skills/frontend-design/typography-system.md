@@ -18,15 +18,15 @@ A mathematical relationship between font sizes:
 
 ### Common Ratios and When to Use
 
-| Ratio | Value | Feeling | Best For |
-|-------|-------|---------|----------|
-| Minor Second | 1.067 | Very subtle | Dense UI, small screens |
-| Major Second | 1.125 | Subtle | Compact interfaces |
-| Minor Third | 1.2 | Comfortable | Mobile apps, cards |
-| Major Third | 1.25 | Balanced | General web (most common) |
-| Perfect Fourth | 1.333 | Noticeable | Editorial, blogs |
-| Perfect Fifth | 1.5 | Dramatic | Headlines, marketing |
-| Golden Ratio | 1.618 | Maximum impact | Hero sections, display |
+| Ratio          | Value | Feeling        | Best For                  |
+| -------------- | ----- | -------------- | ------------------------- |
+| Minor Second   | 1.067 | Very subtle    | Dense UI, small screens   |
+| Major Second   | 1.125 | Subtle         | Compact interfaces        |
+| Minor Third    | 1.2   | Comfortable    | Mobile apps, cards        |
+| Major Third    | 1.25  | Balanced       | General web (most common) |
+| Perfect Fourth | 1.333 | Noticeable     | Editorial, blogs          |
+| Perfect Fifth  | 1.5   | Dramatic       | Headlines, marketing      |
+| Golden Ratio   | 1.618 | Maximum impact | Hero sections, display    |
 
 ### Generate Your Scale
 
@@ -46,12 +46,12 @@ Scale:
 
 ### Choosing Base Size
 
-| Context | Base Size Range | Why |
-|---------|-----------------|-----|
-| Mobile-first | 16-18px | Readability on small screens |
-| Desktop app | 14-16px | Information density |
-| Editorial | 18-21px | Long-form reading comfort |
-| Accessibility focus | 18px+ | Easier to read |
+| Context             | Base Size Range | Why                          |
+| ------------------- | --------------- | ---------------------------- |
+| Mobile-first        | 16-18px         | Readability on small screens |
+| Desktop app         | 14-16px         | Information density          |
+| Editorial           | 18-21px         | Long-form reading comfort    |
+| Accessibility focus | 18px+           | Easier to read               |
 
 ---
 
@@ -68,12 +68,12 @@ Contrast + Harmony:
 
 ### Pairing Strategies
 
-| Strategy | How | Result |
-|----------|-----|--------|
-| **Contrast** | Serif heading + Sans body | Classic, editorial feel |
-| **Same Family** | One variable font, different weights | Cohesive, modern |
-| **Same Designer** | Fonts by same foundry | Often harmonious proportions |
-| **Era Match** | Fonts from same time period | Historical consistency |
+| Strategy          | How                                  | Result                       |
+| ----------------- | ------------------------------------ | ---------------------------- |
+| **Contrast**      | Serif heading + Sans body            | Classic, editorial feel      |
+| **Same Family**   | One variable font, different weights | Cohesive, modern             |
+| **Same Designer** | Fonts by same foundry                | Often harmonious proportions |
+| **Era Match**     | Fonts from same time period          | Historical consistency       |
 
 ### What to Look For
 
@@ -87,12 +87,12 @@ When pairing, compare:
 
 ### Safe Pairing Patterns
 
-| Heading Style | Body Style | Mood |
-|---------------|------------|------|
-| Geometric sans | Humanist sans | Modern, friendly |
-| Display serif | Clean sans | Editorial, sophisticated |
-| Neutral sans | Same sans | Minimal, tech |
-| Bold geometric | Light geometric | Contemporary |
+| Heading Style  | Body Style      | Mood                     |
+| -------------- | --------------- | ------------------------ |
+| Geometric sans | Humanist sans   | Modern, friendly         |
+| Display serif  | Clean sans      | Editorial, sophisticated |
+| Neutral sans   | Same sans       | Minimal, tech            |
+| Bold geometric | Light geometric | Contemporary             |
 
 ### Avoid
 
@@ -117,12 +117,12 @@ Line height depends on:
 
 ### Guidelines by Context
 
-| Content Type | Line Height Range | Why |
-|--------------|-------------------|-----|
-| **Headings** | 1.1 - 1.3 | Short lines, want compact |
-| **Body text** | 1.4 - 1.6 | Comfortable reading |
-| **Long-form** | 1.6 - 1.8 | Maximum readability |
-| **UI elements** | 1.2 - 1.4 | Space efficiency |
+| Content Type    | Line Height Range | Why                       |
+| --------------- | ----------------- | ------------------------- |
+| **Headings**    | 1.1 - 1.3         | Short lines, want compact |
+| **Body text**   | 1.4 - 1.6         | Comfortable reading       |
+| **Long-form**   | 1.6 - 1.8         | Maximum readability       |
+| **UI elements** | 1.2 - 1.4         | Space efficiency          |
 
 ### Adjustment Factors
 
@@ -155,12 +155,12 @@ max-width: 65ch; /* ch = width of "0" character */
 
 ### Context Adjustments
 
-| Context | Character Range |
-|---------|-----------------|
-| Desktop article | 60-75 characters |
-| Mobile | 35-50 characters |
-| Sidebar text | 30-45 characters |
-| Wide monitors | Still cap at ~75ch |
+| Context         | Character Range    |
+| --------------- | ------------------ |
+| Desktop article | 60-75 characters   |
+| Mobile          | 35-50 characters   |
+| Sidebar text    | 30-45 characters   |
+| Wide monitors   | Still cap at ~75ch |
 
 ---
 
@@ -179,11 +179,7 @@ Fixed sizes don't scale well:
 
 ```css
 /* Syntax: clamp(MIN, PREFERRED, MAX) */
-font-size: clamp(
-  MINIMUM_SIZE,
-  FLUID_CALCULATION,
-  MAXIMUM_SIZE
-);
+font-size: clamp(MINIMUM_SIZE, FLUID_CALCULATION, MAXIMUM_SIZE);
 
 /* FLUID_CALCULATION typically: 
    base + viewport-relative-unit */
@@ -191,12 +187,12 @@ font-size: clamp(
 
 ### Scaling Strategy
 
-| Element | Scaling Behavior |
-|---------|-----------------|
-| Body text | Slight scaling (1rem → 1.125rem) |
-| Subheadings | Moderate scaling |
-| Headings | More dramatic scaling |
-| Display text | Most dramatic scaling |
+| Element      | Scaling Behavior                 |
+| ------------ | -------------------------------- |
+| Body text    | Slight scaling (1rem → 1.125rem) |
+| Subheadings  | Moderate scaling                 |
+| Headings     | More dramatic scaling            |
+| Display text | Most dramatic scaling            |
 
 ---
 
@@ -204,13 +200,13 @@ font-size: clamp(
 
 ### Semantic Weight Usage
 
-| Weight Range | Name | Use For |
-|--------------|------|---------|
-| 300-400 | Light/Normal | Body text, paragraphs |
-| 500 | Medium | Subtle emphasis |
-| 600 | Semibold | Subheadings, labels |
-| 700 | Bold | Headings, strong emphasis |
-| 800-900 | Heavy/Black | Display, hero text |
+| Weight Range | Name         | Use For                   |
+| ------------ | ------------ | ------------------------- |
+| 300-400      | Light/Normal | Body text, paragraphs     |
+| 500          | Medium       | Subtle emphasis           |
+| 600          | Semibold     | Subheadings, labels       |
+| 700          | Bold         | Headings, strong emphasis |
+| 800-900      | Heavy/Black  | Display, hero text        |
 
 ### Creating Contrast
 
@@ -249,13 +245,13 @@ ALL CAPS: always wider tracking
 
 ### Adjustment Guidelines
 
-| Context | Tracking Adjustment |
-|---------|---------------------|
-| Display/Hero | -2% to -4% |
-| Headings | -1% to -2% |
-| Body text | 0% (normal) |
-| Small text | +1% to +2% |
-| ALL CAPS | +5% to +10% |
+| Context      | Tracking Adjustment |
+| ------------ | ------------------- |
+| Display/Hero | -2% to -4%          |
+| Headings     | -1% to -2%          |
+| Body text    | 0% (normal)         |
+| Small text   | +1% to +2%          |
+| ALL CAPS     | +5% to +10%         |
 
 ---
 
@@ -274,13 +270,13 @@ Ways to create hierarchy:
 
 ### Typical Hierarchy
 
-| Level | Characteristics |
-|-------|-----------------|
-| Primary (H1) | Largest, boldest, most distinct |
+| Level          | Characteristics                   |
+| -------------- | --------------------------------- |
+| Primary (H1)   | Largest, boldest, most distinct   |
 | Secondary (H2) | Noticeably smaller but still bold |
-| Tertiary (H3) | Medium size, may use weight only |
-| Body | Standard size and weight |
-| Caption/Meta | Smaller, often lighter color |
+| Tertiary (H3)  | Medium size, may use weight only  |
+| Body           | Standard size and weight          |
+| Caption/Meta   | Smaller, often lighter color      |
 
 ### Testing Hierarchy
 

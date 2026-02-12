@@ -14,11 +14,11 @@ Protect against:
 
 ## Strategy Selection
 
-| Type | How | When |
-|------|-----|------|
-| **Token bucket** | Burst allowed, refills over time | Most APIs |
-| **Sliding window** | Smooth distribution | Strict limits |
-| **Fixed window** | Simple counters per window | Basic needs |
+| Type               | How                              | When          |
+| ------------------ | -------------------------------- | ------------- |
+| **Token bucket**   | Burst allowed, refills over time | Most APIs     |
+| **Sliding window** | Smooth distribution              | Strict limits |
+| **Fixed window**   | Simple counters per window       | Basic needs   |
 
 ## Response Headers
 

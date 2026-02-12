@@ -15,21 +15,21 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ### Tool Selection
 
-| Scenario | Tool |
-|----------|------|
-| **Node.js app** | PM2 (clustering, reload) |
-| **Any app** | systemd (Linux native) |
-| **Containers** | Docker/Podman |
+| Scenario          | Tool                     |
+| ----------------- | ------------------------ |
+| **Node.js app**   | PM2 (clustering, reload) |
+| **Any app**       | systemd (Linux native)   |
+| **Containers**    | Docker/Podman            |
 | **Orchestration** | Kubernetes, Docker Swarm |
 
 ### Process Management Goals
 
-| Goal | What It Means |
-|------|---------------|
-| **Restart on crash** | Auto-recovery |
+| Goal                     | What It Means           |
+| ------------------------ | ----------------------- |
+| **Restart on crash**     | Auto-recovery           |
 | **Zero-downtime reload** | No service interruption |
-| **Clustering** | Use all CPU cores |
-| **Persistence** | Survive server reboot |
+| **Clustering**           | Use all CPU cores       |
+| **Persistence**          | Survive server reboot   |
 
 ---
 
@@ -37,29 +37,29 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ### What to Monitor
 
-| Category | Key Metrics |
-|----------|-------------|
-| **Availability** | Uptime, health checks |
-| **Performance** | Response time, throughput |
-| **Errors** | Error rate, types |
-| **Resources** | CPU, memory, disk |
+| Category         | Key Metrics               |
+| ---------------- | ------------------------- |
+| **Availability** | Uptime, health checks     |
+| **Performance**  | Response time, throughput |
+| **Errors**       | Error rate, types         |
+| **Resources**    | CPU, memory, disk         |
 
 ### Alert Severity Strategy
 
-| Level | Response |
-|-------|----------|
+| Level        | Response         |
+| ------------ | ---------------- |
 | **Critical** | Immediate action |
-| **Warning** | Investigate soon |
-| **Info** | Review daily |
+| **Warning**  | Investigate soon |
+| **Info**     | Review daily     |
 
 ### Monitoring Tool Selection
 
-| Need | Options |
-|------|---------|
-| Simple/Free | PM2 metrics, htop |
-| Full observability | Grafana, Datadog |
-| Error tracking | Sentry |
-| Uptime | UptimeRobot, Pingdom |
+| Need               | Options              |
+| ------------------ | -------------------- |
+| Simple/Free        | PM2 metrics, htop    |
+| Full observability | Grafana, Datadog     |
+| Error tracking     | Sentry               |
+| Uptime             | UptimeRobot, Pingdom |
 
 ---
 
@@ -67,11 +67,11 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ### Log Strategy
 
-| Log Type | Purpose |
-|----------|---------|
-| **Application logs** | Debug, audit |
-| **Access logs** | Traffic analysis |
-| **Error logs** | Issue detection |
+| Log Type             | Purpose          |
+| -------------------- | ---------------- |
+| **Application logs** | Debug, audit     |
+| **Access logs**      | Traffic analysis |
+| **Error logs**       | Issue detection  |
 
 ### Log Principles
 
@@ -86,20 +86,20 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ### When to Scale
 
-| Symptom | Solution |
-|---------|----------|
-| High CPU | Add instances (horizontal) |
-| High memory | Increase RAM or fix leak |
-| Slow response | Profile first, then scale |
-| Traffic spikes | Auto-scaling |
+| Symptom        | Solution                   |
+| -------------- | -------------------------- |
+| High CPU       | Add instances (horizontal) |
+| High memory    | Increase RAM or fix leak   |
+| Slow response  | Profile first, then scale  |
+| Traffic spikes | Auto-scaling               |
 
 ### Scaling Strategy
 
-| Type | When to Use |
-|------|-------------|
-| **Vertical** | Quick fix, single instance |
-| **Horizontal** | Sustainable, distributed |
-| **Auto** | Variable traffic |
+| Type           | When to Use                |
+| -------------- | -------------------------- |
+| **Vertical**   | Quick fix, single instance |
+| **Horizontal** | Sustainable, distributed   |
+| **Auto**       | Variable traffic           |
 
 ---
 
@@ -107,12 +107,12 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ### What Constitutes Healthy
 
-| Check | Meaning |
-|-------|---------|
-| **HTTP 200** | Service responding |
-| **Database connected** | Data accessible |
-| **Dependencies OK** | External services reachable |
-| **Resources OK** | CPU/memory not exhausted |
+| Check                  | Meaning                     |
+| ---------------------- | --------------------------- |
+| **HTTP 200**           | Service responding          |
+| **Database connected** | Data accessible             |
+| **Dependencies OK**    | External services reachable |
+| **Resources OK**       | CPU/memory not exhausted    |
 
 ### Health Check Implementation
 
@@ -124,13 +124,13 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ## 6. Security Principles
 
-| Area | Principle |
-|------|-----------|
-| **Access** | SSH keys only, no passwords |
-| **Firewall** | Only needed ports open |
-| **Updates** | Regular security patches |
-| **Secrets** | Environment vars, not files |
-| **Audit** | Log access and changes |
+| Area         | Principle                   |
+| ------------ | --------------------------- |
+| **Access**   | SSH keys only, no passwords |
+| **Firewall** | Only needed ports open      |
+| **Updates**  | Regular security patches    |
+| **Secrets**  | Environment vars, not files |
+| **Audit**    | Log access and changes      |
 
 ---
 
@@ -148,13 +148,13 @@ When something's wrong:
 
 ## 8. Anti-Patterns
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Run as root | Use non-root user |
-| Ignore logs | Set up log rotation |
-| Skip monitoring | Monitor from day one |
-| Manual restarts | Auto-restart config |
-| No backups | Regular backup schedule |
+| ❌ Don't        | ✅ Do                   |
+| --------------- | ----------------------- |
+| Run as root     | Use non-root user       |
+| Ignore logs     | Set up log rotation     |
+| Skip monitoring | Monitor from day one    |
+| Manual restarts | Auto-restart config     |
+| No backups      | Regular backup schedule |
 
 ---
 

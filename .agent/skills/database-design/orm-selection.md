@@ -22,9 +22,9 @@ What's the context?
 
 ## Comparison
 
-| ORM | Best For | Trade-offs |
-|-----|----------|------------|
-| **Drizzle** | Edge, TypeScript | Newer, less examples |
-| **Prisma** | DX, schema management | Heavier, not edge-ready |
-| **Kysely** | Type-safe SQL builder | Manual migrations |
-| **Raw SQL** | Complex queries, control | Manual type safety |
+| ORM         | Best For                 | Trade-offs              |
+| ----------- | ------------------------ | ----------------------- |
+| **Drizzle** | Edge, TypeScript         | Newer, less examples    |
+| **Prisma**  | DX, schema management    | Heavier, not edge-ready |
+| **Kysely**  | Type-safe SQL builder    | Manual migrations       |
+| **Raw SQL** | Complex queries, control | Manual type safety      |

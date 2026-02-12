@@ -26,16 +26,16 @@ Mobile clients are DIFFERENT from web clients:
 
 ### These are common AI mistakes when building mobile backends:
 
-| ❌ AI Default | Why It's Wrong | ✅ Mobile-Correct |
-|---------------|----------------|-------------------|
-| Same API for web and mobile | Mobile needs compact responses | Separate mobile endpoints OR field selection |
-| Full object responses | Wastes bandwidth, battery | Partial responses, pagination |
-| No offline consideration | App crashes without network | Offline-first design, sync queues |
-| WebSocket for everything | Battery drain | Push notifications + polling fallback |
-| No app versioning | Can't force updates, breaking changes | Version headers, minimum version check |
-| Generic error messages | Users can't fix issues | Mobile-specific error codes + recovery actions |
-| Session-based auth | Mobile apps restart | Token-based with refresh |
-| Ignore device info | Can't debug issues | Device ID, app version in headers |
+| ❌ AI Default               | Why It's Wrong                        | ✅ Mobile-Correct                              |
+| --------------------------- | ------------------------------------- | ---------------------------------------------- |
+| Same API for web and mobile | Mobile needs compact responses        | Separate mobile endpoints OR field selection   |
+| Full object responses       | Wastes bandwidth, battery             | Partial responses, pagination                  |
+| No offline consideration    | App crashes without network           | Offline-first design, sync queues              |
+| WebSocket for everything    | Battery drain                         | Push notifications + polling fallback          |
+| No app versioning           | Can't force updates, breaking changes | Version headers, minimum version check         |
+| Generic error messages      | Users can't fix issues                | Mobile-specific error codes + recovery actions |
+| Session-based auth          | Mobile apps restart                   | Token-based with refresh                       |
+| Ignore device info          | Can't debug issues                    | Device ID, app version in headers              |
 
 ---
 
@@ -64,21 +64,21 @@ Mobile clients are DIFFERENT from web clients:
 
 ### Push Types
 
-| Type | Use Case | User Sees |
-|------|----------|-----------|
-| **Display** | New message, order update | Notification banner |
-| **Silent** | Background sync, content update | Nothing (background) |
-| **Data** | Custom handling by app | Depends on app logic |
+| Type        | Use Case                        | User Sees            |
+| ----------- | ------------------------------- | -------------------- |
+| **Display** | New message, order update       | Notification banner  |
+| **Silent**  | Background sync, content update | Nothing (background) |
+| **Data**    | Custom handling by app          | Depends on app logic |
 
 ### Anti-Patterns
 
-| ❌ NEVER | ✅ ALWAYS |
-|----------|----------|
+| ❌ NEVER                    | ✅ ALWAYS                                    |
+| --------------------------- | -------------------------------------------- |
 | Send sensitive data in push | Push says "New message", app fetches content |
-| Overload with pushes | Batch, dedupe, respect quiet hours |
-| Same message to all | Segment by user preference, timezone |
-| Ignore failed tokens | Clean up invalid tokens regularly |
-| Skip APNs for iOS | FCM alone doesn't guarantee iOS delivery |
+| Overload with pushes        | Batch, dedupe, respect quiet hours           |
+| Same message to all         | Segment by user preference, timezone         |
+| Ignore failed tokens        | Clean up invalid tokens regularly            |
+| Skip APNs for iOS           | FCM alone doesn't guarantee iOS delivery     |
 
 ### Token Management
 
@@ -119,13 +119,13 @@ WHAT TYPE OF DATA?
 
 ### Conflict Resolution Strategies
 
-| Strategy | How It Works | Best For |
-|----------|--------------|----------|
-| **Last-write-wins** | Latest timestamp overwrites | Simple data, single user |
-| **Server-wins** | Server always authoritative | Critical transactions |
-| **Client-wins** | Offline changes prioritized | Offline-heavy apps |
-| **Merge** | Combine changes field-by-field | Documents, rich content |
-| **CRDT** | Mathematically conflict-free | Real-time collaboration |
+| Strategy            | How It Works                   | Best For                 |
+| ------------------- | ------------------------------ | ------------------------ |
+| **Last-write-wins** | Latest timestamp overwrites    | Simple data, single user |
+| **Server-wins**     | Server always authoritative    | Critical transactions    |
+| **Client-wins**     | Offline changes prioritized    | Offline-heavy apps       |
+| **Merge**           | Combine changes field-by-field | Documents, rich content  |
+| **CRDT**            | Mathematically conflict-free   | Real-time collaboration  |
 
 ### Sync Queue Pattern
 
@@ -152,13 +152,13 @@ SERVER SIDE:
 
 ### Response Size Reduction
 
-| Technique | Savings | Implementation |
-|-----------|---------|----------------|
-| **Field selection** | 30-70% | `?fields=id,name,thumbnail` |
-| **Compression** | 60-80% | gzip/brotli (automatic) |
-| **Pagination** | Varies | Cursor-based for mobile |
-| **Image variants** | 50-90% | `/image?w=200&q=80` |
-| **Delta sync** | 80-95% | Only changed records since timestamp |
+| Technique           | Savings | Implementation                       |
+| ------------------- | ------- | ------------------------------------ |
+| **Field selection** | 30-70%  | `?fields=id,name,thumbnail`          |
+| **Compression**     | 60-80%  | gzip/brotli (automatic)              |
+| **Pagination**      | Varies  | Cursor-based for mobile              |
+| **Image variants**  | 50-90%  | `/image?w=200&q=80`                  |
+| **Delta sync**      | 80-95%  | Only changed records since timestamp |
 
 ### Pagination: Cursor vs Offset
 
@@ -182,7 +182,7 @@ CURSOR (Good for mobile):
 ```
 Instead of:
 GET /users/1
-GET /users/2  
+GET /users/2
 GET /users/3
 (3 round trips, 3x latency)
 
@@ -307,16 +307,16 @@ REQUEST FLOW:
 
 ### Error Categories
 
-| Code Range | Category | Mobile Handling |
-|------------|----------|-----------------|
-| 400-499 | Client error | Show message, user action needed |
-| 401 | Auth expired | Silent refresh or re-login |
-| 403 | Forbidden | Show upgrade/permission screen |
-| 404 | Not found | Remove from local cache |
-| 409 | Conflict | Show sync conflict UI |
-| 429 | Rate limit | Retry after header, backoff |
-| 500-599 | Server error | Retry with backoff, show "try later" |
-| Network | No connection | Use cached data, queue for sync |
+| Code Range | Category      | Mobile Handling                      |
+| ---------- | ------------- | ------------------------------------ |
+| 400-499    | Client error  | Show message, user action needed     |
+| 401        | Auth expired  | Silent refresh or re-login           |
+| 403        | Forbidden     | Show upgrade/permission screen       |
+| 404        | Not found     | Remove from local cache              |
+| 409        | Conflict      | Show sync conflict UI                |
+| 429        | Rate limit    | Retry after header, backoff          |
+| 500-599    | Server error  | Retry with backoff, show "try later" |
+| Network    | No connection | Use cached data, queue for sync      |
 
 ---
 
@@ -457,30 +457,35 @@ ALERTS:
 ## 📝 MOBILE BACKEND CHECKLIST
 
 ### Before API Design
+
 - [ ] Identified mobile-specific requirements?
 - [ ] Planned offline behavior?
 - [ ] Designed sync strategy?
 - [ ] Considered bandwidth constraints?
 
 ### For Every Endpoint
+
 - [ ] Response as small as possible?
 - [ ] Pagination cursor-based?
 - [ ] Proper caching headers?
 - [ ] Mobile error format with actions?
 
 ### Authentication
+
 - [ ] Token refresh implemented?
 - [ ] Silent re-auth flow?
 - [ ] Multi-device logout?
 - [ ] Secure token storage guidance?
 
 ### Push Notifications
+
 - [ ] FCM + APNs configured?
 - [ ] Token lifecycle managed?
 - [ ] Silent vs display push defined?
 - [ ] Sensitive data NOT in push payload?
 
 ### Release
+
 - [ ] Version check endpoint ready?
 - [ ] Feature flags configured?
 - [ ] Force update mechanism?

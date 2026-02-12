@@ -31,10 +31,10 @@ Monorepo:
 
 ## Alternative Options
 
-| Need | Default | Alternative |
-|------|---------|-------------|
-| Real-time | - | Supabase Realtime, Socket.io |
-| File storage | - | Cloudinary, S3 |
-| Payment | Stripe | LemonSqueezy, Paddle |
-| Email | - | Resend, SendGrid |
-| Search | - | Algolia, Typesense |
+| Need         | Default | Alternative                  |
+| ------------ | ------- | ---------------------------- |
+| Real-time    | -       | Supabase Realtime, Socket.io |
+| File storage | -       | Cloudinary, S3               |
+| Payment      | Stripe  | LemonSqueezy, Paddle         |
+| Email        | -       | Resend, SendGrid             |
+| Search       | -       | Algolia, Typesense           |

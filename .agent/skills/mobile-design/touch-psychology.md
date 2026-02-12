@@ -37,12 +37,12 @@ Where:
 
 ### Minimum Touch Target Sizes
 
-| Platform | Minimum | Recommended | Use For |
-|----------|---------|-------------|---------|
-| **iOS (HIG)** | 44pt × 44pt | 48pt+ | All tappable elements |
-| **Android (Material)** | 48dp × 48dp | 56dp+ | All tappable elements |
-| **WCAG 2.2** | 44px × 44px | - | Accessibility compliance |
-| **Critical Actions** | - | 56-64px | Primary CTAs, destructive actions |
+| Platform               | Minimum     | Recommended | Use For                           |
+| ---------------------- | ----------- | ----------- | --------------------------------- |
+| **iOS (HIG)**          | 44pt × 44pt | 48pt+       | All tappable elements             |
+| **Android (Material)** | 48dp × 48dp | 56dp+       | All tappable elements             |
+| **WCAG 2.2**           | 44px × 44px | -           | Accessibility compliance          |
+| **Critical Actions**   | -           | 56-64px     | Primary CTAs, destructive actions |
 
 ### Visual Size vs Hit Area
 
@@ -63,14 +63,14 @@ Where:
 
 ### Application Rules
 
-| Element | Visual Size | Hit Area |
-|---------|-------------|----------|
-| Icon buttons | 24-32px | 44-48px (padding) |
-| Text links | Any | 44px height minimum |
-| List items | Full width | 48-56px height |
-| Checkboxes/Radio | 20-24px | 44-48px tap area |
-| Close/X buttons | 24px | 44px minimum |
-| Tab bar items | Icon 24-28px | Full tab width, 49px height (iOS) |
+| Element          | Visual Size  | Hit Area                          |
+| ---------------- | ------------ | --------------------------------- |
+| Icon buttons     | 24-32px      | 44-48px (padding)                 |
+| Text links       | Any          | 44px height minimum               |
+| List items       | Full width   | 48-56px height                    |
+| Checkboxes/Radio | 20-24px      | 44-48px tap area                  |
+| Close/X buttons  | 24px         | 44px minimum                      |
+| Tab bar items    | Icon 24-28px | Full tab width, 49px height (iOS) |
 
 ---
 
@@ -124,15 +124,15 @@ Left hand is mirrored.
 
 ### Placement Guidelines
 
-| Element Type | Ideal Position | Reason |
-|--------------|----------------|--------|
-| **Primary CTA** | Bottom center/right | Easy thumb reach |
-| **Tab bar** | Bottom | Natural thumb position |
-| **FAB** | Bottom right | Easy for right hand |
-| **Navigation** | Top (stretch) | Less frequent use |
-| **Destructive actions** | Top left | Hard to reach = harder to accidentally tap |
-| **Dismiss/Cancel** | Top left | Convention + safety |
-| **Confirm/Done** | Top right or bottom | Convention |
+| Element Type            | Ideal Position      | Reason                                     |
+| ----------------------- | ------------------- | ------------------------------------------ |
+| **Primary CTA**         | Bottom center/right | Easy thumb reach                           |
+| **Tab bar**             | Bottom              | Natural thumb position                     |
+| **FAB**                 | Bottom right        | Easy for right hand                        |
+| **Navigation**          | Top (stretch)       | Less frequent use                          |
+| **Destructive actions** | Top left            | Hard to reach = harder to accidentally tap |
+| **Dismiss/Cancel**      | Top left            | Convention + safety                        |
+| **Confirm/Done**        | Top right or bottom | Convention                                 |
 
 ### Large Phone Considerations (>6")
 
@@ -153,14 +153,14 @@ Solutions:
 
 ### Expectation Differences
 
-| Aspect | Click (Desktop) | Touch (Mobile) |
-|--------|-----------------|----------------|
-| **Feedback timing** | Can wait 100ms | Expect instant (<50ms) |
-| **Visual feedback** | Hover → Click | Immediate tap response |
-| **Error tolerance** | Easy retry | Frustrating, feels broken |
-| **Precision** | High | Low |
-| **Context menu** | Right-click | Long press |
-| **Cancel action** | ESC key | Swipe away, outside tap |
+| Aspect              | Click (Desktop) | Touch (Mobile)            |
+| ------------------- | --------------- | ------------------------- |
+| **Feedback timing** | Can wait 100ms  | Expect instant (<50ms)    |
+| **Visual feedback** | Hover → Click   | Immediate tap response    |
+| **Error tolerance** | Easy retry      | Frustrating, feels broken |
+| **Precision**       | High            | Low                       |
+| **Context menu**    | Right-click     | Long press                |
+| **Cancel action**   | ESC key         | Swipe away, outside tap   |
 
 ### Touch Feedback Requirements
 
@@ -216,15 +216,15 @@ Solution: Always provide visible alternative
 
 ### Common Gesture Conventions
 
-| Gesture | Universal Meaning | Usage |
-|---------|-------------------|-------|
-| **Tap** | Select, activate | Primary action |
-| **Double tap** | Zoom in, like/favorite | Quick action |
-| **Long press** | Context menu, selection mode | Secondary options |
-| **Swipe horizontal** | Navigation, delete, actions | List actions |
-| **Swipe down** | Refresh, dismiss | Pull to refresh |
-| **Pinch** | Zoom in/out | Maps, images |
-| **Two-finger scroll** | Scroll within scroll | Nested scrolls |
+| Gesture               | Universal Meaning            | Usage             |
+| --------------------- | ---------------------------- | ----------------- |
+| **Tap**               | Select, activate             | Primary action    |
+| **Double tap**        | Zoom in, like/favorite       | Quick action      |
+| **Long press**        | Context menu, selection mode | Secondary options |
+| **Swipe horizontal**  | Navigation, delete, actions  | List actions      |
+| **Swipe down**        | Refresh, dismiss             | Pull to refresh   |
+| **Pinch**             | Zoom in/out                  | Maps, images      |
+| **Two-finger scroll** | Scroll within scroll         | Nested scrolls    |
 
 ### Gesture Affordance Design
 
@@ -245,13 +245,13 @@ Swipe actions need visual hints:
 
 ### Platform Gesture Differences
 
-| Gesture | iOS | Android |
-|---------|-----|---------|
-| **Back** | Edge swipe from left | System back button/gesture |
-| **Share** | Action sheet | Share sheet |
-| **Context menu** | Long press / Force touch | Long press |
-| **Dismiss modal** | Swipe down | Back button or swipe |
-| **Delete in list** | Swipe left, tap delete | Swipe left, immediate or undo |
+| Gesture            | iOS                      | Android                       |
+| ------------------ | ------------------------ | ----------------------------- |
+| **Back**           | Edge swipe from left     | System back button/gesture    |
+| **Share**          | Action sheet             | Share sheet                   |
+| **Context menu**   | Long press / Force touch | Long press                    |
+| **Dismiss modal**  | Swipe down               | Back button or swipe          |
+| **Delete in list** | Swipe left, tap delete   | Swipe left, immediate or undo |
 
 ---
 
@@ -275,26 +275,26 @@ Without haptics:
 
 ### iOS Haptic Types
 
-| Type | Intensity | Use Case |
-|------|-----------|----------|
-| `selection` | Light | Picker scroll, toggle, selection |
-| `light` | Light | Minor actions, hover equivalent |
-| `medium` | Medium | Standard tap confirmation |
-| `heavy` | Strong | Important completed, drop |
-| `success` | Pattern | Task completed successfully |
-| `warning` | Pattern | Warning, attention needed |
-| `error` | Pattern | Error occurred |
+| Type        | Intensity | Use Case                         |
+| ----------- | --------- | -------------------------------- |
+| `selection` | Light     | Picker scroll, toggle, selection |
+| `light`     | Light     | Minor actions, hover equivalent  |
+| `medium`    | Medium    | Standard tap confirmation        |
+| `heavy`     | Strong    | Important completed, drop        |
+| `success`   | Pattern   | Task completed successfully      |
+| `warning`   | Pattern   | Warning, attention needed        |
+| `error`     | Pattern   | Error occurred                   |
 
 ### Android Haptic Types
 
-| Type | Use Case |
-|------|----------|
-| `CLICK` | Standard tap feedback |
-| `HEAVY_CLICK` | Important actions |
-| `DOUBLE_CLICK` | Confirm actions |
-| `TICK` | Scroll/scrub feedback |
-| `LONG_PRESS` | Long press activation |
-| `REJECT` | Error/invalid action |
+| Type           | Use Case              |
+| -------------- | --------------------- |
+| `CLICK`        | Standard tap feedback |
+| `HEAVY_CLICK`  | Important actions     |
+| `DOUBLE_CLICK` | Confirm actions       |
+| `TICK`         | Scroll/scrub feedback |
+| `LONG_PRESS`   | Long press activation |
+| `REJECT`       | Error/invalid action  |
 
 ### Haptic Usage Guidelines
 
@@ -319,13 +319,13 @@ Without haptics:
 
 ### Haptic Intensity Mapping
 
-| Action Importance | Haptic Level | Example |
-|-------------------|--------------|---------|
-| Minor/Browsing | Light / None | Scrolling, hovering |
-| Standard Action | Medium / Selection | Tap, toggle |
-| Significant Action | Heavy / Success | Complete, confirm |
-| Critical/Destructive | Heavy / Warning | Delete, payment |
-| Error | Error pattern | Failed action |
+| Action Importance    | Haptic Level       | Example             |
+| -------------------- | ------------------ | ------------------- |
+| Minor/Browsing       | Light / None       | Scrolling, hovering |
+| Standard Action      | Medium / Selection | Tap, toggle         |
+| Significant Action   | Heavy / Success    | Complete, confirm   |
+| Critical/Destructive | Heavy / Warning    | Delete, payment     |
+| Error                | Error pattern      | Failed action       |
 
 ---
 
@@ -333,32 +333,32 @@ Without haptics:
 
 ### How Mobile Differs from Desktop
 
-| Factor | Desktop | Mobile | Implication |
-|--------|---------|--------|-------------|
-| **Attention** | Focused sessions | Interrupted constantly | Design for micro-sessions |
-| **Context** | Controlled environment | Anywhere, any condition | Handle bad lighting, noise |
-| **Multitasking** | Multiple windows | One app visible | Complete task in-app |
-| **Input speed** | Fast (keyboard) | Slow (touch typing) | Minimize input, smart defaults |
-| **Error recovery** | Easy (undo, back) | Harder (no keyboard shortcuts) | Prevent errors, easy recovery |
+| Factor             | Desktop                | Mobile                         | Implication                    |
+| ------------------ | ---------------------- | ------------------------------ | ------------------------------ |
+| **Attention**      | Focused sessions       | Interrupted constantly         | Design for micro-sessions      |
+| **Context**        | Controlled environment | Anywhere, any condition        | Handle bad lighting, noise     |
+| **Multitasking**   | Multiple windows       | One app visible                | Complete task in-app           |
+| **Input speed**    | Fast (keyboard)        | Slow (touch typing)            | Minimize input, smart defaults |
+| **Error recovery** | Easy (undo, back)      | Harder (no keyboard shortcuts) | Prevent errors, easy recovery  |
 
 ### Reducing Mobile Cognitive Load
 
 ```
 1. ONE PRIMARY ACTION per screen
    └── Clear what to do next
-   
+
 2. PROGRESSIVE DISCLOSURE
    └── Show only what's needed now
-   
+
 3. SMART DEFAULTS
    └── Pre-fill what you can
-   
+
 4. CHUNKING
    └── Break long forms into steps
-   
+
 5. RECOGNITION over RECALL
    └── Show options, don't make user remember
-   
+
 6. CONTEXT PERSISTENCE
    └── Save state on interrupt/background
 ```
@@ -432,13 +432,13 @@ OR the target is:
 
 ### Accessible Touch Patterns
 
-| Pattern | Accessible Implementation |
-|---------|---------------------------|
-| Swipe actions | Provide menu alternative |
-| Drag and drop | Provide select + move option |
-| Pinch zoom | Provide zoom buttons |
-| Force touch | Provide long press alternative |
-| Shake gesture | Provide button alternative |
+| Pattern       | Accessible Implementation      |
+| ------------- | ------------------------------ |
+| Swipe actions | Provide menu alternative       |
+| Drag and drop | Provide select + move option   |
+| Pinch zoom    | Provide zoom buttons           |
+| Force touch   | Provide long press alternative |
+| Shake gesture | Provide button alternative     |
 
 ---
 
@@ -458,13 +458,13 @@ What makes touch feel "premium":
 
 ### Emotional Touch Feedback
 
-| Emotion | Touch Response |
-|---------|----------------|
-| Success | Haptic success + confetti/check |
-| Error | Haptic error + shake animation |
-| Warning | Haptic warning + attention color |
-| Delight | Unexpected smooth animation |
-| Power | Heavy haptic on significant action |
+| Emotion | Touch Response                     |
+| ------- | ---------------------------------- |
+| Success | Haptic success + confetti/check    |
+| Error   | Haptic error + shake animation     |
+| Warning | Haptic warning + attention color   |
+| Delight | Unexpected smooth animation        |
+| Power   | Heavy haptic on significant action |
 
 ### Trust Building Through Touch
 

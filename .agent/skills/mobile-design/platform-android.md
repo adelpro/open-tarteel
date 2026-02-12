@@ -31,13 +31,13 @@ ACCESSIBLE BY DEFAULT:
 
 ### Material Design Values
 
-| Value | Implementation |
-|-------|----------------|
-| **Dynamic Color** | Colors adapt to wallpaper/user preference |
-| **Personalization** | User-specific themes |
-| **Accessibility** | Built into every component |
-| **Responsiveness** | Works on all screen sizes |
-| **Consistency** | Unified design language |
+| Value               | Implementation                            |
+| ------------------- | ----------------------------------------- |
+| **Dynamic Color**   | Colors adapt to wallpaper/user preference |
+| **Personalization** | User-specific themes                      |
+| **Accessibility**   | Built into every component                |
+| **Responsiveness**  | Works on all screen sizes                 |
+| **Consistency**     | Unified design language                   |
 
 ---
 
@@ -56,23 +56,23 @@ Android System Fonts:
 
 ### Material Type Scale
 
-| Role | Size | Weight | Line Height | Usage |
-|------|------|--------|-------------|-------|
-| **Display Large** | 57sp | Regular | 64sp | Hero text, splash |
-| **Display Medium** | 45sp | Regular | 52sp | Large headers |
-| **Display Small** | 36sp | Regular | 44sp | Medium headers |
-| **Headline Large** | 32sp | Regular | 40sp | Page titles |
-| **Headline Medium** | 28sp | Regular | 36sp | Section headers |
-| **Headline Small** | 24sp | Regular | 32sp | Subsections |
-| **Title Large** | 22sp | Regular | 28sp | Dialogs, cards |
-| **Title Medium** | 16sp | Medium | 24sp | Lists, navigation |
-| **Title Small** | 14sp | Medium | 20sp | Tabs, secondary |
-| **Body Large** | 16sp | Regular | 24sp | Primary content |
-| **Body Medium** | 14sp | Regular | 20sp | Secondary content |
-| **Body Small** | 12sp | Regular | 16sp | Captions |
-| **Label Large** | 14sp | Medium | 20sp | Buttons, FAB |
-| **Label Medium** | 12sp | Medium | 16sp | Navigation |
-| **Label Small** | 11sp | Medium | 16sp | Chips, badges |
+| Role                | Size | Weight  | Line Height | Usage             |
+| ------------------- | ---- | ------- | ----------- | ----------------- |
+| **Display Large**   | 57sp | Regular | 64sp        | Hero text, splash |
+| **Display Medium**  | 45sp | Regular | 52sp        | Large headers     |
+| **Display Small**   | 36sp | Regular | 44sp        | Medium headers    |
+| **Headline Large**  | 32sp | Regular | 40sp        | Page titles       |
+| **Headline Medium** | 28sp | Regular | 36sp        | Section headers   |
+| **Headline Small**  | 24sp | Regular | 32sp        | Subsections       |
+| **Title Large**     | 22sp | Regular | 28sp        | Dialogs, cards    |
+| **Title Medium**    | 16sp | Medium  | 24sp        | Lists, navigation |
+| **Title Small**     | 14sp | Medium  | 20sp        | Tabs, secondary   |
+| **Body Large**      | 16sp | Regular | 24sp        | Primary content   |
+| **Body Medium**     | 14sp | Regular | 20sp        | Secondary content |
+| **Body Small**      | 12sp | Regular | 16sp        | Captions          |
+| **Label Large**     | 14sp | Medium  | 20sp        | Buttons, FAB      |
+| **Label Medium**    | 12sp | Medium  | 16sp        | Navigation        |
+| **Label Small**     | 11sp | Medium  | 16sp        | Chips, badges     |
 
 ### Scalable Pixels (sp)
 
@@ -89,11 +89,11 @@ RULE: ALWAYS use sp for text, dp for everything else.
 
 ### Font Weight Usage
 
-| Weight | Use Case |
-|--------|----------|
-| Regular (400) | Body text, display |
-| Medium (500) | Buttons, labels, emphasis |
-| Bold (700) | Rarely, strong emphasis only |
+| Weight        | Use Case                     |
+| ------------- | ---------------------------- |
+| Regular (400) | Body text, display           |
+| Medium (500)  | Buttons, labels, emphasis    |
+| Bold (700)    | Rarely, strong emphasis only |
 
 ---
 
@@ -142,11 +142,11 @@ Secondary/Tertiary: Similar pattern
 
 ### Error, Warning, Success Colors
 
-| Role | Light | Dark | Usage |
-|------|-------|------|-------|
-| Error | #B3261E | #F2B8B5 | Errors, destructive |
-| OnError | #FFFFFF | #601410 | Text on error |
-| ErrorContainer | #F9DEDC | #8C1D18 | Error backgrounds |
+| Role           | Light   | Dark    | Usage               |
+| -------------- | ------- | ------- | ------------------- |
+| Error          | #B3261E | #F2B8B5 | Errors, destructive |
+| OnError        | #FFFFFF | #601410 | Text on error       |
+| ErrorContainer | #F9DEDC | #8C1D18 | Error backgrounds   |
 
 ### Dark Theme
 
@@ -213,10 +213,10 @@ EXPANDED (> 840dp width):
 
 ### Canonical Layouts
 
-| Layout | Use Case | Window Class |
-|--------|----------|--------------|
-| **List-Detail** | Email, messages | Medium, Expanded |
-| **Feed** | Social, news | All |
+| Layout              | Use Case          | Window Class     |
+| ------------------- | ----------------- | ---------------- |
+| **List-Detail**     | Email, messages   | Medium, Expanded |
+| **Feed**            | Social, news      | All              |
 | **Supporting Pane** | Reference content | Medium, Expanded |
 
 ---
@@ -225,12 +225,12 @@ EXPANDED (> 840dp width):
 
 ### Navigation Components
 
-| Component | Use Case | Position |
-|-----------|----------|----------|
-| **Bottom Navigation** | 3-5 top-level destinations | Bottom |
-| **Navigation Rail** | Tablets, foldables | Left side, vertical |
+| Component             | Use Case                         | Position                  |
+| --------------------- | -------------------------------- | ------------------------- |
+| **Bottom Navigation** | 3-5 top-level destinations       | Bottom                    |
+| **Navigation Rail**   | Tablets, foldables               | Left side, vertical       |
 | **Navigation Drawer** | Many destinations, large screens | Left side, hidden/visible |
-| **Top App Bar** | Current context, actions | Top |
+| **Top App Bar**       | Current context, actions         | Top                       |
 
 ### Bottom Navigation
 
@@ -519,7 +519,7 @@ Every touchable element needs ripple:
 Touch down → Ripple expands from touch point
 Touch up → Ripple completes and fades
 
-Color: 
+Color:
 ├── On light: Black at ~12% opacity
 ├── On dark: White at ~12% opacity
 ├── On colored: Appropriate contrast
@@ -550,12 +550,12 @@ Variable font axes:
 
 ### Icon Sizes
 
-| Size | Usage |
-|------|-------|
-| 20dp | Dense UI, inline |
+| Size | Usage                  |
+| ---- | ---------------------- |
+| 20dp | Dense UI, inline       |
 | 24dp | Standard (most common) |
-| 40dp | Larger touch targets |
-| 48dp | Emphasis, standalone |
+| 40dp | Larger touch targets   |
+| 48dp | Emphasis, standalone   |
 
 ### States
 

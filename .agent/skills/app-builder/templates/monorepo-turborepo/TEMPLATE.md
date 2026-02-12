@@ -7,13 +7,13 @@ description: Turborepo monorepo template principles. pnpm workspaces, shared pac
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Build System | Turborepo |
-| Package Manager | pnpm |
-| Apps | Next.js, Express |
-| Packages | Shared UI, Config, Types |
-| Language | TypeScript |
+| Component       | Technology               |
+| --------------- | ------------------------ |
+| Build System    | Turborepo                |
+| Package Manager | pnpm                     |
+| Apps            | Next.js, Express         |
+| Packages        | Shared UI, Config, Types |
+| Language        | TypeScript               |
 
 ---
 
@@ -39,23 +39,23 @@ project-name/
 
 ## Key Concepts
 
-| Concept | Description |
-|---------|-------------|
-| Workspaces | pnpm-workspace.yaml |
-| Pipeline | turbo.json task graph |
-| Caching | Remote/local task caching |
-| Dependencies | `workspace:*` protocol |
+| Concept      | Description               |
+| ------------ | ------------------------- |
+| Workspaces   | pnpm-workspace.yaml       |
+| Pipeline     | turbo.json task graph     |
+| Caching      | Remote/local task caching |
+| Dependencies | `workspace:*` protocol    |
 
 ---
 
 ## Turbo Pipeline
 
-| Task | Depends On |
-|------|------------|
+| Task  | Depends On                  |
+| ----- | --------------------------- |
 | build | ^build (dependencies first) |
-| dev | cache: false, persistent |
-| lint | ^build |
-| test | ^build |
+| dev   | cache: false, persistent    |
+| lint  | ^build                      |
+| test  | ^build                      |
 
 ---
 
@@ -73,12 +73,12 @@ project-name/
 
 ## Common Commands
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Run all apps |
-| `pnpm build` | Build all |
-| `pnpm --filter @name/web dev` | Run specific app |
-| `pnpm --filter @name/web add axios` | Add dep to app |
+| Command                             | Description      |
+| ----------------------------------- | ---------------- |
+| `pnpm dev`                          | Run all apps     |
+| `pnpm build`                        | Build all        |
+| `pnpm --filter @name/web dev`       | Run specific app |
+| `pnpm --filter @name/web add axios` | Add dep to app   |
 
 ---
 

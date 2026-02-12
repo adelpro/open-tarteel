@@ -16,15 +16,17 @@ Where n = number of choices
 ```
 
 **Application:**
+
 - Navigation: Max 5-7 top-level items
 - Forms: Break into steps (progressive disclosure)
 - Options: Default selections when possible
 - Filters: Prioritize most-used, hide advanced
 
 **Example:**
+
 ```
 ❌ Bad: 15 menu items in one nav
-✅ Good: 5 main categories + "More" 
+✅ Good: 5 main categories + "More"
 
 ❌ Bad: 20 form fields at once
 ✅ Good: 3-step wizard with 5-7 fields each
@@ -42,21 +44,35 @@ Where D = distance, W = width
 ```
 
 **Application:**
+
 - CTAs: Make primary buttons larger (min 44px height)
 - Touch targets: 44×44px minimum on mobile
 - Placement: Important actions near natural cursor position
 - Corners: "Magic corners" (infinite edge = easy to hit)
 
 **Button Sizing:**
+
 ```css
 /* Size by importance */
-.btn-primary { height: 48px; padding: 0 24px; }
-.btn-secondary { height: 40px; padding: 0 16px; }
-.btn-tertiary { height: 36px; padding: 0 12px; }
+.btn-primary {
+  height: 48px;
+  padding: 0 24px;
+}
+.btn-secondary {
+  height: 40px;
+  padding: 0 16px;
+}
+.btn-tertiary {
+  height: 36px;
+  padding: 0 12px;
+}
 
 /* Mobile touch targets */
 @media (hover: none) {
-  .btn { min-height: 44px; min-width: 44px; }
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 ```
 
@@ -67,12 +83,14 @@ Where D = distance, W = width
 **Principle:** Average person can hold 7±2 chunks in working memory.
 
 **Application:**
+
 - Lists: Group into chunks of 5-7 items
 - Navigation: Max 7 menu items
 - Content: Break long content with headings
 - Phone numbers: 555-123-4567 (chunked)
 
 **Chunking Example:**
+
 ```
 ❌ 5551234567
 ✅ 555-123-4567
@@ -90,21 +108,29 @@ Where D = distance, W = width
 **Principle:** An item that stands out is more likely to be remembered.
 
 **Application:**
+
 - CTA buttons: Distinct color from other elements
 - Pricing: Highlight recommended plan
 - Important info: Visual differentiation
 - New features: Badge or callout
 
 **Example:**
+
 ```css
 /* All buttons gray, primary stands out */
-.btn { background: #E5E7EB; }
-.btn-primary { background: #3B82F6; }
+.btn {
+  background: #e5e7eb;
+}
+.btn-primary {
+  background: #3b82f6;
+}
 
 /* Recommended plan highlighted */
-.pricing-card { border: 1px solid #E5E7EB; }
-.pricing-card.popular { 
-  border: 2px solid #3B82F6;
+.pricing-card {
+  border: 1px solid #e5e7eb;
+}
+.pricing-card.popular {
+  border: 2px solid #3b82f6;
   box-shadow: var(--shadow-lg);
 }
 ```
@@ -116,12 +142,14 @@ Where D = distance, W = width
 **Principle:** Items at the beginning (primacy) and end (recency) of a list are remembered best.
 
 **Application:**
+
 - Navigation: Most important items first and last
 - Lists: Key info at top and bottom
 - Forms: Most critical fields at start
 - CTAs: Repeat at top and bottom of long pages
 
 **Example:**
+
 ```
 Navigation: Home | [key items] | Contact
 
@@ -165,6 +193,7 @@ Long landing page:
 ### Designing for Each Level
 
 **Visceral:**
+
 ```css
 /* Beautiful first impression */
 .hero {
@@ -180,19 +209,21 @@ Long landing page:
 ```
 
 **Behavioral:**
+
 ```javascript
 // Instant feedback
 button.onclick = () => {
   button.disabled = true;
   button.textContent = 'Saving...';
-  
+
   save().then(() => {
-    showSuccess('Saved!');  // Immediate confirmation
+    showSuccess('Saved!'); // Immediate confirmation
   });
 };
 ```
 
 **Reflective:**
+
 ```html
 <!-- Brand story and values -->
 <section class="about">
@@ -212,13 +243,13 @@ button.onclick = () => {
 
 ### Trust Signal Categories
 
-| Category | Elements | Implementation |
-|----------|----------|----------------|
-| **Security** | SSL, badges, encryption | Visible padlock, security logos on forms |
-| **Social Proof** | Reviews, testimonials, logos | Star ratings, customer photos, brand logos |
-| **Transparency** | Policies, pricing, contact | Clear links, no hidden fees, real address |
-| **Professional** | Design quality, consistency | No broken elements, consistent branding |
-| **Authority** | Certifications, awards, media | "As seen in...", industry certifications |
+| Category         | Elements                      | Implementation                             |
+| ---------------- | ----------------------------- | ------------------------------------------ |
+| **Security**     | SSL, badges, encryption       | Visible padlock, security logos on forms   |
+| **Social Proof** | Reviews, testimonials, logos  | Star ratings, customer photos, brand logos |
+| **Transparency** | Policies, pricing, contact    | Clear links, no hidden fees, real address  |
+| **Professional** | Design quality, consistency   | No broken elements, consistent branding    |
+| **Authority**    | Certifications, awards, media | "As seen in...", industry certifications   |
 
 ### Trust Signal Placement
 
@@ -246,7 +277,7 @@ button.onclick = () => {
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  background: #F0FDF4;  /* Light green = security */
+  background: #f0fdf4; /* Light green = security */
   border-radius: 2px; /* Sharp for trust = precision feel */
   font-size: 14px;
   color: #166534;
@@ -274,7 +305,7 @@ button.onclick = () => {
 .testimonial-avatar {
   width: 48px;
   height: 48px;
-  border-radius: 50%;  /* Real photos > initials */
+  border-radius: 50%; /* Real photos > initials */
 }
 ```
 
@@ -284,33 +315,35 @@ button.onclick = () => {
 
 ### Three Types of Cognitive Load
 
-| Type | Definition | Designer's Role |
-|------|------------|-----------------|
-| **Intrinsic** | Inherent complexity of task | Break into smaller steps |
-| **Extraneous** | Load from poor design | Eliminate this! |
-| **Germane** | Effort for learning | Support and encourage |
+| Type           | Definition                  | Designer's Role          |
+| -------------- | --------------------------- | ------------------------ |
+| **Intrinsic**  | Inherent complexity of task | Break into smaller steps |
+| **Extraneous** | Load from poor design       | Eliminate this!          |
+| **Germane**    | Effort for learning         | Support and encourage    |
 
 ### Reduction Strategies
 
 **1. Simplify (Reduce Extraneous)**
+
 ```css
 /* Visual noise → Clean */
 .card-busy {
   border: 2px solid red;
   background: linear-gradient(...);
-  box-shadow: 0 0 20px ...;
+  box-shadow: 0 0 20px...;
   /* Too much! */
 }
 
 .card-clean {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
   /* Calm, focused */
 }
 ```
 
 **2. Chunk Information**
+
 ```html
 <!-- Overwhelming -->
 <form>
@@ -331,15 +364,14 @@ button.onclick = () => {
 ```
 
 **3. Progressive Disclosure**
+
 ```html
 <!-- Hide complexity until needed -->
 <div class="filters">
   <div class="filters-basic">
     <!-- Common filters visible -->
   </div>
-  <button onclick="toggleAdvanced()">
-    Advanced Options ▼
-  </button>
+  <button onclick="toggleAdvanced()">Advanced Options ▼</button>
   <div class="filters-advanced" hidden>
     <!-- Complex filters hidden -->
   </div>
@@ -347,6 +379,7 @@ button.onclick = () => {
 ```
 
 **4. Use Familiar Patterns**
+
 ```
 ✅ Standard navigation placement
 ✅ Expected icon meanings (🔍 = search)
@@ -355,13 +388,17 @@ button.onclick = () => {
 ```
 
 **5. Offload Information**
+
 ```html
 <!-- Don't make users remember -->
 <label>
   Card Number
-  <input type="text" inputmode="numeric" 
-         autocomplete="cc-number" 
-         placeholder="1234 5678 9012 3456">
+  <input
+    type="text"
+    inputmode="numeric"
+    autocomplete="cc-number"
+    placeholder="1234 5678 9012 3456"
+  />
 </label>
 
 <!-- Show what they entered -->
@@ -377,25 +414,27 @@ button.onclick = () => {
 
 ### Ethical Persuasion Techniques
 
-| Technique | Ethical Use | Dark Pattern (Avoid) |
-|-----------|-------------|----------------------|
-| **Scarcity** | Real stock levels | Fake countdown timers |
-| **Social Proof** | Genuine reviews | Fake testimonials |
-| **Authority** | Real credentials | Misleading badges |
-| **Urgency** | Real deadlines | Manufactured FOMO |
-| **Commitment** | Progress saving | Guilt-tripping |
+| Technique        | Ethical Use       | Dark Pattern (Avoid)  |
+| ---------------- | ----------------- | --------------------- |
+| **Scarcity**     | Real stock levels | Fake countdown timers |
+| **Social Proof** | Genuine reviews   | Fake testimonials     |
+| **Authority**    | Real credentials  | Misleading badges     |
+| **Urgency**      | Real deadlines    | Manufactured FOMO     |
+| **Commitment**   | Progress saving   | Guilt-tripping        |
 
 ### Nudge Patterns
 
 **Smart Defaults:**
+
 ```html
 <!-- Pre-select the recommended option -->
-<input type="radio" name="plan" value="monthly">
-<input type="radio" name="plan" value="annual" checked>
-  Annual (Save 20%)
+<input type="radio" name="plan" value="monthly" />
+<input type="radio" name="plan" value="annual" checked />
+Annual (Save 20%)
 ```
 
 **Anchoring:**
+
 ```html
 <!-- Show original price to frame discount -->
 <div class="price">
@@ -406,6 +445,7 @@ button.onclick = () => {
 ```
 
 **Social Proof:**
+
 ```html
 <!-- Real-time activity -->
 <div class="activity">
@@ -418,6 +458,7 @@ button.onclick = () => {
 ```
 
 **Progress & Commitment:**
+
 ```html
 <!-- Show progress to encourage completion -->
 <div class="progress">

@@ -34,13 +34,13 @@ What are you building?
 
 ### Comparison
 
-| Factor | Unity 6 | Godot 4 | Unreal 5 |
-|--------|---------|---------|----------|
-| 2D | Good | Excellent | Limited |
-| 3D | Good | Good | Excellent |
-| Learning | Medium | Easy | Hard |
-| Cost | Revenue share | Free | 5% after $1M |
-| Team | Any | Solo-Medium | Medium-Large |
+| Factor   | Unity 6       | Godot 4     | Unreal 5     |
+| -------- | ------------- | ----------- | ------------ |
+| 2D       | Good          | Excellent   | Limited      |
+| 3D       | Good          | Good        | Excellent    |
+| Learning | Medium        | Easy        | Hard         |
+| Cost     | Revenue share | Free        | 5% after $1M |
+| Team     | Any           | Solo-Medium | Medium-Large |
 
 ---
 
@@ -48,21 +48,21 @@ What are you building?
 
 ### Steam Integration
 
-| Feature | Purpose |
-|---------|---------|
-| Achievements | Player goals |
-| Cloud Saves | Cross-device progress |
-| Leaderboards | Competition |
-| Workshop | User mods |
-| Rich Presence | Show in-game status |
+| Feature       | Purpose               |
+| ------------- | --------------------- |
+| Achievements  | Player goals          |
+| Cloud Saves   | Cross-device progress |
+| Leaderboards  | Competition           |
+| Workshop      | User mods             |
+| Rich Presence | Show in-game status   |
 
 ### Console Requirements
 
-| Platform | Certification |
-|----------|--------------|
+| Platform    | Certification  |
+| ----------- | -------------- |
 | PlayStation | TRC compliance |
-| Xbox | XR compliance |
-| Nintendo | Lotcheck |
+| Xbox        | XR compliance  |
+| Nintendo    | Lotcheck       |
 
 ---
 
@@ -78,11 +78,11 @@ Map ACTIONS, not buttons:
 
 ### Haptic Feedback
 
-| Intensity | Use |
-|-----------|-----|
-| Light | UI feedback |
-| Medium | Impacts |
-| Heavy | Major events |
+| Intensity | Use          |
+| --------- | ------------ |
+| Light     | UI feedback  |
+| Medium    | Impacts      |
+| Heavy     | Major events |
 
 ---
 
@@ -90,20 +90,20 @@ Map ACTIONS, not buttons:
 
 ### Profiling First
 
-| Engine | Tool |
-|--------|------|
-| Unity | Profiler Window |
-| Godot | Debugger → Profiler |
-| Unreal | Unreal Insights |
+| Engine | Tool                |
+| ------ | ------------------- |
+| Unity  | Profiler Window     |
+| Godot  | Debugger → Profiler |
+| Unreal | Unreal Insights     |
 
 ### Common Bottlenecks
 
-| Bottleneck | Solution |
-|------------|----------|
+| Bottleneck | Solution          |
+| ---------- | ----------------- |
 | Draw calls | Batching, atlases |
-| GC spikes | Object pooling |
-| Physics | Simpler colliders |
-| Shaders | LOD shaders |
+| GC spikes  | Object pooling    |
+| Physics    | Simpler colliders |
+| Shaders    | LOD shaders       |
 
 ---
 
@@ -132,12 +132,12 @@ Map ACTIONS, not buttons:
 
 ## 6. Anti-Patterns
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Choose engine by hype | Choose by project needs |
+| ❌ Don't                   | ✅ Do                            |
+| -------------------------- | -------------------------------- |
+| Choose engine by hype      | Choose by project needs          |
 | Ignore platform guidelines | Study certification requirements |
-| Hardcode input buttons | Abstract to actions |
-| Skip profiling | Profile early and often |
+| Hardcode input buttons     | Abstract to actions              |
+| Skip profiling             | Profile early and often          |
 
 ---
 

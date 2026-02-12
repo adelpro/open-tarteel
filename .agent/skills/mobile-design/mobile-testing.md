@@ -23,17 +23,17 @@ Mobile testing differs from web:
 
 ## 🚫 AI MOBILE TESTING ANTI-PATTERNS
 
-| ❌ AI Default | Why It's Wrong | ✅ Mobile-Correct |
-|---------------|----------------|-------------------|
-| Jest-only testing | Misses native layer | Jest + E2E on device |
-| Enzyme patterns | Deprecated, web-focused | React Native Testing Library |
-| Browser-based E2E (Cypress) | Can't test native features | Detox / Maestro |
-| Mock everything | Misses integration bugs | Real device testing |
-| Ignore platform tests | iOS/Android differ | Platform-specific cases |
-| Skip performance tests | Mobile perf is critical | Profile on low-end device |
-| Test only happy path | Mobile has more edge cases | Offline, permissions, interrupts |
-| 100% unit test coverage | False security | Pyramid balance |
-| Copy web testing patterns | Different environment | Mobile-specific tools |
+| ❌ AI Default               | Why It's Wrong             | ✅ Mobile-Correct                |
+| --------------------------- | -------------------------- | -------------------------------- |
+| Jest-only testing           | Misses native layer        | Jest + E2E on device             |
+| Enzyme patterns             | Deprecated, web-focused    | React Native Testing Library     |
+| Browser-based E2E (Cypress) | Can't test native features | Detox / Maestro                  |
+| Mock everything             | Misses integration bugs    | Real device testing              |
+| Ignore platform tests       | iOS/Android differ         | Platform-specific cases          |
+| Skip performance tests      | Mobile perf is critical    | Profile on low-end device        |
+| Test only happy path        | Mobile has more edge cases | Offline, permissions, interrupts |
+| 100% unit test coverage     | False security             | Pyramid balance                  |
+| Copy web testing patterns   | Different environment      | Mobile-specific tools            |
 
 ---
 
@@ -69,14 +69,14 @@ WHAT ARE YOU TESTING?
 
 ### Tool Comparison
 
-| Tool | Platform | Speed | Reliability | Use When |
-|------|----------|-------|-------------|----------|
-| **Jest** | RN | ⚡⚡⚡ | ⚡⚡⚡ | Unit tests, logic |
-| **RNTL** | RN | ⚡⚡⚡ | ⚡⚡ | Component tests |
-| **flutter_test** | Flutter | ⚡⚡⚡ | ⚡⚡⚡ | Widget tests |
-| **Detox** | RN | ⚡⚡ | ⚡⚡⚡ | E2E, critical flows |
-| **Maestro** | Both | ⚡⚡ | ⚡⚡ | E2E, cross-platform |
-| **Appium** | Both | ⚡ | ⚡ | Legacy, last resort |
+| Tool             | Platform | Speed  | Reliability | Use When            |
+| ---------------- | -------- | ------ | ----------- | ------------------- |
+| **Jest**         | RN       | ⚡⚡⚡ | ⚡⚡⚡      | Unit tests, logic   |
+| **RNTL**         | RN       | ⚡⚡⚡ | ⚡⚡        | Component tests     |
+| **flutter_test** | Flutter  | ⚡⚡⚡ | ⚡⚡⚡      | Widget tests        |
+| **Detox**        | RN       | ⚡⚡   | ⚡⚡⚡      | E2E, critical flows |
+| **Maestro**      | Both     | ⚡⚡   | ⚡⚡        | E2E, cross-platform |
+| **Appium**       | Both     | ⚡     | ⚡          | Legacy, last resort |
 
 ---
 
@@ -100,12 +100,12 @@ WHAT ARE YOU TESTING?
 
 ### Why This Distribution?
 
-| Level | Why This % |
-|-------|------------|
-| **E2E 10%** | Slow, flaky, but catches integration bugs |
-| **Integration 20%** | Tests real user flows without full app |
-| **Component 30%** | Fast feedback on UI changes |
-| **Unit 40%** | Fastest, most stable, logic coverage |
+| Level               | Why This %                                |
+| ------------------- | ----------------------------------------- |
+| **E2E 10%**         | Slow, flaky, but catches integration bugs |
+| **Integration 20%** | Tests real user flows without full app    |
+| **Component 30%**   | Fast feedback on UI changes               |
+| **Unit 40%**        | Fastest, most stable, logic coverage      |
 
 > 🔴 **If you have 90% unit tests and 0% E2E, you're testing the wrong things.**
 
@@ -187,15 +187,15 @@ WHAT ARE YOU TESTING?
 
 ### What Differs Between iOS and Android?
 
-| Area | iOS Behavior | Android Behavior | Test Both? |
-|------|--------------|------------------|------------|
-| **Back navigation** | Edge swipe | System back button | ✅ YES |
-| **Permissions** | Ask once, settings | Ask each time, rationale | ✅ YES |
-| **Keyboard** | Different appearance | Different behavior | ✅ YES |
-| **Date picker** | Wheel/modal | Material dialog | ⚠️ If custom UI |
-| **Push format** | APNs payload | FCM payload | ✅ YES |
-| **Deep links** | Universal Links | App Links | ✅ YES |
-| **Gestures** | Some unique | Material gestures | ⚠️ If custom |
+| Area                | iOS Behavior         | Android Behavior         | Test Both?      |
+| ------------------- | -------------------- | ------------------------ | --------------- |
+| **Back navigation** | Edge swipe           | System back button       | ✅ YES          |
+| **Permissions**     | Ask once, settings   | Ask each time, rationale | ✅ YES          |
+| **Keyboard**        | Different appearance | Different behavior       | ✅ YES          |
+| **Date picker**     | Wheel/modal          | Material dialog          | ⚠️ If custom UI |
+| **Push format**     | APNs payload         | FCM payload              | ✅ YES          |
+| **Deep links**      | Universal Links      | App Links                | ✅ YES          |
+| **Gestures**        | Some unique          | Material gestures        | ⚠️ If custom    |
 
 ### Platform Testing Strategy
 
@@ -215,13 +215,13 @@ FOR EACH PLATFORM:
 
 ### Offline Scenarios to Test
 
-| Scenario | What to Verify |
-|----------|----------------|
-| Start app offline | Shows cached data or offline message |
-| Go offline mid-action | Action queued, not lost |
-| Come back online | Queue synced, no duplicates |
-| Slow network (2G) | Loading states, timeouts work |
-| Flaky network | Retry logic, error recovery |
+| Scenario              | What to Verify                       |
+| --------------------- | ------------------------------------ |
+| Start app offline     | Shows cached data or offline message |
+| Go offline mid-action | Action queued, not lost              |
+| Come back online      | Queue synced, no duplicates          |
+| Slow network (2G)     | Loading states, timeouts work        |
+| Flaky network         | Retry logic, error recovery          |
 
 ### How to Test Network Conditions
 
@@ -240,13 +240,13 @@ APPROACH:
 
 ### What to Measure
 
-| Metric | Target | How to Measure |
-|--------|--------|----------------|
-| **App startup** | < 2 seconds | Profiler, Flashlight |
-| **Screen transition** | < 300ms | React DevTools |
-| **List scroll** | 60 FPS | Profiler, feel |
-| **Memory** | Stable, no leaks | Instruments / Android Profiler |
-| **Bundle size** | Minimize | Metro bundler analysis |
+| Metric                | Target           | How to Measure                 |
+| --------------------- | ---------------- | ------------------------------ |
+| **App startup**       | < 2 seconds      | Profiler, Flashlight           |
+| **Screen transition** | < 300ms          | React DevTools                 |
+| **List scroll**       | 60 FPS           | Profiler, feel                 |
+| **Memory**            | Stable, no leaks | Instruments / Android Profiler |
+| **Bundle size**       | Minimize         | Metro bundler analysis         |
 
 ### When to Performance Test
 
@@ -271,14 +271,14 @@ WHERE TO TEST:
 
 ### What to Verify
 
-| Element | Check |
-|---------|-------|
-| Interactive elements | Have accessibilityLabel |
-| Images | Have alt text or decorative flag |
-| Forms | Labels linked to inputs |
-| Buttons | Role = button |
-| Touch targets | ≥ 44x44 (iOS) / 48x48 (Android) |
-| Color contrast | WCAG AA minimum |
+| Element              | Check                            |
+| -------------------- | -------------------------------- |
+| Interactive elements | Have accessibilityLabel          |
+| Images               | Have alt text or decorative flag |
+| Forms                | Labels linked to inputs          |
+| Buttons              | Role = button                    |
+| Touch targets        | ≥ 44x44 (iOS) / 48x48 (Android)  |
+| Color contrast       | WCAG AA minimum                  |
 
 ### How to Test
 
@@ -301,33 +301,35 @@ MANUAL:
 
 ### What to Run Where
 
-| Stage | Tests | Devices |
-|-------|-------|---------|
-| **PR** | Unit + Component | None (fast) |
-| **Merge to main** | + Integration | Simulator/Emulator |
-| **Pre-release** | + E2E | Real devices (farm) |
-| **Nightly** | Full suite | Device farm |
+| Stage             | Tests            | Devices             |
+| ----------------- | ---------------- | ------------------- |
+| **PR**            | Unit + Component | None (fast)         |
+| **Merge to main** | + Integration    | Simulator/Emulator  |
+| **Pre-release**   | + E2E            | Real devices (farm) |
+| **Nightly**       | Full suite       | Device farm         |
 
 ### Device Farm Options
 
-| Service | Pros | Cons |
-|---------|------|------|
-| **Firebase Test Lab** | Free tier, Google devices | Android focus |
-| **AWS Device Farm** | Wide selection | Expensive |
-| **BrowserStack** | Good UX | Expensive |
-| **Local devices** | Free, reliable | Limited variety |
+| Service               | Pros                      | Cons            |
+| --------------------- | ------------------------- | --------------- |
+| **Firebase Test Lab** | Free tier, Google devices | Android focus   |
+| **AWS Device Farm**   | Wide selection            | Expensive       |
+| **BrowserStack**      | Good UX                   | Expensive       |
+| **Local devices**     | Free, reliable            | Limited variety |
 
 ---
 
 ## 📝 MOBILE TESTING CHECKLIST
 
 ### Before PR
+
 - [ ] Unit tests for new logic
 - [ ] Component tests for new UI
 - [ ] No console.logs in tests
 - [ ] Tests pass on CI
 
 ### Before Release
+
 - [ ] E2E on real iOS device
 - [ ] E2E on real Android device
 - [ ] Tested on low-end device
@@ -336,6 +338,7 @@ MANUAL:
 - [ ] Accessibility verified
 
 ### What to Skip (Consciously)
+
 - [ ] 100% coverage (aim for meaningful coverage)
 - [ ] Every visual permutation (use snapshots sparingly)
 - [ ] Third-party library internals

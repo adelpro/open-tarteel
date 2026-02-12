@@ -44,13 +44,13 @@ What are you deploying?
 
 ### Each Platform Has Different Procedures
 
-| Platform | Deployment Method |
-|----------|------------------|
-| **Vercel/Netlify** | Git push, auto-deploy |
-| **Railway/Render** | Git push or CLI |
-| **VPS + PM2** | SSH + manual steps |
-| **Docker** | Image push + orchestration |
-| **Kubernetes** | kubectl apply |
+| Platform           | Deployment Method          |
+| ------------------ | -------------------------- |
+| **Vercel/Netlify** | Git push, auto-deploy      |
+| **Railway/Render** | Git push or CLI            |
+| **VPS + PM2**      | SSH + manual steps         |
+| **Docker**         | Image push + orchestration |
+| **Kubernetes**     | kubectl apply              |
 
 ---
 
@@ -58,12 +58,12 @@ What are you deploying?
 
 ### The 4 Verification Categories
 
-| Category | What to Check |
-|----------|--------------|
+| Category         | What to Check                          |
+| ---------------- | -------------------------------------- |
 | **Code Quality** | Tests passing, linting clean, reviewed |
-| **Build** | Production build works, no warnings |
-| **Environment** | Env vars set, secrets current |
-| **Safety** | Backup done, rollback plan ready |
+| **Build**        | Production build works, no warnings    |
+| **Environment**  | Env vars set, secrets current          |
+| **Safety**       | Backup done, rollback plan ready       |
 
 ### Pre-Deployment Checklist
 
@@ -101,13 +101,13 @@ What are you deploying?
 
 ### Phase Principles
 
-| Phase | Principle |
-|-------|-----------|
-| **Prepare** | Never deploy untested code |
-| **Backup** | Can't rollback without backup |
-| **Deploy** | Watch it happen, don't walk away |
-| **Verify** | Trust but verify |
-| **Confirm** | Have rollback trigger ready |
+| Phase       | Principle                        |
+| ----------- | -------------------------------- |
+| **Prepare** | Never deploy untested code       |
+| **Backup**  | Can't rollback without backup    |
+| **Deploy**  | Watch it happen, don't walk away |
+| **Verify**  | Trust but verify                 |
+| **Confirm** | Have rollback trigger ready      |
 
 ---
 
@@ -115,12 +115,12 @@ What are you deploying?
 
 ### What to Verify
 
-| Check | Why |
-|-------|-----|
-| **Health endpoint** | Service is running |
-| **Error logs** | No new errors |
-| **Key user flows** | Critical features work |
-| **Performance** | Response times acceptable |
+| Check               | Why                       |
+| ------------------- | ------------------------- |
+| **Health endpoint** | Service is running        |
+| **Error logs**      | No new errors             |
+| **Key user flows**  | Critical features work    |
+| **Performance**     | Response times acceptable |
 
 ### Verification Window
 
@@ -135,22 +135,22 @@ What are you deploying?
 
 ### When to Rollback
 
-| Symptom | Action |
-|---------|--------|
-| Service down | Rollback immediately |
-| Critical errors | Rollback |
-| Performance >50% degraded | Consider rollback |
-| Minor issues | Fix forward if quick |
+| Symptom                   | Action               |
+| ------------------------- | -------------------- |
+| Service down              | Rollback immediately |
+| Critical errors           | Rollback             |
+| Performance >50% degraded | Consider rollback    |
+| Minor issues              | Fix forward if quick |
 
 ### Rollback Strategy by Platform
 
-| Platform | Rollback Method |
-|----------|----------------|
+| Platform           | Rollback Method          |
+| ------------------ | ------------------------ |
 | **Vercel/Netlify** | Redeploy previous commit |
-| **Railway/Render** | Rollback in dashboard |
-| **VPS + PM2** | Restore backup, restart |
-| **Docker** | Previous image tag |
-| **K8s** | kubectl rollout undo |
+| **Railway/Render** | Rollback in dashboard    |
+| **VPS + PM2**      | Restore backup, restart  |
+| **Docker**         | Previous image tag       |
+| **K8s**            | kubectl rollout undo     |
 
 ### Rollback Principles
 
@@ -165,19 +165,19 @@ What are you deploying?
 
 ### Strategies
 
-| Strategy | How It Works |
-|----------|--------------|
-| **Rolling** | Replace instances one by one |
+| Strategy       | How It Works                        |
+| -------------- | ----------------------------------- |
+| **Rolling**    | Replace instances one by one        |
 | **Blue-Green** | Switch traffic between environments |
-| **Canary** | Gradual traffic shift |
+| **Canary**     | Gradual traffic shift               |
 
 ### Selection Principles
 
-| Scenario | Strategy |
-|----------|----------|
-| Standard release | Rolling |
-| High-risk change | Blue-green (easy rollback) |
-| Need validation | Canary (test with real traffic) |
+| Scenario         | Strategy                        |
+| ---------------- | ------------------------------- |
+| Standard release | Rolling                         |
+| High-risk change | Blue-green (easy rollback)      |
+| Need validation  | Canary (test with real traffic) |
 
 ---
 
@@ -192,24 +192,24 @@ What are you deploying?
 
 ### Investigation Order
 
-| Check | Common Issues |
-|-------|--------------|
-| **Logs** | Errors, exceptions |
-| **Resources** | Disk full, memory |
-| **Network** | DNS, firewall |
-| **Dependencies** | Database, APIs |
+| Check            | Common Issues      |
+| ---------------- | ------------------ |
+| **Logs**         | Errors, exceptions |
+| **Resources**    | Disk full, memory  |
+| **Network**      | DNS, firewall      |
+| **Dependencies** | Database, APIs     |
 
 ---
 
 ## 8. Anti-Patterns
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Deploy on Friday | Deploy early in week |
-| Rush deployment | Follow the process |
-| Skip staging | Always test first |
-| Deploy without backup | Backup before deploy |
-| Walk away after deploy | Monitor for 15+ min |
+| ❌ Don't                 | ✅ Do                |
+| ------------------------ | -------------------- |
+| Deploy on Friday         | Deploy early in week |
+| Rush deployment          | Follow the process   |
+| Skip staging             | Always test first    |
+| Deploy without backup    | Backup before deploy |
+| Walk away after deploy   | Monitor for 15+ min  |
 | Multiple changes at once | One change at a time |
 
 ---

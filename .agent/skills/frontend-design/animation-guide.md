@@ -20,18 +20,19 @@ Factors that determine animation speed:
 
 ### Duration Ranges by Purpose
 
-| Purpose | Range | Why |
-|---------|-------|-----|
-| Instant feedback | 50-100ms | Below perception threshold |
-| Micro-interactions | 100-200ms | Quick but noticeable |
-| Standard transitions | 200-300ms | Comfortable pace |
-| Complex animations | 300-500ms | Time to follow |
-| Page transitions | 400-600ms | Smooth handoff |
-| **Wow/Premium Effects** | 800ms+ | Dramatic, organic spring-based, layered |
+| Purpose                 | Range     | Why                                     |
+| ----------------------- | --------- | --------------------------------------- |
+| Instant feedback        | 50-100ms  | Below perception threshold              |
+| Micro-interactions      | 100-200ms | Quick but noticeable                    |
+| Standard transitions    | 200-300ms | Comfortable pace                        |
+| Complex animations      | 300-500ms | Time to follow                          |
+| Page transitions        | 400-600ms | Smooth handoff                          |
+| **Wow/Premium Effects** | 800ms+    | Dramatic, organic spring-based, layered |
 
 ### Choosing Duration
 
 Ask yourself:
+
 1. How far is the element moving?
 2. How important is it to notice this change?
 3. Is the user waiting, or is this background?
@@ -52,13 +53,13 @@ Easing = how speed changes over time
 
 ### When to Use Each
 
-| Easing | Best For | Feels Like |
-|--------|----------|------------|
-| **Ease-out** | Elements entering | Arriving, settling |
-| **Ease-in** | Elements leaving | Departing, exiting |
-| **Ease-in-out** | Emphasis, loops | Deliberate, smooth |
-| **Linear** | Continuous motion | Mechanical, constant |
-| **Bounce/Elastic** | Playful UI | Fun, energetic |
+| Easing             | Best For          | Feels Like           |
+| ------------------ | ----------------- | -------------------- |
+| **Ease-out**       | Elements entering | Arriving, settling   |
+| **Ease-in**        | Elements leaving  | Departing, exiting   |
+| **Ease-in-out**    | Emphasis, loops   | Deliberate, smooth   |
+| **Linear**         | Continuous motion | Mechanical, constant |
+| **Bounce/Elastic** | Playful UI        | Fun, energetic       |
 
 ### The Pattern
 
@@ -116,12 +117,12 @@ Success → confirmation (check, color)
 
 ### Types by Context
 
-| Situation | Approach |
-|-----------|----------|
-| Quick load (<1s) | No indicator needed |
-| Medium (1-3s) | Spinner or simple animation |
-| Long (3s+) | Progress bar or skeleton |
-| Unknown duration | Indeterminate indicator |
+| Situation        | Approach                    |
+| ---------------- | --------------------------- |
+| Quick load (<1s) | No indicator needed         |
+| Medium (1-3s)    | Spinner or simple animation |
+| Long (3s+)       | Progress bar or skeleton    |
+| Unknown duration | Indeterminate indicator     |
 
 ### Skeleton Screens
 
@@ -163,12 +164,12 @@ Simple rule: exit fast, enter slower
 
 ### Common Patterns
 
-| Pattern | When to Use |
-|---------|-------------|
-| **Fade** | Safe default, works everywhere |
-| **Slide** | Sequential navigation (prev/next) |
-| **Scale** | Opening/closing modals |
-| **Shared element** | Maintaining visual continuity |
+| Pattern            | When to Use                       |
+| ------------------ | --------------------------------- |
+| **Fade**           | Safe default, works everywhere    |
+| **Slide**          | Sequential navigation (prev/next) |
+| **Scale**          | Opening/closing modals            |
+| **Shared element** | Maintaining visual continuity     |
 
 ### Direction Matching
 
@@ -196,12 +197,12 @@ Content appears as user scrolls:
 
 ### Trigger Points
 
-| When to Trigger | Effect |
-|-----------------|--------|
+| When to Trigger        | Effect          |
+| ---------------------- | --------------- |
 | Just entering viewport | Standard reveal |
-| Centered in viewport | For emphasis |
-| Partially visible | Earlier reveal |
-| Fully visible | Late trigger |
+| Centered in viewport   | For emphasis    |
+| Partially visible      | Earlier reveal  |
+| Fully visible          | Late trigger    |
 
 ### Animation Properties
 
@@ -222,12 +223,12 @@ Content appears as user scrolls:
 
 ### Matching Effect to Action
 
-| Element | Effect | Intent |
-|---------|--------|--------|
-| **Clickable card** | Lift + shadow | "This is interactive" |
-| **Button** | Color/brightness change | "Press me" |
-| **Image** | Zoom/scale | "View closer" |
-| **Link** | Underline/color | "Navigate here" |
+| Element            | Effect                  | Intent                |
+| ------------------ | ----------------------- | --------------------- |
+| **Clickable card** | Lift + shadow           | "This is interactive" |
+| **Button**         | Color/brightness change | "Press me"            |
+| **Image**          | Zoom/scale              | "View closer"         |
+| **Link**           | Underline/color         | "Navigate here"       |
 
 ### Principles
 

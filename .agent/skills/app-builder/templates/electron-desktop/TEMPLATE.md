@@ -7,14 +7,14 @@ description: Electron desktop app template principles. Cross-platform, React, Ty
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Framework | Electron 28+ |
-| UI | React 18 |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
-| Bundler | Vite + electron-builder |
-| IPC | Type-safe communication |
+| Component | Technology              |
+| --------- | ----------------------- |
+| Framework | Electron 28+            |
+| UI        | React 18                |
+| Language  | TypeScript              |
+| Styling   | Tailwind CSS            |
+| Bundler   | Vite + electron-builder |
+| IPC       | Type-safe communication |
 
 ---
 
@@ -40,22 +40,22 @@ project-name/
 
 ## Process Model
 
-| Process | Role |
-|---------|------|
-| Main | Node.js, system access |
-| Renderer | Chromium, React UI |
-| Preload | Bridge, context isolation |
+| Process  | Role                      |
+| -------- | ------------------------- |
+| Main     | Node.js, system access    |
+| Renderer | Chromium, React UI        |
+| Preload  | Bridge, context isolation |
 
 ---
 
 ## Key Concepts
 
-| Concept | Purpose |
-|---------|---------|
-| contextBridge | Safe API exposure |
-| ipcMain/ipcRenderer | Process communication |
-| nodeIntegration: false | Security |
-| contextIsolation: true | Security |
+| Concept                | Purpose               |
+| ---------------------- | --------------------- |
+| contextBridge          | Safe API exposure     |
+| ipcMain/ipcRenderer    | Process communication |
+| nodeIntegration: false | Security              |
+| contextIsolation: true | Security              |
 
 ---
 
@@ -71,11 +71,11 @@ project-name/
 
 ## Build Targets
 
-| Platform | Output |
-|----------|--------|
-| Windows | NSIS, Portable |
-| macOS | DMG, ZIP |
-| Linux | AppImage, DEB |
+| Platform | Output         |
+| -------- | -------------- |
+| Windows  | NSIS, Portable |
+| macOS    | DMG, ZIP       |
+| Linux    | AppImage, DEB  |
 
 ---
 

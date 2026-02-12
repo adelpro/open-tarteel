@@ -62,23 +62,23 @@ skills: clean-code, systematic-debugging
 
 ### By Error Type
 
-| Error Type | Investigation Approach |
-|------------|----------------------|
-| **Runtime Error** | Read stack trace, check types and nulls |
-| **Logic Bug** | Trace data flow, compare expected vs actual |
-| **Performance** | Profile first, then optimize |
-| **Intermittent** | Look for race conditions, timing issues |
-| **Memory Leak** | Check event listeners, closures, caches |
+| Error Type        | Investigation Approach                      |
+| ----------------- | ------------------------------------------- |
+| **Runtime Error** | Read stack trace, check types and nulls     |
+| **Logic Bug**     | Trace data flow, compare expected vs actual |
+| **Performance**   | Profile first, then optimize                |
+| **Intermittent**  | Look for race conditions, timing issues     |
+| **Memory Leak**   | Check event listeners, closures, caches     |
 
 ### By Symptom
 
-| Symptom | First Steps |
-|---------|------------|
-| "It crashes" | Get stack trace, check error logs |
-| "It's slow" | Profile, don't guess |
-| "Sometimes works" | Race condition? Timing? External dependency? |
-| "Wrong output" | Trace data flow step by step |
-| "Works locally, fails in prod" | Environment diff, check configs |
+| Symptom                        | First Steps                                  |
+| ------------------------------ | -------------------------------------------- |
+| "It crashes"                   | Get stack trace, check error logs            |
+| "It's slow"                    | Profile, don't guess                         |
+| "Sometimes works"              | Race condition? Timing? External dependency? |
+| "Wrong output"                 | Trace data flow step by step                 |
+| "Works locally, fails in prod" | Environment diff, check configs              |
 
 ---
 
@@ -106,6 +106,7 @@ WHY wasn't migration run?
 ### Binary Search Debugging
 
 When unsure where the bug is:
+
 1. Find a point where it works
 2. Find a point where it fails
 3. Check the middle
@@ -114,6 +115,7 @@ When unsure where the bug is:
 ### Git Bisect Strategy
 
 Use `git bisect` to find regression:
+
 1. Mark current as bad
 2. Mark known-good commit
 3. Git helps you binary search through history
@@ -124,31 +126,31 @@ Use `git bisect` to find regression:
 
 ### Browser Issues
 
-| Need | Tool |
-|------|------|
-| See network requests | Network tab |
-| Inspect DOM state | Elements tab |
-| Debug JavaScript | Sources tab + breakpoints |
-| Performance analysis | Performance tab |
-| Memory investigation | Memory tab |
+| Need                 | Tool                      |
+| -------------------- | ------------------------- |
+| See network requests | Network tab               |
+| Inspect DOM state    | Elements tab              |
+| Debug JavaScript     | Sources tab + breakpoints |
+| Performance analysis | Performance tab           |
+| Memory investigation | Memory tab                |
 
 ### Backend Issues
 
-| Need | Tool |
-|------|------|
-| See request flow | Logging |
-| Debug step-by-step | Debugger (--inspect) |
-| Find slow queries | Query logging, EXPLAIN |
-| Memory issues | Heap snapshots |
-| Find regression | git bisect |
+| Need               | Tool                   |
+| ------------------ | ---------------------- |
+| See request flow   | Logging                |
+| Debug step-by-step | Debugger (--inspect)   |
+| Find slow queries  | Query logging, EXPLAIN |
+| Memory issues      | Heap snapshots         |
+| Find regression    | git bisect             |
 
 ### Database Issues
 
-| Need | Approach |
-|------|----------|
-| Slow queries | EXPLAIN ANALYZE |
-| Wrong data | Check constraints, trace writes |
-| Connection issues | Check pool, logs |
+| Need              | Approach                        |
+| ----------------- | ------------------------------- |
+| Slow queries      | EXPLAIN ANALYZE                 |
+| Wrong data        | Check constraints, trace writes |
+| Connection issues | Check pool, logs                |
 
 ---
 
@@ -165,6 +167,7 @@ Use `git bisect` to find regression:
 ### Root Cause Documentation
 
 After finding the bug:
+
 1. **Root cause:** (one sentence)
 2. **Why it happened:** (5 whys result)
 3. **Fix:** (what you changed)
@@ -174,33 +177,36 @@ After finding the bug:
 
 ## Anti-Patterns (What NOT to Do)
 
-| ❌ Anti-Pattern | ✅ Correct Approach |
-|-----------------|---------------------|
-| Random changes hoping to fix | Systematic investigation |
-| Ignoring stack traces | Read every line carefully |
-| "Works on my machine" | Reproduce in same environment |
-| Fixing symptoms only | Find and fix root cause |
-| No regression test | Always add test for the bug |
-| Multiple changes at once | One change, then verify |
-| Guessing without data | Profile and measure first |
+| ❌ Anti-Pattern              | ✅ Correct Approach           |
+| ---------------------------- | ----------------------------- |
+| Random changes hoping to fix | Systematic investigation      |
+| Ignoring stack traces        | Read every line carefully     |
+| "Works on my machine"        | Reproduce in same environment |
+| Fixing symptoms only         | Find and fix root cause       |
+| No regression test           | Always add test for the bug   |
+| Multiple changes at once     | One change, then verify       |
+| Guessing without data        | Profile and measure first     |
 
 ---
 
 ## Debugging Checklist
 
 ### Before Starting
+
 - [ ] Can reproduce consistently
 - [ ] Have error message/stack trace
 - [ ] Know expected behavior
 - [ ] Checked recent changes
 
 ### During Investigation
+
 - [ ] Added strategic logging
 - [ ] Traced data flow
 - [ ] Used debugger/breakpoints
 - [ ] Checked relevant logs
 
 ### After Fix
+
 - [ ] Root cause documented
 - [ ] Fix verified
 - [ ] Regression test added
