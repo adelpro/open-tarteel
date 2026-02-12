@@ -32,11 +32,11 @@ What type of multiplayer?
 
 ### Comparison
 
-| Architecture | Latency | Cost | Security |
-|--------------|---------|------|----------|
-| **Dedicated** | Low | High | Strong |
-| **P2P** | Variable | Low | Weak |
-| **Host-based** | Medium | Low | Medium |
+| Architecture   | Latency  | Cost | Security |
+| -------------- | -------- | ---- | -------- |
+| **Dedicated**  | Low      | High | Strong   |
+| **P2P**        | Variable | Low  | Weak     |
+| **Host-based** | Medium   | Low  | Medium   |
 
 ---
 
@@ -44,19 +44,19 @@ What type of multiplayer?
 
 ### State vs Input
 
-| Approach | Sync What | Best For |
-|----------|-----------|----------|
-| **State Sync** | Game state | Simple, few objects |
-| **Input Sync** | Player inputs | Action games |
-| **Hybrid** | Both | Most games |
+| Approach       | Sync What     | Best For            |
+| -------------- | ------------- | ------------------- |
+| **State Sync** | Game state    | Simple, few objects |
+| **Input Sync** | Player inputs | Action games        |
+| **Hybrid**     | Both          | Most games          |
 
 ### Lag Compensation
 
-| Technique | Purpose |
-|-----------|---------|
-| **Prediction** | Client predicts server |
-| **Interpolation** | Smooth remote players |
-| **Reconciliation** | Fix mispredictions |
+| Technique            | Purpose                  |
+| -------------------- | ------------------------ |
+| **Prediction**       | Client predicts server   |
+| **Interpolation**    | Smooth remote players    |
+| **Reconciliation**   | Fix mispredictions       |
 | **Lag compensation** | Rewind for hit detection |
 
 ---
@@ -65,21 +65,21 @@ What type of multiplayer?
 
 ### Bandwidth Reduction
 
-| Technique | Savings |
-|-----------|---------|
-| **Delta compression** | Send only changes |
-| **Quantization** | Reduce precision |
-| **Priority** | Important data first |
-| **Area of interest** | Only nearby entities |
+| Technique             | Savings              |
+| --------------------- | -------------------- |
+| **Delta compression** | Send only changes    |
+| **Quantization**      | Reduce precision     |
+| **Priority**          | Important data first |
+| **Area of interest**  | Only nearby entities |
 
 ### Update Rates
 
-| Type | Rate |
-|------|------|
-| Position | 20-60 Hz |
-| Health | On change |
+| Type      | Rate      |
+| --------- | --------- |
+| Position  | 20-60 Hz  |
+| Health    | On change |
 | Inventory | On change |
-| Chat | On send |
+| Chat      | On send   |
 
 ---
 
@@ -96,12 +96,12 @@ Server: Validate → did projectile actually hit?
 
 ### Anti-Cheat
 
-| Cheat | Prevention |
-|-------|------------|
-| Speed hack | Server validates movement |
-| Aimbot | Server validates sight line |
-| Item dupe | Server owns inventory |
-| Wall hack | Don't send hidden data |
+| Cheat      | Prevention                  |
+| ---------- | --------------------------- |
+| Speed hack | Server validates movement   |
+| Aimbot     | Server validates sight line |
+| Item dupe  | Server owns inventory       |
+| Wall hack  | Don't send hidden data      |
 
 ---
 
@@ -109,23 +109,23 @@ Server: Validate → did projectile actually hit?
 
 ### Considerations
 
-| Factor | Impact |
-|--------|--------|
-| **Skill** | Fair matches |
-| **Latency** | Playable connection |
-| **Wait time** | Player patience |
-| **Party size** | Group play |
+| Factor         | Impact              |
+| -------------- | ------------------- |
+| **Skill**      | Fair matches        |
+| **Latency**    | Playable connection |
+| **Wait time**  | Player patience     |
+| **Party size** | Group play          |
 
 ---
 
 ## 6. Anti-Patterns
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Trust the client | Server is authority |
-| Send everything | Send only necessary |
-| Ignore latency | Design for 100-200ms |
-| Sync exact positions | Interpolate/predict |
+| ❌ Don't             | ✅ Do                |
+| -------------------- | -------------------- |
+| Trust the client     | Server is authority  |
+| Send everything      | Send only necessary  |
+| Ignore latency       | Design for 100-200ms |
+| Sync exact positions | Interpolate/predict  |
 
 ---
 

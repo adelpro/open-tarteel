@@ -31,14 +31,14 @@ DEPTH:
 
 ### iOS Design Values
 
-| Value | Implementation |
-|-------|----------------|
+| Value                   | Implementation                                |
+| ----------------------- | --------------------------------------------- |
 | **Aesthetic Integrity** | Design matches function (game ≠ productivity) |
-| **Consistency** | Use system controls, familiar patterns |
-| **Direct Manipulation** | Touch directly affects content |
-| **Feedback** | Actions are acknowledged |
-| **Metaphors** | Real-world comparisons aid understanding |
-| **User Control** | User initiates actions, can cancel |
+| **Consistency**         | Use system controls, familiar patterns        |
+| **Direct Manipulation** | Touch directly affects content                |
+| **Feedback**            | Actions are acknowledged                      |
+| **Metaphors**           | Real-world comparisons aid understanding      |
+| **User Control**        | User initiates actions, can cancel            |
 
 ---
 
@@ -57,19 +57,19 @@ iOS System Fonts:
 
 ### iOS Type Scale (Dynamic Type)
 
-| Style | Default Size | Weight | Usage |
-|-------|--------------|--------|-------|
-| **Large Title** | 34pt | Bold | Navigation bar (scroll collapse) |
-| **Title 1** | 28pt | Bold | Page titles |
-| **Title 2** | 22pt | Bold | Section headers |
-| **Title 3** | 20pt | Semibold | Subsection headers |
-| **Headline** | 17pt | Semibold | Emphasized body |
-| **Body** | 17pt | Regular | Primary content |
-| **Callout** | 16pt | Regular | Secondary content |
-| **Subhead** | 15pt | Regular | Tertiary content |
-| **Footnote** | 13pt | Regular | Caption, timestamps |
-| **Caption 1** | 12pt | Regular | Annotations |
-| **Caption 2** | 11pt | Regular | Fine print |
+| Style           | Default Size | Weight   | Usage                            |
+| --------------- | ------------ | -------- | -------------------------------- |
+| **Large Title** | 34pt         | Bold     | Navigation bar (scroll collapse) |
+| **Title 1**     | 28pt         | Bold     | Page titles                      |
+| **Title 2**     | 22pt         | Bold     | Section headers                  |
+| **Title 3**     | 20pt         | Semibold | Subsection headers               |
+| **Headline**    | 17pt         | Semibold | Emphasized body                  |
+| **Body**        | 17pt         | Regular  | Primary content                  |
+| **Callout**     | 16pt         | Regular  | Secondary content                |
+| **Subhead**     | 15pt         | Regular  | Tertiary content                 |
+| **Footnote**    | 13pt         | Regular  | Caption, timestamps              |
+| **Caption 1**   | 12pt         | Regular  | Annotations                      |
+| **Caption 2**   | 11pt         | Regular  | Fine print                       |
 
 ### Dynamic Type Support (MANDATORY)
 
@@ -89,13 +89,13 @@ Text("Hello")
 
 ### Font Weight Usage
 
-| Weight | iOS Constant | Use Case |
-|--------|--------------|----------|
-| Regular (400) | `.regular` | Body text |
-| Medium (500) | `.medium` | Buttons, emphasis |
-| Semibold (600) | `.semibold` | Subheadings |
-| Bold (700) | `.bold` | Titles, key info |
-| Heavy (800) | `.heavy` | Rarely, marketing |
+| Weight         | iOS Constant | Use Case          |
+| -------------- | ------------ | ----------------- |
+| Regular (400)  | `.regular`   | Body text         |
+| Medium (500)   | `.medium`    | Buttons, emphasis |
+| Semibold (600) | `.semibold`  | Subheadings       |
+| Bold (700)     | `.bold`      | Titles, key info  |
+| Heavy (800)    | `.heavy`     | Rarely, marketing |
 
 ---
 
@@ -126,16 +126,16 @@ Fills:
 
 ### System Accent Colors
 
-| Color | Light Mode | Dark Mode | Usage |
-|-------|------------|-----------|-------|
-| Blue | #007AFF | #0A84FF | Links, highlights, default tint |
-| Green | #34C759 | #30D158 | Success, positive |
-| Red | #FF3B30 | #FF453A | Errors, destructive |
-| Orange | #FF9500 | #FF9F0A | Warnings |
-| Yellow | #FFCC00 | #FFD60A | Attention |
-| Purple | #AF52DE | #BF5AF2 | Special features |
-| Pink | #FF2D55 | #FF375F | Affection, favorites |
-| Teal | #5AC8FA | #64D2FF | Information |
+| Color  | Light Mode | Dark Mode | Usage                           |
+| ------ | ---------- | --------- | ------------------------------- |
+| Blue   | #007AFF    | #0A84FF   | Links, highlights, default tint |
+| Green  | #34C759    | #30D158   | Success, positive               |
+| Red    | #FF3B30    | #FF453A   | Errors, destructive             |
+| Orange | #FF9500    | #FF9F0A   | Warnings                        |
+| Yellow | #FFCC00    | #FFD60A   | Attention                       |
+| Purple | #AF52DE    | #BF5AF2   | Special features                |
+| Pink   | #FF2D55    | #FF375F   | Affection, favorites            |
+| Teal   | #5AC8FA    | #64D2FF   | Information                     |
 
 ### Dark Mode Considerations
 
@@ -175,13 +175,13 @@ RULE: Never place interactive content in unsafe areas.
 
 ### Standard Margins & Padding
 
-| Element | Margin | Notes |
-|---------|--------|-------|
-| Screen edge → content | 16pt | Standard horizontal margin |
-| Grouped table sections | 16pt top/bottom | Breathing room |
-| List item padding | 16pt horizontal | Standard cell padding |
-| Card internal padding | 16pt | Content within cards |
-| Button internal padding | 12pt vertical, 16pt horizontal | Minimum |
+| Element                 | Margin                         | Notes                      |
+| ----------------------- | ------------------------------ | -------------------------- |
+| Screen edge → content   | 16pt                           | Standard horizontal margin |
+| Grouped table sections  | 16pt top/bottom                | Breathing room             |
+| List item padding       | 16pt horizontal                | Standard cell padding      |
+| Card internal padding   | 16pt                           | Content within cards       |
+| Button internal padding | 12pt vertical, 16pt horizontal | Minimum                    |
 
 ### iOS Grid System
 
@@ -206,12 +206,12 @@ iPad Grid:
 
 ### Navigation Types
 
-| Pattern | Use Case | Implementation |
-|---------|----------|----------------|
-| **Tab Bar** | 3-5 top-level sections | Bottom, always visible |
-| **Navigation Controller** | Hierarchical drill-down | Stack-based, back button |
-| **Modal** | Focused task, interruption | Sheet or full-screen |
-| **Sidebar** | iPad, multi-column | Left sidebar (iPad) |
+| Pattern                   | Use Case                   | Implementation           |
+| ------------------------- | -------------------------- | ------------------------ |
+| **Tab Bar**               | 3-5 top-level sections     | Bottom, always visible   |
+| **Navigation Controller** | Hierarchical drill-down    | Stack-based, back button |
+| **Modal**                 | Focused task, interruption | Sheet or full-screen     |
+| **Sidebar**               | iPad, multi-column         | Left sidebar (iPad)      |
 
 ### Tab Bar Guidelines
 
@@ -254,23 +254,23 @@ Rules:
 
 ### Modal Presentations
 
-| Style | Use Case | Appearance |
-|-------|----------|------------|
-| **Sheet (default)** | Secondary tasks | Card slides up, parent visible |
-| **Full Screen** | Immersive tasks | Covers entire screen |
-| **Popover** | iPad, quick info | Arrow-pointed bubble |
-| **Alert** | Critical interruption | Centered dialog |
-| **Action Sheet** | Choices from context | Bottom sheet with options |
+| Style               | Use Case              | Appearance                     |
+| ------------------- | --------------------- | ------------------------------ |
+| **Sheet (default)** | Secondary tasks       | Card slides up, parent visible |
+| **Full Screen**     | Immersive tasks       | Covers entire screen           |
+| **Popover**         | iPad, quick info      | Arrow-pointed bubble           |
+| **Alert**           | Critical interruption | Centered dialog                |
+| **Action Sheet**    | Choices from context  | Bottom sheet with options      |
 
 ### Gestures
 
-| Gesture | iOS Convention |
-|---------|----------------|
-| **Edge swipe (left)** | Navigate back |
-| **Pull down (sheet)** | Dismiss modal |
-| **Long press** | Context menu |
-| **Deep press** | Peek/Pop (legacy) |
-| **Two-finger swipe** | Scroll in nested scroll |
+| Gesture               | iOS Convention          |
+| --------------------- | ----------------------- |
+| **Edge swipe (left)** | Navigate back           |
+| **Pull down (sheet)** | Dismiss modal           |
+| **Long press**        | Context menu            |
+| **Deep press**        | Peek/Pop (legacy)       |
+| **Two-finger swipe**  | Scroll in nested scroll |
 
 ---
 
@@ -466,12 +466,12 @@ Image(systemName: "checkmark.circle")
 
 ### Symbol Best Practices
 
-| Guideline | Implementation |
-|-----------|----------------|
-| Match text weight | Symbol weight = font weight |
-| Use standard symbols | Users recognize them |
-| Multicolor when meaningful | Not just decoration |
-| Fallback for older iOS | Check availability |
+| Guideline                  | Implementation              |
+| -------------------------- | --------------------------- |
+| Match text weight          | Symbol weight = font weight |
+| Use standard symbols       | Users recognize them        |
+| Multicolor when meaningful | Not just decoration         |
+| Fallback for older iOS     | Check availability          |
 
 ---
 

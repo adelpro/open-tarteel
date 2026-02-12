@@ -12,22 +12,22 @@ allowed-tools: Read, Glob, Grep
 
 **Read ONLY files relevant to the request!** Check the content map, find what you need.
 
-| File | Description | When to Read |
-|------|-------------|--------------|
-| `context-discovery.md` | Questions to ask, project classification | Starting architecture design |
-| `trade-off-analysis.md` | ADR templates, trade-off framework | Documenting decisions |
-| `pattern-selection.md` | Decision trees, anti-patterns | Choosing patterns |
-| `examples.md` | MVP, SaaS, Enterprise examples | Reference implementations |
-| `patterns-reference.md` | Quick lookup for patterns | Pattern comparison |
+| File                    | Description                              | When to Read                 |
+| ----------------------- | ---------------------------------------- | ---------------------------- |
+| `context-discovery.md`  | Questions to ask, project classification | Starting architecture design |
+| `trade-off-analysis.md` | ADR templates, trade-off framework       | Documenting decisions        |
+| `pattern-selection.md`  | Decision trees, anti-patterns            | Choosing patterns            |
+| `examples.md`           | MVP, SaaS, Enterprise examples           | Reference implementations    |
+| `patterns-reference.md` | Quick lookup for patterns                | Pattern comparison           |
 
 ---
 
 ## 🔗 Related Skills
 
-| Skill | Use For |
-|-------|---------|
-| `@[skills/database-design]` | Database schema design |
-| `@[skills/api-patterns]` | API design patterns |
+| Skill                             | Use For                 |
+| --------------------------------- | ----------------------- |
+| `@[skills/database-design]`       | Database schema design  |
+| `@[skills/api-patterns]`          | API design patterns     |
 | `@[skills/deployment-procedures]` | Deployment architecture |
 
 ---

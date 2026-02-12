@@ -14,21 +14,21 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### VR Platforms
 
-| Platform | Use Case |
-|----------|----------|
+| Platform  | Use Case             |
+| --------- | -------------------- |
 | **Quest** | Standalone, wireless |
-| **PCVR** | High fidelity |
-| **PSVR** | Console market |
-| **WebXR** | Browser-based |
+| **PCVR**  | High fidelity        |
+| **PSVR**  | Console market       |
+| **WebXR** | Browser-based        |
 
 ### AR Platforms
 
-| Platform | Use Case |
-|----------|----------|
-| **ARKit** | iOS devices |
-| **ARCore** | Android devices |
-| **WebXR** | Browser AR |
-| **HoloLens** | Enterprise |
+| Platform     | Use Case        |
+| ------------ | --------------- |
+| **ARKit**    | iOS devices     |
+| **ARCore**   | Android devices |
+| **WebXR**    | Browser AR      |
+| **HoloLens** | Enterprise      |
 
 ---
 
@@ -36,12 +36,12 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### Motion Sickness Prevention
 
-| Cause | Solution |
-|-------|----------|
-| **Locomotion** | Teleport, snap turn |
-| **Low FPS** | Maintain 90 FPS |
-| **Camera shake** | Avoid or minimize |
-| **Rapid acceleration** | Gradual movement |
+| Cause                  | Solution            |
+| ---------------------- | ------------------- |
+| **Locomotion**         | Teleport, snap turn |
+| **Low FPS**            | Maintain 90 FPS     |
+| **Camera shake**       | Avoid or minimize   |
+| **Rapid acceleration** | Gradual movement    |
 
 ### Comfort Settings
 
@@ -56,12 +56,12 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### Target Metrics
 
-| Platform | FPS | Resolution |
-|----------|-----|------------|
-| Quest 2 | 72-90 | 1832x1920 |
-| Quest 3 | 90-120 | 2064x2208 |
-| PCVR | 90 | 2160x2160+ |
-| PSVR2 | 90-120 | 2000x2040 |
+| Platform | FPS    | Resolution |
+| -------- | ------ | ---------- |
+| Quest 2  | 72-90  | 1832x1920  |
+| Quest 3  | 90-120 | 2064x2208  |
+| PCVR     | 90     | 2160x2160+ |
+| PSVR2    | 90-120 | 2000x2040  |
 
 ### Frame Budget
 
@@ -75,12 +75,12 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### Controller Interaction
 
-| Type | Use |
-|------|-----|
-| **Point + click** | UI, distant objects |
-| **Grab** | Manipulation |
-| **Gesture** | Magic, special actions |
-| **Physical** | Throwing, swinging |
+| Type              | Use                    |
+| ----------------- | ---------------------- |
+| **Point + click** | UI, distant objects    |
+| **Grab**          | Manipulation           |
+| **Gesture**       | Magic, special actions |
+| **Physical**      | Throwing, swinging     |
 
 ### Hand Tracking
 
@@ -100,23 +100,23 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### Depth Cues
 
-| Cue | Importance |
-|-----|------------|
-| Stereo | Primary depth |
-| Motion parallax | Secondary |
-| Shadows | Grounding |
-| Occlusion | Layering |
+| Cue             | Importance    |
+| --------------- | ------------- |
+| Stereo          | Primary depth |
+| Motion parallax | Secondary     |
+| Shadows         | Grounding     |
+| Occlusion       | Layering      |
 
 ---
 
 ## 6. Anti-Patterns
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
+| ❌ Don't                   | ✅ Do                  |
+| -------------------------- | ---------------------- |
 | Move camera without player | Player controls camera |
-| Drop below 90 FPS | Maintain frame rate |
-| Use tiny UI text | Large, readable text |
-| Ignore arm length | Scale to player reach |
+| Drop below 90 FPS          | Maintain frame rate    |
+| Use tiny UI text           | Large, readable text   |
+| Ignore arm length          | Scale to player reach  |
 
 ---
 

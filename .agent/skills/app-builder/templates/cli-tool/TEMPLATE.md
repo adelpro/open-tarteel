@@ -7,14 +7,14 @@ description: Node.js CLI tool template principles. Commander.js, interactive pro
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Runtime | Node.js 20+ |
-| Language | TypeScript |
+| Component     | Technology   |
+| ------------- | ------------ |
+| Runtime       | Node.js 20+  |
+| Language      | TypeScript   |
 | CLI Framework | Commander.js |
-| Prompts | Inquirer.js |
-| Output | chalk + ora |
-| Config | cosmiconfig |
+| Prompts       | Inquirer.js  |
+| Output        | chalk + ora  |
+| Config        | cosmiconfig  |
 
 ---
 
@@ -39,23 +39,23 @@ project-name/
 
 ## CLI Design Principles
 
-| Principle | Description |
-|-----------|-------------|
-| Subcommands | Group related actions |
-| Options | Flags with defaults |
-| Interactive | Prompts when needed |
-| Non-interactive | Support --yes flags |
+| Principle       | Description           |
+| --------------- | --------------------- |
+| Subcommands     | Group related actions |
+| Options         | Flags with defaults   |
+| Interactive     | Prompts when needed   |
+| Non-interactive | Support --yes flags   |
 
 ---
 
 ## Key Components
 
-| Component | Purpose |
-|-----------|---------|
-| Commander | Command parsing |
-| Inquirer | Interactive prompts |
-| Chalk | Colored output |
-| Ora | Spinners/loading |
+| Component   | Purpose               |
+| ----------- | --------------------- |
+| Commander   | Command parsing       |
+| Inquirer    | Interactive prompts   |
+| Chalk       | Colored output        |
+| Ora         | Spinners/loading      |
 | Cosmiconfig | Config file discovery |
 
 ---

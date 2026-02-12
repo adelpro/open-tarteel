@@ -7,14 +7,14 @@ description: Express.js REST API template principles. TypeScript, Prisma, JWT.
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Runtime | Node.js 20+ |
-| Framework | Express.js |
-| Language | TypeScript |
-| Database | PostgreSQL + Prisma |
-| Validation | Zod |
-| Auth | JWT + bcrypt |
+| Component  | Technology          |
+| ---------- | ------------------- |
+| Runtime    | Node.js 20+         |
+| Framework  | Express.js          |
+| Language   | TypeScript          |
+| Database   | PostgreSQL + Prisma |
+| Validation | Zod                 |
+| Auth       | JWT + bcrypt        |
 
 ---
 
@@ -43,23 +43,23 @@ project-name/
 
 ## Middleware Stack
 
-| Order | Middleware |
-|-------|------------|
-| 1 | helmet (security) |
-| 2 | cors |
-| 3 | morgan (logging) |
-| 4 | body parsing |
-| 5 | routes |
-| 6 | error handler |
+| Order | Middleware        |
+| ----- | ----------------- |
+| 1     | helmet (security) |
+| 2     | cors              |
+| 3     | morgan (logging)  |
+| 4     | body parsing      |
+| 5     | routes            |
+| 6     | error handler     |
 
 ---
 
 ## API Response Format
 
-| Type | Structure |
-|------|-----------|
-| Success | `{ success: true, data: {...} }` |
-| Error | `{ error: "message", details: [...] }` |
+| Type    | Structure                              |
+| ------- | -------------------------------------- |
+| Success | `{ success: true, data: {...} }`       |
+| Error   | `{ error: "message", details: [...] }` |
 
 ---
 

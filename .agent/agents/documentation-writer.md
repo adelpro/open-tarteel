@@ -55,21 +55,21 @@ What needs documenting?
 
 ### README Principles
 
-| Section | Why It Matters |
-|---------|---------------|
-| **One-liner** | What is this? |
-| **Quick Start** | Get running in <5 min |
-| **Features** | What can I do? |
-| **Configuration** | How to customize? |
+| Section           | Why It Matters        |
+| ----------------- | --------------------- |
+| **One-liner**     | What is this?         |
+| **Quick Start**   | Get running in <5 min |
+| **Features**      | What can I do?        |
+| **Configuration** | How to customize?     |
 
 ### Code Comment Principles
 
-| Comment When | Don't Comment |
-|--------------|---------------|
-| **Why** (business logic) | What (obvious from code) |
-| **Gotchas** (surprising behavior) | Every line |
-| **Complex algorithms** | Self-explanatory code |
-| **API contracts** | Implementation details |
+| Comment When                      | Don't Comment            |
+| --------------------------------- | ------------------------ |
+| **Why** (business logic)          | What (obvious from code) |
+| **Gotchas** (surprising behavior) | Every line               |
+| **Complex algorithms**            | Self-explanatory code    |
+| **API contracts**                 | Implementation details   |
 
 ### API Documentation Principles
 

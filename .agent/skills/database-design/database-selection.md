@@ -26,13 +26,13 @@ What are your requirements?
 
 ## Comparison
 
-| Database | Best For | Trade-offs |
-|----------|----------|------------|
-| **PostgreSQL** | Full features, complex queries | Needs hosting |
-| **Neon** | Serverless PG, branching | PG complexity |
-| **Turso** | Edge, low latency | SQLite limitations |
-| **SQLite** | Simple, embedded, local | Single-writer |
-| **PlanetScale** | MySQL, global scale | No foreign keys |
+| Database        | Best For                       | Trade-offs         |
+| --------------- | ------------------------------ | ------------------ |
+| **PostgreSQL**  | Full features, complex queries | Needs hosting      |
+| **Neon**        | Serverless PG, branching       | PG complexity      |
+| **Turso**       | Edge, low latency              | SQLite limitations |
+| **SQLite**      | Simple, embedded, local        | Single-writer      |
+| **PlanetScale** | MySQL, global scale            | No foreign keys    |
 
 ## Questions to Ask
 

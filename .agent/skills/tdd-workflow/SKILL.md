@@ -36,10 +36,10 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ### What to Write
 
-| Focus | Example |
-|-------|---------|
-| Behavior | "should add two numbers" |
-| Edge cases | "should handle empty input" |
+| Focus        | Example                         |
+| ------------ | ------------------------------- |
+| Behavior     | "should add two numbers"        |
+| Edge cases   | "should handle empty input"     |
 | Error states | "should throw for invalid data" |
 
 ### RED Phase Rules
@@ -54,11 +54,11 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ### Minimum Code
 
-| Principle | Meaning |
-|-----------|---------|
-| **YAGNI** | You Aren't Gonna Need It |
-| **Simplest thing** | Write the minimum to pass |
-| **No optimization** | Just make it work |
+| Principle           | Meaning                   |
+| ------------------- | ------------------------- |
+| **YAGNI**           | You Aren't Gonna Need It  |
+| **Simplest thing**  | Write the minimum to pass |
+| **No optimization** | Just make it work         |
 
 ### GREEN Phase Rules
 
@@ -72,12 +72,12 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ### What to Improve
 
-| Area | Action |
-|------|--------|
-| Duplication | Extract common code |
-| Naming | Make intent clear |
-| Structure | Improve organization |
-| Complexity | Simplify logic |
+| Area        | Action               |
+| ----------- | -------------------- |
+| Duplication | Extract common code  |
+| Naming      | Make intent clear    |
+| Structure   | Improve organization |
+| Complexity  | Simplify logic       |
 
 ### REFACTOR Rules
 
@@ -91,46 +91,46 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 Every test follows:
 
-| Step | Purpose |
-|------|---------|
-| **Arrange** | Set up test data |
-| **Act** | Execute code under test |
-| **Assert** | Verify expected outcome |
+| Step        | Purpose                 |
+| ----------- | ----------------------- |
+| **Arrange** | Set up test data        |
+| **Act**     | Execute code under test |
+| **Assert**  | Verify expected outcome |
 
 ---
 
 ## 7. When to Use TDD
 
-| Scenario | TDD Value |
-|----------|-----------|
-| New feature | High |
-| Bug fix | High (write test first) |
-| Complex logic | High |
-| Exploratory | Low (spike, then TDD) |
-| UI layout | Low |
+| Scenario      | TDD Value               |
+| ------------- | ----------------------- |
+| New feature   | High                    |
+| Bug fix       | High (write test first) |
+| Complex logic | High                    |
+| Exploratory   | Low (spike, then TDD)   |
+| UI layout     | Low                     |
 
 ---
 
 ## 8. Test Prioritization
 
-| Priority | Test Type |
-|----------|-----------|
-| 1 | Happy path |
-| 2 | Error cases |
-| 3 | Edge cases |
-| 4 | Performance |
+| Priority | Test Type   |
+| -------- | ----------- |
+| 1        | Happy path  |
+| 2        | Error cases |
+| 3        | Edge cases  |
+| 4        | Performance |
 
 ---
 
 ## 9. Anti-Patterns
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Skip the RED phase | Watch test fail first |
-| Write tests after | Write tests before |
-| Over-engineer initial | Keep it simple |
-| Multiple asserts | One behavior per test |
-| Test implementation | Test behavior |
+| ❌ Don't              | ✅ Do                 |
+| --------------------- | --------------------- |
+| Skip the RED phase    | Watch test fail first |
+| Write tests after     | Write tests before    |
+| Over-engineer initial | Keep it simple        |
+| Multiple asserts      | One behavior per test |
+| Test implementation   | Test behavior         |
 
 ---
 
@@ -138,11 +138,11 @@ Every test follows:
 
 ### Multi-Agent Pattern
 
-| Agent | Role |
-|-------|------|
+| Agent   | Role                      |
+| ------- | ------------------------- |
 | Agent A | Write failing tests (RED) |
 | Agent B | Implement to pass (GREEN) |
-| Agent C | Optimize (REFACTOR) |
+| Agent C | Optimize (REFACTOR)       |
 
 ---
 

@@ -18,11 +18,11 @@ Model Context Protocol - standard for connecting AI systems with external tools 
 
 ### Core Concepts
 
-| Concept | Purpose |
-|---------|---------|
-| **Tools** | Functions AI can call |
-| **Resources** | Data AI can read |
-| **Prompts** | Pre-defined prompt templates |
+| Concept       | Purpose                      |
+| ------------- | ---------------------------- |
+| **Tools**     | Functions AI can call        |
+| **Resources** | Data AI can read             |
+| **Prompts**   | Pre-defined prompt templates |
 
 ---
 
@@ -40,10 +40,10 @@ my-mcp-server/
 
 ### Transport Types
 
-| Type | Use |
-|------|-----|
-| **Stdio** | Local, CLI-based |
-| **SSE** | Web-based, streaming |
+| Type          | Use                      |
+| ------------- | ------------------------ |
+| **Stdio**     | Local, CLI-based         |
+| **SSE**       | Web-based, streaming     |
 | **WebSocket** | Real-time, bidirectional |
 
 ---
@@ -52,21 +52,21 @@ my-mcp-server/
 
 ### Good Tool Design
 
-| Principle | Description |
-|-----------|-------------|
-| Clear name | Action-oriented (get_weather, create_user) |
-| Single purpose | One thing well |
-| Validated input | Schema with types and descriptions |
-| Structured output | Predictable response format |
+| Principle         | Description                                |
+| ----------------- | ------------------------------------------ |
+| Clear name        | Action-oriented (get_weather, create_user) |
+| Single purpose    | One thing well                             |
+| Validated input   | Schema with types and descriptions         |
+| Structured output | Predictable response format                |
 
 ### Input Schema Design
 
-| Field | Required? |
-|-------|-----------|
-| Type | Yes - object |
-| Properties | Define each param |
-| Required | List mandatory params |
-| Description | Human-readable |
+| Field       | Required?             |
+| ----------- | --------------------- |
+| Type        | Yes - object          |
+| Properties  | Define each param     |
+| Required    | List mandatory params |
+| Description | Human-readable        |
 
 ---
 
@@ -74,19 +74,19 @@ my-mcp-server/
 
 ### Resource Types
 
-| Type | Use |
-|------|-----|
-| Static | Fixed data (config, docs) |
-| Dynamic | Generated on request |
-| Template | URI with parameters |
+| Type     | Use                       |
+| -------- | ------------------------- |
+| Static   | Fixed data (config, docs) |
+| Dynamic  | Generated on request      |
+| Template | URI with parameters       |
 
 ### URI Patterns
 
-| Pattern | Example |
-|---------|---------|
-| Fixed | `docs://readme` |
-| Parameterized | `users://{userId}` |
-| Collection | `files://project/*` |
+| Pattern       | Example             |
+| ------------- | ------------------- |
+| Fixed         | `docs://readme`     |
+| Parameterized | `users://{userId}`  |
+| Collection    | `files://project/*` |
 
 ---
 
@@ -94,11 +94,11 @@ my-mcp-server/
 
 ### Error Types
 
-| Situation | Response |
-|-----------|----------|
-| Invalid params | Validation error message |
-| Not found | Clear "not found" |
-| Server error | Generic error, log details |
+| Situation      | Response                   |
+| -------------- | -------------------------- |
+| Invalid params | Validation error message   |
+| Not found      | Clear "not found"          |
+| Server error   | Generic error, log details |
 
 ### Best Practices
 
@@ -113,11 +113,11 @@ my-mcp-server/
 
 ### Supported Types
 
-| Type | Encoding |
-|------|----------|
-| Text | Plain text |
+| Type   | Encoding           |
+| ------ | ------------------ |
+| Text   | Plain text         |
 | Images | Base64 + MIME type |
-| Files | Base64 + MIME type |
+| Files  | Base64 + MIME type |
 
 ---
 
@@ -141,11 +141,11 @@ my-mcp-server/
 
 ### Claude Desktop Config
 
-| Field | Purpose |
-|-------|---------|
-| command | Executable to run |
-| args | Command arguments |
-| env | Environment variables |
+| Field   | Purpose               |
+| ------- | --------------------- |
+| command | Executable to run     |
+| args    | Command arguments     |
+| env     | Environment variables |
 
 ---
 
@@ -153,11 +153,11 @@ my-mcp-server/
 
 ### Test Categories
 
-| Type | Focus |
-|------|-------|
-| Unit | Tool logic |
-| Integration | Full server |
-| Contract | Schema validation |
+| Type        | Focus             |
+| ----------- | ----------------- |
+| Unit        | Tool logic        |
+| Integration | Full server       |
+| Contract    | Schema validation |
 
 ---
 

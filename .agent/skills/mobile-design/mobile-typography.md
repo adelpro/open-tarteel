@@ -21,13 +21,13 @@ DESKTOP:                        MOBILE:
 
 ### Mobile Type Rules
 
-| Rule | Desktop | Mobile |
-|------|---------|--------|
-| **Minimum body size** | 14px | 16px (14pt/14sp) |
-| **Maximum line length** | 75 characters | 40-60 characters |
-| **Line height** | 1.4-1.5 | 1.4-1.6 (more generous) |
-| **Font weight** | Varies | Regular dominant, bold sparingly |
-| **Contrast** | AA (4.5:1) | AA minimum, AAA preferred |
+| Rule                    | Desktop       | Mobile                           |
+| ----------------------- | ------------- | -------------------------------- |
+| **Minimum body size**   | 14px          | 16px (14pt/14sp)                 |
+| **Maximum line length** | 75 characters | 40-60 characters                 |
+| **Line height**         | 1.4-1.5       | 1.4-1.6 (more generous)          |
+| **Font weight**         | Varies        | Regular dominant, bold sparingly |
+| **Contrast**            | AA (4.5:1)    | AA minimum, AAA preferred        |
 
 ---
 
@@ -102,39 +102,39 @@ If using custom fonts:
 
 ### iOS Type Scale (Built-in)
 
-| Style | Size | Weight | Line Height |
-|-------|------|--------|-------------|
-| Large Title | 34pt | Bold | 41pt |
-| Title 1 | 28pt | Bold | 34pt |
-| Title 2 | 22pt | Bold | 28pt |
-| Title 3 | 20pt | Semibold | 25pt |
-| Headline | 17pt | Semibold | 22pt |
-| Body | 17pt | Regular | 22pt |
-| Callout | 16pt | Regular | 21pt |
-| Subhead | 15pt | Regular | 20pt |
-| Footnote | 13pt | Regular | 18pt |
-| Caption 1 | 12pt | Regular | 16pt |
-| Caption 2 | 11pt | Regular | 13pt |
+| Style       | Size | Weight   | Line Height |
+| ----------- | ---- | -------- | ----------- |
+| Large Title | 34pt | Bold     | 41pt        |
+| Title 1     | 28pt | Bold     | 34pt        |
+| Title 2     | 22pt | Bold     | 28pt        |
+| Title 3     | 20pt | Semibold | 25pt        |
+| Headline    | 17pt | Semibold | 22pt        |
+| Body        | 17pt | Regular  | 22pt        |
+| Callout     | 16pt | Regular  | 21pt        |
+| Subhead     | 15pt | Regular  | 20pt        |
+| Footnote    | 13pt | Regular  | 18pt        |
+| Caption 1   | 12pt | Regular  | 16pt        |
+| Caption 2   | 11pt | Regular  | 13pt        |
 
 ### Android Type Scale (Material 3)
 
-| Role | Size | Weight | Line Height |
-|------|------|--------|-------------|
-| Display Large | 57sp | 400 | 64sp |
-| Display Medium | 45sp | 400 | 52sp |
-| Display Small | 36sp | 400 | 44sp |
-| Headline Large | 32sp | 400 | 40sp |
-| Headline Medium | 28sp | 400 | 36sp |
-| Headline Small | 24sp | 400 | 32sp |
-| Title Large | 22sp | 400 | 28sp |
-| Title Medium | 16sp | 500 | 24sp |
-| Title Small | 14sp | 500 | 20sp |
-| Body Large | 16sp | 400 | 24sp |
-| Body Medium | 14sp | 400 | 20sp |
-| Body Small | 12sp | 400 | 16sp |
-| Label Large | 14sp | 500 | 20sp |
-| Label Medium | 12sp | 500 | 16sp |
-| Label Small | 11sp | 500 | 16sp |
+| Role            | Size | Weight | Line Height |
+| --------------- | ---- | ------ | ----------- |
+| Display Large   | 57sp | 400    | 64sp        |
+| Display Medium  | 45sp | 400    | 52sp        |
+| Display Small   | 36sp | 400    | 44sp        |
+| Headline Large  | 32sp | 400    | 40sp        |
+| Headline Medium | 28sp | 400    | 36sp        |
+| Headline Small  | 24sp | 400    | 32sp        |
+| Title Large     | 22sp | 400    | 28sp        |
+| Title Medium    | 16sp | 500    | 24sp        |
+| Title Small     | 14sp | 500    | 20sp        |
+| Body Large      | 16sp | 400    | 24sp        |
+| Body Medium     | 14sp | 400    | 20sp        |
+| Body Small      | 12sp | 400    | 16sp        |
+| Label Large     | 14sp | 500    | 20sp        |
+| Label Medium    | 12sp | 500    | 16sp        |
+| Label Small     | 11sp | 500    | 16sp        |
 
 ### Creating Custom Scale
 
@@ -217,13 +217,13 @@ Solutions:
 
 ### Minimum Sizes
 
-| Element | Minimum | Recommended |
-|---------|---------|-------------|
-| Body text | 14px/pt/sp | 16px/pt/sp |
-| Secondary text | 12px/pt/sp | 13-14px/pt/sp |
-| Captions | 11px/pt/sp | 12px/pt/sp |
-| Buttons | 14px/pt/sp | 14-16px/pt/sp |
-| **Nothing smaller** | 11px | - |
+| Element             | Minimum    | Recommended   |
+| ------------------- | ---------- | ------------- |
+| Body text           | 14px/pt/sp | 16px/pt/sp    |
+| Secondary text      | 12px/pt/sp | 13-14px/pt/sp |
+| Captions            | 11px/pt/sp | 12px/pt/sp    |
+| Buttons             | 14px/pt/sp | 14-16px/pt/sp |
+| **Nothing smaller** | 11px       | -             |
 
 ### Contrast Requirements (WCAG)
 
@@ -274,12 +274,12 @@ Use off-white (#E0E0E0 to #F0F0F0) to reduce eye strain.
 
 ### Dark Mode Hierarchy
 
-| Level | Light Mode | Dark Mode |
-|-------|------------|-----------|
-| Primary text | #000000 | #E8E8E8 |
-| Secondary text | #666666 | #A0A0A0 |
-| Tertiary text | #999999 | #707070 |
-| Disabled text | #CCCCCC | #505050 |
+| Level          | Light Mode | Dark Mode |
+| -------------- | ---------- | --------- |
+| Primary text   | #000000    | #E8E8E8   |
+| Secondary text | #666666    | #A0A0A0   |
+| Tertiary text  | #999999    | #707070   |
+| Disabled text  | #CCCCCC    | #505050   |
 
 ### Weight in Dark Mode
 
@@ -300,16 +300,16 @@ Consider:
 
 ### ❌ Common Mistakes
 
-| Mistake | Problem | Fix |
-|---------|---------|-----|
-| **Fixed font sizes** | Ignores accessibility | Use dynamic sizing |
-| **Too small text** | Unreadable | Min 14pt/sp |
-| **Low contrast** | Invisible in sunlight | Min 4.5:1 |
-| **Long lines** | Hard to track | Max 60 chars |
-| **Tight line height** | Cramped, hard to read | Min 1.4× |
-| **Too many sizes** | Visual chaos | Max 5-7 sizes |
-| **All caps body** | Hard to read | Headlines only |
-| **Light gray on white** | Impossible in bright light | Higher contrast |
+| Mistake                 | Problem                    | Fix                |
+| ----------------------- | -------------------------- | ------------------ |
+| **Fixed font sizes**    | Ignores accessibility      | Use dynamic sizing |
+| **Too small text**      | Unreadable                 | Min 14pt/sp        |
+| **Low contrast**        | Invisible in sunlight      | Min 4.5:1          |
+| **Long lines**          | Hard to track              | Max 60 chars       |
+| **Tight line height**   | Cramped, hard to read      | Min 1.4×           |
+| **Too many sizes**      | Visual chaos               | Max 5-7 sizes      |
+| **All caps body**       | Hard to read               | Headlines only     |
+| **Light gray on white** | Impossible in bright light | Higher contrast    |
 
 ### ❌ AI Typography Mistakes
 
@@ -352,13 +352,13 @@ Recommendations:
 ```
 1. SYSTEM FONT FALLBACK
    Show system font → swap when custom loads
-   
+
 2. FONT DISPLAY SWAP
    font-display: swap (CSS)
-   
+
 3. PRELOAD CRITICAL FONTS
    Preload fonts needed above the fold
-   
+
 4. DON'T BLOCK RENDER
    Don't wait for fonts to show content
 ```

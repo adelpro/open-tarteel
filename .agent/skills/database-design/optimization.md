@@ -30,7 +30,7 @@ Before optimizing:
 ## Optimization Priorities
 
 1. **Add missing indexes** (most common issue)
-2. **Select only needed columns** (not SELECT *)
+2. **Select only needed columns** (not SELECT \*)
 3. **Use proper JOINs** (avoid subqueries when possible)
 4. **Limit early** (pagination at database level)
 5. **Cache** (when appropriate)

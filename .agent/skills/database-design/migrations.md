@@ -31,18 +31,18 @@ For zero-downtime changes:
 
 ### Neon (Serverless PostgreSQL)
 
-| Feature | Benefit |
-|---------|---------|
-| Scale to zero | Cost savings |
-| Instant branching | Dev/preview |
-| Full PostgreSQL | Compatibility |
-| Autoscaling | Traffic handling |
+| Feature           | Benefit          |
+| ----------------- | ---------------- |
+| Scale to zero     | Cost savings     |
+| Instant branching | Dev/preview      |
+| Full PostgreSQL   | Compatibility    |
+| Autoscaling       | Traffic handling |
 
 ### Turso (Edge SQLite)
 
-| Feature | Benefit |
-|---------|---------|
-| Edge locations | Ultra-low latency |
-| SQLite compatible | Simple |
-| Generous free tier | Cost |
-| Global distribution | Performance |
+| Feature             | Benefit           |
+| ------------------- | ----------------- |
+| Edge locations      | Ultra-low latency |
+| SQLite compatible   | Simple            |
+| Generous free tier  | Cost              |
+| Global distribution | Performance       |

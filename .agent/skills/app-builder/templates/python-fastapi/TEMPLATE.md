@@ -7,14 +7,14 @@ description: FastAPI REST API template principles. SQLAlchemy, Pydantic, Alembic
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Framework | FastAPI |
-| Language | Python 3.11+ |
-| ORM | SQLAlchemy 2.0 |
-| Validation | Pydantic v2 |
-| Migrations | Alembic |
-| Auth | JWT + passlib |
+| Component  | Technology     |
+| ---------- | -------------- |
+| Framework  | FastAPI        |
+| Language   | Python 3.11+   |
+| ORM        | SQLAlchemy 2.0 |
+| Validation | Pydantic v2    |
+| Migrations | Alembic        |
+| Auth       | JWT + passlib  |
 
 ---
 
@@ -42,24 +42,24 @@ project-name/
 
 ## Key Concepts
 
-| Concept | Description |
-|---------|-------------|
-| Async | async/await throughout |
-| Dependency Injection | FastAPI Depends |
-| Pydantic v2 | Validation + serialization |
-| SQLAlchemy 2.0 | Async sessions |
+| Concept              | Description                |
+| -------------------- | -------------------------- |
+| Async                | async/await throughout     |
+| Dependency Injection | FastAPI Depends            |
+| Pydantic v2          | Validation + serialization |
+| SQLAlchemy 2.0       | Async sessions             |
 
 ---
 
 ## API Structure
 
-| Layer | Responsibility |
-|-------|---------------|
-| Routers | HTTP handling |
-| Dependencies | Auth, validation |
-| Services | Business logic |
-| Models | Database entities |
-| Schemas | Request/response |
+| Layer        | Responsibility    |
+| ------------ | ----------------- |
+| Routers      | HTTP handling     |
+| Dependencies | Auth, validation  |
+| Services     | Business logic    |
+| Models       | Database entities |
+| Schemas      | Request/response  |
 
 ---
 

@@ -20,13 +20,13 @@ JSON-based vector animations:
 
 ### When to Use Lottie
 
-| Use Case | Why Lottie? |
-|----------|-------------|
-| **Loading animations** | Branded, smooth, lightweight |
-| **Empty states** | Engaging illustrations |
-| **Onboarding flows** | Complex multi-step animations |
+| Use Case                   | Why Lottie?                   |
+| -------------------------- | ----------------------------- |
+| **Loading animations**     | Branded, smooth, lightweight  |
+| **Empty states**           | Engaging illustrations        |
+| **Onboarding flows**       | Complex multi-step animations |
 | **Success/Error feedback** | Delightful micro-interactions |
-| **Animated icons** | Consistent cross-platform |
+| **Animated icons**         | Consistent cross-platform     |
 
 ### Principles
 
@@ -58,12 +58,12 @@ Professional timeline-based animation:
 
 ### Core Concepts
 
-| Concept | Purpose |
-|---------|---------|
-| **Tween** | Single A→B animation |
-| **Timeline** | Sequenced/overlapping animations |
+| Concept           | Purpose                           |
+| ----------------- | --------------------------------- |
+| **Tween**         | Single A→B animation              |
+| **Timeline**      | Sequenced/overlapping animations  |
 | **ScrollTrigger** | Scroll position controls playback |
-| **Stagger** | Cascade effect across elements |
+| **Stagger**       | Cascade effect across elements    |
 
 ### When to Use GSAP
 
@@ -87,12 +87,12 @@ Professional timeline-based animation:
 
 ### Types of SVG Animation
 
-| Type | Technique | Use Case |
-|------|-----------|----------|
-| **Line Drawing** | stroke-dashoffset | Logo reveals, signatures |
-| **Morph** | Path interpolation | Icon transitions |
-| **Transform** | rotate, scale, translate | Interactive icons |
-| **Color** | fill/stroke transition | State changes |
+| Type             | Technique                | Use Case                 |
+| ---------------- | ------------------------ | ------------------------ |
+| **Line Drawing** | stroke-dashoffset        | Logo reveals, signatures |
+| **Morph**        | Path interpolation       | Icon transitions         |
+| **Transform**    | rotate, scale, translate | Interactive icons        |
+| **Color**        | fill/stroke transition   | State changes            |
 
 ### Line Drawing Principles
 
@@ -137,12 +137,12 @@ CSS 3D Space:
 
 ### Common 3D Patterns
 
-| Pattern | Use Case |
-|---------|----------|
-| **Card flip** | Reveals, flashcards, product views |
-| **Tilt on hover** | Interactive cards, 3D depth |
+| Pattern             | Use Case                           |
+| ------------------- | ---------------------------------- |
+| **Card flip**       | Reveals, flashcards, product views |
+| **Tilt on hover**   | Interactive cards, 3D depth        |
 | **Parallax layers** | Hero sections, immersive scrolling |
-| **3D carousel** | Image galleries, sliders |
+| **3D carousel**     | Image galleries, sliders           |
 
 ### Principles
 
@@ -157,22 +157,22 @@ CSS 3D Space:
 
 ### Types of Particle Systems
 
-| Type | Feel | Use Case |
-|------|------|----------|
-| **Geometric** | Tech, network | SaaS, tech sites |
-| **Confetti** | Celebration | Success moments |
-| **Snow/Rain** | Atmospheric | Seasonal, mood |
-| **Dust/Bokeh** | Dreamy | Photography, luxury |
-| **Fireflies** | Magical | Games, fantasy |
+| Type           | Feel          | Use Case            |
+| -------------- | ------------- | ------------------- |
+| **Geometric**  | Tech, network | SaaS, tech sites    |
+| **Confetti**   | Celebration   | Success moments     |
+| **Snow/Rain**  | Atmospheric   | Seasonal, mood      |
+| **Dust/Bokeh** | Dreamy        | Photography, luxury |
+| **Fireflies**  | Magical       | Games, fantasy      |
 
 ### Libraries
 
-| Library | Best For |
-|---------|----------|
-| **tsParticles** | Configurable, lightweight |
-| **particles.js** | Simple backgrounds |
-| **Canvas API** | Custom, maximum control |
-| **Three.js** | Complex 3D particles |
+| Library          | Best For                  |
+| ---------------- | ------------------------- |
+| **tsParticles**  | Configurable, lightweight |
+| **particles.js** | Simple backgrounds        |
+| **Canvas API**   | Custom, maximum control   |
+| **Three.js**     | Complex 3D particles      |
 
 ### Principles
 
@@ -206,12 +206,12 @@ CSS Scroll Timelines:
 
 ### Principles
 
-| Trigger Point | Use Case |
-|---------------|----------|
-| **Entry 0%** | When element starts entering |
-| **Entry 50%** | When half visible |
-| **Cover 50%** | When centered in viewport |
-| **Exit 100%** | When fully exited |
+| Trigger Point | Use Case                     |
+| ------------- | ---------------------------- |
+| **Entry 0%**  | When element starts entering |
+| **Entry 50%** | When half visible            |
+| **Cover 50%** | When centered in viewport    |
+| **Exit 100%** | When fully exited            |
 
 ### Best Practices
 
@@ -278,28 +278,28 @@ What animation do you need?
 
 ## 9. Anti-Patterns
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Animate everything at once | Stagger and sequence |
-| Use heavy libraries for simple effects | Start with CSS |
-| Ignore reduced-motion | Always provide fallback |
-| Block main thread | Optimize for 60fps |
-| Same particles every project | Match brand/context |
-| Complex effects on mobile | Feature detection |
+| ❌ Don't                               | ✅ Do                   |
+| -------------------------------------- | ----------------------- |
+| Animate everything at once             | Stagger and sequence    |
+| Use heavy libraries for simple effects | Start with CSS          |
+| Ignore reduced-motion                  | Always provide fallback |
+| Block main thread                      | Optimize for 60fps      |
+| Same particles every project           | Match brand/context     |
+| Complex effects on mobile              | Feature detection       |
 
 ---
 
 ## 10. Quick Reference
 
-| Effect | Tool | Performance |
-|--------|------|-------------|
-| Loading spinner | CSS/Lottie | Light |
-| Staggered reveal | GSAP/Framer | Medium |
-| SVG path draw | CSS stroke | Light |
-| 3D card flip | CSS transforms | Light |
-| Particle background | tsParticles | Heavy |
-| Scroll parallax | GSAP ScrollTrigger | Medium |
-| Shape morphing | GSAP MorphSVG | Medium |
+| Effect              | Tool               | Performance |
+| ------------------- | ------------------ | ----------- |
+| Loading spinner     | CSS/Lottie         | Light       |
+| Staggered reveal    | GSAP/Framer        | Medium      |
+| SVG path draw       | CSS stroke         | Light       |
+| 3D card flip        | CSS transforms     | Light       |
+| Particle background | tsParticles        | Heavy       |
+| Scroll parallax     | GSAP ScrollTrigger | Medium      |
+| Shape morphing      | GSAP MorphSVG      | Medium      |
 
 ---
 

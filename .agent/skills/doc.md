@@ -16,8 +16,8 @@ Mặc dù các mô hình cơ bản của Antigravity (như Gemini) là những m
 
 Kỹ năng là các gói dựa trên thư mục. Bạn có thể xác định các phạm vi này tuỳ thuộc vào nhu cầu:
 
-| Phạm vi | Đường dẫn | Mô tả |
-|---------|-----------|-------|
+| Phạm vi       | Đường dẫn                         | Mô tả                         |
+| ------------- | --------------------------------- | ----------------------------- |
 | **Workspace** | `<workspace-root>/.agent/skills/` | Chỉ có trong một dự án cụ thể |
 
 ### Cấu trúc thư mục kỹ năng
@@ -96,10 +96,10 @@ def process_payments(items):
 def run_batch():
     users = [{'id': 1, 'name': 'Alice'}, {'id': 2, 'name': 'Bob'}]
     items = [{'price': 10}, {'price': 20}, {'price': 100}]
-    
+
     u = get_user_data(users, 3)
     print("User found: " + u['name'])  # Will crash if None
-    
+
     print("Total: " + str(process_payments(items)))
 
 if __name__ == "__main__":
@@ -152,7 +152,7 @@ This skill ensures that all new source files have the correct copyright header.
 
 1. **Read the Template**: Read the content of `resources/HEADER.txt`.
 2. **Apply to File**: When creating a new file, prepend this exact content.
-3. **Adapt Syntax**: 
+3. **Adapt Syntax**:
    - For C-style languages (Java, TS), keep the `/* */` block.
    - For Python/Shell, convert to `#` comments.
 ```

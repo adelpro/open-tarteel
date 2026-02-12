@@ -57,11 +57,12 @@ When asked to test a file or feature:
 ## 🧪 Tests: [Target]
 
 ### Test Plan
-| Test Case | Type | Coverage |
-|-----------|------|----------|
-| Should create user | Unit | Happy path |
+
+| Test Case                   | Type | Coverage   |
+| --------------------------- | ---- | ---------- |
+| Should create user          | Unit | Happy path |
 | Should reject invalid email | Unit | Validation |
-| Should handle db error | Unit | Error case |
+| Should handle db error      | Unit | Error case |
 
 ### Generated Tests
 
@@ -114,10 +115,10 @@ describe('AuthService', () => {
     it('should return token for valid credentials', async () => {
       // Arrange
       const credentials = { email: 'test@test.com', password: 'pass123' };
-      
+
       // Act
       const result = await authService.login(credentials);
-      
+
       // Assert
       expect(result.token).toBeDefined();
     });
@@ -125,9 +126,11 @@ describe('AuthService', () => {
     it('should throw for invalid password', async () => {
       // Arrange
       const credentials = { email: 'test@test.com', password: 'wrong' };
-      
+
       // Act & Assert
-      await expect(authService.login(credentials)).rejects.toThrow('Invalid credentials');
+      await expect(authService.login(credentials)).rejects.toThrow(
+        'Invalid credentials'
+      );
     });
   });
 });

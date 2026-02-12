@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-    clearNormalizationCache,
-    fuzzySearch,
-    normalizeArabicText,
-    removeDefiniteArticle,
-    removeTashkeel,
+  clearNormalizationCache,
+  fuzzySearch,
+  normalizeArabicText,
+  removeDefiniteArticle,
+  removeTashkeel,
 } from '@/utils/search';
 
 // ──────────────────────────────────────────

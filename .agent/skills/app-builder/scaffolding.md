@@ -64,27 +64,27 @@ project-name/
 
 ## Structure Principles
 
-| Principle | Implementation |
-|-----------|----------------|
-| **Feature isolation** | Each feature in `features/` with its own components, hooks, actions |
-| **Server/Client separation** | Server-only code in `server/`, prevents accidental client imports |
-| **Thin routes** | `app/` only for routing, logic lives in `features/` |
-| **Route groups** | `(groupName)/` for layout sharing without URL impact |
-| **Shared code** | `shared/` for truly reusable UI and utilities |
+| Principle                    | Implementation                                                      |
+| ---------------------------- | ------------------------------------------------------------------- |
+| **Feature isolation**        | Each feature in `features/` with its own components, hooks, actions |
+| **Server/Client separation** | Server-only code in `server/`, prevents accidental client imports   |
+| **Thin routes**              | `app/` only for routing, logic lives in `features/`                 |
+| **Route groups**             | `(groupName)/` for layout sharing without URL impact                |
+| **Shared code**              | `shared/` for truly reusable UI and utilities                       |
 
 ---
 
 ## Core Files
 
-| File | Purpose |
-|------|---------|
-| `package.json` | Dependencies |
-| `tsconfig.json` | TypeScript + path aliases (`@/features/*`) |
-| `tailwind.config.ts` | Tailwind config |
-| `.env.example` | Environment template |
-| `README.md` | Project documentation |
-| `.gitignore` | Git ignore rules |
-| `prisma/schema.prisma` | Database schema |
+| File                   | Purpose                                    |
+| ---------------------- | ------------------------------------------ |
+| `package.json`         | Dependencies                               |
+| `tsconfig.json`        | TypeScript + path aliases (`@/features/*`) |
+| `tailwind.config.ts`   | Tailwind config                            |
+| `.env.example`         | Environment template                       |
+| `README.md`            | Project documentation                      |
+| `.gitignore`           | Git ignore rules                           |
+| `prisma/schema.prisma` | Database schema                            |
 
 ---
 
@@ -107,12 +107,12 @@ project-name/
 
 ## When to Use What
 
-| Need | Location |
-|------|----------|
-| New page/route | `app/(group)/page.tsx` |
-| Feature component | `features/[name]/components/` |
-| Server action | `features/[name]/actions.ts` |
-| Data fetching | `features/[name]/queries.ts` |
-| Reusable button/input | `shared/components/ui/` |
-| Database query | `server/db/` |
-| External API call | `server/services/` |
+| Need                  | Location                      |
+| --------------------- | ----------------------------- |
+| New page/route        | `app/(group)/page.tsx`        |
+| Feature component     | `features/[name]/components/` |
+| Server action         | `features/[name]/actions.ts`  |
+| Data fetching         | `features/[name]/queries.ts`  |
+| Reusable button/input | `shared/components/ui/`       |
+| Database query        | `server/db/`                  |
+| External API call     | `server/services/`            |
