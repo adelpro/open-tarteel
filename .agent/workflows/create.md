@@ -52,6 +52,7 @@ This command starts a new application creation process.
 ## Before Starting
 
 If request is unclear, ask these questions:
+
 - What type of application?
 - What are the basic features?
 - Who will use it?

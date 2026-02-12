@@ -31,12 +31,12 @@ What type of game?
 
 ### Comparison (2025)
 
-| Framework | Type | Best For |
-|-----------|------|----------|
-| **Phaser 4** | 2D | Full game features |
-| **PixiJS 8** | 2D | Rendering, UI |
-| **Three.js** | 3D | Visualizations, lightweight |
-| **Babylon.js 7** | 3D | Full engine, XR |
+| Framework        | Type | Best For                    |
+| ---------------- | ---- | --------------------------- |
+| **Phaser 4**     | 2D   | Full game features          |
+| **PixiJS 8**     | 2D   | Rendering, UI               |
+| **Three.js**     | 3D   | Visualizations, lightweight |
+| **Babylon.js 7** | 3D   | Full engine, XR             |
 
 ---
 
@@ -44,12 +44,12 @@ What type of game?
 
 ### Browser Support (2025)
 
-| Browser | Support |
-|---------|---------|
-| Chrome | ✅ Since v113 |
-| Edge | ✅ Since v113 |
-| Firefox | ✅ Since v131 |
-| Safari | ✅ Since 18.0 |
+| Browser   | Support         |
+| --------- | --------------- |
+| Chrome    | ✅ Since v113   |
+| Edge      | ✅ Since v113   |
+| Firefox   | ✅ Since v131   |
+| Safari    | ✅ Since 18.0   |
 | **Total** | **~73%** global |
 
 ### Decision
@@ -64,12 +64,12 @@ What type of game?
 
 ### Browser Constraints
 
-| Constraint | Strategy |
-|------------|----------|
-| No local file access | Asset bundling, CDN |
-| Tab throttling | Pause when hidden |
-| Mobile data limits | Compress assets |
-| Audio autoplay | Require user interaction |
+| Constraint           | Strategy                 |
+| -------------------- | ------------------------ |
+| No local file access | Asset bundling, CDN      |
+| Tab throttling       | Pause when hidden        |
+| Mobile data limits   | Compress assets          |
+| Audio autoplay       | Require user interaction |
 
 ### Optimization Priority
 
@@ -85,18 +85,18 @@ What type of game?
 
 ### Compression Formats
 
-| Type | Format |
-|------|--------|
-| Textures | KTX2 + Basis Universal |
-| Audio | WebM/Opus (fallback: MP3) |
-| 3D Models | glTF + Draco/Meshopt |
+| Type      | Format                    |
+| --------- | ------------------------- |
+| Textures  | KTX2 + Basis Universal    |
+| Audio     | WebM/Opus (fallback: MP3) |
+| 3D Models | glTF + Draco/Meshopt      |
 
 ### Loading Strategy
 
-| Phase | Load |
-|-------|------|
-| Startup | Core assets, <2MB |
-| Gameplay | Stream on demand |
+| Phase      | Load                |
+| ---------- | ------------------- |
+| Startup    | Core assets, <2MB   |
+| Gameplay   | Stream on demand    |
 | Background | Prefetch next level |
 
 ---
@@ -137,13 +137,13 @@ What type of game?
 
 ## 7. Anti-Patterns
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Load all assets upfront | Progressive loading |
-| Ignore tab visibility | Pause when hidden |
-| Block on audio load | Lazy load audio |
-| Skip compression | Compress everything |
-| Assume fast connection | Handle slow networks |
+| ❌ Don't                | ✅ Do                |
+| ----------------------- | -------------------- |
+| Load all assets upfront | Progressive loading  |
+| Ignore tab visibility   | Pause when hidden    |
+| Block on audio load     | Lazy load audio      |
+| Skip compression        | Compress everything  |
+| Assume fast connection  | Handle slow networks |
 
 ---
 

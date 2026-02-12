@@ -130,39 +130,39 @@ Ask these questions for every default pattern:
 
 ### Navigation Pattern Questioning
 
-| Assumption | Question | Alternative |
-|------------|----------|-------------|
-| "I'll use tab bar" | How many destinations? | 3 → minimal tabs, 6+ → drawer |
-| "5 tabs" | Are all equally important? | "More" tab? Drawer hybrid? |
-| "Bottom nav" | iPad/tablet support? | Navigation rail alternative |
+| Assumption         | Question                   | Alternative                          |
+| ------------------ | -------------------------- | ------------------------------------ |
+| "I'll use tab bar" | How many destinations?     | 3 → minimal tabs, 6+ → drawer        |
+| "5 tabs"           | Are all equally important? | "More" tab? Drawer hybrid?           |
+| "Bottom nav"       | iPad/tablet support?       | Navigation rail alternative          |
 | "Stack navigation" | Did I consider deep links? | URL structure = navigation structure |
 
 ### State Pattern Questioning
 
-| Assumption | Question | Alternative |
-|------------|----------|-------------|
-| "I'll use Redux" | How complex is the app? | Simple: Zustand, Server: TanStack |
-| "Global state" | Is this state really global? | Local lift, Context selector |
-| "Context Provider" | Will re-render be an issue? | Zustand, Jotai (atom-based) |
-| "BLoC pattern" | Is the boilerplate worth it? | Riverpod (less code) |
+| Assumption         | Question                     | Alternative                       |
+| ------------------ | ---------------------------- | --------------------------------- |
+| "I'll use Redux"   | How complex is the app?      | Simple: Zustand, Server: TanStack |
+| "Global state"     | Is this state really global? | Local lift, Context selector      |
+| "Context Provider" | Will re-render be an issue?  | Zustand, Jotai (atom-based)       |
+| "BLoC pattern"     | Is the boilerplate worth it? | Riverpod (less code)              |
 
 ### List Pattern Questioning
 
-| Assumption | Question | Alternative |
-|------------|----------|-------------|
-| "FlatList" | Is performance critical? | FlashList (faster) |
-| "Standard renderItem" | Is it memoized? | useCallback + React.memo |
-| "Index key" | Does data order change? | Use item.id |
-| "ListView" | Are there separators? | ListView.separated |
+| Assumption            | Question                 | Alternative              |
+| --------------------- | ------------------------ | ------------------------ |
+| "FlatList"            | Is performance critical? | FlashList (faster)       |
+| "Standard renderItem" | Is it memoized?          | useCallback + React.memo |
+| "Index key"           | Does data order change?  | Use item.id              |
+| "ListView"            | Are there separators?    | ListView.separated       |
 
 ### UI Pattern Questioning
 
-| Assumption | Question | Alternative |
-|------------|----------|-------------|
-| "FAB bottom-right" | User handedness? | Accessibility settings |
-| "Pull-to-refresh" | Does this list need refresh? | Only when necessary |
-| "Modal bottom sheet" | How much content? | Full screen modal might be better |
-| "Swipe actions" | Discoverability? | Visible button alternative |
+| Assumption           | Question                     | Alternative                       |
+| -------------------- | ---------------------------- | --------------------------------- |
+| "FAB bottom-right"   | User handedness?             | Accessibility settings            |
+| "Pull-to-refresh"    | Does this list need refresh? | Only when necessary               |
+| "Modal bottom sheet" | How much content?            | Full screen modal might be better |
+| "Swipe actions"      | Discoverability?             | Visible button alternative        |
 
 ---
 
@@ -289,13 +289,13 @@ GESTURE: [Gesture Type]
 
 ### Passing the Checklist is Not Enough!
 
-| ❌ Self-Deception | ✅ Honest Assessment |
-|-------------------|----------------------|
-| "Touch target is 44px" (but on edge, unreachable) | "Can user reach it one-handed?" |
-| "I used FlatList" (but didn't memoize) | "Is scroll smooth?" |
-| "Platform-specific nav" (but only icons differ) | "Does iOS feel like iOS, Android like Android?" |
-| "Offline support exists" (but error message is generic) | "What can user actually do offline?" |
-| "Loading state exists" (but just a spinner) | "Does user know how long to wait?" |
+| ❌ Self-Deception                                       | ✅ Honest Assessment                            |
+| ------------------------------------------------------- | ----------------------------------------------- |
+| "Touch target is 44px" (but on edge, unreachable)       | "Can user reach it one-handed?"                 |
+| "I used FlatList" (but didn't memoize)                  | "Is scroll smooth?"                             |
+| "Platform-specific nav" (but only icons differ)         | "Does iOS feel like iOS, Android like Android?" |
+| "Offline support exists" (but error message is generic) | "What can user actually do offline?"            |
+| "Loading state exists" (but just a spinner)             | "Does user know how long to wait?"              |
 
 > 🔴 **Passing the checklist is NOT the goal. Creating great mobile UX IS the goal.**
 
@@ -313,7 +313,7 @@ Platform: iOS / Android / Both
 
 1. Default pattern I will NOT use in this project:
    └── _______________
-   
+
 2. Context-specific focus for this project:
    └── _______________
 

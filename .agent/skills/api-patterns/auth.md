@@ -4,13 +4,13 @@
 
 ## Selection Guide
 
-| Pattern | Best For |
-|---------|----------|
-| **JWT** | Stateless, microservices |
-| **Session** | Traditional web, simple |
-| **OAuth 2.0** | Third-party integration |
-| **API Keys** | Server-to-server, public APIs |
-| **Passkey** | Modern passwordless (2025+) |
+| Pattern       | Best For                      |
+| ------------- | ----------------------------- |
+| **JWT**       | Stateless, microservices      |
+| **Session**   | Traditional web, simple       |
+| **OAuth 2.0** | Third-party integration       |
+| **API Keys**  | Server-to-server, public APIs |
+| **Passkey**   | Modern passwordless (2025+)   |
 
 ## JWT Principles
 

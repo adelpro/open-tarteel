@@ -56,15 +56,15 @@ WHAT ARE YOU BUILDING?
 
 ### Framework Comparison
 
-| Factor | React Native | Flutter | Native (Swift/Kotlin) |
-|--------|-------------|---------|----------------------|
-| **OTA Updates** | ✅ Expo | ❌ No | ❌ No |
-| **Learning Curve** | Low (React devs) | Medium | Higher |
-| **Performance** | Good | Excellent | Best |
-| **UI Consistency** | Platform-native | Identical | Platform-native |
-| **Bundle Size** | Medium | Larger | Smallest |
-| **Native Access** | Via bridges | Via channels | Direct |
-| **Hot Reload** | ✅ | ✅ | ✅ (Xcode 15+) |
+| Factor             | React Native     | Flutter      | Native (Swift/Kotlin) |
+| ------------------ | ---------------- | ------------ | --------------------- |
+| **OTA Updates**    | ✅ Expo          | ❌ No        | ❌ No                 |
+| **Learning Curve** | Low (React devs) | Medium       | Higher                |
+| **Performance**    | Good             | Excellent    | Best                  |
+| **UI Consistency** | Platform-native  | Identical    | Platform-native       |
+| **Bundle Size**    | Medium           | Larger       | Smallest              |
+| **Native Access**  | Via bridges      | Via channels | Direct                |
+| **Hot Reload**     | ✅               | ✅           | ✅ (Xcode 15+)        |
 
 ### When to Choose Native
 
@@ -207,14 +207,14 @@ HOW MANY TOP-LEVEL DESTINATIONS?
 
 ### Navigation by App Type
 
-| App Type | Pattern | Reason |
-|----------|---------|--------|
-| Social (Instagram) | Tab bar | Frequent switching |
-| E-commerce | Tab bar + stack | Categories as tabs |
-| Email (Gmail) | Drawer + list-detail | Many folders |
-| Settings | Stack only | Deep drill-down |
-| Onboarding | Stack wizard | Linear flow |
-| Messaging | Tab (chats) + stack | Threads |
+| App Type           | Pattern              | Reason             |
+| ------------------ | -------------------- | ------------------ |
+| Social (Instagram) | Tab bar              | Frequent switching |
+| E-commerce         | Tab bar + stack      | Categories as tabs |
+| Email (Gmail)      | Drawer + list-detail | Many folders       |
+| Settings           | Stack only           | Deep drill-down    |
+| Onboarding         | Stack wizard         | Linear flow        |
+| Messaging          | Tab (chats) + stack  | Threads            |
 
 ---
 
@@ -261,13 +261,13 @@ WHAT TYPE OF DATA?
 
 ### Storage Comparison
 
-| Storage | Speed | Security | Capacity | Use Case |
-|---------|-------|----------|----------|----------|
-| Secure Storage | Medium | 🔒 High | Small | Tokens, secrets |
-| Key-Value | Fast | Low | Medium | Settings |
-| SQLite | Fast | Low | Large | Structured data |
-| File System | Medium | Low | Very Large | Media, documents |
-| Query Cache | Fast | Low | Medium | API responses |
+| Storage        | Speed  | Security | Capacity   | Use Case         |
+| -------------- | ------ | -------- | ---------- | ---------------- |
+| Secure Storage | Medium | 🔒 High  | Small      | Tokens, secrets  |
+| Key-Value      | Fast   | Low      | Medium     | Settings         |
+| SQLite         | Fast   | Low      | Large      | Structured data  |
+| File System    | Medium | Low      | Very Large | Media, documents |
+| Query Cache    | Fast   | Low      | Medium     | API responses    |
 
 ---
 
@@ -304,13 +304,13 @@ HOW CRITICAL IS OFFLINE?
 ```
 1. CACHE-FIRST (Simple)
    Request → Check cache → If stale, fetch → Update cache
-   
+
 2. STALE-WHILE-REVALIDATE
    Request → Return cached → Fetch update → Update UI
-   
+
 3. OFFLINE-FIRST (Complex)
    Action → Write to local DB → Queue sync → Sync when online
-   
+
 4. SYNC ENGINE
    Use: Firebase, Realm Sync, Supabase realtime
    Handles conflict resolution automatically
@@ -470,13 +470,13 @@ If project details are vague, ASK:
 
 ### ❌ Decision Anti-Patterns
 
-| Anti-Pattern | Why It's Bad | Better Approach |
-|--------------|--------------|-----------------|
-| **Redux for simple app** | Massive overkill | Zustand or context |
-| **Native for MVP** | Slow development | Cross-platform MVP |
-| **Drawer for 3 sections** | Hidden navigation | Tab bar |
-| **AsyncStorage for tokens** | Insecure | SecureStore |
-| **No offline consideration** | Broken on subway | Plan from start |
+| Anti-Pattern                    | Why It's Bad        | Better Approach      |
+| ------------------------------- | ------------------- | -------------------- |
+| **Redux for simple app**        | Massive overkill    | Zustand or context   |
+| **Native for MVP**              | Slow development    | Cross-platform MVP   |
+| **Drawer for 3 sections**       | Hidden navigation   | Tab bar              |
+| **AsyncStorage for tokens**     | Insecure            | SecureStore          |
+| **No offline consideration**    | Broken on subway    | Plan from start      |
 | **Same stack for all projects** | Doesn't fit context | Evaluate per project |
 
 ---

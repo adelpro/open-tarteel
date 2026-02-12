@@ -7,15 +7,15 @@ description: Nuxt 3 full-stack template. Vue 3, Pinia, Tailwind, Prisma.
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Framework | Nuxt 3 |
-| Language | TypeScript |
-| UI | Vue 3 (Composition API) |
-| State | Pinia |
-| Database | PostgreSQL + Prisma |
-| Styling | Tailwind CSS |
-| Validation | Zod |
+| Component  | Technology              |
+| ---------- | ----------------------- |
+| Framework  | Nuxt 3                  |
+| Language   | TypeScript              |
+| UI         | Vue 3 (Composition API) |
+| State      | Pinia                   |
+| Database   | PostgreSQL + Prisma     |
+| Styling    | Tailwind CSS            |
+| Validation | Zod                     |
 
 ---
 
@@ -54,22 +54,22 @@ project-name/
 
 ## Key Concepts
 
-| Concept | Description |
-|---------|-------------|
-| Auto-imports | Components, composables, utils |
-| File-based routing | pages/ → routes |
-| Server Routes | server/api/ → API endpoints |
-| Composables | Reusable reactive logic |
-| Pinia | State management |
+| Concept            | Description                    |
+| ------------------ | ------------------------------ |
+| Auto-imports       | Components, composables, utils |
+| File-based routing | pages/ → routes                |
+| Server Routes      | server/api/ → API endpoints    |
+| Composables        | Reusable reactive logic        |
+| Pinia              | State management               |
 
 ---
 
 ## Environment Variables
 
-| Variable | Purpose |
-|----------|---------|
-| DATABASE_URL | Prisma connection |
-| NUXT_PUBLIC_APP_URL | Public URL |
+| Variable            | Purpose           |
+| ------------------- | ----------------- |
+| DATABASE_URL        | Prisma connection |
+| NUXT_PUBLIC_APP_URL | Public URL        |
 
 ---
 
@@ -81,7 +81,7 @@ project-name/
 4. `npm install -D @nuxtjs/tailwindcss`
 5. Add modules to `nuxt.config.ts`:
    ```ts
-   modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss']
+   modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss'];
    ```
 6. `npx prisma init`
 7. Configure schema

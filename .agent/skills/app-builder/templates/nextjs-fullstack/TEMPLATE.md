@@ -7,14 +7,14 @@ description: Next.js full-stack template principles. App Router, Prisma, Tailwin
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Framework | Next.js 14 (App Router) |
-| Language | TypeScript |
-| Database | PostgreSQL + Prisma |
-| Styling | Tailwind CSS |
-| Auth | Clerk (optional) |
-| Validation | Zod |
+| Component  | Technology              |
+| ---------- | ----------------------- |
+| Framework  | Next.js 14 (App Router) |
+| Language   | TypeScript              |
+| Database   | PostgreSQL + Prisma     |
+| Styling    | Tailwind CSS            |
+| Auth       | Clerk (optional)        |
+| Validation | Zod                     |
 
 ---
 
@@ -44,21 +44,21 @@ project-name/
 
 ## Key Concepts
 
-| Concept | Description |
-|---------|-------------|
+| Concept           | Description         |
+| ----------------- | ------------------- |
 | Server Components | Default, fetch data |
-| Server Actions | Form mutations |
-| Route Handlers | API endpoints |
-| Prisma | Type-safe ORM |
+| Server Actions    | Form mutations      |
+| Route Handlers    | API endpoints       |
+| Prisma            | Type-safe ORM       |
 
 ---
 
 ## Environment Variables
 
-| Variable | Purpose |
-|----------|---------|
-| DATABASE_URL | Prisma connection |
-| NEXT_PUBLIC_APP_URL | Public URL |
+| Variable            | Purpose           |
+| ------------------- | ----------------- |
+| DATABASE_URL        | Prisma connection |
+| NEXT_PUBLIC_APP_URL | Public URL        |
 
 ---
 

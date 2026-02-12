@@ -27,6 +27,7 @@ Manage preview server: start, stop, status check.
 ## Usage Examples
 
 ### Start Server
+
 ```
 /preview start
 
@@ -40,6 +41,7 @@ Response:
 ```
 
 ### Status Check
+
 ```
 /preview
 
@@ -53,6 +55,7 @@ Response:
 ```
 
 ### Port Conflict
+
 ```
 /preview start
 

@@ -7,13 +7,13 @@ description: Astro static site template principles. Content-focused websites, bl
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Framework | Astro 4.x |
-| Content | MDX + Content Collections |
-| Styling | Tailwind CSS |
-| Integrations | Sitemap, RSS, SEO |
-| Output | Static/SSG |
+| Component    | Technology                |
+| ------------ | ------------------------- |
+| Framework    | Astro 4.x                 |
+| Content      | MDX + Content Collections |
+| Styling      | Tailwind CSS              |
+| Integrations | Sitemap, RSS, SEO         |
+| Output       | Static/SSG                |
 
 ---
 
@@ -38,12 +38,12 @@ project-name/
 
 ## Key Concepts
 
-| Concept | Description |
-|---------|-------------|
-| Content Collections | Type-safe content with Zod schemas |
+| Concept              | Description                         |
+| -------------------- | ----------------------------------- |
+| Content Collections  | Type-safe content with Zod schemas  |
 | Islands Architecture | Partial hydration for interactivity |
-| Zero JS by default | Static HTML unless needed |
-| MDX Support | Markdown with components |
+| Zero JS by default   | Static HTML unless needed           |
+| MDX Support          | Markdown with components            |
 
 ---
 
@@ -59,12 +59,12 @@ project-name/
 
 ## Deployment
 
-| Platform | Method |
-|----------|--------|
-| Vercel | Auto-detected |
-| Netlify | Auto-detected |
-| Cloudflare Pages | Auto-detected |
-| GitHub Pages | Build + deploy action |
+| Platform         | Method                |
+| ---------------- | --------------------- |
+| Vercel           | Auto-detected         |
+| Netlify          | Auto-detected         |
+| Cloudflare Pages | Auto-detected         |
+| GitHub Pages     | Build + deploy action |
 
 ---
 

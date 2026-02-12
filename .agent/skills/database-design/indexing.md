@@ -20,13 +20,13 @@ Don't over-index:
 
 ## Index Type Selection
 
-| Type | Use For |
-|------|---------|
-| **B-tree** | General purpose, equality & range |
-| **Hash** | Equality only, faster |
-| **GIN** | JSONB, arrays, full-text |
-| **GiST** | Geometric, range types |
-| **HNSW/IVFFlat** | Vector similarity (pgvector) |
+| Type             | Use For                           |
+| ---------------- | --------------------------------- |
+| **B-tree**       | General purpose, equality & range |
+| **Hash**         | Equality only, faster             |
+| **GIN**          | JSONB, arrays, full-text          |
+| **GiST**         | Geometric, range types            |
+| **HNSW/IVFFlat** | Vector similarity (pgvector)      |
 
 ## Composite Index Principles
 

@@ -42,7 +42,6 @@ Thank you for considering contributing to **Open-Tarteel**! We appreciate your h
    Implement your feature or fix the bug. Ensure that your code follows the project's style guidelines.
 
 6. **Coding Standards**
-
    - Use TypeScript and functional components.
    - Follow the existing linting and formatting rules (`yarn lint`, `yarn format`).
    - Write meaningful commit messages following [Conventional Commits](https://www.conventionalcommits.org/).

@@ -24,12 +24,13 @@ This command adds features or makes updates to existing application.
    - Check dependencies
 
 3. **Present Plan to User** (for major changes)
+
    ```
    "To add admin panel:
    - I'll create 15 new files
    - Update 8 files
    - Takes ~10 minutes
-   
+
    Should I start?"
    ```
 

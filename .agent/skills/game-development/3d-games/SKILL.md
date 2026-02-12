@@ -23,12 +23,12 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### Optimization Principles
 
-| Technique | Purpose |
-|-----------|---------|
-| **Frustum culling** | Don't render off-screen |
-| **Occlusion culling** | Don't render hidden |
-| **LOD** | Less detail at distance |
-| **Batching** | Combine draw calls |
+| Technique             | Purpose                 |
+| --------------------- | ----------------------- |
+| **Frustum culling**   | Don't render off-screen |
+| **Occlusion culling** | Don't render hidden     |
+| **LOD**               | Less detail at distance |
+| **Batching**          | Combine draw calls      |
 
 ---
 
@@ -36,11 +36,11 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### Shader Types
 
-| Type | Purpose |
-|------|---------|
-| **Vertex** | Position, normals |
-| **Fragment/Pixel** | Color, lighting |
-| **Compute** | General computation |
+| Type               | Purpose             |
+| ------------------ | ------------------- |
+| **Vertex**         | Position, normals   |
+| **Fragment/Pixel** | Color, lighting     |
+| **Compute**        | General computation |
 
 ### When to Write Custom Shaders
 
@@ -55,12 +55,12 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### Collision Shapes
 
-| Shape | Use Case |
-|-------|----------|
-| **Box** | Buildings, crates |
-| **Sphere** | Balls, quick checks |
-| **Capsule** | Characters |
-| **Mesh** | Terrain (expensive) |
+| Shape       | Use Case            |
+| ----------- | ------------------- |
+| **Box**     | Buildings, crates   |
+| **Sphere**  | Balls, quick checks |
+| **Capsule** | Characters          |
+| **Mesh**    | Terrain (expensive) |
 
 ### Principles
 
@@ -74,12 +74,12 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### Camera Types
 
-| Type | Use |
-|------|-----|
-| **Third-person** | Action, adventure |
-| **First-person** | Immersive, FPS |
-| **Isometric** | Strategy, RPG |
-| **Orbital** | Inspection, editors |
+| Type             | Use                 |
+| ---------------- | ------------------- |
+| **Third-person** | Action, adventure   |
+| **First-person** | Immersive, FPS      |
+| **Isometric**    | Strategy, RPG       |
+| **Orbital**      | Inspection, editors |
 
 ### Camera Feel
 
@@ -94,12 +94,12 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### Light Types
 
-| Type | Use |
-|------|-----|
-| **Directional** | Sun, moon |
-| **Point** | Lamps, torches |
-| **Spot** | Flashlight, stage |
-| **Ambient** | Base illumination |
+| Type            | Use               |
+| --------------- | ----------------- |
+| **Directional** | Sun, moon         |
+| **Point**       | Lamps, torches    |
+| **Spot**        | Flashlight, stage |
+| **Ambient**     | Base illumination |
 
 ### Performance Consideration
 
@@ -113,22 +113,22 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### LOD Strategy
 
-| Distance | Model |
-|----------|-------|
-| Near | Full detail |
-| Medium | 50% triangles |
-| Far | 25% or billboard |
+| Distance | Model            |
+| -------- | ---------------- |
+| Near     | Full detail      |
+| Medium   | 50% triangles    |
+| Far      | 25% or billboard |
 
 ---
 
 ## 7. Anti-Patterns
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Mesh colliders everywhere | Simple shapes |
+| ❌ Don't                    | ✅ Do                 |
+| --------------------------- | --------------------- |
+| Mesh colliders everywhere   | Simple shapes         |
 | Real-time shadows on mobile | Baked or blob shadows |
-| One LOD for all distances | Distance-based LOD |
-| Unoptimized shaders | Profile and simplify |
+| One LOD for all distances   | Distance-based LOD    |
+| Unoptimized shaders         | Profile and simplify  |
 
 ---
 

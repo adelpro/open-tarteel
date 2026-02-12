@@ -20,13 +20,13 @@ DESKTOP:                           MOBILE:
 
 ### Mobile Color Priorities
 
-| Priority | Why |
-|----------|-----|
-| **1. Readability** | Outdoor, variable lighting |
-| **2. Battery efficiency** | OLED = dark mode saves power |
-| **3. System integration** | Dark/light mode support |
-| **4. Semantics** | Error, success, warning colors |
-| **5. Brand** | After functional requirements |
+| Priority                  | Why                            |
+| ------------------------- | ------------------------------ |
+| **1. Readability**        | Outdoor, variable lighting     |
+| **2. Battery efficiency** | OLED = dark mode saves power   |
+| **3. System integration** | Dark/light mode support        |
+| **4. Semantics**          | Error, success, warning colors |
+| **5. Brand**              | After functional requirements  |
 
 ---
 
@@ -122,12 +122,12 @@ Elevation in dark mode:
 
 ### Text Colors in Dark Mode
 
-| Role | Light Mode | Dark Mode |
-|------|------------|-----------|
-| Primary | #000000 (Black) | #E8E8E8 (Not pure white) |
-| Secondary | #666666 | #B0B0B0 |
-| Disabled | #9E9E9E | #6E6E6E |
-| Links | #1976D2 | #8AB4F8 |
+| Role      | Light Mode      | Dark Mode                |
+| --------- | --------------- | ------------------------ |
+| Primary   | #000000 (Black) | #E8E8E8 (Not pure white) |
+| Secondary | #666666         | #B0B0B0                  |
+| Disabled  | #9E9E9E         | #6E6E6E                  |
+| Links     | #1976D2         | #8AB4F8                  |
 
 ### Color Inversion Rules
 
@@ -194,12 +194,12 @@ DO:
 
 ### Consistent Meaning
 
-| Semantic | Meaning | iOS Default | Android Default |
-|----------|---------|-------------|-----------------|
-| Error | Problems, destruction | #FF3B30 | #B3261E |
-| Success | Completion, positive | #34C759 | #4CAF50 |
-| Warning | Attention, caution | #FF9500 | #FFC107 |
-| Info | Information | #007AFF | #2196F3 |
+| Semantic | Meaning               | iOS Default | Android Default |
+| -------- | --------------------- | ----------- | --------------- |
+| Error    | Problems, destruction | #FF3B30     | #B3261E         |
+| Success  | Completion, positive  | #34C759     | #4CAF50         |
+| Warning  | Attention, caution    | #FF9500     | #FFC107         |
+| Info     | Information           | #007AFF     | #2196F3         |
 
 ### Semantic Color Rules
 
@@ -338,14 +338,14 @@ Mobile recommendation: Meet AA, aim for AAA
 
 ### ❌ Common Mistakes
 
-| Mistake | Problem | Fix |
-|---------|---------|-----|
-| **Light gray on white** | Invisible outdoors | Min 4.5:1 contrast |
-| **Pure white in dark mode** | Eye strain | Use #E0E0E0-#F0F0F0 |
-| **Same saturation dark mode** | Garish, glowing | Desaturate colors |
-| **Red/green only indicator** | Colorblind users can't see | Add icons |
-| **Semantic colors for brand** | Confusing meaning | Use neutral for brand |
-| **Ignoring system dark mode** | Jarring experience | Support both modes |
+| Mistake                       | Problem                    | Fix                   |
+| ----------------------------- | -------------------------- | --------------------- |
+| **Light gray on white**       | Invisible outdoors         | Min 4.5:1 contrast    |
+| **Pure white in dark mode**   | Eye strain                 | Use #E0E0E0-#F0F0F0   |
+| **Same saturation dark mode** | Garish, glowing            | Desaturate colors     |
+| **Red/green only indicator**  | Colorblind users can't see | Add icons             |
+| **Semantic colors for brand** | Confusing meaning          | Use neutral for brand |
+| **Ignoring system dark mode** | Jarring experience         | Support both modes    |
 
 ### ❌ AI Color Mistakes
 

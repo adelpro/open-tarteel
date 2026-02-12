@@ -82,5 +82,6 @@ Show current project and agent status.
 ## Technical
 
 Status uses these scripts:
+
 - `session_manager.py status`
 - `auto_preview.py status`
