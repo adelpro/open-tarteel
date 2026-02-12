@@ -81,9 +81,9 @@ const ARABIC_INDIC_DIGIT_PATTERN = /[\u0660-\u0669]/g;
  */
 export const removeTashkeel = (text: string): string => {
   return text
-    .replace(/ٱ/g, '\u0627') // Wasl sign → regular Alef
-    .replace(TASHKEEL_PATTERN, '')
-    .replace(QURANIC_MARKS_PATTERN, '');
+    .replaceAll(/ٱ/g, '\u0627') // Wasl sign → regular Alef
+    .replaceAll(TASHKEEL_PATTERN, '')
+    .replaceAll(QURANIC_MARKS_PATTERN, '');
 };
 
 /**
@@ -114,21 +114,21 @@ export const normalizeArabicText = (text: string): string => {
 
   result = result
     // Normalize Alef variations → ا
-    .replace(/[\u0622\u0623\u0625]/g, '\u0627') // آ أ إ → ا
+    .replaceAll(/[\u0622\u0623\u0625]/g, '\u0627') // آ أ إ → ا
     // Normalize Hamza on Waw → و
-    .replace(/\u0624/g, '\u0648') // ؤ → و
+    .replaceAll(/\u0624/g, '\u0648') // ؤ → و
     // Normalize Hamza on Yaa → ي
-    .replace(/\u0626/g, '\u064A') // ئ → ي
+    .replaceAll(/\u0626/g, '\u064A') // ئ → ي
     // Normalize Alef Maqsura → Yaa
-    .replace(/\u0649/g, '\u064A') // ى → ي
+    .replaceAll(/\u0649/g, '\u064A') // ى → ي
     // Normalize Taa Marbouta → Haa
-    .replace(/\u0629/g, '\u0647') // ة → ه
+    .replaceAll(/\u0629/g, '\u0647') // ة → ه
     // Remove tatweel (kashida)
-    .replace(new RegExp(TATWEEL, 'g'), '')
+    .replaceAll(new RegExp(TATWEEL, 'g'), '')
     // Normalize standalone hamza marks
-    .replace(/[\u0654\u0655]/g, '') // Remove hamza above/below
+    .replaceAll(/[\u0654\u0655]/g, '') // Remove hamza above/below
     // Convert Arabic-Indic digits → Western digits
-    .replace(
+    .replaceAll(
       ARABIC_INDIC_DIGIT_PATTERN,
       (match: string) => ARABIC_INDIC_DIGITS[match] ?? match
     )
@@ -148,7 +148,7 @@ export const normalizeArabicText = (text: string): string => {
  * Useful for matching "سديس" against "السديس".
  */
 export const removeDefiniteArticle = (text: string): string => {
-  return text.replace(/(^|\s)ال/g, '$1').trim();
+  return text.replaceAll(/(^|\s)ال/g, '$1').trim();
 };
 
 /**
@@ -156,7 +156,7 @@ export const removeDefiniteArticle = (text: string): string => {
  * "عبدالباسط" against "عبد الباسط".
  */
 const removeSpaces = (text: string): string => {
-  return text.replace(/\s/g, '');
+  return text.replaceAll(/\s/g, '');
 };
 
 // ──────────────────────────────────────────
@@ -266,9 +266,9 @@ export function fuzzySearch<T extends { name: string }>(
   // Search with both normal and spaceless variants
   const normalResults = fuse.search(normalizedSearchTerm);
   const spacelessResults =
-    spacelessSearchTerm !== normalizedSearchTerm
-      ? fuse.search(spacelessSearchTerm)
-      : [];
+    spacelessSearchTerm === normalizedSearchTerm
+      ? []
+      : fuse.search(spacelessSearchTerm);
 
   // Merge and deduplicate results, keeping best scores
   const seenIndices = new Set<number>();

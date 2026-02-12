@@ -921,7 +921,7 @@ describe('fuzzySearch', () => {
 
     it('should accept perfect match threshold (0.0)', () => {
       const results = fuzzySearch(items, 'محمد صديق المنشاوي', {
-        threshold: 0.0,
+        threshold: 0,
       });
       expect(results).toHaveLength(1);
       expect(results[0].name).toBe('محمد صديق المنشاوي');

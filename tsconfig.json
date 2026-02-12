@@ -2,11 +2,7 @@
   "compilerOptions": {
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext", "webworker"],
-    "types": [
-      "vitest/globals",
-      "vitest/jsdom",
-      "@serwist/next/typings"
-    ],
+    "types": ["vitest/globals", "vitest/jsdom", "@serwist/next/typings"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
