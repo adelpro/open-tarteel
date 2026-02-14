@@ -1,5 +1,5 @@
 'use client';
-import Gun from 'gun';
+import Gun from 'gun/gun';
 
 import { GUNCONFIG, VIEW_COUNTS_KEY } from '@/constants';
 
