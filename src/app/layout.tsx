@@ -1,10 +1,9 @@
 'use client';
 import './globals.css';
 
-import { useAtom, useAtomValue } from 'jotai';
-import type { Metadata } from 'next';
+import { useAtom } from 'jotai';
 import { Tajawal } from 'next/font/google';
-import { use, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import ExitFullscreen from '@/components/exit-fullscreen';
 import Footer from '@/components/footer';

@@ -10,19 +10,21 @@
     "dev:inspect": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
+    "lint": "eslint . --cache --concurrency=auto --max-warnings=0",
+    "lint:fix": "eslint . --fix --cache --concurrency=auto",
     "type-check": "tsc  --noemit",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "prepare": "husky || true",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "clean": "rimraf .next node_modules"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "prettier --write",
-      "eslint --fix"
+      "eslint --fix --cache --concurrency=auto",
+      "prettier --write"
     ],
     "*.{json,md,css}": "prettier --write"
   },
@@ -57,7 +59,6 @@
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
     "@eslint/compat": "^1.2.5",
-    "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/forms": "^0.5.10",
@@ -90,6 +91,7 @@
     "postcss": "^8",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.10",
+    "rimraf": "^6.1.2",
     "tailwindcss": "^3.4.1",
     "tailwindcss-animated": "^1.1.2",
     "typescript": "^5",
