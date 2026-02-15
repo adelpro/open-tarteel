@@ -3,6 +3,7 @@ import './globals.css';
 
 import { useAtom } from 'jotai';
 import { Tajawal } from 'next/font/google';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { useEffect } from 'react';
 
 import ExitFullscreen from '@/components/exit-fullscreen';
@@ -36,19 +37,21 @@ export default function RootLayout({
   }, [setIsFullscreen]);
 
   return (
-    <IntlProviderWrapper>
-      <HtmlWrapper>
-        <body className={`${tajawal.className} antialiased`}>
-          <main className="relative flex min-h-dvh w-full flex-col items-center justify-center text-foreground">
-            {isFullscreen ? <ExitFullscreen /> : <></>}
-            {isFullscreen ? <></> : <LanguageSwitcher />}
-            <div className="flex w-full flex-grow items-center justify-center">
-              {children}
-            </div>
-            {isFullscreen ? <></> : <Footer />}
-          </main>
-        </body>
-      </HtmlWrapper>
-    </IntlProviderWrapper>
+    <NuqsAdapter>
+      <IntlProviderWrapper>
+        <HtmlWrapper>
+          <body className={`${tajawal.className} antialiased`}>
+            <main className="relative flex min-h-dvh w-full flex-col items-center justify-center text-foreground">
+              {isFullscreen ? <ExitFullscreen /> : <></>}
+              {isFullscreen ? <></> : <LanguageSwitcher />}
+              <div className="flex w-full flex-grow items-center justify-center">
+                {children}
+              </div>
+              {isFullscreen ? <></> : <Footer />}
+            </main>
+          </body>
+        </HtmlWrapper>
+      </IntlProviderWrapper>
+    </NuqsAdapter>
   );
 }
