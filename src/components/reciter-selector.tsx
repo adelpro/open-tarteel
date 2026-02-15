@@ -31,7 +31,7 @@ export default function ReciterSelector() {
     setMounted(true);
 
     // Auto-open dialog if there's a search query in URL (only once)
-    const searchQuery = searchParams.get('q');
+    const searchQuery = searchParams.get('query');
     if (searchQuery && searchQuery.trim() !== '' && !autoOpenedRef.current) {
       setIsOpen(true);
       autoOpenedRef.current = true;

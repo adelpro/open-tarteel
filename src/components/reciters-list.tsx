@@ -6,15 +6,15 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
 import { ImSortAmountDesc } from 'react-icons/im';
 import {
-  TbSortAscendingLetters,
-  TbSortDescendingNumbers,
+    TbSortAscendingLetters,
+    TbSortDescendingNumbers,
 } from 'react-icons/tb';
 import { useIntl } from 'react-intl';
 
 import {
-  fetchViewCounts,
-  subscribeToViewCounts,
-  syncView,
+    fetchViewCounts,
+    subscribeToViewCounts,
+    syncView,
 } from '@/gun/view-rank';
 import { useFavorites } from '@/hooks/use-favorites';
 import { useFilterSort } from '@/hooks/use-filter-sort';
@@ -130,7 +130,16 @@ export default function RecitersList({ setIsOpen }: Props) {
       syncView(generateFavId(reciter));
       setSelectedReciter(reciter);
       setIsOpen(false);
-      router.push(`/reciter/${reciter.id}?moshafId=${reciter.moshaf.id}`);
+
+      // Preserve URL state (query, reciter parameters) when navigating
+      const params = new URLSearchParams(window.location.search);
+      const moshafParam = `moshafId=${reciter.moshaf.id}`;
+      const existingParams = params.toString();
+      const queryString = existingParams
+        ? `${moshafParam}&${existingParams}`
+        : moshafParam;
+
+      router.push(`/reciter/${reciter.id}?${queryString}`);
     },
     [router, setIsOpen, setSelectedReciter]
   );
