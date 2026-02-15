@@ -12,7 +12,7 @@ declare global {
 window.wb = window.wb || {
   messageSkipWaiting: () => {},
   register: () => {},
-  addEventListener: (name: string, callback: () => unknown) => {},
+  addEventListener: (_name: string, _callback: () => unknown) => {},
 };
 
 export {};

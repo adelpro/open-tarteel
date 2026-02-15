@@ -20,14 +20,15 @@ const generatePlaylist = (moshaf: MP3APIMoshaf): Playlist => {
 export async function getAllReciters(
   locale: 'ar' | 'en' = 'ar'
 ): Promise<Reciter[]> {
+  const language = locale === 'en' ? 'eng' : 'ar';
   try {
-    const response = await fetch(
-      `https://www.mp3quran.net/api/v3/reciters?language=${locale}`,
-      { next: { revalidate: 3600 } }
-    );
+    const response = await fetch(`/api/reciters?language=${language}`, {
+      next: { revalidate: 3600 },
+    });
 
-    if (!response.ok)
-      throw new Error(`Failed to fetch reciters:: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch reciters, ${response.statusText}`);
+    }
 
     const data: mp3QuranAPiResponse = await response.json();
     const reciters: Reciter[] = [];
@@ -67,22 +68,17 @@ export async function getReciter(
   locale: 'ar' | 'en' = 'ar'
 ): Promise<Reciter | undefined> {
   try {
+    const language = locale === 'en' ? 'eng' : 'ar';
     const response = await fetch(
-      `https://www.mp3quran.net/api/v3/reciters?language=${locale}&reciter=${id}`,
+      `/api/reciters/${id}/${moshafId}?language=${language}`,
       { next: { revalidate: 3600 } }
     );
 
     if (!response.ok) return undefined;
 
-    const apiRecitersData: mp3QuranAPiResponse = await response.json();
-    const apiReciter = apiRecitersData.reciters.find((r) => r.id === id);
-    if (!apiReciter) return undefined;
+    const { reciter: apiReciter, moshaf: apiMoshaf } = await response.json();
 
-    const apiMoshaf = apiReciter.moshaf.find(
-      (m) => m.id.toString() === moshafId.toString()
-    );
-
-    if (!apiMoshaf) return undefined;
+    if (!apiReciter || !apiMoshaf) return undefined;
 
     const playlist = generatePlaylist(apiMoshaf);
     const riwayaKey = getRiwayaKeyFromMoshafName(apiMoshaf.name, locale);

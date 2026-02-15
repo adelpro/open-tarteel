@@ -1,5 +1,5 @@
 'use client';
-import Gun from 'gun';
+import Gun from 'gun/gun';
 
 import { FAVORITE_COUNTS_KEY, GUNCONFIG } from '@/constants';
 

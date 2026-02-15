@@ -1,41 +1,45 @@
 'use client';
 
-import type React from 'react';
-import { BsEye, BsShare, BsStar, BsStarFill } from 'react-icons/bs';
+import React from 'react';
+import { BsStar, BsStarFill } from 'react-icons/bs';
+import { FaRegShareFromSquare } from 'react-icons/fa6';
+import { MdHistory } from 'react-icons/md';
 
-import type { Reciter, Riwaya } from '@/types';
-import { getRiwayaKeyFromValue } from '@/utils/get-riwaya-from-mushaf';
+import { useRecentlyPlayed } from '@/hooks/use-recently-played';
+import { Reciter, Riwaya } from '@/types';
+import { generateFavId } from '@/utils';
 import { useShareReciter } from '@/utils/share';
 
 type Props = {
   reciter: Reciter;
+  favoriteCount: number;
+  viewCount: number;
   index: number;
   isFavorite: boolean;
   isFocused: boolean;
-  favoriteCount: number;
-  viewCount: number;
-  refCallback: (element: HTMLElement | null) => void;
   onSelect: (reciter: Reciter) => void;
-  onFavoriteToggle: (reciter: Reciter) => void;
-  onSelectRiwaya: (riwaya: Riwaya) => void;
+  onFavoriteToggle: () => void;
+  onSelectRiwaya: (riwaya: Riwaya | 'all') => void;
+  refCallback: (element: HTMLDivElement | null) => void;
 };
 
 export default function ReciterCard({
   reciter,
-  isFavorite,
-  isFocused,
   favoriteCount,
   viewCount,
-  refCallback,
+  isFavorite,
+  isFocused,
   onSelect,
   onFavoriteToggle,
-  onSelectRiwaya,
+  refCallback,
 }: Props) {
   const { shareReciter } = useShareReciter();
-  const riwaya = reciter.moshaf.riwaya;
-  const riwayaKey = getRiwayaKeyFromValue(riwaya);
+  const { recentIds } = useRecentlyPlayed();
 
-  const handleShare = async (event: React.MouseEvent) => {
+  const favId = generateFavId(reciter);
+  const isRecentlyPlayed = recentIds.includes(favId);
+
+  const handleShare = (event: React.MouseEvent) => {
     event.stopPropagation();
     shareReciter(reciter);
   };
@@ -43,77 +47,65 @@ export default function ReciterCard({
   return (
     <div
       ref={refCallback}
-      role="button"
-      tabIndex={0}
       onClick={() => onSelect(reciter)}
-      className={`group relative flex w-full cursor-pointer flex-col rounded-2xl border bg-card p-6 transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
+      className={`relative cursor-pointer rounded-2xl border p-4 transition-all duration-300 ${
         isFocused
-          ? 'border-blue-500 shadow-md ring-2 ring-blue-500/20'
-          : isFavorite
-            ? 'border-amber-200 bg-amber-50/30'
-            : 'border-gray-200 hover:border-gray-300'
-      } dark:border-gray-700 dark:bg-gray-900 dark:hover:border-gray-600`}
+          ? 'bg-brand-CTA-blue-50/30 border-brand-CTA-blue-500 ring-2 ring-brand-CTA-blue-500/20'
+          : 'hover:border-brand-CTA-blue-200 border-gray-100 bg-white hover:shadow-xl hover:shadow-gray-200/50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600'
+      }`}
     >
-      {/* Header */}
-      <div className="mb-6 flex items-start justify-between">
-        <h2 className="pr-2 text-lg font-semibold leading-tight">
-          {reciter.name}
-        </h2>
+      <div className="flex flex-col gap-3">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 overflow-hidden text-right">
+            <h3 className="mb-1 truncate text-lg font-bold text-gray-900 dark:text-gray-100">
+              {reciter.name}
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {reciter.moshaf.name}
+            </p>
+          </div>
 
-        <button
-          type="button"
-          aria-pressed={isFavorite}
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            onFavoriteToggle(reciter);
-          }}
-          className={`flex-shrink-0 rounded-full p-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
-            isFavorite ? 'text-amber-500' : 'text-gray-400 hover:text-amber-500'
-          }`}
-          aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-        >
-          {isFavorite ? (
-            <BsStarFill className="h-4 w-4" />
-          ) : (
-            <BsStar className="h-4 w-4" />
+          {isRecentlyPlayed && (
+            <div className="bg-brand-CTA-blue-50 dark:bg-brand-CTA-blue-900/40 dark:text-brand-CTA-blue-400 border-brand-CTA-blue-100 dark:border-brand-CTA-blue-800 flex shrink-0 items-center gap-1 self-start rounded-md border px-2 py-1 text-[10px] font-bold text-brand-CTA-blue-600">
+              <MdHistory size={12} />
+              <span>RECENT</span>
+            </div>
           )}
-        </button>
-      </div>
-
-      {/* Stats */}
-      <div className="mb-6 flex items-center gap-4 text-sm">
-        <div className="flex items-center gap-1.5">
-          <BsStar className="h-3.5 w-3.5" />
-          <span className="font-medium">{favoriteCount.toLocaleString()}</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <BsEye className="h-3.5 w-3.5" />
-          <span className="font-medium">{viewCount.toLocaleString()}</span>
+
+        <div className="mt-auto flex items-center justify-between border-t border-gray-50 pt-2 dark:border-gray-700/50">
+          <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+            <div className="flex items-center gap-1">
+              <BsStarFill className="text-yellow-400" />
+              <span>{favoriteCount}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span>Views: {viewCount}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleShare}
+              className="rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700"
+            >
+              <FaRegShareFromSquare size={18} />
+            </button>
+            <button
+              onClick={(event) => {
+                event.stopPropagation();
+                onFavoriteToggle();
+              }}
+              className="rounded-full p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              {isFavorite ? (
+                <BsStarFill size={20} className="text-yellow-400" />
+              ) : (
+                <BsStar size={20} className="text-gray-400" />
+              )}
+            </button>
+          </div>
         </div>
-      </div>
-
-      {/* Footer */}
-      <div className="flex items-center justify-between">
-        <button
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            onSelectRiwaya(riwaya);
-          }}
-          className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-        >
-          {riwayaKey}
-        </button>
-
-        <button
-          type="button"
-          onClick={handleShare}
-          className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:hover:bg-gray-800 dark:hover:text-gray-300"
-          aria-label="Share reciter"
-        >
-          <BsShare className="h-3.5 w-3.5" />
-        </button>
       </div>
     </div>
   );

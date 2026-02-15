@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
 import { ImSortAmountDesc } from 'react-icons/im';
+import { MdHistory } from 'react-icons/md';
 import {
     TbSortAscendingLetters,
     TbSortDescendingNumbers,
@@ -19,6 +20,7 @@ import {
 import { useFavorites } from '@/hooks/use-favorites';
 import { useFilterSort } from '@/hooks/use-filter-sort';
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
+import { useRecentlyPlayed } from '@/hooks/use-recently-played';
 import { useReciters } from '@/hooks/use-reciters';
 import { selectedReciterAtom } from '@/jotai/atom';
 import { Reciter, Riwaya } from '@/types';
@@ -34,6 +36,8 @@ type Props = {
 export default function RecitersList({ setIsOpen }: Props) {
   const router = useRouter();
   const setSelectedReciter = useSetAtom(selectedReciterAtom);
+  const { recentIds, addToRecent } = useRecentlyPlayed();
+  const [showRecentOnly, setShowRecentOnly] = useState(false);
 
   const { reciters, loading, error } = useReciters();
 
@@ -60,7 +64,7 @@ export default function RecitersList({ setIsOpen }: Props) {
     setSelectedRiwaya,
     sortMode,
     setSortMode,
-    filteredReciters,
+    filteredReciters: baseFilteredReciters,
     availableRiwiyat,
   } = useFilterSort({
     reciters,
@@ -69,6 +73,17 @@ export default function RecitersList({ setIsOpen }: Props) {
     favoriteReciters,
     showOnlyFavorites,
   });
+
+  const filteredReciters = useMemo(() => {
+    if (!showRecentOnly) return baseFilteredReciters;
+    return baseFilteredReciters
+      .filter((r) => recentIds.includes(generateFavId(r)))
+      .sort(
+        (a, b) =>
+          recentIds.indexOf(generateFavId(a)) -
+          recentIds.indexOf(generateFavId(b))
+      );
+  }, [baseFilteredReciters, showRecentOnly, recentIds]);
 
   const { formatMessage } = useIntl();
 
@@ -127,7 +142,9 @@ export default function RecitersList({ setIsOpen }: Props) {
 
   const handleSelectReciter = useCallback(
     (reciter: Reciter) => {
-      syncView(generateFavId(reciter));
+      const favId = generateFavId(reciter);
+      addToRecent(favId);
+      syncView(favId);
       setSelectedReciter(reciter);
       setIsOpen(false);
 
@@ -141,7 +158,7 @@ export default function RecitersList({ setIsOpen }: Props) {
 
       router.push(`/reciter/${reciter.id}?${queryString}`);
     },
-    [router, setIsOpen, setSelectedReciter]
+    [router, setIsOpen, setSelectedReciter, addToRecent]
   );
 
   const handleSearchTerm = useCallback(
@@ -168,9 +185,21 @@ export default function RecitersList({ setIsOpen }: Props) {
             placeholder={searchPlaceHolder}
             value={searchTerm}
             onChange={handleSearchTerm}
-            className="w-full rounded-full border border-gray-300 p-3 shadow-sm focus:border-brand-CTA-blue-500 focus:outline-none"
+            className="w-full rounded-full border border-gray-300 p-3 pr-24 text-black shadow-sm focus:border-brand-CTA-blue-500 focus:outline-none dark:text-white"
           />
-          <div className="absolute inset-y-0 end-2 flex items-center gap-2 pr-2">
+          <div className="absolute inset-y-0 end-2 flex items-center gap-1 pr-2">
+            <button
+              aria-label="Recently Played"
+              title="Recently Played"
+              onClick={() => setShowRecentOnly(!showRecentOnly)}
+              className={`rounded-full p-2.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500/50 ${
+                showRecentOnly
+                  ? 'bg-brand-CTA-blue-50 dark:bg-brand-CTA-blue-900/30 dark:text-brand-CTA-blue-400 text-brand-CTA-blue-600'
+                  : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+              }`}
+            >
+              <MdHistory className="size-5" />
+            </button>
             <button
               aria-label={sort}
               title={
