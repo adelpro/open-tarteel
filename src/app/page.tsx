@@ -25,7 +25,6 @@ export default function Home() {
 
   // Validate selectedReciter exists in reciters list
   useEffect(() => {
-
     if (!isClient || loading || reciters.length === 0) return;
 
     if (selectedReciter) {

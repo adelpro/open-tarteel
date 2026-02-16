@@ -1,9 +1,9 @@
 import {
-    LinkSource,
-    MP3APIMoshaf,
-    mp3QuranAPiResponse,
-    Reciter,
-    Riwaya,
+  LinkSource,
+  MP3APIMoshaf,
+  mp3QuranAPiResponse,
+  Reciter,
+  Riwaya,
 } from '@/types';
 import { Playlist } from '@/types/playlist';
 
