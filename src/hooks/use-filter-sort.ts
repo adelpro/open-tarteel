@@ -10,7 +10,7 @@ import { Reciter, Riwaya } from '@/types';
 import { fuzzySearch, generateFavId } from '@/utils';
 
 // Define parsers for URL state management
-// Using descriptive keys (query, reciter) for clarity
+// Using descriptive keys (query, riwaya) for clarity
 // Define all possible Riwaya values plus 'all'
 const riwayaValues = ['all', ...Object.values(Riwaya)] as const;
 
@@ -41,7 +41,7 @@ export function useFilterSort({
     useQueryStates(filterSearchParsers, {
       urlKeys: {
         searchQuery: 'query',
-        selectedRiwaya: 'reciter',
+        selectedRiwaya: 'riwaya',
       },
       history: 'push',
       shallow: false, // Allow server to track state changes

@@ -148,7 +148,7 @@ export default function RecitersList({ setIsOpen }: Props) {
       setSelectedReciter(reciter);
       setIsOpen(false);
 
-      // Preserve URL state (query, reciter parameters) when navigating
+      // Preserve URL state (query, riwaya parameters) when navigating
       const parameters = new URLSearchParams(window.location.search);
       const moshafParameter = `moshafId=${reciter.moshaf.id}`;
       const existingParameters = parameters.toString();
@@ -156,7 +156,8 @@ export default function RecitersList({ setIsOpen }: Props) {
         ? `${moshafParameter}&${existingParameters}`
         : moshafParameter;
 
-      router.push(`/reciter/${reciter.id}?${queryString}`);
+      const targetUrl = `/reciter/${reciter.id}?${queryString}`;
+      router.push(targetUrl);
     },
     [router, setIsOpen, setSelectedReciter, addToRecent]
   );
