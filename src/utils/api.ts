@@ -1,9 +1,9 @@
 import {
-  LinkSource,
-  MP3APIMoshaf,
-  mp3QuranAPiResponse,
-  Reciter,
-  Riwaya,
+    LinkSource,
+    MP3APIMoshaf,
+    mp3QuranAPiResponse,
+    Reciter,
+    Riwaya,
 } from '@/types';
 import { Playlist } from '@/types/playlist';
 
@@ -21,12 +21,21 @@ export async function getAllReciters(
   locale: 'ar' | 'en' = 'ar'
 ): Promise<Reciter[]> {
   const language = locale === 'en' ? 'eng' : 'ar';
+
+  // Determine if we're on server or client
+  const isServer = typeof window === 'undefined';
+  const baseUrl = isServer
+    ? process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    : '';
+  const url = `${baseUrl}/api/reciters?language=${language}`;
+
   try {
-    const response = await fetch(`/api/reciters?language=${language}`, {
+    const response = await fetch(url, {
       next: { revalidate: 3600 },
     });
 
     if (!response.ok) {
+      console.error('[getAllReciters] Response not ok:', response.statusText);
       throw new Error(`Failed to fetch reciters, ${response.statusText}`);
     }
 
@@ -56,7 +65,8 @@ export async function getAllReciters(
     }
 
     return reciters;
-  } catch {
+  } catch (error) {
+    console.error('[getAllReciters] Error:', error);
     return [];
   }
 }
@@ -69,10 +79,15 @@ export async function getReciter(
 ): Promise<Reciter | undefined> {
   try {
     const language = locale === 'en' ? 'eng' : 'ar';
-    const response = await fetch(
-      `/api/reciters/${id}/${moshafId}?language=${language}`,
-      { next: { revalidate: 3600 } }
-    );
+
+    // Determine if we're on server or client
+    const isServer = typeof window === 'undefined';
+    const baseUrl = isServer
+      ? process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+      : '';
+    const url = `${baseUrl}/api/reciters/${id}/${moshafId}?language=${language}`;
+
+    const response = await fetch(url, { next: { revalidate: 3600 } });
 
     if (!response.ok) return undefined;
 
