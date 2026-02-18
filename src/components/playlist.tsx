@@ -49,13 +49,13 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                   <div className="flex-1">
                     <div className="flex items-baseline justify-between">
                       <span className="text-lg font-medium">
-                        {isEnlgish
+                        {isEnglish
                           ? surah.englishName
                           : removeTashkeel(surah.name)}
                       </span>
                       <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
                         {surah.ayahCount}{' '}
-                        {isEnlgish
+                        {isEnglish
                           ? surah.ayahCount === 1
                             ? 'Aya'
                             : 'Ayas'
