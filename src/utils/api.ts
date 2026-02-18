@@ -16,18 +16,27 @@ const generatePlaylist = (moshaf: MP3APIMoshaf): Playlist => {
   }));
   return result;
 };
-// Function to fetch reciters from MP3Quran API
+/**
+ * Fetches all reciters from MP3Quran API
+ *
+ * Note: Uses different URL strategy for server vs client to handle SSR:
+ * - Server-side: Calls mp3quran.net API directly with absolute URL
+ *   (Node.js fetch() requires absolute URLs, relative URLs throw "Invalid URL" error)
+ * - Client-side: Uses internal API route with relative URL
+ *   (Browser automatically resolves relative URLs to current domain)
+ *
+ * This prevents SSR failures when users directly visit reciter pages or refresh them.
+ */
 export async function getAllReciters(
   locale: 'ar' | 'en' = 'ar'
 ): Promise<Reciter[]> {
   const language = locale === 'en' ? 'eng' : 'ar';
 
-  // Determine if we're on server or client
+  // Server needs absolute URL, client works with relative URL
   const isServer = typeof window === 'undefined';
-  const baseUrl = isServer
-    ? process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-    : '';
-  const url = `${baseUrl}/api/reciters?language=${language}`;
+  const url = isServer
+    ? `https://www.mp3quran.net/api/v3/reciters?language=${language}`
+    : `/api/reciters?language=${language}`;
 
   try {
     const response = await fetch(url, {
@@ -69,7 +78,13 @@ export async function getAllReciters(
   }
 }
 
-// Fetch reciter data from API
+/**
+ * Fetches a specific reciter's data from MP3Quran API
+ *
+ * Note: Uses different URL strategy for server vs client (same reason as getAllReciters):
+ * - Server-side: Direct API call with absolute URL to avoid "Invalid URL" errors
+ * - Client-side: Internal API route with relative URL for browser compatibility
+ */
 export async function getReciter(
   id: number,
   moshafId: number,
@@ -78,12 +93,11 @@ export async function getReciter(
   try {
     const language = locale === 'en' ? 'eng' : 'ar';
 
-    // Determine if we're on server or client
+    // Server needs absolute URL, client works with relative URL
     const isServer = typeof window === 'undefined';
-    const baseUrl = isServer
-      ? process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-      : '';
-    const url = `${baseUrl}/api/reciters/${id}/${moshafId}?language=${language}`;
+    const url = isServer
+      ? `https://www.mp3quran.net/api/v3/reciters?language=${language}&reciter=${id}`
+      : `/api/reciters/${id}/${moshafId}?language=${language}`;
 
     const response = await fetch(url, { next: { revalidate: 3600 } });
 
