@@ -72,15 +72,14 @@ export default async function Page({ params }: Props) {
   let RECITERS = [];
   try {
     RECITERS = await getAllReciters();
-  } catch (error) {
-    console.error('[ReciterPage] Error fetching reciters:', error);
+  } catch {
     return notFound();
   }
 
+  // Find reciter with matching ID (there may be multiple entries with different moshafs)
   const reciter = RECITERS.find((r) => r.id === Number(id));
 
   if (!reciter) {
-    console.warn('[ReciterPage] Reciter not found for ID:', id);
     return notFound();
   }
 

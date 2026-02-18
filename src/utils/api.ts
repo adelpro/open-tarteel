@@ -35,7 +35,6 @@ export async function getAllReciters(
     });
 
     if (!response.ok) {
-      console.error('[getAllReciters] Response not ok:', response.statusText);
       throw new Error(`Failed to fetch reciters, ${response.statusText}`);
     }
 
@@ -65,8 +64,7 @@ export async function getAllReciters(
     }
 
     return reciters;
-  } catch (error) {
-    console.error('[getAllReciters] Error:', error);
+  } catch {
     return [];
   }
 }

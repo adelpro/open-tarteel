@@ -28,11 +28,6 @@ export async function GET(request: NextRequest) {
     }
 
     if (!response.ok) {
-      console.error(
-        '[API /api/reciters] mp3quran.net response not ok:',
-        response.status,
-        response.statusText
-      );
       return NextResponse.json(
         { error: 'Failed to fetch reciters' },
         { status: response.status }
@@ -40,14 +35,8 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
-    console.log(
-      '[API /api/reciters] Successfully fetched:',
-      data.reciters?.length || 0,
-      'reciters'
-    );
     return NextResponse.json(data);
-  } catch (error) {
-    console.error('[API /api/reciters] Error:', error);
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

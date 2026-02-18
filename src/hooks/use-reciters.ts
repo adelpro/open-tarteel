@@ -30,13 +30,9 @@ export function useReciters() {
         if (selectedReciter) {
           const matched = data.find((r) => r.id === selectedReciter.id);
           if (matched) {
-            setSelectedReciter(matched); // Update with fresh data
+            setSelectedReciter(matched);
           } else {
-            console.warn(
-              '[useReciters] Clearing invalid reciter ID:',
-              selectedReciter.id
-            );
-            setSelectedReciter(null); // Clear invalid reciter
+            setSelectedReciter(null);
           }
         }
       } catch {

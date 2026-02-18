@@ -30,8 +30,6 @@ export default function Home() {
     if (selectedReciter) {
       const exists = reciters.some((r) => r.id === selectedReciter.id);
       if (!exists) {
-        // Clear invalid reciter
-        console.warn('[Home] Clearing invalid reciter from home page');
         setSelectedReciter(null);
         return;
       }
@@ -43,10 +41,7 @@ export default function Home() {
 
     // Verify reciter exists before redirecting
     const exists = reciters.some((r) => r.id === selectedReciter.id);
-    if (!exists) {
-      console.warn('[Home] Reciter does not exist, not redirecting');
-      return;
-    }
+    if (!exists) return;
 
     const currentPath = `${pathname}?${searchParams.toString()}`;
     const targetPath = `/reciter/${selectedReciter.id}?moshafId=${selectedReciter.moshaf.id}`;
