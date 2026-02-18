@@ -21,7 +21,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
     setCurrentTrack(index);
   };
 
-  const isEnlgish = language === 'en';
+  const isEnglish = language === 'en';
 
   if (!selectedReciter?.moshaf?.playlist) {
     return <></>;
