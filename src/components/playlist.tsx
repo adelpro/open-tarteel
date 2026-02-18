@@ -16,7 +16,7 @@ type Props = {
 export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
   const language = useIntl().locale;
   const selectedReciter = useAtomValue(selectedReciterAtom);
-  const handlePlylistItemClick = (index: number) => {
+  const handlePlaylistItemClick = (index: number) => {
     setIsOpen(false);
     setCurrentTrack(index);
   };
@@ -40,7 +40,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
               <li
                 key={index}
                 className="mx-2 my-3 w-full cursor-pointer rounded border-b border-gray-100 p-3 text-slate-500 transition-colors duration-300 hover:bg-gray-50 hover:text-slate-800"
-                onClick={() => handlePlylistItemClick(index)}
+                onClick={() => handlePlaylistItemClick(index)}
               >
                 <div className="flex items-center">
                   <span className="m-2 flex size-8 items-center justify-center rounded-full bg-gray-100 text-xs font-medium">
