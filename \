@@ -10,7 +10,7 @@ type DialogProps = {
   hideCloseButton?: boolean;
   className?: string;
   ariaLabel?: string;
-  ariaLabelledBy?: string;
+  ariaLabelBy?: string;
 };
 
 export default function Dialog({
@@ -20,7 +20,7 @@ export default function Dialog({
   children,
   className,
   ariaLabel,
-  ariaLabelledBy,
+  ariaLabelBy,
 }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
   const previouslyFocusedElement = useRef<HTMLElement | null>(null);
@@ -49,12 +49,6 @@ export default function Dialog({
     dialog.addEventListener('cancel', handleCancel);
     return () => dialog.removeEventListener('cancel', handleCancel);
   }, [setIsOpen]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      previouslyFocusedElement.current?.focus();
-    }
-  }, [isOpen]);
 
   // Focus trap
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDialogElement>) => {
@@ -99,9 +93,6 @@ export default function Dialog({
         'top-50 left-50 -translate-x-50 -translate-y-50 fixed z-10 mx-auto w-[98%] max-w-4xl origin-top animate-slideInWithFade p-2 backdrop:bg-zinc-800/50 dark:backdrop:bg-zinc-200/50',
         className
       )}
-      aria-modal="true"
-      aria-label={ariaLabel}
-      aria-labelledby={ariaLabelledBy}
     >
       {/* Apply overflow and rounded corners to the main content container */}
       <main className="h-full w-full overflow-hidden rounded-xl bg-background text-foreground">
