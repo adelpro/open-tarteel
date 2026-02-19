@@ -112,5 +112,6 @@
 
   "player.sleepTimerActive": "Sleep timer active",
   "player.sleepTimer": "Sleep Timer",
-  "player.untilEnd": "Until the end of the recitation"
+  "player.untilEnd": "Until the end of the recitation",
+  "player.cancelTimer": "Cancel Timer"
 }
