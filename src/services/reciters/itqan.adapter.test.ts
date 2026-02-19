@@ -170,12 +170,10 @@ describe('ItqanAdapter', () => {
     it('throws when the recitations list endpoint returns a non-ok response', async () => {
       vi.stubGlobal(
         'fetch',
-        vi
-          .fn()
-          .mockResolvedValue({
-            ok: false,
-            json: vi.fn(),
-          } as unknown as Response)
+        vi.fn().mockResolvedValue({
+          ok: false,
+          json: vi.fn(),
+        } as unknown as Response)
       );
       await expect(ItqanAdapter.getReciters('ar')).rejects.toThrow(
         'Failed to fetch Itqan recitations'
