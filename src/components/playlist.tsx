@@ -16,12 +16,12 @@ type Props = {
 export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
   const language = useIntl().locale;
   const selectedReciter = useAtomValue(selectedReciterAtom);
-  const handlePlylistItemClick = (index: number) => {
+  const handlePlaylistItemClick = (index: number) => {
     setIsOpen(false);
     setCurrentTrack(index);
   };
 
-  const isEnlgish = language === 'en';
+  const isEnglish = language === 'en';
 
   if (!selectedReciter?.moshaf?.playlist) {
     return <></>;
@@ -40,7 +40,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
               <li
                 key={index}
                 className="mx-2 my-3 w-full cursor-pointer rounded border-b border-gray-100 p-3 text-slate-500 transition-colors duration-300 hover:bg-gray-50 hover:text-slate-800"
-                onClick={() => handlePlylistItemClick(index)}
+                onClick={() => handlePlaylistItemClick(index)}
               >
                 <div className="flex items-center">
                   <span className="m-2 flex size-8 items-center justify-center rounded-full bg-gray-100 text-xs font-medium">
@@ -49,13 +49,13 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                   <div className="flex-1">
                     <div className="flex items-baseline justify-between">
                       <span className="text-lg font-medium">
-                        {isEnlgish
+                        {isEnglish
                           ? surah.englishName
                           : removeTashkeel(surah.name)}
                       </span>
                       <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
                         {surah.ayahCount}{' '}
-                        {isEnlgish
+                        {isEnglish
                           ? surah.ayahCount === 1
                             ? 'Aya'
                             : 'Ayas'
