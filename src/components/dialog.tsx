@@ -80,7 +80,8 @@ export default function Dialog({
     );
 
     const first = focusableElements[0];
-    const last = focusableElements[-1];
+    // eslint-disable-next-line unicorn/prefer-at
+    const last = focusableElements[focusableElements.length - 1];
 
     if (!first || !last) return;
 
