@@ -46,7 +46,13 @@ export default function ReciterCard({
       role="button"
       tabIndex={0}
       onClick={() => onSelect(reciter)}
-      className={`group relative flex w-full cursor-pointer flex-col rounded-2xl border bg-card p-6 transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onSelect(reciter);
+        }
+      }}
+      className={`group relative flex w-full cursor-pointer flex-col rounded-2xl border bg-card p-6 transition-all duration-200 hover:shadow-md focus:ring-4 focus:ring-blue-500/20 ${
         isFocused
           ? 'border-blue-500 shadow-md ring-2 ring-blue-500/20'
           : isFavorite
