@@ -29,7 +29,11 @@ export function useReciters() {
 
         if (selectedReciter) {
           const matched = data.find((r) => r.id === selectedReciter.id);
-          setSelectedReciter(matched ?? null); // Reset if not found
+          if (matched) {
+            setSelectedReciter(matched);
+          } else {
+            setSelectedReciter(null);
+          }
         }
       } catch {
         if (isMounted) {
@@ -49,7 +53,8 @@ export function useReciters() {
     return () => {
       isMounted = false;
     };
-  }, [locale, selectedReciter, setSelectedReciter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Only fetch on locale change to avoid skeleton flicker
+  }, [locale, setSelectedReciter]);
 
   return { reciters, loading, error };
 }

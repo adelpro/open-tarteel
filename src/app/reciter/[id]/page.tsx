@@ -76,6 +76,7 @@ export default async function Page({ params }: Props) {
     return notFound();
   }
 
+  // Find reciter with matching ID (there may be multiple entries with different moshafs)
   const reciter = RECITERS.find((r) => r.id === Number(id));
 
   if (!reciter) {
