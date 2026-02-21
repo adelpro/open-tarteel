@@ -319,27 +319,27 @@ export default function RecitersList({ setIsOpen }: Props) {
             </p>
           ) : filteredReciters.length > 0 ? (
             filteredReciters.map((reciter, index) => {
-                const favId = generateFavId(reciter);
-                const isFavorited = favoriteReciters.includes(favId);
+              const favId = generateFavId(reciter);
+              const isFavorited = favoriteReciters.includes(favId);
 
-                return (
-                  <ReciterCard
-                    key={favId}
-                    reciter={reciter}
-                    favoriteCount={favoriteCounts[favId] ?? 0}
-                    viewCount={viewCounts[favId] ?? 0}
-                    index={index}
-                    isFavorite={isFavorited}
-                    isFocused={focusedIndex === index}
-                    refCallback={(element) =>
-                      (reciterRefs.current[index] = element)
-                    }
-                    onSelect={handleSelectReciter}
-                    onFavoriteToggle={() => toggleFavorite(favId)}
-                    onSelectRiwaya={(riwaya) => setSelectedRiwaya(riwaya)}
-                  />
-                );
-              })
+              return (
+                <ReciterCard
+                  key={favId}
+                  reciter={reciter}
+                  favoriteCount={favoriteCounts[favId] ?? 0}
+                  viewCount={viewCounts[favId] ?? 0}
+                  index={index}
+                  isFavorite={isFavorited}
+                  isFocused={focusedIndex === index}
+                  refCallback={(element) =>
+                    (reciterRefs.current[index] = element)
+                  }
+                  onSelect={handleSelectReciter}
+                  onFavoriteToggle={() => toggleFavorite(favId)}
+                  onSelectRiwaya={(riwaya) => setSelectedRiwaya(riwaya)}
+                />
+              );
+            })
           ) : (
             !error && (
               <p className="col-span-full text-center text-gray-500 dark:text-gray-400">

@@ -16,7 +16,8 @@ vi.mock('./itqan.adapter', () => ({
   ItqanAdapter: { source: LinkSource.ITQAN, getReciters: vi.fn() },
 }));
 
-const { getAllRecitersFromAdapters } = await import('./index');
+const { getAllRecitersFromAdapters, parseEnabledSources } =
+  await import('./index');
 const { Mp3QuranAdapter } = await import('./mp3quran.adapter');
 const { ItqanAdapter } = await import('./itqan.adapter');
 
@@ -134,5 +135,41 @@ describe('getAllRecitersFromAdapters', () => {
 
     expect(result[0].source).toBe(LinkSource.MP3QURAN);
     expect(result[1].source).toBe(LinkSource.ITQAN);
+  });
+
+  it('when enabledSources provided, only fetches from those adapters', async () => {
+    mp3Mock.mockResolvedValue([mp3Reciter]);
+    itqanMock.mockResolvedValue([itqanReciter]);
+
+    const result = await getAllRecitersFromAdapters('ar', [
+      LinkSource.MP3QURAN,
+    ]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(mp3Reciter);
+    expect(mp3Mock).toHaveBeenCalledWith('ar');
+    expect(itqanMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('parseEnabledSources', () => {
+  it('parses comma-separated source string', () => {
+    expect(parseEnabledSources('mp3quran.net,itqan.dev')).toEqual([
+      LinkSource.MP3QURAN,
+      LinkSource.ITQAN,
+    ]);
+  });
+
+  it('returns undefined for empty or invalid input', () => {
+    expect(parseEnabledSources('')).toBeUndefined();
+    expect(parseEnabledSources(null)).toBeUndefined();
+    expect(parseEnabledSources(undefined)).toBeUndefined();
+  });
+
+  it('filters out invalid source values', () => {
+    expect(parseEnabledSources('mp3quran.net,invalid,itqan.dev')).toEqual([
+      LinkSource.MP3QURAN,
+      LinkSource.ITQAN,
+    ]);
   });
 });

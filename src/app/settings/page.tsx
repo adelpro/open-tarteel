@@ -34,10 +34,7 @@ export default function SettingsPage() {
     <div className="mt-10 flex w-full flex-col items-center justify-center bg-background text-foreground">
       <div className="mx-auto w-full max-w-2xl">
         <h1 className="mb-6 text-center text-3xl font-bold">
-          <FormattedMessage
-            id="settings.title"
-            defaultMessage="Settings"
-          />
+          <FormattedMessage id="settings.title" defaultMessage="Settings" />
         </h1>
 
         <section
@@ -60,7 +57,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={selectAll}
-              className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium bg-gray-900 transition-colors  text-gray-100 hover:bg-gray-600"
+              className="rounded-lg border border-gray-300 bg-gray-900 px-3 py-1.5 text-sm font-medium text-gray-100 transition-colors hover:bg-gray-600"
             >
               <FormattedMessage
                 id="settings.selectAll"
@@ -74,7 +71,7 @@ export default function SettingsPage() {
               return (
                 <li
                   key={source}
-                  className="flex items-center gap-3 rtl:flex-row-reverse text-"
+                  className="text- flex items-center gap-3 rtl:flex-row-reverse"
                 >
                   <input
                     id={`source-${source}`}

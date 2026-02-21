@@ -7,8 +7,18 @@ import { LinkSource, Riwaya } from '@/types';
 // Mock the service layer so no real network calls happen
 // ─────────────────────────────────────────────────────
 
-vi.mock('@/services/reciters', () => ({
-  getAllRecitersFromAdapters: vi.fn(),
+vi.mock('@/services/reciters', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/services/reciters')>();
+  return {
+    ...actual,
+    getAllRecitersFromAdapters: vi.fn(),
+  };
+});
+
+vi.mock('next/headers', () => ({
+  cookies: vi.fn().mockResolvedValue({
+    get: vi.fn().mockReturnValue(undefined),
+  }),
 }));
 
 const { getAllRecitersFromAdapters } = await import('@/services/reciters');
@@ -81,7 +91,7 @@ describe('getAllReciters', () => {
 
       const result = await runAsServer(() => getAllReciters('ar'));
 
-      expect(serviceMock).toHaveBeenCalledWith('ar');
+      expect(serviceMock).toHaveBeenCalledWith('ar', undefined);
       expect(result).toEqual([reciterA, reciterB]);
     });
 
@@ -90,7 +100,7 @@ describe('getAllReciters', () => {
 
       await runAsServer(() => getAllReciters('en'));
 
-      expect(serviceMock).toHaveBeenCalledWith('en');
+      expect(serviceMock).toHaveBeenCalledWith('en', undefined);
     });
 
     it('defaults locale to "ar"', async () => {
@@ -98,7 +108,7 @@ describe('getAllReciters', () => {
 
       await runAsServer(() => getAllReciters());
 
-      expect(serviceMock).toHaveBeenCalledWith('ar');
+      expect(serviceMock).toHaveBeenCalledWith('ar', undefined);
     });
   });
 

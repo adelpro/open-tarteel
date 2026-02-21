@@ -63,25 +63,28 @@ export default function ReciterCard({
       <div className="flex flex-col gap-3">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 overflow-hidden text-right">
-          <div className="flex shrink-0  items-center justify-end gap-1 self-start flex-wrap">
-            {SOURCE_LABEL_IDS[reciter.source] && (
-              <span
-                className="rounded px-2 py-0.5 text-[10px] font-medium text-gray-400 dark:text-gray-500"
-                title={reciter.source}
-              >
-                <FormattedMessage
-                  id={SOURCE_LABEL_IDS[reciter.source]}
-                  defaultMessage={reciter.source}
-                />
-              </span>
-            )}
-            {isRecentlyPlayed && (
-              <div className="bg-brand-CTA-blue-50 dark:bg-brand-CTA-blue-900/40 dark:text-brand-CTA-blue-400 border-brand-CTA-blue-100 dark:border-brand-CTA-blue-800 flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-bold text-brand-CTA-blue-600">
-                <MdHistory size={12} />
-                <FormattedMessage id="reciter.recent" defaultMessage="Recent" />
-              </div>
-            )}
-          </div>
+            <div className="flex shrink-0 flex-wrap items-center justify-end gap-1 self-start">
+              {SOURCE_LABEL_IDS[reciter.source] && (
+                <span
+                  className="rounded px-2 py-0.5 text-[10px] font-medium text-gray-400 dark:text-gray-500"
+                  title={reciter.source}
+                >
+                  <FormattedMessage
+                    id={SOURCE_LABEL_IDS[reciter.source]}
+                    defaultMessage={reciter.source}
+                  />
+                </span>
+              )}
+              {isRecentlyPlayed && (
+                <div className="bg-brand-CTA-blue-50 dark:bg-brand-CTA-blue-900/40 dark:text-brand-CTA-blue-400 border-brand-CTA-blue-100 dark:border-brand-CTA-blue-800 flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-bold text-brand-CTA-blue-600">
+                  <MdHistory size={12} />
+                  <FormattedMessage
+                    id="reciter.recent"
+                    defaultMessage="Recent"
+                  />
+                </div>
+              )}
+            </div>
             <h3 className="mb-1 truncate text-lg font-bold text-gray-900 dark:text-gray-100">
               {reciter.name}
             </h3>
@@ -89,7 +92,6 @@ export default function ReciterCard({
               {reciter.moshaf.name}
             </p>
           </div>
-
         </div>
 
         <div className="mt-auto flex items-center justify-between border-t border-gray-50 pt-2 dark:border-gray-700/50">
