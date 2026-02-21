@@ -4,10 +4,10 @@ import homeSVG from '@svgs/home.svg';
 import aboutSVG from '@svgs/info.svg';
 import contactSVG from '@svgs/mail.svg';
 import privacySVG from '@svgs/privacy.svg';
-import { IoSettingsOutline } from 'react-icons/io5';
 import { useSetAtom } from 'jotai';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { IoSettingsOutline } from 'react-icons/io5';
 import { FormattedMessage } from 'react-intl';
 
 import { selectedReciterAtom } from '@/jotai/atom';

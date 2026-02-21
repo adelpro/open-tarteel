@@ -17,12 +17,12 @@ export default function SettingsPage() {
   const [enabledSources, setEnabledSources] = useAtom(enabledSourcesAtom);
 
   const toggleSource = (source: LinkSource) => {
-    setEnabledSources((prev) => {
-      if (prev.includes(source)) {
-        if (prev.length <= 1) return prev;
-        return prev.filter((s) => s !== source);
+    setEnabledSources((previous) => {
+      if (previous.includes(source)) {
+        if (previous.length <= 1) return previous;
+        return previous.filter((s) => s !== source);
       }
-      return [...prev, source];
+      return [...previous, source];
     });
   };
 

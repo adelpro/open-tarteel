@@ -14,9 +14,9 @@ export async function GET(
   const language =
     (searchParams.get('language') || 'ar') === 'eng' ? 'en' : 'ar';
 
-  const sourcesParam = searchParams.get('sources');
+  const sourcesParameter = searchParams.get('sources');
   const cookie = request.cookies.get('enabled-sources')?.value;
-  const enabledSources = parseEnabledSources(sourcesParam ?? cookie);
+  const enabledSources = parseEnabledSources(sourcesParameter ?? cookie);
 
   try {
     const reciters = await getAllRecitersFromAdapters(language, enabledSources);

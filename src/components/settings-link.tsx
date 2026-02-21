@@ -1,7 +1,7 @@
 'use client';
 
-import { IoSettingsOutline } from 'react-icons/io5';
 import Link from 'next/link';
+import { IoSettingsOutline } from 'react-icons/io5';
 
 export default function SettingsLink() {
   return (
