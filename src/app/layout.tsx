@@ -11,6 +11,7 @@ import Footer from '@/components/footer';
 import HtmlWrapper from '@/components/html-wrapper';
 import IntlProviderWrapper from '@/components/intl-provider-wrapper';
 import LanguageSwitcher from '@/components/language-switcher';
+import SettingsLink from '@/components/settings-link';
 import { fullscreenAtom } from '@/jotai/atom';
 const tajawal = Tajawal({
   weight: ['400', '700', '900'],
@@ -43,6 +44,7 @@ export default function RootLayout({
           <body className={`${tajawal.className} antialiased`}>
             <main className="relative flex min-h-dvh w-full flex-col items-center justify-center text-foreground">
               {isFullscreen ? <ExitFullscreen /> : <></>}
+              {isFullscreen ? <></> : <SettingsLink />}
               {isFullscreen ? <></> : <LanguageSwitcher />}
               <div className="flex w-full flex-grow items-center justify-center">
                 {children}

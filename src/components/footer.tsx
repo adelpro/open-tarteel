@@ -4,6 +4,7 @@ import homeSVG from '@svgs/home.svg';
 import aboutSVG from '@svgs/info.svg';
 import contactSVG from '@svgs/mail.svg';
 import privacySVG from '@svgs/privacy.svg';
+import { IoSettingsOutline } from 'react-icons/io5';
 import { useSetAtom } from 'jotai';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -75,6 +76,14 @@ export default function Footer() {
           </div>
           <span className="sr-only sm:not-sr-only sm:block">
             <FormattedMessage id="footer.contact" defaultMessage="contact us" />
+          </span>
+        </FooterLink>
+        <FooterLink href="/settings">
+          <div className="relative flex h-10 w-10 items-center justify-center">
+            <IoSettingsOutline className="size-6 text-current" />
+          </div>
+          <span className="sr-only sm:not-sr-only sm:block">
+            <FormattedMessage id="footer.settings" defaultMessage="Settings" />
           </span>
         </FooterLink>
       </div>
