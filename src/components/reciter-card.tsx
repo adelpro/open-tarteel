@@ -8,7 +8,6 @@ import { FormattedMessage } from 'react-intl';
 
 import { useRecentlyPlayed } from '@/hooks/use-recently-played';
 import { LinkSource, Reciter, Riwaya } from '@/types';
-import { Reciter, Riwaya } from '@/types';
 import { cn, generateFavId } from '@/utils';
 import { useShareReciter } from '@/utils/share';
 
