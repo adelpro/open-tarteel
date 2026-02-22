@@ -1,6 +1,6 @@
 'use client';
 
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
@@ -22,7 +22,7 @@ import { useFilterSort } from '@/hooks/use-filter-sort';
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
 import { useRecentlyPlayed } from '@/hooks/use-recently-played';
 import { useReciters } from '@/hooks/use-reciters';
-import { selectedReciterAtom } from '@/jotai/atom';
+import { enabledSourcesAtom, selectedReciterAtom } from '@/jotai/atom';
 import { Reciter, Riwaya } from '@/types';
 import { generateFavId } from '@/utils';
 
@@ -40,6 +40,14 @@ export default function RecitersList({ setIsOpen }: Props) {
   const [showRecentOnly, setShowRecentOnly] = useState(false);
 
   const { reciters, loading, error } = useReciters();
+  const enabledSources = useAtomValue(enabledSourcesAtom);
+  const recitersBySource = useMemo(
+    () =>
+      reciters.filter((r) =>
+        enabledSources.length > 0 ? enabledSources.includes(r.source) : true
+      ),
+    [reciters, enabledSources]
+  );
 
   const {
     favoriteReciters,
@@ -67,7 +75,7 @@ export default function RecitersList({ setIsOpen }: Props) {
     filteredReciters: baseFilteredReciters,
     availableRiwiyat,
   } = useFilterSort({
-    reciters,
+    reciters: recitersBySource,
     favoriteCounts,
     viewCounts,
     favoriteReciters,
@@ -127,6 +135,11 @@ export default function RecitersList({ setIsOpen }: Props) {
     defaultMessage: 'No reciters found.',
   });
 
+  const enableSourceInSettings = formatMessage({
+    id: 'settings.enableSource',
+    defaultMessage: 'Enable at least one source in Settings.',
+  });
+
   const allReciters = formatMessage({
     id: 'allReciters',
     defaultMessage: 'All Reciters',
@@ -136,8 +149,11 @@ export default function RecitersList({ setIsOpen }: Props) {
     useKeyboardNavigation(filteredReciters.length);
 
   const favoriteRecitersList = useMemo(
-    () => reciters.filter((r) => favoriteReciters.includes(generateFavId(r))),
-    [reciters, favoriteReciters]
+    () =>
+      recitersBySource.filter((r) =>
+        favoriteReciters.includes(generateFavId(r))
+      ),
+    [recitersBySource, favoriteReciters]
   );
 
   const handleSelectReciter = useCallback(
@@ -297,34 +313,40 @@ export default function RecitersList({ setIsOpen }: Props) {
         {error && <p className="text-center text-red-500">{error}</p>}
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredReciters.length > 0
-            ? filteredReciters.map((reciter, index) => {
-                const favId = generateFavId(reciter);
-                const isFavorited = favoriteReciters.includes(favId);
+          {enabledSources.length === 0 ? (
+            <p className="col-span-full text-center text-gray-500 dark:text-gray-400">
+              {enableSourceInSettings}
+            </p>
+          ) : filteredReciters.length > 0 ? (
+            filteredReciters.map((reciter, index) => {
+              const favId = generateFavId(reciter);
+              const isFavorited = favoriteReciters.includes(favId);
 
-                return (
-                  <ReciterCard
-                    key={favId}
-                    reciter={reciter}
-                    favoriteCount={favoriteCounts[favId] ?? 0}
-                    viewCount={viewCounts[favId] ?? 0}
-                    index={index}
-                    isFavorite={isFavorited}
-                    isFocused={focusedIndex === index}
-                    refCallback={(element) =>
-                      (reciterRefs.current[index] = element)
-                    }
-                    onSelect={handleSelectReciter}
-                    onFavoriteToggle={() => toggleFavorite(favId)}
-                    onSelectRiwaya={(riwaya) => setSelectedRiwaya(riwaya)}
-                  />
-                );
-              })
-            : !error && (
-                <p className="col-span-full text-center text-gray-500 dark:text-gray-400">
-                  {noRecitersFound}
-                </p>
-              )}
+              return (
+                <ReciterCard
+                  key={favId}
+                  reciter={reciter}
+                  favoriteCount={favoriteCounts[favId] ?? 0}
+                  viewCount={viewCounts[favId] ?? 0}
+                  index={index}
+                  isFavorite={isFavorited}
+                  isFocused={focusedIndex === index}
+                  refCallback={(element) =>
+                    (reciterRefs.current[index] = element)
+                  }
+                  onSelect={handleSelectReciter}
+                  onFavoriteToggle={() => toggleFavorite(favId)}
+                  onSelectRiwaya={(riwaya) => setSelectedRiwaya(riwaya)}
+                />
+              );
+            })
+          ) : (
+            !error && (
+              <p className="col-span-full text-center text-gray-500 dark:text-gray-400">
+                {noRecitersFound}
+              </p>
+            )
+          )}
         </div>
       </div>
     </section>

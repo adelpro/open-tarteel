@@ -6,11 +6,13 @@ import { Tajawal } from 'next/font/google';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { useEffect } from 'react';
 
+import { EnabledSourcesCookieSync } from '@/components/enabled-sources-cookie-sync';
 import ExitFullscreen from '@/components/exit-fullscreen';
 import Footer from '@/components/footer';
 import HtmlWrapper from '@/components/html-wrapper';
 import IntlProviderWrapper from '@/components/intl-provider-wrapper';
 import LanguageSwitcher from '@/components/language-switcher';
+import SettingsLink from '@/components/settings-link';
 import { fullscreenAtom } from '@/jotai/atom';
 const tajawal = Tajawal({
   weight: ['400', '700', '900'],
@@ -42,7 +44,9 @@ export default function RootLayout({
         <HtmlWrapper>
           <body className={`${tajawal.className} antialiased`}>
             <main className="relative flex min-h-dvh w-full flex-col items-center justify-center text-foreground">
+              <EnabledSourcesCookieSync />
               {isFullscreen ? <ExitFullscreen /> : <></>}
+              {isFullscreen ? <></> : <SettingsLink />}
               {isFullscreen ? <></> : <LanguageSwitcher />}
               <div className="flex w-full flex-grow items-center justify-center">
                 {children}
