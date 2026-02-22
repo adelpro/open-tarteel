@@ -7,7 +7,7 @@ import { MdHistory } from 'react-icons/md';
 
 import { useRecentlyPlayed } from '@/hooks/use-recently-played';
 import { Reciter, Riwaya } from '@/types';
-import { generateFavId } from '@/utils';
+import { cn, generateFavId } from '@/utils';
 import { useShareReciter } from '@/utils/share';
 
 type Props = {
@@ -28,7 +28,6 @@ export default function ReciterCard({
   favoriteCount,
   viewCount,
   isFavorite,
-  isFocused,
   onSelect,
   onFavoriteToggle,
   refCallback,
@@ -46,13 +45,22 @@ export default function ReciterCard({
 
   return (
     <div
+      role="button"
+      tabIndex={0}
       ref={refCallback}
       onClick={() => onSelect(reciter)}
-      className={`relative cursor-pointer rounded-2xl border p-4 transition-all duration-300 ${
-        isFocused
-          ? 'bg-brand-CTA-blue-50/30 border-brand-CTA-blue-500 ring-2 ring-brand-CTA-blue-500/20'
-          : 'hover:border-brand-CTA-blue-200 border-gray-100 bg-white hover:shadow-xl hover:shadow-gray-200/50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600'
-      }`}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onSelect(reciter);
+        }
+      }}
+      className={cn(
+        'relative w-full rounded-2xl border p-4 text-right transition-all duration-300',
+        'hover:border-brand-CTA-blue-200 border-gray-100 bg-white hover:scale-[103%] hover:shadow-xl hover:shadow-gray-200/50',
+        'dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-CTA-blue-500 focus-visible:ring-offset-2'
+      )}
     >
       <div className="flex flex-col gap-3">
         <div className="flex items-start justify-between gap-4">
