@@ -49,3 +49,6 @@ public/swe-worker*
 
 #Ignore vscode AI rules
 .github\copilot-instructions.md
+
+# IDE settings
+.vscode/
