@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { LinkSource, Riwaya } from '@/types';
+import { Riwaya } from '@/constants';
+import { LinkSource } from '@/types';
 
 import { Mp3QuranAdapter } from './mp3quran.adapter';
 import type { Mp3QuranApiResponse } from './mp3quran.types';

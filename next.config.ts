@@ -1,16 +1,22 @@
-// next.config.mjs
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import withSerwistInit from '@serwist/next';
 import type { NextConfig } from 'next';
 
 const isProduction = process.env.NODE_ENV === 'production';
+const isDebug = process.env.DEBUG === 'true';
+const isDebugSW = process.env.NEXT_PUBLIC_DEBUG_SW === 'true';
+
+const isDebugMode = isDebug || isDebugSW;
+const removeConsole =
+  isProduction && !isDebugMode ? { exclude: ['error'] } : undefined;
 
 const withSerwist = withSerwistInit({
   swSrc: 'src/sw.ts',
   swDest: 'public/sw.js',
   cacheOnNavigation: true,
-  disable: !isProduction,
-  register: isProduction,
+  reloadOnOnline: false,
+  disable: !(isProduction || isDebugSW),
+  register: isProduction || isDebugSW,
   maximumFileSizeToCacheInBytes: 100 * 1024 * 1024, // 100MB
 });
 
@@ -20,7 +26,7 @@ const nextConfig: NextConfig = {
   transpilePackages: ['jotai-devtools'],
   productionBrowserSourceMaps: isProduction,
   compiler: {
-    removeConsole: isProduction && { exclude: ['error'] },
+    removeConsole,
   },
   typescript: {
     ignoreBuildErrors: !isProduction,
@@ -30,6 +36,15 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     // nextScriptWorkers: true,
+  },
+
+  async rewrites() {
+    return [
+      {
+        source: '/',
+        destination: '/ar',
+      },
+    ];
   },
 };
 

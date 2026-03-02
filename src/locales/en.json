@@ -2,15 +2,20 @@
   "appName": "The Holy Quran",
   "appDescription": "Heartfelt recitations without distractions.",
 
+  "cta.continue": "Continue your listening journey",
+  "cta.select": "Choose a reciter and start listening",
+
   "close": "Close",
 
   "footer.home": "Home",
+  "footer.reciters": "Reciters",
+  "footer.library": "Library",
   "footer.about": "About the app",
   "footer.privacy": "Privacy Policy",
   "footer.contact": "Contact Us",
   "footer.settings": "Settings",
   "underConstruction": "The app is under development",
-  "settings.title": "Settings",
+
   "settings.reciterSources": "Reciter sources",
   "settings.reciterSourcesDescription": "Choose which sources to show in the reciter list. At least one must be enabled.",
   "settings.selectAll": "Select all",
@@ -31,6 +36,15 @@
   "noRecitersFound": "No reciters found.",
   "allReciters": "All Reciters",
   "reciter.recent": "Recent",
+
+  "reciters.filters.empty.title": "No surahs found",
+  "reciters.filters.empty.description": "Try adjusting your search or filter",
+  "reciters.filters.type.all": "All",
+  "reciters.filters.type.meccan": "Meccan",
+  "reciters.filters.type.medinan": "Medinan",
+  "reciters.filters.results.count": "{current} of {total} surahs",
+  "reciters.filters.search.placeholder": "Search surahs...",
+  "reciters.surah.ayah_count": "{count, plural, one {# Aya} other {# Ayas}}",
 
   "riwaya.Hafs": "Hafs",
   "riwaya.Warsh": "Warsh",
@@ -117,12 +131,191 @@
   "player.togglePlaylist": "Playlist",
   "player.playbackSpeed": "Playback speed: {speed}x",
   "player.volumeControl": "Volume control",
+  "player.download": "Download",
+  "player.availableOffline": "Available offline",
+  "player.resumeDownload": "Resume download",
+  "player.downloading": "Downloading… {progress}%",
 
   "player.more": "More options",
 
   "player.sleepTimerActive": "Sleep timer active",
   "player.sleepTimer": "Sleep Timer",
   "player.untilEnd": "Until the end of the recitation",
-  "reciterDialog.title": "Select a Reciter",
-  "player.cancelTimer": "Cancel Timer"
+
+  "player.saveTrack": "Save",
+  "player.queuedForDownload": "Queued for download",
+  "player.removeFromLibrary": "Remove from offline library",
+  "player.pausedClickToResume": "Paused – click to resume in library",
+  "player.downloadFailedRetry": "Download failed – click to retry",
+
+  "playlist.ayahCount": "{count, plural, one {# Aya} other {# Ayas}}",
+
+  "library": "Library",
+
+  "library.search.placeholder": "Search surahs, reciters...",
+
+  "library.actions.play": "Play",
+  "library.actions.loading": "Loading...",
+  "library.actions.pause": "Pause download",
+  "library.actions.startDownLoad": "Start download",
+  "library.actions.resume": "Resume download",
+  "library.actions.retry": "Retry download",
+  "library.actions.cancel": "Cancel download",
+  "library.actions.remove": "Remove track",
+
+  "library.add.confirm": "Add \"{track}\" to your library?",
+
+  "library.download.confirm": "Download \"{track}\" for offline playback?",
+  "library.pause.confirm": "Pause download for \"{track}\"?",
+  "library.resume.confirm": "Resume download for \"{track}\"?",
+  "library.retry.confirm": "Retry download for \"{track}\"?",
+  "library.cancel.confirm": "Cancel download for \"{track}\"? Current progress will be lost.",
+
+  "library.remove.confirm": "Remove \"{track}\" from your library?",
+  "library.clearOffline.confirm": "Remove downloaded data for \"{track}\"? The track will stay in your library but needs an internet connection to play.",
+  "library.remove.consequence.offline": "downloaded track data will be deleted",
+  "library.remove.consequence.bookmark": "bookmark will be removed",
+  "library.remove.confirmWithConsequences": "Remove \"{track}\" from library? This will also remove: {consequences}.",
+
+  "library.clearAll.confirm": "Clear your entire library? All downloaded audio files, playback history, and bookmarks will be deleted.",
+
+  "library.bookmark.confirmRemoveOnly": "Remove the bookmark for \"{track}\"? The track will remain in your library.",
+  "library.bookmark.confirmRemoveWithLibrary": "Remove the bookmark for \"{track}\"? It will also be removed from your library since it is not downloaded or in your recent history.",
+  "library.bookmark.confirmClearAll": "Clear all bookmarks? Tracks that are not downloaded or not in your recent history will also be removed from your library.",
+
+  "library.status.downloadFailed": "Download failed. Check your connection and try again.",
+  "library.status.partialSaved": "Partial download saved — resume to continue.",
+
+  "library.meta.duration": "Duration",
+  "library.meta.size": "Size",
+  "library.meta.speed": "Speed",
+
+  "library.tabs.all": "All",
+  "library.tabs.allWithCount": "{count, plural, =0 {All} one {All - #} other {All - #}}",
+
+  "library.tabs.recent": "Recent",
+  "library.tabs.recentWithCount": "{count, plural, =0 {Recent} one {Recent - #} other {Recent - #}}",
+
+  "library.tabs.bookmarked": "Bookmarked",
+  "library.tabs.bookmarkedWithCount": "{count, plural, =0 {Bookmarked} one {Bookmarked - #} other {Bookmarked - #}}",
+
+  "library.tabs.downloaded": "Downloaded",
+  "library.tabs.downloadedWithCount": "{count, plural, =0 {Downloaded} one {Downloaded - #} other {Downloaded - #}}",
+
+  "library.trackStatus.idle": "Idle",
+  "library.trackStatus.queued": "Queued",
+  "library.trackStatus.downloading": "Downloading",
+  "library.trackStatus.done": "Completed",
+  "library.trackStatus.paused": "Paused",
+  "library.trackStatus.error": "Error",
+  "library.trackStatus.updating": "Updating",
+
+  "library.empty.all": "Your library is empty. Start adding some tracks.",
+  "library.empty.recent": "You haven’t played any tracks recently.",
+  "library.empty.bookmarks": "No bookmarked tracks yet. Tap the bookmark icon to save your favorites.",
+  "library.empty.downloads": "No downloaded tracks yet. Download tracks to listen offline.",
+  "library.empty.default": "No tracks saved in your library yet.",
+  "library.empty.search": "No results found for \"{search}\"",
+
+  "bookmark.add": "Add to library",
+  "bookmark.remove": "Remove from library",
+  "bookmark.addedToast": "Added to library",
+  "bookmark.removedToast": "Removed from library",
+
+  "filter.RecentPlayed": "Recently Played",
+
+  "settings.recent.empty": "No recent tracks yet",
+  "settings.recent.count": "{count, plural, =0 {No recent tracks} one {# recent track} other {# recent tracks}}",
+  "settings.recent.confirmRemoveOnlyRecent": "Remove this track from recent?",
+  "settings.recent.confirmRemoveWithLibrary": "Remove this track from recent? It will also be removed from your library because it is not bookmarked or downloaded.",
+  "settings.recent.confirmClearAll": "Clear all recent tracks? Tracks that are not bookmarked or downloaded will also be removed from your library.",
+
+  "error.fetchReciters": "Failed to load reciters. Please try again.",
+
+  "library.clearAll.title": "Clear entire library",
+  "library.clearAll.description": "This will delete all downloaded audio, recent history, and bookmarks.",
+  "library.clearAll.button": "Clear all",
+
+  "settings.downloads.title": "Downloads",
+  "settings.recent.title": "Recently played",
+  "settings.bookmarks.title": "Bookmarks",
+
+  "settings.downloads.clearAll": "Clear all downloads",
+  "settings.recent.clearAll": "Clear recent history",
+  "settings.bookmarks.clearAll": "Clear all bookmarks",
+
+  "settings.downloads.remove": "Remove download",
+  "settings.recent.remove": "Remove from recently played",
+  "settings.bookmarks.remove": "Remove bookmark",
+
+  "settings.title": "Settings",
+  "settings.description": "Manage your preferences and application settings.",
+
+  "settings.tabs.general": "General",
+  "settings.tabs.sources": "Reciter Sources",
+  "settings.tabs.library": "Library",
+  "settings.tabs.storage": "Storage",
+
+  "settings.general.appearance": "Appearance",
+  "settings.general.appearance.description": "Customize how the app looks and feels.",
+  "settings.general.theme": "Theme",
+  "settings.general.theme.light": "Light",
+  "settings.general.theme.dark": "Dark",
+  "settings.general.theme.system": "System",
+  "settings.general.language": "Language",
+  "settings.general.language.description": "Select your preferred language.",
+  "settings.general.language.en": "English",
+  "settings.general.language.ar": "Arabic",
+  "settings.general.playback": "Playback",
+  "settings.general.playback.description": "Configure audio playback behavior.",
+
+  "settings.general.playbackMode": "Playback Mode",
+  "settings.general.playbackMode.description": "Choose how audio behaves after finishing.",
+  "settings.general.playbackSpeed": "Playback Speed",
+  "settings.general.playbackSpeed.description": "Adjust the speed of the audio playback.",
+  "settings.general.playback.off": "Off",
+  "settings.general.playback.repeatOne": "Repeat One",
+  "settings.general.playback.shuffle": "Shuffle",
+
+  "settings.sources.title": "Reciter Sources",
+  "settings.sources.description": "Choose which sources to show in the reciter list. At least one must be enabled.",
+  "settings.sources.selectAll": "Select all",
+  "settings.sources.mp3quran": "MP3 Quran",
+  "settings.sources.itqan": "Itqan",
+  "settings.sources.minOneRequired": "At least one source must remain enabled.",
+
+  "settings.library.title": "Library Management",
+  "settings.library.description": "Manage your downloads, recent tracks, and bookmarks.",
+  "settings.library.downloads": "Downloads",
+  "settings.library.downloads.description": "Manage your downloaded audio tracks.",
+  "settings.library.downloads.clearAll": "Clear all downloads",
+  "settings.library.recent": "Recent Tracks",
+  "settings.library.recent.description": "Tracks you recently listened to.",
+  "settings.library.recent.clearAll": "Clear recent history",
+  "settings.library.bookmarks": "Bookmarks",
+  "settings.library.bookmarks.description": "Your saved bookmarks.",
+  "settings.library.bookmarks.clearAll": "Clear all bookmarks",
+  "settings.library.clearAll.title": "Clear Entire Library",
+  "settings.library.clearAll.description": "This will permanently remove all downloads, recent tracks, and bookmarks.",
+  "settings.library.clearAll.button": "Clear everything",
+  "settings.library.empty": "No items yet.",
+
+  "settings.storage.title": "Storage",
+  "settings.storage.description": "View and manage storage used by the application.",
+  "settings.storage.coreData": "Core Data",
+  "settings.storage.coreData.description": "App shell, JavaScript, CSS, and fonts.",
+  "settings.storage.appData": "App Data",
+  "settings.storage.appData.description": "Downloaded audio tracks.",
+  "settings.storage.total": "Total used",
+  "settings.storage.clear": "Clear",
+  "settings.storage.refresh": "Refresh",
+
+  "common.save": "Save",
+  "common.cancel": "Cancel",
+  "common.reset": "Reset",
+  "common.items": "{count} items",
+
+  "badge.recent": "Recent",
+  "badge.bookmarked": "Bookmarked",
+  "badge.downloaded": "Downloaded"
 }

@@ -1,16 +1,19 @@
-import type { LinkSource, Reciter } from '@/types';
+import { LinkSource, LocaleType, MP3APIMoshaf, Reciter } from '@/types';
+import { Playlist } from '@/types/playlist';
 
-/**
- * Fetches all reciters.
- *
- * - Server-side: calls the service layer directly, using enabled-sources cookie when present.
- * - Client-side: calls the Next.js API route with sources in query (cookie is also sent).
- */
+export const generatePlaylist = (moshaf: MP3APIMoshaf): Playlist => {
+  const result = moshaf.surah_list.split(',').map((surahId: string) => ({
+    surahId: surahId,
+    link: `${moshaf.server}${surahId.padStart(3, '0')}.mp3`,
+  }));
+  return result;
+};
+// Function to fetch reciters from MP3Quran API
 export async function getAllReciters(
-  locale: 'ar' | 'en' = 'ar',
+  locale: LocaleType = 'ar',
   enabledSources?: LinkSource[] | null
 ): Promise<Reciter[]> {
-  const isServer = typeof window === 'undefined';
+  const isServer = globalThis.window === undefined;
 
   if (isServer) {
     const { getAllRecitersFromAdapters, parseEnabledSources } =
@@ -47,8 +50,8 @@ export async function getReciter(
   moshafId: string,
   locale: 'ar' | 'en' = 'ar',
   enabledSources?: LinkSource[] | null
-): Promise<Reciter | undefined> {
-  const isServer = typeof window === 'undefined';
+): Promise<Reciter | null> {
+  const isServer = globalThis.window === undefined;
 
   if (isServer) {
     const { getAllRecitersFromAdapters, parseEnabledSources } =
@@ -58,7 +61,9 @@ export async function getReciter(
     const cookieValue = cookieStore.get('enabled-sources')?.value;
     const sources = enabledSources ?? parseEnabledSources(cookieValue);
     const reciters = await getAllRecitersFromAdapters(locale, sources);
-    return reciters.find((r) => r.id === id && r.moshaf.id === moshafId);
+    return (
+      reciters.find((r) => r.id === id && r.moshaf.id === moshafId) ?? null
+    );
   }
 
   const language = locale === 'en' ? 'eng' : 'ar';
@@ -70,7 +75,7 @@ export async function getReciter(
     `/api/reciters/${encodeURIComponent(id)}/${encodeURIComponent(moshafId)}?${params}`
   );
 
-  if (!response.ok) return undefined;
+  if (!response.ok) return null;
 
   return response.json() as Promise<Reciter>;
 }

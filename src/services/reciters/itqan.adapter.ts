@@ -1,6 +1,7 @@
+import { Riwaya } from '@/constants';
 import type { Playlist, Reciter } from '@/types';
-import { LinkSource, Riwaya } from '@/types';
-import { getRiwayaKeyFromMoshafName } from '@/utils/get-riwaya-from-mushaf';
+import { LinkSource } from '@/types';
+import { getRiwayaKeyFromMoshafName } from '@/utils';
 
 import type {
   ItqanRecitationDetailResponse,
@@ -43,7 +44,7 @@ export const ItqanAdapter: ReciterSource = {
           }));
 
           const riwayaKey = getRiwayaKeyFromMoshafName(
-            recitation.riwayah.name,
+            recitation?.riwayah?.name,
             'ar'
           );
 
@@ -56,7 +57,7 @@ export const ItqanAdapter: ReciterSource = {
               name: recitation.name,
               riwaya: Riwaya[riwayaKey],
               server: '',
-              surah_total: String(playlist.length),
+              surah_total: playlist.length,
               playlist,
             },
           } satisfies Reciter;

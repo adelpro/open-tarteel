@@ -1,4 +1,4 @@
-import type { Reciter } from '@/types';
+import type { LocaleType, Reciter } from '@/types';
 import { LinkSource } from '@/types';
 
 import { ItqanAdapter } from './itqan.adapter';
@@ -29,7 +29,7 @@ export function parseEnabledSources(
  * @param enabledSources - If provided, only fetch from these sources. Otherwise fetch from all.
  */
 export async function getAllRecitersFromAdapters(
-  lang: 'ar' | 'en' = 'ar',
+  lang: LocaleType = 'ar',
   enabledSources?: LinkSource[] | null
 ): Promise<Reciter[]> {
   const toFetch =

@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { Riwaya } from '@/constants';
 import type { Reciter } from '@/types';
-import { LinkSource, Riwaya } from '@/types';
+import { LinkSource } from '@/types';
 
 // ─────────────────────────────────────────────────────
 // Module mocks – must be declared before imports of the
@@ -37,7 +38,7 @@ const makeReciter = (id: string, source: LinkSource): Reciter => ({
     name: 'Test Moshaf',
     riwaya: Riwaya.Hafs,
     server: 'https://example.com/',
-    surah_total: '3',
+    surah_total: 3,
     playlist: [
       { surahId: '1', link: 'https://example.com/001.mp3' },
       { surahId: '2', link: 'https://example.com/002.mp3' },

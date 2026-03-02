@@ -7,9 +7,15 @@ declare namespace NodeJS {
     NEXT_PUBLIC_TRACKER_URL: string;
     NEXT_PUBLIC_DEBUG: boolean;
 
+    NEXT_PUBLIC_DB_NAME: string;
+    NEXT_PUBLIC_DB_VERSION: number;
+    NEXT_PUBLIC_TRACKS_STORE: string;
+    NEXT_PUBLIC_AUDIO_STORE: string;
+
     //Private env:
     PORT: number;
-    DEBUG: boolean;
+    DEBUG: string;
+    DEBUG_SW: string;
 
     FEED_BACK_EMAIL: string;
     FEED_BACK_PASSWORD: string;

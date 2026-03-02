@@ -1,5 +1,5 @@
-import type { Playlist } from '@/types';
-import { Riwaya } from '@/types';
+import { Riwaya } from '@/constants';
+import type { LocaleType, Playlist } from '@/types';
 import { getRiwayaKeyFromMoshafName } from '@/utils/get-riwaya-from-mushaf';
 
 import type { Mp3QuranApiMoshaf } from './mp3quran.types';
@@ -12,7 +12,7 @@ export const generatePlaylist = (moshaf: Mp3QuranApiMoshaf): Playlist =>
 
 export const resolveRiwaya = (
   moshafName: string,
-  locale: 'ar' | 'en'
+  locale: LocaleType
 ): Riwaya => {
   const key = getRiwayaKeyFromMoshafName(moshafName, locale);
   return Riwaya[key];

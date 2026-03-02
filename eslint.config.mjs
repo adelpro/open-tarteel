@@ -1,14 +1,14 @@
 import { fixupConfigRules } from '@eslint/compat';
 import js from '@eslint/js';
-import globals from 'globals';
 import nextPlugin from '@next/eslint-plugin-next';
-import reactHooks from 'eslint-plugin-react-hooks';
+import tseslintPlugin from '@typescript-eslint/eslint-plugin';
+import tseslintParser from '@typescript-eslint/parser';
+import prettier from 'eslint-config-prettier';
 import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import unicorn from 'eslint-plugin-unicorn';
-import prettier from 'eslint-config-prettier';
-import tseslintParser from '@typescript-eslint/parser';
-import tseslintPlugin from '@typescript-eslint/eslint-plugin';
+import globals from 'globals';
 
 const config = [
   js.configs.recommended,
@@ -31,6 +31,9 @@ const config = [
         ...globals.es2021,
         React: 'readonly',
         NodeJS: 'readonly',
+        FetchEvent: 'readonly',
+        ExtendableEvent: 'readonly',
+        ExtendableMessageEvent: 'readonly',
       },
     },
     plugins: {

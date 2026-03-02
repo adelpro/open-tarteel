@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { LinkSource, Riwaya } from '@/types';
+import { Riwaya } from '@/constants';
+import { LinkSource } from '@/types';
 
 import { ItqanAdapter } from './itqan.adapter';
 import type {

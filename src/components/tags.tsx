@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Riwaya } from '@/types';
+import { Riwaya } from '@/constants';
 import { cn } from '@/utils/cn';
 
 export default function Tags() {

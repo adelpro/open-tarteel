@@ -1,4 +1,4 @@
-import { Riwaya } from '@/types';
+import { Riwaya } from '@/constants';
 
 export const RiwayaNameByLocale: Record<
   'ar' | 'en',

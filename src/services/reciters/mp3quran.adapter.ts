@@ -30,7 +30,7 @@ export const Mp3QuranAdapter: ReciterSource = {
             name: apiMoshaf.name,
             riwaya: resolveRiwaya(apiMoshaf.name, lang),
             server: apiMoshaf.server,
-            surah_total: String(apiMoshaf.surah_total),
+            surah_total: apiMoshaf.surah_total,
             playlist: generatePlaylist(apiMoshaf),
           },
         });

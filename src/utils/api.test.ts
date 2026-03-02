@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { Riwaya } from '@/constants';
 import type { Reciter } from '@/types';
-import { LinkSource, Riwaya } from '@/types';
+import { LinkSource } from '@/types';
 
 // ─────────────────────────────────────────────────────
 // Mock the service layer so no real network calls happen
@@ -40,7 +41,7 @@ const makeReciter = (id: string): Reciter => ({
     name: 'حفص عن عاصم',
     riwaya: Riwaya.Hafs,
     server: 'https://cdn.example.com/',
-    surah_total: '3',
+    surah_total: 3,
     playlist: [
       { surahId: '1', link: 'https://cdn.example.com/001.mp3' },
       { surahId: '2', link: 'https://cdn.example.com/002.mp3' },

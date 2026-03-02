@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Riwaya } from '@/types';
+import { Riwaya } from '@/constants';
 
 import { generatePlaylist, resolveRiwaya } from './mp3quran.helpers';
 import type { Mp3QuranApiMoshaf } from './mp3quran.types';

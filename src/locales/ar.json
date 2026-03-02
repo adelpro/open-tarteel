@@ -2,23 +2,20 @@
   "appName": "القرآن الكريم",
   "appDescription": "تلاوات تلامس القلب دون إلهاءات.",
 
+  "cta.continue": "تابع رحلتك في الاستماع",
+  "cta.select": "اختر قارئًا وابدأ الاستماع",
+
   "close": "إغلاق",
 
-  "footer.home": "الصفحة الرئيسية",
-  "footer.about": "معلومات عن التطبيق",
+  "footer.home": "الرئيسية",
+  "footer.reciters": "المقرئون",
+  "footer.library": "المكتبة",
+  "footer.about": "عن التطبيق",
   "footer.privacy": "سياسة الخصوصية",
   "footer.contact": "إتصل بنا",
   "footer.settings": "الإعدادات",
   "underConstruction": "جاري تطوير التطبيق",
-  "settings.title": "الإعدادات",
-  "settings.reciterSources": "مصادر القراء",
-  "settings.reciterSourcesDescription": "اختر المصادر التي تريد عرضها في قائمة القراء. يجب تفعيل مصدر واحد على الأقل.",
-  "settings.selectAll": "تفعيل الكل",
-  "settings.deselectAll": "إلغاء تفعيل الكل",
-  "settings.source.mp3quran": "MP3 القرآن",
-  "settings.source.itqan": "إتقان",
-  "settings.enableSource": "قم بتفعيل مصدر واحد على الأقل من الإعدادات.",
-  "reciter.select": "اختر القارئ",
+
   "favorites": "المفضلة",
   "views": "المشاهدات",
   "sort": "تغيير الترتيب",
@@ -31,6 +28,15 @@
   "noRecitersFound": "لا يوجد قراء مطابقين للبحث.",
   "allReciters": "جميع الروايات",
   "reciter.recent": "سمعت مؤخراً",
+
+  "reciters.filters.empty.title": "لم يتم العثور على سور",
+  "reciters.filters.empty.description": "حاول تعديل البحث أو تغيير الفلتر",
+  "reciters.filters.type.all": "الكل",
+  "reciters.filters.type.meccan": "مكية",
+  "reciters.filters.type.medinan": "مدنية",
+  "reciters.filters.results.count": "{current} من {total} سورة",
+  "reciters.filters.search.placeholder": "ابحث عن سورة...",
+  "reciters.surah.ayah_count": "{count, plural, one {# آية} other {# آيات}}",
 
   "riwaya.Hafs": "حفص",
   "riwaya.Warsh": "ورش",
@@ -117,6 +123,10 @@
   "player.togglePlaylist": "قائمة التشغيل",
   "player.playbackSpeed": "سرعة التشغيل: {speed}x",
   "player.volumeControl": "تحكم بمستوى الصوت",
+  "player.download": "تنزيل",
+  "player.availableOffline": "متاح دون اتصال",
+  "player.resumeDownload": "استئناف التنزيل",
+  "player.downloading": "جارٍ التنزيل… {progress}%",
 
   "player.more": "المزيد",
 
@@ -124,5 +134,198 @@
   "player.sleepTimer": "مؤقت النوم",
   "player.untilEnd": "حتى نهاية التلاوة",
   "reciterDialog.title": "اختر قارئًا",
-  "player.cancelTimer": "إلغاء المؤقت"
+  "player.cancelTimer": "إلغاء المؤقت",
+
+  "player.saveTrack": "حفظ",
+  "player.queuedForDownload": "في قائمة الانتظار للتنزيل",
+  "player.removeFromLibrary": "إزالة من المكتبة دون اتصال",
+  "player.pausedClickToResume": "متوقف مؤقتًا – اضغط للاستئناف من المكتبة",
+  "player.downloadFailedRetry": "فشل التنزيل – اضغط لإعادة المحاولة",
+
+  "playlist.ayahCount": "{count, plural, one {# آية} other {# آيات}}",
+
+  "library": "المكتبة",
+
+  "library.search.placeholder": "ابحث عن السور أو القرّاء...",
+
+  "library.actions.play": "تشغيل",
+  "library.actions.loading": "جارٍ التحميل...",
+  "library.actions.pause": "إيقاف التحميل مؤقتًا",
+  "library.actions.startDownLoad": "بدا التحميل",
+  "library.actions.resume": "استئناف التحميل",
+  "library.actions.retry": "إعادة المحاولة",
+  "library.actions.cancel": "إلغاء التحميل",
+  "library.actions.remove": "إزالة التلاوة",
+
+  "library.add.confirm": "هل تريد إضافة \"{track}\" إلى مكتبتك؟",
+  "library.download.confirm": "هل تريد تحميل \"{track}\" للتشغيل بدون اتصال بالإنترنت؟",
+  "library.pause.confirm": "هل تريد إيقاف تحميل \"{track}\" مؤقتًا؟",
+  "library.resume.confirm": "هل تريد استئناف تحميل \"{track}\"؟",
+  "library.retry.confirm": "هل تريد إعادة محاولة تحميل \"{track}\"؟",
+  "library.cancel.confirm": "هل تريد إلغاء تحميل \"{track}\"؟ سيتم فقدان التقدم الحالي.",
+
+  "library.clearOffline.confirm": "هل تريد إزالة الصوت المحمّل بلا إنترنت للمسار \"{track}\"؟ سيبقى المسار في مكتبتك ولكن سيتطلب اتصالاً بالإنترنت لتشغيله.",
+
+  "library.remove.confirm": "هل تريد إزالة \"{track}\" من المكتبة؟",
+  "library.remove.confirmWithConsequences": "هل تريد إزالة \"{track}\" من المكتبة؟ سيؤدي هذا أيضًا إلى إزالة: {consequences}.",
+
+  "library.remove.consequence.offline": "سيتم حذف الصوت المحمّل بلا إنترنت",
+  "library.remove.consequence.bookmark": "سيتم حذف الإشارة المرجعية",
+
+  "library.clearAllOffline.confirm": "هل تريد حذف الصوت غير المتصل لجميع المقاطع المحملة؟ ستبقى جميع المقاطع في مكتبتك.",
+
+  "library.clearAll.confirm": "هل تريد مسح مكتبتك بالكامل؟ سيتم حذف جميع الملفات الصوتية المحملة وسجل التشغيل والإشارات المرجعية.",
+
+  "library.bookmark.confirmRemoveOnly": "هل تريد إزالة إشارة \"{track}\" المرجعية؟ سيبقى المقطع في مكتبتك.",
+  "library.bookmark.confirmRemoveWithLibrary": "هل تريد إزالة إشارة \"{track}\" المرجعية؟ سيتم أيضاً حذفه من مكتبتك لأنه غير محمل أو في سجلك الأخير.",
+  "library.bookmark.confirmClearAll": "هل تريد مسح جميع الإشارات المرجعية؟ المقاطع غير المحملة أو غير الموجودة في السجل الأخير ستُحذف أيضاً من مكتبتك",
+
+  "library.status.downloadFailed": "فشل التحميل. تحقق من الاتصال وحاول مرة أخرى.",
+  "library.status.partialSaved": "تم حفظ تحميل جزئي — استأنف للمتابعة.",
+
+  "library.meta.duration": "المدة",
+  "library.meta.size": "الحجم",
+  "library.meta.speed": "السرعة",
+
+  "library.tabs.all": "الكل",
+  "library.tabs.allWithCount": "{count, plural, =0 {الكل} one {الكل - #} two {الكل - #} few {الكل - #} many {الكل - #} other {الكل - #}}",
+
+  "library.tabs.recent": "الأخيرة",
+  "library.tabs.recentWithCount": "{count, plural, =0 {الأخيرة} one {الأخيرة - #} two {الأخيرة - #} few {الأخيرة - #} many {الأخيرة - #} other {الأخيرة - #}}",
+
+  "library.tabs.bookmarked": "المحفوظة",
+  "library.tabs.bookmarkedWithCount": "{count, plural, =0 {المحفوظة} one {المحفوظة - #} two {المحفوظة - #} few {المحفوظة - #} many {المحفوظة - #} other {المحفوظة - #}}",
+
+  "library.tabs.downloaded": "المحمّلة",
+  "library.tabs.downloadedWithCount": "{count, plural, =0 {المحمّلة} one {المحمّلة - #} two {المحمّلة - #} few {المحمّلة - #} many {المحمّلة - #} other {المحمّلة - #}}",
+
+  "library.trackStatus.idle": "جاهز",
+  "library.trackStatus.queued": "في قائمة الانتظار",
+  "library.trackStatus.downloading": "جارٍ التحميل",
+  "library.trackStatus.done": "مكتمل",
+  "library.trackStatus.paused": "متوقف مؤقتًا",
+  "library.trackStatus.error": "خطأ",
+  "library.trackStatus.updating": "جارٍ التحديث",
+
+  "library.empty.all": "مكتبتك فارغة حالياً. ابدأ بإضافة بعض المقاطع.",
+  "library.empty.recent": "لم تقم بتشغيل أي مقاطع مؤخراً.",
+  "library.empty.bookmarks": "لا توجد إشارات مرجعية حتى الآن. اضغط على أيقونة الإشارة المرجعية لحفظ مقاطعك المفضلة.",
+  "library.empty.downloads": "لا توجد مقاطع مُحمّلة حتى الآن. قم بتحميل المقاطع للاستماع بدون اتصال بالإنترنت.",
+  "library.empty.default": "لا توجد مقاطع محفوظة في مكتبتك حتى الآن.",
+  "library.empty.search": "لا توجد نتائج للمصطلح \"{search}\"",
+
+  "bookmark.add": "إضافة إلى المكتبة",
+  "bookmark.remove": "إزالة من المكتبة",
+  "bookmark.addedToast": "تمت الإضافة إلى المكتبة",
+  "bookmark.removedToast": "تمت الإزالة من المكتبة",
+
+  "filter.RecentPlayed": "تم تشغيله مؤخرًا",
+
+  "settings.recent.confirmRemoveOnlyRecent": "هل تريد إزالة هذه التلاوة من السجل الحديث؟",
+  "settings.recent.confirmRemoveWithLibrary": "هل تريد إزالة هذه التلاوة من السجل الحديث؟ سيتم أيضًا حذفها من المكتبة لأنها غير محفوظة أو محمّلة.",
+  "settings.recent.confirmClearAll": "هل تريد مسح جميع التلاوات الحديثة؟ سيتم أيضًا حذف التلاوات غير المحفوظة أو غير المحمّلة من المكتبة.",
+
+  "error.fetchReciters": "تعذر تحميل القرّاء. يرجى المحاولة مرة أخرى.",
+  "library.clearAll.title": "مسح المكتبة بالكامل",
+  "library.clearAll.description": "سيتم حذف جميع المقاطع المُحمّلة وسجل التشغيل والإشارات المرجعية.",
+  "library.clearAll.button": "مسح الكل",
+
+  "settings.downloads.title": "المقاطع المُحمّلة",
+  "settings.recent.title": "تم تشغيله مؤخراً",
+  "settings.bookmarks.title": "الإشارات المرجعية",
+
+  "settings.downloads.clearAll": "مسح جميع المقاطع المُحمّلة",
+  "settings.recent.clearAll": "مسح سجل التلاوات الحديثة",
+  "settings.bookmarks.clearAll": "مسح جميع الإشارات المرجعية",
+
+  "settings.downloads.remove": "حذف المقطع المُحمّل",
+  "settings.recent.remove": "إزالة من سجل التشغيل",
+  "settings.bookmarks.remove": "إزالة الإشارة المرجعية",
+
+  "settings.recent.empty": "لا توجد مقاطع تم تشغيلها مؤخراً",
+  "settings.recent.count": "{count, plural, zero {لا توجد مقاطع} one {مقطع واحد} two {مقطعان} few {# مقاطع} many {# مقطعًا} other {# مقطع}}",
+
+  "settings.reciterSources": "مصادر القراء",
+  "settings.reciterSourcesDescription": "اختر المصادر التي تريد عرضها في قائمة القراء. يجب تفعيل مصدر واحد على الأقل.",
+  "settings.selectAll": "تفعيل الكل",
+  "settings.deselectAll": "إلغاء تفعيل الكل",
+  "settings.source.mp3quran": "MP3 القرآن",
+  "settings.source.itqan": "إتقان",
+  "settings.enableSource": "قم بتفعيل مصدر واحد على الأقل من الإعدادات.",
+  "reciter.select": "اختر القارئ",
+
+  "settings.title": "الإعدادات",
+  "settings.description": "إدارة التفضيلات وإعدادات التطبيق.",
+
+  "settings.tabs.general": "عام",
+  "settings.tabs.sources": "مصادر القراء",
+  "settings.tabs.library": "المكتبة",
+  "settings.tabs.storage": "التخزين",
+
+  "settings.general.appearance": "المظهر",
+  "settings.general.appearance.description": "تخصيص مظهر وشكل التطبيق.",
+  "settings.general.theme": "السمة",
+  "settings.general.theme.light": "فاتح",
+  "settings.general.theme.dark": "داكن",
+  "settings.general.theme.system": "النظام",
+  "settings.general.language": "اللغة",
+  "settings.general.language.description": "اختر لغتك المفضلة.",
+  "settings.general.language.en": "الإنجليزية",
+  "settings.general.language.ar": "العربية",
+  "settings.general.playback": "التشغيل",
+  "settings.general.playback.description": "ضبط سلوك تشغيل الصوت.",
+  "settings.general.autoplay": "تشغيل تلقائي للمقطع التالي",
+  "settings.general.autoplay.description": "تشغيل السورة التالية تلقائيًا عند انتهاء الحالية.",
+  "settings.general.shuffle": "وضع التبديل العشوائي",
+  "settings.general.shuffle.description": "اختيار السورة التالية عشوائيًا.",
+  "settings.general.playbackMode": "وضع التشغيل",
+  "settings.general.playbackMode.description": "اختر طريقة تشغيل الصوت بعد الانتهاء.",
+  "settings.general.playbackSpeed": "سرعة التشغيل",
+  "settings.general.playbackSpeed.description": "تحكم في سرعة تشغيل الصوت.",
+
+  "settings.general.playback.off": "إيقاف",
+  "settings.general.playback.repeatOne": "تكرار المقطع",
+  "settings.general.playback.shuffle": "تشغيل عشوائي",
+
+  "settings.sources.title": "مصادر القراء",
+  "settings.sources.description": "اختر المصادر التي تظهر في قائمة القراء. يجب تفعيل مصدر واحد على الأقل.",
+  "settings.sources.selectAll": "تحديد الكل",
+  "settings.sources.mp3quran": "إم بي 3 قرآن",
+  "settings.sources.itqan": "إتقان",
+  "settings.sources.minOneRequired": "يجب أن يبقى مصدر واحد على الأقل مفعلاً.",
+
+  "settings.library.title": "إدارة المكتبة",
+  "settings.library.description": "إدارة التحميلات والمقاطع الأخيرة والعلامات المرجعية.",
+  "settings.library.downloads": "التحميلات",
+  "settings.library.downloads.description": "إدارة المقاطع الصوتية المحملة.",
+  "settings.library.downloads.clearAll": "مسح جميع التحميلات",
+  "settings.library.recent": "المقاطع الأخيرة",
+  "settings.library.recent.description": "المقاطع التي استمعت إليها مؤخرًا.",
+  "settings.library.recent.clearAll": "مسح السجل الأخير",
+  "settings.library.bookmarks": "العلامات المرجعية",
+  "settings.library.bookmarks.description": "العلامات المرجعية المحفوظة.",
+  "settings.library.bookmarks.clearAll": "مسح جميع العلامات المرجعية",
+  "settings.library.clearAll.title": "مسح المكتبة بالكامل",
+  "settings.library.clearAll.description": "سيؤدي ذلك إلى حذف جميع التحميلات والمقاطع الأخيرة والعلامات المرجعية نهائيًا.",
+  "settings.library.clearAll.button": "مسح الكل",
+  "settings.library.empty": "لا توجد عناصر بعد.",
+
+  "settings.storage.title": "التخزين",
+  "settings.storage.description": "عرض وإدارة مساحة التخزين المستخدمة من التطبيق.",
+  "settings.storage.coreData": "البيانات الأساسية",
+  "settings.storage.coreData.description": "واجهة التطبيق، جافاسكريبت، CSS، والخطوط.",
+  "settings.storage.appData": "بيانات التطبيق",
+  "settings.storage.appData.description": "المقاطع الصوتية المحملة.",
+  "settings.storage.total": "إجمالي الاستخدام",
+  "settings.storage.clear": "مسح",
+  "settings.storage.refresh": "تحديث",
+
+  "common.save": "حفظ",
+  "common.cancel": "إلغاء",
+  "common.reset": "إعادة تعيين",
+  "common.items": "{count} عناصر",
+
+  "badge.recent": "تم تشغيله",
+  "badge.bookmarked": "محفوظ",
+  "badge.downloaded": "مُحمّل"
 }

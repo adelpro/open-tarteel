@@ -1,4 +1,4 @@
-import { Riwaya } from '@/types';
+import { Riwaya } from '@/constants';
 
 type Locale = 'ar' | 'en';
 type RiwayaKey = keyof typeof Riwaya;
@@ -40,13 +40,13 @@ const riwayaMatchPhrases: Record<Locale, RiwayaMatchMap> = {
 const findRiwayaKey = (moshafName: string, locale: Locale): RiwayaKey => {
   const map = riwayaMatchPhrases[locale];
   for (const [key, phrases] of Object.entries(map)) {
-    if (phrases.some((phrase) => moshafName.includes(phrase))) {
-      return key as RiwayaKey;
+    if (moshafName && phrases.some((phrase) => moshafName.includes(phrase))) {
+      if (key in Riwaya) return key as RiwayaKey;
     }
   }
+  // fallback
   return 'Hafs';
 };
-
 export const getRiwayaKeyFromMoshafName = findRiwayaKey;
 
 export const getRiwayaKeyFromValue = (value: string): keyof typeof Riwaya => {

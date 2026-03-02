@@ -6,8 +6,9 @@ import { FaRegShareFromSquare } from 'react-icons/fa6';
 import { MdHistory } from 'react-icons/md';
 import { FormattedMessage } from 'react-intl';
 
-import { useRecentlyPlayed } from '@/hooks/use-recently-played';
-import { LinkSource, Reciter, Riwaya } from '@/types';
+import { Riwaya } from '@/constants';
+import { useRecentRecitersData } from '@/hooks/recent-reciters';
+import { LinkSource, Reciter } from '@/types';
 import { cn, generateFavId } from '@/utils';
 import { useShareReciter } from '@/utils/share';
 
@@ -39,7 +40,7 @@ export default function ReciterCard({
   refCallback,
 }: Props) {
   const { shareReciter } = useShareReciter();
-  const { recentIds } = useRecentlyPlayed();
+  const { recentIds } = useRecentRecitersData();
 
   const favId = generateFavId(reciter);
   const isRecentlyPlayed = recentIds.includes(favId);

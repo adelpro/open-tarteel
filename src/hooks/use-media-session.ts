@@ -1,14 +1,14 @@
 import { useAtomValue } from 'jotai';
 import { useEffect } from 'react';
 
-import { SURAHS } from '@/constants';
-import { selectedReciterAtom } from '@/jotai/atom';
-import { Playlist } from '@/types';
-import { removeTashkeel } from '@/utils';
+import { selectedReciterAtom } from '@/jotai/atoms';
+import { PlayerTrack, Playlist } from '@/types';
+import { getSurahInfo, removeTashkeel } from '@/utils';
 type Props = {
   audioRef: React.RefObject<HTMLAudioElement | null>;
-  playlist: Playlist;
-  currentTrackId: number;
+  playlist?: Playlist;
+  track: PlayerTrack | null;
+  trackIndex: number;
   isPlaying: boolean;
   onPlay: () => void;
   onPause: () => void;
@@ -19,7 +19,7 @@ type Props = {
 export function useMediaSession({
   audioRef,
   playlist,
-  currentTrackId,
+  track,
   isPlaying,
   onPlay,
   onPause,
@@ -29,13 +29,18 @@ export function useMediaSession({
   const selectedReciter = useAtomValue(selectedReciterAtom);
 
   useEffect(() => {
-    if (!('mediaSession' in navigator)) return;
+    if (
+      !('mediaSession' in navigator) ||
+      !playlist ||
+      !track ||
+      !selectedReciter
+    )
+      return;
 
-    const track = playlist[currentTrackId];
-    if (!track || !selectedReciter) return;
-    const surahName = removeTashkeel(
-      SURAHS.find((surah) => surah.id.toString() === track.surahId)?.name || ''
-    );
+    const { name } = getSurahInfo(track.surahId);
+
+    const surahName = removeTashkeel(name);
+
     navigator.mediaSession.metadata = new MediaMetadata({
       title: `${track.surahId} - ${surahName}`,
       artist: selectedReciter.name,
@@ -68,7 +73,6 @@ export function useMediaSession({
     return () => clearInterval(interval);
   }, [
     playlist,
-    currentTrackId,
     isPlaying,
     onPlay,
     onPause,
@@ -76,5 +80,6 @@ export function useMediaSession({
     onPrev,
     audioRef,
     selectedReciter,
+    track,
   ]);
 }

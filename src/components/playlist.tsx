@@ -4,7 +4,7 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 
 import { SURAHS } from '@/constants';
-import { selectedReciterAtom } from '@/jotai/atom';
+import { selectedReciterAtom } from '@/jotai/atoms';
 import { PlaylistItem } from '@/types';
 import { removeTashkeel } from '@/utils';
 

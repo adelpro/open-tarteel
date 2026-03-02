@@ -1,6 +1,3 @@
-export type PlaylistItem = {
-  surahId: string;
-  link: string;
-};
+import { PlaylistItem } from './player';
 
 export type Playlist = PlaylistItem[];

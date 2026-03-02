@@ -1,61 +1,68 @@
-import { RefObject, useEffect, useRef, useState } from 'react';
+'use client';
 
-export function useKeyboardNavigation(itemCount: number): {
-  focusedIndex: number | null;
-  setFocusedIndex: (index: number | null) => void;
-  reciterRefs: RefObject<(HTMLElement | null)[]>;
-  searchInputRef: RefObject<HTMLInputElement | null>;
-} {
-  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
-  const reciterReferences = useRef<(HTMLButtonElement | null)[]>([]);
-  const searchInputRef = useRef<HTMLInputElement>(null);
+import { useAtom } from 'jotai';
+import { useCallback, useEffect, useRef } from 'react';
+
+import { focusedIndexAtom, recitersCountAtom } from '@/jotai/atoms';
+
+export function useKeyboardNavigation() {
+  const [focusedIndex, setFocusedIndex] = useAtom(focusedIndexAtom);
+  const [recitersCount, setRecitersCount] = useAtom(recitersCountAtom);
+
+  const reciterReferences = useRef<(HTMLAnchorElement | null)[]>([]);
+  const recitersCountRef = useRef<number>(recitersCount);
+  recitersCountRef.current = recitersCount;
+
+  const resetFocusedIndex = useCallback(() => {
+    setFocusedIndex(null);
+  }, [setFocusedIndex]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (itemCount === 0) return;
-
+      const count = recitersCountRef.current;
+      if (count === 0) return;
       switch (event.key) {
         case 'ArrowDown': {
           event.preventDefault();
-          setFocusedIndex((previous) =>
-            previous === null || previous === itemCount - 1 ? 0 : previous + 1
+          setFocusedIndex((current) =>
+            current === null || current === count - 1 ? 0 : current + 1
           );
           break;
         }
         case 'ArrowUp': {
           event.preventDefault();
-          setFocusedIndex((previous) =>
-            previous === null || previous === 0 ? itemCount - 1 : previous - 1
+          setFocusedIndex((current) =>
+            current === null || current === 0 ? count - 1 : current - 1
           );
           break;
         }
         case 'Escape': {
           setFocusedIndex(null);
-          searchInputRef.current?.focus();
+          document.getElementById('search-input')?.focus();
           break;
         }
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [itemCount]);
+    globalThis.window.addEventListener('keydown', handleKeyDown);
+    return () =>
+      globalThis.window.removeEventListener('keydown', handleKeyDown);
+  }, [setFocusedIndex]);
 
   useEffect(() => {
-    if (focusedIndex !== null) {
-      reciterReferences.current[focusedIndex]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'start',
-      });
-      reciterReferences.current[focusedIndex]?.focus();
-    }
+    if (focusedIndex === null) return;
+    reciterReferences.current[focusedIndex]?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+    });
+    reciterReferences.current[focusedIndex]?.focus();
   }, [focusedIndex]);
 
   return {
     focusedIndex,
     setFocusedIndex,
+    resetFocusedIndex,
     reciterRefs: reciterReferences,
-    searchInputRef,
+    setRecitersCount,
   };
 }

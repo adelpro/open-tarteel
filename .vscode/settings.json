@@ -6,5 +6,21 @@
      "@gun/*": "${workspaceRoot}/src/gun",
 
     },
-    "postman.settings.dotenv-detection-notification-visibility": false
+    "postman.settings.dotenv-detection-notification-visibility": false,
+    "cSpell.words": [
+        "itqan",
+        "lerp",
+        "Meccan",
+        "Medinan",
+        "Metas",
+        "moshaf",
+        "nuqs",
+        "riwaya",
+        "Riwayat",
+        "Serwist",
+        "SURAHS",
+        "svgs",
+        "Tajawal",
+        "Tashkeel"
+    ]
 }

@@ -3,7 +3,7 @@
 import { useAtomValue } from 'jotai';
 import { useEffect } from 'react';
 
-import { enabledSourcesAtom } from '@/jotai/atom';
+import { settingsEnabledSourcesAtom  } from '@/jotai/settings';
 
 const COOKIE_NAME = 'enabled-sources';
 const MAX_AGE = 60 * 60 * 24 * 365; // 1 year
@@ -14,7 +14,7 @@ const MAX_AGE = 60 * 60 * 24 * 365; // 1 year
  * preferences without a network round-trip.
  */
 export function EnabledSourcesCookieSync() {
-  const enabledSources = useAtomValue(enabledSourcesAtom);
+  const enabledSources = useAtomValue(settingsEnabledSourcesAtom );
 
   useEffect(() => {
     const value = enabledSources.join(',');

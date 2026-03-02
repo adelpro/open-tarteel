@@ -3,10 +3,10 @@ import { useAtom } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import { hideUnderConstructionAtom } from '@/jotai/atom';
+import { hideUnderConstructionAtom } from '@/jotai';
 
 const UnderConstruction: React.FC = () => {
-  const [hideUnderConstructionValue, setHideUnderconstructionValue] = useAtom(
+  const [hideUnderConstructionValue, setHideUnderConstructionValue] = useAtom(
     hideUnderConstructionAtom
   );
   const [visible, setVisible] = useState(false);
@@ -51,7 +51,7 @@ const UnderConstruction: React.FC = () => {
             type="checkbox"
             checked={hideUnderConstructionValue}
             onChange={(event) =>
-              setHideUnderconstructionValue(event.target.checked)
+              setHideUnderConstructionValue(event.target.checked)
             }
           />
           <FormattedMessage

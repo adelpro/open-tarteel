@@ -1,3 +1,5 @@
+'use client';
+
 import { useIntl } from 'react-intl';
 
 import { Reciter } from '@/types';
