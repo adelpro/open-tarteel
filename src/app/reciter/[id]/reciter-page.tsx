@@ -7,6 +7,7 @@ import React, { Suspense, useEffect } from 'react';
 import PwaUpdater from '@/components/pwa-updater';
 import ReciterSelector from '@/components/reciter-selector';
 import SimpleSkeleton from '@/components/simple-skeleton';
+import DownloadMushafButton from '@/components/download-mushaf-button';
 import { fullscreenAtom, selectedReciterAtom } from '@/jotai/atom';
 
 const Player = dynamic(() => import('@/components/player'), { ssr: false });
@@ -43,6 +44,9 @@ function ReciterContent() {
           <Suspense fallback={<SimpleSkeleton />}>
             <Player playlist={selectedReciter.moshaf.playlist} />
           </Suspense>
+        )}
+        {selectedReciter?.moshaf && !isFullscreen && (
+          <DownloadMushafButton playlist={selectedReciter.moshaf.playlist} />
         )}
         <PwaUpdater />
       </div>

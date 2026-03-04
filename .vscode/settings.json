@@ -6,5 +6,8 @@
      "@gun/*": "${workspaceRoot}/src/gun",
 
     },
-    "postman.settings.dotenv-detection-notification-visibility": false
+    "postman.settings.dotenv-detection-notification-visibility": false,
+    "i18n-ally.localesPaths": [
+        "src/locales"
+    ]
 }

@@ -1,9 +1,7 @@
 {
   "appName": "The Holy Quran",
   "appDescription": "Heartfelt recitations without distractions.",
-
   "close": "Close",
-
   "footer.home": "Home",
   "footer.about": "About the app",
   "footer.privacy": "Privacy Policy",
@@ -21,7 +19,6 @@
   "showFavorite": "Show Favorite",
   "noRecitersFound": "No reciters found.",
   "allReciters": "All Reciters",
-
   "riwaya.Hafs": "Hafs",
   "riwaya.Warsh": "Warsh",
   "riwaya.Qaloon": "Qaloon",
@@ -36,7 +33,6 @@
   "riwaya.Hisham": "Hisham",
   "riwaya.IbnJammaz": "Ibn Jammaz",
   "riwaya.Yaqoub": "Ya‘qoub",
-
   "contact.please_enter_name": "Please enter your name",
   "contact.please_enter_email": "Please enter your email",
   "contact.please_enter_valid_email": "Please enter a valid email",
@@ -50,7 +46,6 @@
   "contact.name": "Name",
   "contact.email": "Email",
   "contact.message": "Message",
-
   "about.title": "About Quran.us.kg App",
   "about.description": "Quran.us.kg is an open-source Quran app built to offer an ideal listening experience across all platforms. The app is built using modern web technologies to ensure:",
   "about.feature.performance": "High-speed performance and quick response",
@@ -61,7 +56,6 @@
   "about.servers.description1": "The app uses high-quality Quran audio files provided by mp3quran, a third-party independent service. This ensures fast and stable loading, enabling users to listen to recitations without interruption.",
   "about.servers.description2": "We emphasize that mp3quran is not part of our services. It is an external provider supporting millions of users worldwide with a vast and diverse audio library.",
   "about.footer.rights": "All rights reserved",
-
   "privacy.title": "Quran.us.kg Privacy Policy",
   "privacy.effectiveDate": "Effective Date: February 14, 2025",
   "privacy.section1.title": "Your Privacy Matters to Us",
@@ -82,15 +76,12 @@
   "privacy.section7.body": "Quran.us.kg does not use any third-party services for analytics, tracking, or data collection. The app works entirely on your device without sending any information externally.",
   "privacy.section8.title": "Contact Us",
   "privacy.section8.body": "If you have any questions about this policy, feel free to contact us at:",
-
   "share.message": "Listen to this reciter on Tarteel",
   "share.fallback": "Link copied to clipboard!",
   "share.fallback.error": "Failed to copy link.",
-
   "underConstruction.message": "The app is under development",
   "underConstruction.doNotShowAgain": "Do not show this message again",
   "underConstruction.title": "Under Construction",
-
   "player.play": "Play",
   "player.pause": "Pause",
   "player.nextTrack": "Next Track",
@@ -107,10 +98,15 @@
   "player.togglePlaylist": "Playlist",
   "player.playbackSpeed": "Playback speed: {speed}x",
   "player.volumeControl": "Volume control",
-
   "player.more": "More options",
-
   "player.sleepTimerActive": "Sleep timer active",
   "player.sleepTimer": "Sleep Timer",
-  "player.untilEnd": "Until the end of the recitation"
+  "player.untilEnd": "Until the end of the recitation",
+  "mushaf.download": "Download Mushaf",
+  "mushaf.checkingStatus": "Checking Status...",
+  "mushaf.calculatingSize": "Calculating Size...",
+  "mushaf.pauseDownload": "Pause Download ({progress}%)",
+  "mushaf.resumeDownload": "Resume Download ({progress}%)",
+  "mushaf.availableOffline": "Available Offline",
+  "mushaf.removeOffline": "Remove Offline Mushaf"
 }

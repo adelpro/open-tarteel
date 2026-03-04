@@ -1,9 +1,7 @@
 {
   "appName": "القرآن الكريم",
   "appDescription": "تلاوات تلامس القلب دون إلهاءات.",
-
   "close": "إغلاق",
-
   "footer.home": "الصفحة الرئيسية",
   "footer.about": "معلومات عن التطبيق",
   "footer.privacy": "سياسة الخصوصية",
@@ -21,7 +19,6 @@
   "showFavorite": "المفضلة فقط",
   "noRecitersFound": "لا يوجد قراء مطابقين للبحث.",
   "allReciters": "جميع الروايات",
-
   "riwaya.Hafs": "حفص",
   "riwaya.Warsh": "ورش",
   "riwaya.Qaloon": "قالون",
@@ -36,7 +33,6 @@
   "riwaya.Hisham": "هشام",
   "riwaya.IbnJammaz": "ابن جماز",
   "riwaya.Yaqoub": "يعقوب",
-
   "contact.please_enter_name": "يرجى إدخال اسمك",
   "contact.please_enter_email": "يرجى إدخال البريد الإلكتروني",
   "contact.please_enter_valid_email": "يرجى إدخال البريد الإلكتروني بشكل صحيح",
@@ -50,7 +46,6 @@
   "contact.name": "اسم",
   "contact.email": "بريد إلكتروني",
   "contact.message": "رسالة",
-
   "about.title": "حول تطبيق Quran.us.kg",
   "about.description": "Quran.us.kg هو تطبيق قرآن مفتوح المصدر صمم لتوفير تجربة استماع مثالية عبر مختلف المنصات. بُني التطبيق باستخدام تقنيات ويب حديثة لضمان:",
   "about.feature.performance": "أداء عالي السرعة واستجابة سريعة",
@@ -61,7 +56,6 @@
   "about.servers.description1": "يستخدم التطبيق ملفات الصوت عالية الجودة للقرآن الكريم التي توفرها خدمة mp3quran، وهي خدمة طرف ثالث مستقلة. هذه الخدمة تضمن استقرار وسرعة في تحميل الملفات، مما يتيح للمستخدمين الاستماع إلى التلاوات دون انقطاع أو تأخير.",
   "about.servers.description2": "نود التأكيد على أن mp3quran ليست جزءًا من خدماتنا، بل هي مزود خارجي يدعم ملايين المستخدمين حول العالم من خلال مكتبة صوتية واسعة ومتنوعة.",
   "about.footer.rights": "جميع الحقوق محفوظة",
-
   "privacy.title": "سياسة خصوصية Quran.us.kg",
   "privacy.effectiveDate": "تاريخ السريان: 14 فبراير 2025",
   "privacy.section1.title": "خصوصيتك مهمة بالنسبة لنا",
@@ -82,15 +76,12 @@
   "privacy.section7.body": "لا يستخدم Quran.us.kg أي خدمات طرف ثالث للتحليلات أو التتبع أو جمع البيانات. يعمل التطبيق بالكامل على جهازك دون إرسال أي معلومات خارجيًا.",
   "privacy.section8.title": "اتصل بنا",
   "privacy.section8.body": "إذا كانت لديك أي أسئلة حول هذه السياسة، فلا تتردد في الاتصال بنا على:",
-
   "share.message": "استمع إلى هذا القارئ على Tarteel",
   "share.fallback": "تم نسخ الرابط إلى الحافظة!",
   "share.fallback.error": "فشل نسخ الرابط.",
-
   "underConstruction.message": "التطبيق قيد التطوير",
   "underConstruction.doNotShowAgain": "لا تعرض هذا مرة أخرى",
   "underConstruction.title": "قيد الإنشاء",
-
   "player.play": "تشغيل",
   "player.pause": "إيقاف",
   "player.nextTrack": "التالي",
@@ -107,10 +98,15 @@
   "player.togglePlaylist": "قائمة التشغيل",
   "player.playbackSpeed": "سرعة التشغيل: {speed}x",
   "player.volumeControl": "تحكم بمستوى الصوت",
-
   "player.more": "المزيد",
-
   "player.sleepTimerActive": "مؤقت النوم نشط",
   "player.sleepTimer": "مؤقت النوم",
-  "player.untilEnd": "حتى نهاية التلاوة"
+  "player.untilEnd": "حتى نهاية التلاوة",
+  "mushaf.download": "تحميل المصحف",
+  "mushaf.checkingStatus": "جاري التحقق...",
+  "mushaf.calculatingSize": "جاري حساب الحجم...",
+  "mushaf.pauseDownload": "إيقاف التحميل مؤقتا ({progress}%)",
+  "mushaf.resumeDownload": "إكمال التحميل ({progress}%)",
+  "mushaf.availableOffline": "متاح بدون اتصال",
+  "mushaf.removeOffline": "حذف المصحف"
 }
