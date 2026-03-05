@@ -6,7 +6,11 @@ import { useIntl } from 'react-intl';
 
 import { recitersSortAtom, selectedRiwayaAtom } from '@/jotai/atom';
 import { Reciter, Riwaya } from '@/types';
-import { generateFavId, normalizeArabicText } from '@/utils';
+import {
+  FUZZY_SEARCH_THRESHOLD,
+  fuzzyScoreReciter,
+  generateFavId,
+} from '@/utils';
 
 type UseFilterSortParams = {
   reciters: Reciter[];
@@ -46,11 +50,17 @@ export function useFilterSort({
         if (showOnlyFavorites && !favoriteReciters.includes(id)) return false;
         if (selectedRiwaya !== 'all' && r.moshaf.riwaya !== selectedRiwaya)
           return false;
-        return normalizeArabicText(r.name).includes(
-          normalizeArabicText(searchTerm)
-        );
+        const searchScore = fuzzyScoreReciter(r.name, searchTerm);
+        return searchScore > FUZZY_SEARCH_THRESHOLD;
       })
       .sort((a, b) => {
+        if (searchTerm.trim()) {
+          const aScore = fuzzyScoreReciter(a.name, searchTerm);
+          const bScore = fuzzyScoreReciter(b.name, searchTerm);
+          if (Math.abs(aScore - bScore) > 0.01) {
+            return bScore - aScore; // Higher score first
+          }
+        }
         const aId = generateFavId(a);
         const bId = generateFavId(b);
 
