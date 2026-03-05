@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import { useAudioCache } from '@/hooks/use-audio-cache';
-import { cn, formatBytes } from '@/utils';
+import { cn } from '@/utils';
 import { formatBytes as formatCacheBytes } from '@/utils/audio-cache';
 
 import Dialog from './dialog';
@@ -15,14 +15,8 @@ export default function CacheManager() {
   const [isOpen, setIsOpen] = useState(false);
   const [clearing, setClearing] = useState(false);
 
-  const {
-    cacheStats,
-    cachedEntries,
-    loading,
-    error,
-    operation,
-    clearCache,
-  } = useAudioCache();
+  const { cacheStats, cachedEntries, loading, error, operation, clearCache } =
+    useAudioCache();
 
   // Initialize on client side only
   React.useEffect(() => {
@@ -33,7 +27,7 @@ export default function CacheManager() {
     return (
       <button
         className={cn(
-          'px-3 py-1 text-sm font-medium rounded-md transition-colors',
+          'rounded-md px-3 py-1 text-sm font-medium transition-colors',
           'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700'
         )}
         disabled
@@ -44,11 +38,13 @@ export default function CacheManager() {
   }
 
   const handleClearAll = async () => {
-    if (!confirm(
-      intl.locale === 'ar'
-        ? 'هل أنت متأكد من حذف جميع الملفات المخزنة مؤقتاً؟'
-        : 'Are you sure you want to delete all cached files?'
-    )) {
+    if (
+      !confirm(
+        intl.locale === 'ar'
+          ? 'هل أنت متأكد من حذف جميع الملفات المخزنة مؤقتاً؟'
+          : 'Are you sure you want to delete all cached files?'
+      )
+    ) {
       return;
     }
 
@@ -67,7 +63,7 @@ export default function CacheManager() {
       <button
         onClick={() => setIsOpen(true)}
         className={cn(
-          'px-3 py-1 text-sm font-medium rounded-md transition-colors',
+          'rounded-md px-3 py-1 text-sm font-medium transition-colors',
           'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700'
         )}
         title={
@@ -169,9 +165,7 @@ export default function CacheManager() {
                 className="flex items-center justify-between rounded-md bg-gray-50 p-2 dark:bg-slate-800"
               >
                 <div className="flex-1 text-sm">
-                  <div className="font-medium">
-                    {entry.surahName}
-                  </div>
+                  <div className="font-medium">{entry.surahName}</div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
                     {entry.reciterName}
                   </div>
@@ -186,9 +180,7 @@ export default function CacheManager() {
 
         {!loading && cachedEntries.length === 0 && (
           <div className="py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-            {isARLocale
-              ? 'لا توجد ملفات مخزنة مؤقتاً'
-              : 'No cached files yet'}
+            {isARLocale ? 'لا توجد ملفات مخزنة مؤقتاً' : 'No cached files yet'}
           </div>
         )}
 
