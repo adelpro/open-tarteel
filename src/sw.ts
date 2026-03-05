@@ -4,6 +4,7 @@ import {
   CacheableResponsePlugin,
   CacheFirst,
   ExpirationPlugin,
+  NetworkFirst,
   Serwist,
 } from 'serwist';
 
@@ -19,7 +20,11 @@ declare global {
 
 declare const self: ServiceWorkerGlobalScope;
 
-// Add runtime caching for MP3Quran audio files
+/**
+ * Audio caching strategy for MP3Quran audio files
+ * Uses NetworkFirst: tries network first, falls back to cache for offline support
+ * This enables users to listen to previously downloaded surahs when offline
+ */
 const quranAudioCache = {
   matcher: ({ url }: { url: URL }) => {
     // Match only MP3Quran audio files: https://server12.mp3quran.net/001.mp3
@@ -29,15 +34,15 @@ const quranAudioCache = {
       /^\d+\.mp3$/.test(url.pathname.slice(1))
     );
   },
-  handler: new CacheFirst({
-    cacheName: 'quran-audio',
+  handler: new NetworkFirst({
+    cacheName: 'audio-cache-v1',
+    networkTimeoutSeconds: 10,
     plugins: [
-      new ExpirationPlugin({
-        maxEntries: 20,
-        maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
-      }),
       new CacheableResponsePlugin({
         statuses: [200],
+      }),
+      new ExpirationPlugin({
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
       }),
     ],
   }),

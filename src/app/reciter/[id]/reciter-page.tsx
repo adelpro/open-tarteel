@@ -13,8 +13,13 @@ const Player = dynamic(() => import('@/components/player'), { ssr: false });
 
 function ReciterContent() {
   const selectedReciter = useAtomValue(selectedReciterAtom);
+  const [mounted, setMounted] = React.useState(false);
 
   const [isFullscreen, setFullscreen] = useAtom(fullscreenAtom);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -25,7 +30,7 @@ function ReciterContent() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [setFullscreen]);
 
-  if (!selectedReciter) {
+  if (!mounted || !selectedReciter) {
     // Still no selected reciter: show skeleton (prevents hydration mismatch)
     return <SimpleSkeleton />;
   }

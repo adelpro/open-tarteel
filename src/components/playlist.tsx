@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
+import CacheSurahButton from '@/components/cache-surah-button';
 import { SURAHS } from '@/constants';
 import { selectedReciterAtom } from '@/jotai/atom';
 import { PlaylistItem } from '@/types';
@@ -39,32 +40,52 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
             return (
               <li
                 key={index}
-                className="mx-2 my-3 w-full cursor-pointer rounded border-b border-gray-100 p-3 text-slate-500 transition-colors duration-300 hover:bg-gray-50 hover:text-slate-800"
-                onClick={() => handlePlylistItemClick(index)}
+                className="mx-2 my-3 w-full rounded border-b border-gray-100 p-3 text-slate-500 transition-colors duration-300 hover:bg-gray-50 hover:text-slate-800"
               >
-                <div className="flex items-center">
-                  <span className="m-2 flex size-8 items-center justify-center rounded-full bg-gray-100 text-xs font-medium">
-                    {index + 1}
-                  </span>
-                  <div className="flex-1">
-                    <div className="flex items-baseline justify-between">
-                      <span className="text-lg font-medium">
-                        {isEnlgish
-                          ? surah.englishName
-                          : removeTashkeel(surah.name)}
-                      </span>
-                      <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-                        {surah.ayahCount}{' '}
-                        {isEnlgish
-                          ? surah.ayahCount === 1
-                            ? 'Aya'
-                            : 'Ayas'
-                          : surah.ayahCount === 1
-                            ? 'آية'
-                            : 'آيات'}
-                      </span>
+                <div className="flex items-center gap-3">
+                  <span
+                    onClick={() => handlePlylistItemClick(index)}
+                    className="flex cursor-pointer flex-1 items-center"
+                  >
+                    <span className="m-2 flex size-8 items-center justify-center rounded-full bg-gray-100 text-xs font-medium">
+                      {index + 1}
+                    </span>
+                    <div className="flex-1">
+                      <div className="flex items-baseline justify-between">
+                        <span className="text-lg font-medium">
+                          {isEnlgish
+                            ? surah.englishName
+                            : removeTashkeel(surah.name)}
+                        </span>
+                        <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                          {surah.ayahCount}{' '}
+                          {isEnlgish
+                            ? surah.ayahCount === 1
+                              ? 'Aya'
+                              : 'Ayas'
+                            : surah.ayahCount === 1
+                              ? 'آية'
+                              : 'آيات'}
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  </span>
+                  {selectedReciter && (
+                    <div className="flex-shrink-0">
+                      <CacheSurahButton
+                        surahId={item.surahId}
+                        surahName={
+                          isEnlgish
+                            ? surah.englishName
+                            : removeTashkeel(surah.name)
+                        }
+                        playlist={selectedReciter.moshaf.playlist}
+                        reciterId={selectedReciter.id}
+                        reciterName={selectedReciter.name}
+                        compact={true}
+                      />
+                    </div>
+                  )}
                 </div>
               </li>
             );
