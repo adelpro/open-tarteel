@@ -43,6 +43,7 @@ const quranAudioCache = {
       }),
       new ExpirationPlugin({
         maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+        maxEntries: 50, // Limit to 50 files
       }),
     ],
   }),

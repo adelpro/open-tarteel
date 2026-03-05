@@ -32,7 +32,7 @@ export default function CacheManager() {
         )}
         disabled
       >
-        {intl.locale === 'ar' ? '💾 التخزين' : '💾 Cache'}
+        {intl.locale?.startsWith('ar') ? '💾 التخزين' : '💾 Cache'}
       </button>
     );
   }
@@ -56,7 +56,7 @@ export default function CacheManager() {
     }
   };
 
-  const isARLocale = intl.locale === 'ar';
+  const isARLocale = intl.locale?.startsWith('ar');
 
   if (!isOpen) {
     return (
@@ -85,8 +85,10 @@ export default function CacheManager() {
               : 'Offline Cache Manager'}
           </h2>
           <button
+            type="button"
+            aria-label={isARLocale ? 'إغلاق' : 'Close'}
             onClick={() => setIsOpen(false)}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            className="text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-300"
           >
             ✕
           </button>

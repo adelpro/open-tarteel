@@ -27,8 +27,14 @@ export default function CacheSurahButton({
   const intl = useIntl();
   const isARLocale = intl.locale === 'ar';
 
-  const { cacheAudio, checkIfCached, cacheSurah, operation, cachedEntries } =
-    useAudioCache();
+  const {
+    cacheAudio,
+    checkIfCached,
+    cacheSurah,
+    operation,
+    cachedEntries,
+    removeSurahCache,
+  } = useAudioCache();
 
   const [isCached, setIsCached] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
@@ -65,18 +71,23 @@ export default function CacheSurahButton({
       ) {
         return;
       }
-      // Clear cache functionality would go here
+      try {
+        await removeSurahCache(surahId);
+        setIsCached(false);
+        setProgress(0);
+      } catch (error) {
+        console.error('Failed to remove surah from cache:', error);
+      }
       return;
     }
 
     try {
       setProgress(0);
       console.log(`[Cache] Starting to cache surah ${surahId}...`);
-      
+
       // Find the URL for this surah from the playlist
-      const surahIndex = parseInt(surahId) - 1; // surahId is 1-indexed
-      const audioUrl = playlist[surahIndex]?.link;
-      
+      const audioUrl = playlist.find((item) => item.surahId === surahId)?.link;
+
       if (!audioUrl) {
         throw new Error('Audio URL not found for this surah');
       }
@@ -95,11 +106,12 @@ export default function CacheSurahButton({
           setProgress(progress);
         }
       );
-      
+
       console.log(`[Cache] Successfully cached surah ${surahId}`);
       setIsCached(true);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
       console.error(`[Cache] Error caching surah ${surahId}:`, errorMessage);
       alert(isARLocale ? `خطأ: ${errorMessage}` : `Error: ${errorMessage}`);
     }
@@ -127,7 +139,7 @@ export default function CacheSurahButton({
           isCached
             ? 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900 dark:text-green-200 dark:hover:bg-green-800'
             : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700',
-          isDisabled && 'opacity-50 cursor-not-allowed'
+          isDisabled && 'cursor-not-allowed opacity-50'
         )}
       >
         {isLoading ? (
@@ -151,7 +163,7 @@ export default function CacheSurahButton({
           isCached
             ? 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900 dark:text-green-200 dark:hover:bg-green-800'
             : 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800',
-          isDisabled && 'opacity-50 cursor-not-allowed'
+          isDisabled && 'cursor-not-allowed opacity-50'
         )}
       >
         {isLoading ? (

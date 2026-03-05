@@ -7,27 +7,35 @@ import { cn } from '@/utils';
 
 export default function OfflineIndicator() {
   const intl = useIntl();
-  const isARLocale = intl.locale === 'ar';
-  const [isOnline, setIsOnline] = useState(false);
+  const isARLocale = intl.locale?.startsWith('ar');
+  const [isOnline, setIsOnline] = useState(true);
   const [showIndicator, setShowIndicator] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
     // Initialize with current online status
-    setIsOnline(navigator.onLine);
+    const online = navigator.onLine;
+    setIsOnline(online);
+    if (!online) {
+      setShowIndicator(true);
+    }
 
     const handleOnline = () => {
       setIsOnline(true);
       setShowIndicator(true);
-      // Hide indicator after 3 seconds
-      const timeout = setTimeout(() => setShowIndicator(false), 3000);
-      return () => clearTimeout(timeout);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => setShowIndicator(false), 3000);
     };
 
     const handleOffline = () => {
       setIsOnline(false);
       setShowIndicator(true);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
     };
 
     window.addEventListener('online', handleOnline);
@@ -36,6 +44,7 @@ export default function OfflineIndicator() {
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
 
@@ -48,16 +57,16 @@ export default function OfflineIndicator() {
     <div
       className={cn(
         'fixed bottom-4 right-4 rounded-lg px-4 py-3 text-sm font-medium text-white shadow-lg transition-all',
-        isOnline
-          ? 'bg-green-500 animate-pulse'
-          : 'bg-red-500'
+        isOnline ? 'animate-pulse bg-green-500' : 'bg-red-500'
       )}
     >
       <div className="flex items-center gap-2">
-        <span className={cn(
-          'h-2 w-2 rounded-full',
-          isOnline ? 'bg-white' : 'bg-white animate-pulse'
-        )} />
+        <span
+          className={cn(
+            'h-2 w-2 rounded-full',
+            isOnline ? 'bg-white' : 'animate-pulse bg-white'
+          )}
+        />
         {isOnline
           ? isARLocale
             ? 'متصل بالإنترنت'

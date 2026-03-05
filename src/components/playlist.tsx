@@ -43,9 +43,10 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                 className="mx-2 my-3 w-full rounded border-b border-gray-100 p-3 text-slate-500 transition-colors duration-300 hover:bg-gray-50 hover:text-slate-800"
               >
                 <div className="flex items-center gap-3">
-                  <span
+                  <button
+                    type="button"
                     onClick={() => handlePlylistItemClick(index)}
-                    className="flex cursor-pointer flex-1 items-center"
+                    className="flex flex-1 cursor-pointer items-center text-left"
                   >
                     <span className="m-2 flex size-8 items-center justify-center rounded-full bg-gray-100 text-xs font-medium">
                       {index + 1}
@@ -69,7 +70,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                         </span>
                       </div>
                     </div>
-                  </span>
+                  </button>
                   {selectedReciter && (
                     <div className="flex-shrink-0">
                       <CacheSurahButton

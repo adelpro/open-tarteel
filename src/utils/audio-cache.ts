@@ -31,13 +31,15 @@ function getDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve(request.result);
+    request.addEventListener('error', () => reject(request.error));
+    request.addEventListener('success', () => resolve(request.result));
 
     request.onupgradeneeded = (event) => {
-      const db = (event.target as IDBOpenDBRequest).result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        const store = db.createObjectStore(STORE_NAME, { keyPath: 'url' });
+      const database = (event.target as IDBOpenDBRequest).result;
+      if (!database.objectStoreNames.contains(STORE_NAME)) {
+        const store = database.createObjectStore(STORE_NAME, {
+          keyPath: 'url',
+        });
         store.createIndex('surahId', 'surahId', { unique: false });
         store.createIndex('reciterId', 'reciterId', { unique: false });
         store.createIndex('cachedAt', 'cachedAt', { unique: false });
@@ -75,11 +77,6 @@ export async function cacheAudioFile(
     const cache = await caches.open(CACHE_NAME);
     await cache.put(url, blobResponse);
 
-    // Store metadata in IndexedDB
-    const db = await getDB();
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-
     const entry: CacheEntry = {
       url,
       ...metadata,
@@ -87,11 +84,21 @@ export async function cacheAudioFile(
       fileSize,
     };
 
-    await new Promise((resolve, reject) => {
-      const request = store.put(entry);
-      request.onsuccess = () => resolve(undefined);
-      request.onerror = () => reject(request.error);
-    });
+    try {
+      const database = await getDB();
+      await new Promise<void>((resolve, reject) => {
+        const tx = database.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const request = store.put(entry);
+        tx.addEventListener('complete', () => resolve());
+        tx.addEventListener('error', () => reject(tx.error));
+        tx.addEventListener('abort', () => reject(tx.error));
+      });
+    } catch (error) {
+      // Rollback cache if IndexedDB fails
+      await cache.delete(url).catch(() => {});
+      throw error;
+    }
   } catch (error) {
     throw new Error(
       `Failed to cache audio: ${error instanceof Error ? error.message : 'Unknown error'}`
@@ -117,14 +124,16 @@ export async function isCached(url: string): Promise<boolean> {
  */
 export async function getCacheEntry(url: string): Promise<CacheEntry | null> {
   try {
-    const db = await getDB();
+    const database = await getDB();
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, 'readonly');
+      const tx = database.transaction(STORE_NAME, 'readonly');
       const store = tx.objectStore(STORE_NAME);
       const request = store.get(url);
 
-      request.onsuccess = () => resolve(request.result || null);
-      request.onerror = () => reject(request.error);
+      request.addEventListener('success', () =>
+        resolve(request.result || null)
+      );
+      request.addEventListener('error', () => reject(request.error));
     });
   } catch {
     return null;
@@ -139,14 +148,14 @@ export async function removeCachedAudio(url: string): Promise<void> {
     const cache = await caches.open(CACHE_NAME);
     await cache.delete(url);
 
-    const db = await getDB();
+    const database = await getDB();
     await new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const tx = database.transaction(STORE_NAME, 'readwrite');
       const store = tx.objectStore(STORE_NAME);
       const request = store.delete(url);
 
-      request.onsuccess = () => resolve(undefined);
-      request.onerror = () => reject(request.error);
+      request.addEventListener('success', () => resolve());
+      request.addEventListener('error', () => reject(request.error));
     });
   } catch (error) {
     throw new Error(
@@ -188,14 +197,14 @@ export async function removeCachedReciter(reciterId: number): Promise<void> {
  */
 export async function getAllCachedEntries(): Promise<CacheEntry[]> {
   try {
-    const db = await getDB();
+    const database = await getDB();
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, 'readonly');
+      const tx = database.transaction(STORE_NAME, 'readonly');
       const store = tx.objectStore(STORE_NAME);
       const request = store.getAll();
 
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
+      request.addEventListener('success', () => resolve(request.result));
+      request.addEventListener('error', () => reject(request.error));
     });
   } catch {
     return [];
@@ -210,15 +219,15 @@ async function getCachedEntriesByField(
   value: string | number
 ): Promise<CacheEntry[]> {
   try {
-    const db = await getDB();
+    const database = await getDB();
     return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, 'readonly');
+      const tx = database.transaction(STORE_NAME, 'readonly');
       const store = tx.objectStore(STORE_NAME);
       const index = store.index(field);
       const request = index.getAll(value);
 
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
+      request.addEventListener('success', () => resolve(request.result));
+      request.addEventListener('error', () => reject(request.error));
     });
   } catch {
     return [];
@@ -259,16 +268,16 @@ export async function clearAllCache(): Promise<void> {
   try {
     const cache = await caches.open(CACHE_NAME);
     const keys = await cache.keys();
-    await Promise.all(keys.map((req) => cache.delete(req)));
+    await Promise.all(keys.map((request) => cache.delete(request)));
 
-    const db = await getDB();
+    const database = await getDB();
     await new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const tx = database.transaction(STORE_NAME, 'readwrite');
       const store = tx.objectStore(STORE_NAME);
       const request = store.clear();
 
-      request.onsuccess = () => resolve(undefined);
-      request.onerror = () => reject(request.error);
+      request.addEventListener('success', () => resolve());
+      request.addEventListener('error', () => reject(request.error));
     });
   } catch (error) {
     throw new Error(
@@ -284,6 +293,8 @@ export function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+  const index = Math.floor(Math.log(bytes) / Math.log(k));
+  return (
+    Math.round((bytes / Math.pow(k, index)) * 100) / 100 + ' ' + sizes[index]
+  );
 }
