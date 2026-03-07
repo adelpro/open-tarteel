@@ -57,7 +57,7 @@ export default function ReciterSelector() {
   };
 
   return (
-    <div className="flex w-full justify-center">
+    <div className="flex w-[95%] justify-center md:w-full">
       <div className="flex w-full max-w-lg items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-white to-gray-100 p-3 shadow-md shadow-gray-300/20 transition-all duration-200 hover:from-gray-50 hover:to-gray-200 hover:shadow-lg hover:shadow-gray-300/25 focus:outline-none focus:ring-4 focus:ring-gray-400/50 active:scale-95 dark:from-gray-700 dark:to-gray-600 dark:shadow-gray-700/15 dark:hover:from-gray-600 dark:hover:to-gray-500 dark:hover:shadow-gray-600/20">
         <button
           type="button"
