@@ -150,7 +150,7 @@ export default function RecitersList({ setIsOpen }: Props) {
   }, [favoriteRecitersList.length, setShowOnlyFavorites]);
 
   return (
-    <section className="mx-auto w-full px-1">
+    <section className="mx-auto w-full animate-fade-up px-1">
       <div className="flex flex-col gap-4">
         <div className="relative flex w-full">
           <input
@@ -212,7 +212,7 @@ export default function RecitersList({ setIsOpen }: Props) {
         <div className="flex w-full flex-wrap items-center justify-center gap-2">
           <button
             onClick={() => setSelectedRiwaya('all')}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+            className={`rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold transition-all duration-200 dark:border-gray-300/40 ${
               selectedRiwaya === 'all'
                 ? 'bg-gradient-to-r from-brand-CTA-blue-600 to-brand-CTA-blue-500 text-white shadow-lg shadow-brand-CTA-blue-500/25'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
@@ -229,7 +229,7 @@ export default function RecitersList({ setIsOpen }: Props) {
                   event.stopPropagation();
                   setSelectedRiwaya(value as Riwaya | 'all');
                 }}
-                className={`rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                className={`rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold transition-all duration-200 dark:border-gray-300/40 ${
                   isSelected
                     ? 'bg-gradient-to-r from-brand-CTA-blue-600 to-brand-CTA-blue-500 text-white shadow-lg shadow-brand-CTA-blue-500/25'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'

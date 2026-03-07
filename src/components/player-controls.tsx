@@ -247,7 +247,7 @@ export default function PlayerControls({
   if (!isClient) {
     return (
       <div
-        className="relative flex w-full items-center justify-between gap-3 md:gap-4"
+        className="relative flex w-full items-center justify-between gap-2 md:gap-3"
         dir="rtl"
       >
         {Array.from({ length: 9 }).map((_, index) => (
@@ -278,7 +278,7 @@ export default function PlayerControls({
 
   return (
     <div
-      className="relative flex w-full items-center justify-between gap-3 md:gap-4"
+      className="relative flex w-full items-center justify-between gap-2 md:gap-3"
       dir="rtl"
     >
       {/* Volume Control */}
@@ -418,18 +418,18 @@ export default function PlayerControls({
         </Tooltip>
 
         {showMoreMenu && (
-          <div className="absolute bottom-12 left-0 z-10 flex w-56 flex-col gap-1.5 rounded-xl bg-white/95 p-3 shadow-xl ring-1 ring-black/5 backdrop-blur-sm dark:bg-gray-800/95 dark:ring-white/10">
-            <div className="mb-2 border-b border-gray-100 px-2 pb-2 text-xs font-semibold tracking-wide text-gray-500 dark:border-gray-700/50 dark:text-gray-400">
+          <div className="absolute bottom-10 left-0 z-10 flex w-52 flex-col gap-1 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
+            <div className="px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400">
               <Image
                 src={sleepSVG}
                 alt=""
-                width={14}
-                height={14}
-                className="me-1.5 inline opacity-70"
+                width={12}
+                height={12}
+                className="me-0.5 inline"
               />
               {messages.sleepTimer}
             </div>
-            <div className="mb-2 flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-1">
               {SLEEP_MINUTES.map((minutes) => (
                 <button
                   key={minutes}
@@ -437,7 +437,7 @@ export default function PlayerControls({
                     setSleepTimer(minutes);
                     setShowMoreMenu(false);
                   }}
-                  className="min-w-[3rem] flex-1 rounded-md bg-gray-50 px-2 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700/50 dark:text-gray-200 dark:hover:bg-gray-600"
+                  className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                 >
                   {minutes}m
                 </button>
@@ -447,7 +447,7 @@ export default function PlayerControls({
                   setSleepTimer('end');
                   setShowMoreMenu(false);
                 }}
-                className="w-full rounded-md bg-gray-50 px-2 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700/50 dark:text-gray-200 dark:hover:bg-gray-600"
+                className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
               >
                 {messages.untilEnd}
               </button>
@@ -457,7 +457,7 @@ export default function PlayerControls({
                     clearSleepTimer();
                     setShowMoreMenu(false);
                   }}
-                  className="w-full rounded-md bg-red-50 px-2 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40"
+                  className="w-full rounded bg-red-100 px-2 py-1 text-xs text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
                 >
                   Cancel Timer
                 </button>
@@ -471,7 +471,7 @@ export default function PlayerControls({
                 toggleFullscreen();
                 setShowMoreMenu(false);
               }}
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700/80"
+              className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
             >
               {isFullscreen ? (
                 <BsFullscreenExit size={16} color="#6b7280" />
@@ -492,7 +492,7 @@ export default function PlayerControls({
               }}
               disabled={isPlaying}
               className={cn(
-                'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700/80',
+                'flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700',
                 isPlaying && 'cursor-not-allowed opacity-50'
               )}
             >
@@ -514,7 +514,7 @@ export default function PlayerControls({
                 togglePlaybackSpeed();
                 setShowMoreMenu(false);
               }}
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700/80"
+              className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
             >
               <MdSpeed size={16} color="#6b7280" />
               <span>{messages.playbackSpeed}</span>
@@ -525,7 +525,7 @@ export default function PlayerControls({
                 togglePlaylistOpen();
                 setShowMoreMenu(false);
               }}
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700/80"
+              className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
             >
               <Image src={playlistSVG} alt="" width={16} height={16} />
               <span>{messages.togglePlaylist}</span>
@@ -606,18 +606,18 @@ export default function PlayerControls({
           </Tooltip>
 
           {showDesktopSleepMenu && (
-            <div className="absolute bottom-12 right-0 z-10 w-48 rounded-xl bg-white/95 p-3 shadow-xl ring-1 ring-black/5 backdrop-blur-sm dark:bg-gray-800/95 dark:ring-white/10">
-              <div className="mb-2 border-b border-gray-100 px-2 pb-2 text-xs font-semibold tracking-wide text-gray-500 dark:border-gray-700/50 dark:text-gray-400">
+            <div className="absolute bottom-10 right-0 z-10 w-40 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
+              <div className="mb-1 px-2 text-xs font-medium text-gray-500 dark:text-gray-400">
                 <Image
                   src={sleepSVG}
                   alt=""
-                  width={14}
-                  height={14}
-                  className="me-1.5 inline opacity-70"
+                  width={12}
+                  height={12}
+                  className="mr-1 inline"
                 />
                 {messages.sleepTimer}
               </div>
-              <div className="mb-1 flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1">
                 {SLEEP_MINUTES.map((minutes) => (
                   <button
                     key={minutes}
@@ -625,7 +625,7 @@ export default function PlayerControls({
                       setSleepTimer(minutes);
                       setShowDesktopSleepMenu(false);
                     }}
-                    className="min-w-[3rem] flex-1 rounded-md bg-gray-50 px-2 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700/50 dark:text-gray-200 dark:hover:bg-gray-600"
+                    className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                   >
                     {minutes}m
                   </button>
@@ -635,7 +635,7 @@ export default function PlayerControls({
                     setSleepTimer('end');
                     setShowDesktopSleepMenu(false);
                   }}
-                  className="w-full rounded-md bg-gray-50 px-2 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-700/50 dark:text-gray-200 dark:hover:bg-gray-600"
+                  className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                 >
                   {messages.untilEnd}
                 </button>
@@ -645,7 +645,7 @@ export default function PlayerControls({
                       clearSleepTimer();
                       setShowDesktopSleepMenu(false);
                     }}
-                    className="w-full rounded-md bg-red-50 px-2 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40"
+                    className="w-full rounded bg-red-100 px-2 py-1 text-xs text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
                   >
                     Cancel Timer
                   </button>

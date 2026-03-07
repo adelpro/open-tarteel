@@ -10,7 +10,7 @@ type Props = {
 
 export default function ReciterSelectorDialog({ isOpen, setIsOpen }: Props) {
   return (
-    <Dialog isOpen={isOpen} setIsOpen={setIsOpen}>
+    <Dialog isOpen={isOpen} setIsOpen={setIsOpen} className="bg-transparent">
       <RecitersList setIsOpen={setIsOpen} />
     </Dialog>
   );

@@ -47,3 +47,9 @@ export const selectedReciterAtom = createAtomWithStorage<Reciter | null>(
   'selected-reciter',
   null
 );
+
+export type Theme = 'light' | 'dark' | 'system';
+export const themeAtom = createAtomWithStorage<Theme>(
+  'theme-preference',
+  'system'
+);
