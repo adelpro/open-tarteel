@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-import { selectedReciterAtom } from '@/jotai/atom';
+import { enabledSourcesAtom, selectedReciterAtom } from '@/jotai/atom';
 import type { Reciter } from '@/types';
 import { getAllReciters } from '@/utils/api';
 
@@ -15,6 +15,7 @@ export function useReciters() {
   const [error, setError] = useState<string | null>(null);
 
   const [selectedReciter, setSelectedReciter] = useAtom(selectedReciterAtom);
+  const [enabledSources] = useAtom(enabledSourcesAtom);
 
   useEffect(() => {
     let isMounted = true;
@@ -22,14 +23,18 @@ export function useReciters() {
     const fetchReciters = async () => {
       try {
         setLoading(true);
-        const data = await getAllReciters(locale);
+        const data = await getAllReciters(locale, enabledSources);
         if (!isMounted) return;
 
         setReciters(data);
 
         if (selectedReciter) {
           const matched = data.find((r) => r.id === selectedReciter.id);
-          setSelectedReciter(matched ?? null); // Reset if not found
+          if (matched) {
+            setSelectedReciter(matched);
+          } else {
+            setSelectedReciter(null);
+          }
         }
       } catch {
         if (isMounted) {
@@ -49,7 +54,8 @@ export function useReciters() {
     return () => {
       isMounted = false;
     };
-  }, [locale, selectedReciter, setSelectedReciter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Only fetch on locale/sources change
+  }, [locale, enabledSources, setSelectedReciter]);
 
   return { reciters, loading, error };
 }

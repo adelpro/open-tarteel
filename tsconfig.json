@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext", "webworker"],
-    "types": ["@serwist/next/typings"],
+    "types": ["vitest/globals", "vitest/jsdom", "@serwist/next/typings"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -36,8 +36,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "types/**/*.d.ts",
-    "src/app/opengraph-image.alt.tst",
-    "src/constants/trackers.-listts"
+    "src/app/opengraph-image.alt.txt",
+    "src/constants/trackers-list.ts"
   ],
   "exclude": ["node_modules", "public/sw.js"]
 }

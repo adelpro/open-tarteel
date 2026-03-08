@@ -4,7 +4,7 @@ import { Riwaya } from '@/types';
 import { cn } from '@/utils/cn';
 
 export default function Tags() {
-  const [riwaya, setRiwaya] = React.useState<Riwaya>(Riwaya.Hafs);
+  const [riwaya] = React.useState<Riwaya>(Riwaya.Hafs);
   return (
     <section className="mt-8 flex w-full max-w-md flex-row justify-center gap-3">
       {Object.values(Riwaya).map((value) => (

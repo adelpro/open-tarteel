@@ -233,6 +233,10 @@ export default function PlayerControls({
       id: 'player.untilEnd',
       defaultMessage: 'Until end',
     }),
+    cancelTimer: formatMessage({
+      id: 'player.cancelTimer',
+      defaultMessage: 'Cancel Timer',
+    }),
     sleepTimerActive: (minutes: number) =>
       formatMessage(
         {
@@ -647,7 +651,7 @@ export default function PlayerControls({
                     }}
                     className="w-full rounded bg-red-100 px-2 py-1 text-xs text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
                   >
-                    Cancel Timer
+                    {messages.cancelTimer}
                   </button>
                 )}
               </div>

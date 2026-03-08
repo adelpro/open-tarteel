@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { ReactNode, useLayoutEffect, useRef } from 'react';
+import React, { ReactNode, useEffect, useLayoutEffect, useRef } from 'react';
 
 import close from '@/svgs/close.svg';
 import { cn } from '@/utils';
@@ -9,6 +9,8 @@ type DialogProps = {
   children: ReactNode;
   hideCloseButton?: boolean;
   className?: string;
+  ariaLabel?: string;
+  ariaLabelledBy?: string;
 };
 
 export default function Dialog({
@@ -17,16 +19,72 @@ export default function Dialog({
   hideCloseButton = false,
   children,
   className,
+  ariaLabel,
+  ariaLabelledBy,
 }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
+  const previouslyFocusedElement = useRef<HTMLElement | null>(null);
 
   useLayoutEffect(() => {
-    if (isOpen && !dialogRef.current?.open) {
-      dialogRef.current?.showModal();
-    } else if (!isOpen && dialogRef.current?.open) {
-      dialogRef.current?.close();
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    if (isOpen && !dialog.open) {
+      previouslyFocusedElement.current = document.activeElement as HTMLElement;
+      dialog.showModal();
+    } else if (!isOpen && dialog.open) {
+      dialog.close();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const handleCancel = (event: Event) => {
+      event.preventDefault();
+      setIsOpen(false);
+    };
+
+    dialog.addEventListener('cancel', handleCancel);
+    return () => dialog.removeEventListener('cancel', handleCancel);
+  }, [setIsOpen]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      previouslyFocusedElement.current?.focus();
+    }
+  }, [isOpen]);
+
+  // Focus trap
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDialogElement>) => {
+    if (event.key !== 'Tab') return;
+
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const focusableElements = dialog.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+
+    const first = focusableElements[0];
+
+    const last = focusableElements[focusableElements.length - 1];
+
+    if (!first || !last) return;
+
+    if (event.shiftKey) {
+      if (document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  };
 
   return (
     <dialog
@@ -36,15 +94,14 @@ export default function Dialog({
           setIsOpen(false);
         }
       }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') {
-          setIsOpen(false);
-        }
-      }}
+      onKeyDown={handleKeyDown}
       className={cn(
         'top-50 left-50 -translate-x-50 -translate-y-50 fixed z-10 mx-auto w-[98%] max-w-4xl origin-top animate-slideInWithFade p-2 backdrop:bg-zinc-500/50 dark:backdrop:bg-zinc-900/50',
         className
       )}
+      aria-modal="true"
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledBy}
     >
       {/* Apply overflow and rounded corners to the main content container */}
       <main className="h-full w-full overflow-hidden rounded-2xl border border-gray-200/80 bg-background p-1 text-foreground shadow-2xl dark:border-gray-700 sm:p-2">

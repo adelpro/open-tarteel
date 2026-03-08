@@ -25,7 +25,9 @@ const sendFeedback = async (
       }),
     });
     return response;
-  } catch {}
+  } catch {
+    // Handle error silently
+  }
 };
 
 export default function ContactPage() {

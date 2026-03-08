@@ -1,12 +1,25 @@
 'use client';
 
 import { useAtom } from 'jotai';
-import { useMemo, useState } from 'react';
+import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
-import { recitersSortAtom, selectedRiwayaAtom } from '@/jotai/atom';
+import { recitersSortAtom } from '@/jotai/atom';
 import { Reciter, Riwaya } from '@/types';
-import { generateFavId, normalizeArabicText } from '@/utils';
+import { fuzzySearch, generateFavId } from '@/utils';
+
+// Define parsers for URL state management
+// Using descriptive keys (query, riwaya) for clarity
+// Define all possible Riwaya values plus 'all'
+const riwayaValues = ['all', ...Object.values(Riwaya)] as const;
+
+const filterSearchParsers = {
+  searchQuery: parseAsString.withDefault(''),
+  selectedRiwaya: parseAsStringLiteral(riwayaValues).withDefault(
+    'all' as const
+  ),
+};
 
 type UseFilterSortParams = {
   reciters: Reciter[];
@@ -23,8 +36,18 @@ export function useFilterSort({
   favoriteCounts = {},
   viewCounts = {},
 }: UseFilterSortParams) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRiwaya, setSelectedRiwaya] = useAtom(selectedRiwayaAtom);
+  // Use nuqs for URL state management with descriptive keys
+  const [{ searchQuery: searchTerm, selectedRiwaya }, setFilters] =
+    useQueryStates(filterSearchParsers, {
+      urlKeys: {
+        searchQuery: 'query',
+        selectedRiwaya: 'riwaya',
+      },
+      history: 'push',
+      shallow: false, // Allow server to track state changes
+    });
+
+  // Keep sortMode in Jotai for non-URL state
   const [sortMode, setSortMode] = useAtom(recitersSortAtom);
   const { formatMessage, locale } = useIntl();
   const availableRiwiyat = useMemo(() => {
@@ -40,41 +63,46 @@ export function useFilterSort({
   }, [reciters, formatMessage, locale]);
 
   const filteredReciters = useMemo(() => {
-    return reciters
-      .filter((r) => {
-        const id = generateFavId(r);
-        if (showOnlyFavorites && !favoriteReciters.includes(id)) return false;
-        if (selectedRiwaya !== 'all' && r.moshaf.riwaya !== selectedRiwaya)
-          return false;
-        return normalizeArabicText(r.name).includes(
-          normalizeArabicText(searchTerm)
-        );
-      })
-      .sort((a, b) => {
-        const aId = generateFavId(a);
-        const bId = generateFavId(b);
+    // Apply favorite and riwaya filters first
+    let filtered = reciters.filter((r) => {
+      const id = generateFavId(r);
+      if (showOnlyFavorites && !favoriteReciters.includes(id)) return false;
+      if (selectedRiwaya !== 'all' && r.moshaf.riwaya !== selectedRiwaya)
+        return false;
+      return true;
+    });
 
-        if (sortMode === 'alphabetical') {
+    // Apply fuzzy search if there's a search term
+    if (searchTerm && searchTerm.trim() !== '') {
+      filtered = fuzzySearch(filtered, searchTerm);
+    }
+
+    // Sort the filtered results
+    return filtered.sort((a, b) => {
+      const aId = generateFavId(a);
+      const bId = generateFavId(b);
+
+      if (sortMode === 'alphabetical') {
+        return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
+      }
+
+      if (sortMode === 'views') {
+        const aViews = viewCounts[aId] ?? 0;
+        const bViews = viewCounts[bId] ?? 0;
+        if (aViews === bViews) {
           return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
         }
+        return bViews - aViews;
+      }
 
-        if (sortMode === 'views') {
-          const aViews = viewCounts[aId] ?? 0;
-          const bViews = viewCounts[bId] ?? 0;
-          if (aViews === bViews) {
-            return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
-          }
-          return bViews - aViews;
-        }
-
-        // Default to 'popular'
-        const aCount = favoriteCounts[aId] ?? 0;
-        const bCount = favoriteCounts[bId] ?? 0;
-        if (aCount === bCount) {
-          return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
-        }
-        return bCount - aCount;
-      });
+      // Default to 'popular'
+      const aCount = favoriteCounts[aId] ?? 0;
+      const bCount = favoriteCounts[bId] ?? 0;
+      if (aCount === bCount) {
+        return a.name.localeCompare(b.name, 'ar', { sensitivity: 'base' });
+      }
+      return bCount - aCount;
+    });
   }, [
     reciters,
     favoriteReciters,
@@ -88,9 +116,10 @@ export function useFilterSort({
 
   return {
     searchTerm,
-    setSearchTerm,
+    setSearchTerm: (value: string) => setFilters({ searchQuery: value }),
     selectedRiwaya,
-    setSelectedRiwaya,
+    setSelectedRiwaya: (value: Riwaya | 'all') =>
+      setFilters({ selectedRiwaya: value }),
     sortMode,
     setSortMode,
     filteredReciters,
