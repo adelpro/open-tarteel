@@ -12,8 +12,15 @@ export default function LanguageSwitcher() {
   return (
     <button
       onClick={toggleLocale}
-      className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-gray-200 text-sm font-semibold text-gray-900 transition-all duration-200 hover:scale-105 hover:bg-gray-400/70 focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500 dark:border-gray-600 dark:bg-gray-600/60 dark:text-gray-100 dark:hover:bg-gray-600/80"
       aria-label="Switch language"
+      className={[
+        'flex h-8 min-w-[2.75rem] items-center justify-center rounded-full px-3',
+        'border text-xs font-bold tracking-wider',
+        'transition-all duration-200',
+        'focus:-visible:ring-accent·focus:outline-none·focus-visible:ring-2 focus-visible:ring-offset-2',
+        'border-zinc-200 bg-zinc-100 text-zinc-700 hover:border-zinc-300 hover:bg-white',
+        'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-700',
+      ].join(' ')}
     >
       {locale === 'ar' ? 'EN' : 'AR'}
     </button>

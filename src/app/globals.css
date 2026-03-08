@@ -2,30 +2,93 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Design Tokens ─── */
 :root {
-  --background: #fafafa;
-  --foreground: #171717;
+  /* Backgrounds */
+  --background: #f4f4f5; /* warm zinc-100 — not harsh white */
+  --surface: #ffffff;
   --card: #ffffff;
+
+  /* Text */
+  --foreground: #18181b; /* zinc-900 */
+  --muted: #71717a; /* zinc-500 */
+
+  /* Borders */
+  --border: #e4e4e7; /* zinc-200 */
+
+  /* Accent (sky blue) */
+  --accent: #0ea5e9; /* sky-500 */
+  --accent-hover: #0284c7; /* sky-600 */
+  --accent-ring: rgba(14, 165, 233, 0.25);
+
+  /* Shadow */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 .dark {
-  --background: #0f172a;
-  --foreground: #f8fafc;
-  --card: #1e293b;
+  /* Backgrounds */
+  --background: #0f1117; /* near-black with blue tint */
+  --surface: #1a1f2e; /* deep navy card */
+  --card: #1a1f2e;
+
+  /* Text */
+  --foreground: #f1f5f9; /* slate-100 */
+  --muted: #64748b; /* slate-500 */
+
+  /* Borders */
+  --border: #1e293b; /* slate-800 */
+
+  /* Accent */
+  --accent: #38bdf8; /* sky-400 (brighter on dark) */
+  --accent-hover: #7dd3fc; /* sky-300 */
+  --accent-ring: rgba(56, 189, 248, 0.2);
+
+  /* Shadow */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
+/* ─── Base Body ─── */
 body {
   color: var(--foreground);
-  background: var(--background);
+  background-color: var(--background);
+  /* Subtle mesh-like gradient overlay for depth */
+  background-image:
+    radial-gradient(
+      ellipse 80% 50% at 20% -10%,
+      rgba(14, 165, 233, 0.06) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 60% 40% at 80% 110%,
+      rgba(99, 102, 241, 0.05) 0%,
+      transparent 60%
+    );
   transition:
-    background-color 0.3s ease-out,
-    color 0.3s ease-out;
+    background-color 0.35s ease,
+    color 0.35s ease;
 }
 
-/* Modern Sleek Scrollbar */
+.dark body,
+.dark {
+  background-image:
+    radial-gradient(
+      ellipse 80% 50% at 20% -10%,
+      rgba(14, 165, 233, 0.07) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 60% 40% at 80% 110%,
+      rgba(99, 102, 241, 0.06) 0%,
+      transparent 60%
+    );
+}
+
+/* ─── Scrollbar ─── */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -33,27 +96,28 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(156, 163, 175, 0.5); /* Tailwind gray-400 with opacity */
+  background: rgba(156, 163, 175, 0.45);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(107, 114, 128, 0.8); /* Tailwind gray-500 with opacity */
+  background: rgba(107, 114, 128, 0.75);
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.5); /* Tailwind slate-500 with opacity */
+  background: rgba(100, 116, 139, 0.45);
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.8); /* Tailwind slate-400 with opacity */
+  background: rgba(148, 163, 184, 0.75);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+  scrollbar-color: rgba(156, 163, 175, 0.45) transparent;
 }
 
+/* ─── Range Slider (player) ─── */
 .square-thumb {
   -webkit-appearance: none;
 }
@@ -63,9 +127,7 @@ body {
   width: 32px;
   height: 32px;
   background-color: #d3d3d3;
-  /* light gray bg */
   border: 1.5px solid #aaa;
-  /* subtle border */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='blue'%3E%3Cpath d='M6 4h4v16H6V4zm8 0h4v16h-4V4z'/%3E%3C/svg%3E");
   background-size: 60% 60%;
   background-position: center;

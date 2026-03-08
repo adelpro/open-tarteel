@@ -12,7 +12,7 @@ export const FooterLink = ({ href, children, onClick }: FooterLinkProps) => {
     <Link
       href={href}
       onClick={onClick}
-      className="animate-all group flex flex-row items-center justify-center gap-1 text-sm text-gray-700 duration-200 hover:-translate-y-1 hover:scale-105 hover:text-gray-500"
+      className="focus-visible:ring-accent·group·flex·flex-row·items-center·justify-center·gap-1.5·rounded-md·px-1·text-xs·font-medium·text-zinc-500·opacity-70·transition-all·duration-200·hover:-translate-y-0.5·hover:text-zinc-700·hover:opacity-100·focus:outline-none·focus-visible:ring-2·dark:text-slate-400·dark:hover:text-slate-200"
     >
       {children}
     </Link>

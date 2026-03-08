@@ -46,13 +46,16 @@ export default function ReciterCard({
       role="button"
       tabIndex={0}
       onClick={() => onSelect(reciter)}
-      className={`group relative flex w-full cursor-pointer flex-col rounded-2xl border bg-card p-6 transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
+      className={[
+        'group relative flex w-full cursor-pointer flex-col rounded-2xl border p-6',
+        'bg-surface transition-all duration-200',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent',
         isFocused
-          ? 'border-blue-500 shadow-md ring-2 ring-blue-500/20'
+          ? 'ring-accent/20·shadow-md·ring-2 border-accent'
           : isFavorite
-            ? 'border-amber-200 bg-amber-50/30'
-            : 'border-gray-200 hover:border-gray-300'
-      } dark:border-gray-700 dark:bg-gray-900 dark:hover:border-gray-600`}
+            ? 'border-amber-300/60 bg-amber-50/20 dark:bg-amber-900/10'
+            : 'border-border hover:border-zinc-300 hover:shadow-md dark:hover:border-slate-600',
+      ].join(' ')}
     >
       {/* Header */}
       <div className="mb-6 flex items-start justify-between">
@@ -101,7 +104,7 @@ export default function ReciterCard({
             event.stopPropagation();
             onSelectRiwaya(riwaya);
           }}
-          className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+          className="inline-flex items-center rounded-full bg-zinc-100 px-3 py-1.5 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 dark:bg-slate-700/60 dark:text-slate-300 dark:hover:bg-slate-700"
         >
           {riwayaKey}
         </button>
@@ -109,7 +112,7 @@ export default function ReciterCard({
         <button
           type="button"
           onClick={handleShare}
-          className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+          className="rounded-full p-1.5 text-zinc-400 transition-all duration-200 hover:scale-110 hover:bg-zinc-100 hover:text-zinc-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 dark:hover:bg-slate-700 dark:hover:text-slate-300"
           aria-label="Share reciter"
         >
           <BsShare className="h-3.5 w-3.5" />

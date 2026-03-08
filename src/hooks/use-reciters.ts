@@ -49,7 +49,7 @@ export function useReciters() {
     return () => {
       isMounted = false;
     };
-  }, [locale]);
+  }, [locale, selectedReciter, setSelectedReciter]);
 
   return { reciters, loading, error };
 }

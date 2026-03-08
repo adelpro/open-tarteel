@@ -33,10 +33,9 @@ export default function ThemeSwitcher() {
   };
 
   if (!mounted) {
-    return <div className="h-10 w-10 flex-shrink-0" />;
+    return <div className="h-8 w-8 flex-shrink-0 rounded-full" />;
   }
 
-  // To properly show the icon based on actual applied theme (if system)
   const isDark =
     theme === 'dark' ||
     (theme === 'system' &&
@@ -46,13 +45,19 @@ export default function ThemeSwitcher() {
   return (
     <button
       onClick={toggleTheme}
-      className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-gray-200 text-gray-900 transition-all duration-200 hover:scale-105 hover:bg-gray-400/70 focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500 dark:border-gray-600 dark:bg-gray-600/60 dark:text-gray-100 dark:hover:bg-gray-600/80"
-      aria-label="Toggle theme"
+      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      className={[
+        'flex h-8 w-8 items-center justify-center rounded-full',
+        'border transition-all duration-200',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2',
+        'border-zinc-200 bg-zinc-100 text-zinc-700 hover:border-zinc-300 hover:bg-white',
+        'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-700',
+      ].join(' ')}
     >
       {isDark ? (
-        <BsMoonStarsFill className="h-4 w-4" />
+        <BsMoonStarsFill className="h-3.5 w-3.5 text-sky-400" />
       ) : (
-        <BsSunFill className="h-5 w-5 text-slate-800" />
+        <BsSunFill className="h-4 w-4 text-amber-500" />
       )}
     </button>
   );
