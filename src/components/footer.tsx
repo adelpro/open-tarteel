@@ -79,7 +79,7 @@ export default function Footer() {
           </span>
         </FooterLink>
         <FooterLink href="/settings">
-          <div className="relative flex h-10 w-10 items-center justify-center">
+          <div className="relative flex h-5 w-5 items-center justify-center transition-transform duration-200 group-hover:scale-110">
             <IoSettingsOutline className="size-6 text-current" />
           </div>
           <span className="sr-only sm:not-sr-only sm:block">

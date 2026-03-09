@@ -43,7 +43,9 @@ export default function RootLayout({
     <NuqsAdapter>
       <IntlProviderWrapper>
         <HtmlWrapper>
-          <body className={`${tajawal.className} antialiased`}>
+          <body
+            className={`${tajawal.className} min-h-full bg-background antialiased`}
+          >
             <main className="duration-350·relative·flex·min-h-dvh·w-full·flex-col·items-center·justify-center·bg-background·text-foreground·transition-colors">
               {/* Global background effects — fixed, pointer-events-none, pure CSS */}
               <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">

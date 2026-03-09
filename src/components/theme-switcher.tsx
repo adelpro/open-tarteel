@@ -47,11 +47,11 @@ export default function ThemeSwitcher() {
       onClick={toggleTheme}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       className={[
-        'flex h-8 w-8 items-center justify-center rounded-full',
-        'border transition-all duration-200',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2',
-        'border-zinc-200 bg-zinc-100 text-zinc-700 hover:border-zinc-300 hover:bg-white',
-        'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-700',
+        'z-50 flex h-8 w-8 items-center justify-center rounded-full',
+        'border border-gray-300 bg-white text-sm font-semibold text-gray-600 shadow-sm',
+        'transition-all duration-200 hover:bg-gray-50 hover:text-gray-900',
+        'focus:outline-none focus:ring-brand-CTA-blue-500 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2',
+        'dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100',
       ].join(' ')}
     >
       {isDark ? (

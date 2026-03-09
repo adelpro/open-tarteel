@@ -1,5 +1,6 @@
 'use client';
 
+import Head from 'next/head';
 import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -9,7 +10,15 @@ export default function HtmlWrapper({ children }: { children: ReactNode }) {
   const { locale } = useIntl();
   const { isRTL } = useDirection();
   return (
-    <html lang={locale} suppressHydrationWarning dir={isRTL ? 'rtl' : 'ltr'}>
+    <html
+      lang={locale}
+      suppressHydrationWarning
+      dir={isRTL ? 'rtl' : 'ltr'}
+      className="h-[100vh]"
+    >
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </Head>
       <script
         defer
         suppressHydrationWarning

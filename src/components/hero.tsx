@@ -43,7 +43,7 @@ export default function Hero() {
         className="mb-4 text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl md:text-5xl lg:text-6xl"
         itemProp="headline"
       >
-        <span className="text-brand-CTA-blue-500 dark:text-brand-CTA-blue-500">
+        <span className="text-brand-CTA-blue-500">
           <FormattedMessage id="appName" />
         </span>
       </h1>
