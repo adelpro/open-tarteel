@@ -202,7 +202,7 @@ export default function RecitersList({ setIsOpen }: Props) {
             placeholder={searchPlaceHolder}
             value={searchTerm}
             onChange={handleSearchTerm}
-            className="focus-visible:ring-accent/20 border-border·bg-surface·placeholder:text-muted·focus:border-accent·w-full·rounded-full·border·p-3·text-foreground·shadow-sm focus:outline-none focus-visible:ring-2"
+            className="focus-visible:ring-accent/20 bg-background/20 w-full rounded-full border border-border bg-surface p-3 text-foreground shadow-sm placeholder:text-muted focus:border-accent focus:outline-none focus-visible:ring-2"
           />
           <div className="absolute inset-y-0 end-2 flex items-center gap-1 pr-2">
             <button
