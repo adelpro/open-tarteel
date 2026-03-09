@@ -27,9 +27,11 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
   const {
     progress,
     singleTrackLoading,
+    singleTrackProgress,
     downloadTrack,
     downloadAllTracks,
     cancelDownload,
+    cancelSingleDownload,
     removeTrack,
     removeAllTracks,
     isTrackCached,
@@ -74,7 +76,9 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
           const isSingleLoading = singleTrackLoading === item.link;
           const trackProgress = isCurrentlyDownloading
             ? Math.round(progress.currentTrackProgress * 100)
-            : null;
+            : isSingleLoading
+              ? Math.round(singleTrackProgress * 100)
+              : null;
 
           return (
             <li
@@ -110,8 +114,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                       <div
                         className="h-full rounded-full bg-blue-500 transition-all duration-200"
                         style={{
-                          width: trackProgress !== null ? `${trackProgress}%` : '100%',
-                          animation: trackProgress === null ? 'pulse 1.5s ease-in-out infinite' : undefined,
+                          width: `${trackProgress ?? 0}%`,
                         }}
                       />
                     </div>
@@ -123,11 +126,13 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                     e.stopPropagation();
                     if (cached) {
                       removeTrack(item.link);
-                    } else if (!isCurrentlyDownloading && !isSingleLoading) {
+                    } else if (isSingleLoading) {
+                      cancelSingleDownload();
+                    } else if (!isCurrentlyDownloading) {
                       downloadTrack(item.link);
                     }
                   }}
-                  disabled={isCurrentlyDownloading || isSingleLoading}
+                  disabled={isCurrentlyDownloading}
                   className="relative ms-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
                   aria-label={
                     cached

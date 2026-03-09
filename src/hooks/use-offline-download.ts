@@ -23,7 +23,9 @@ export function useOfflineDownload() {
   const [singleTrackLoading, setSingleTrackLoading] = useState<string | null>(
     null
   );
+  const [singleTrackProgress, setSingleTrackProgress] = useState<number>(0);
   const abortRef = useRef<AbortController | null>(null);
+  const singleAbortRef = useRef<AbortController | null>(null);
 
   const refreshCachedUrls = useCallback(async () => {
     if (!('caches' in window)) return;
@@ -78,7 +80,7 @@ export function useOfflineDownload() {
     []
   );
 
-  // ── Download a single track (with loading indicator) ─
+  // ── Download a single track (with loading indicator + progress) ─
   const downloadTrack = useCallback(
     async (url: string): Promise<boolean> => {
       if (!('caches' in window)) return false;
@@ -87,23 +89,40 @@ export function useOfflineDownload() {
         const existing = await cache.match(url);
         if (existing) return true;
 
+        singleAbortRef.current?.abort();
+        const controller = new AbortController();
+        singleAbortRef.current = controller;
+
         setSingleTrackLoading(url);
-        const response = await fetch(url, { mode: 'cors' });
-        if (!response.ok) {
+        setSingleTrackProgress(0);
+
+        const response = await fetchWithProgress(
+          url,
+          controller.signal,
+          (received, total) => {
+            setSingleTrackProgress(total > 0 ? received / total : 0);
+          }
+        );
+
+        if (!response) {
           setSingleTrackLoading(null);
+          setSingleTrackProgress(0);
           return false;
         }
 
-        await cache.put(url, response);
+        const clone = response.clone();
+        await cache.put(url, clone);
         setCachedUrls((prev) => new Set([...prev, url]));
         setSingleTrackLoading(null);
+        setSingleTrackProgress(0);
         return true;
       } catch {
         setSingleTrackLoading(null);
+        setSingleTrackProgress(0);
         return false;
       }
     },
-    []
+    [fetchWithProgress]
   );
 
   // ── Download all tracks ─────────────────────────────
@@ -212,6 +231,12 @@ export function useOfflineDownload() {
     setProgress(null);
   }, []);
 
+  const cancelSingleDownload = useCallback(() => {
+    singleAbortRef.current?.abort();
+    setSingleTrackLoading(null);
+    setSingleTrackProgress(0);
+  }, []);
+
   const removeTrack = useCallback(async (url: string) => {
     if (!('caches' in window)) return;
     const cache = await caches.open(OFFLINE_CACHE);
@@ -255,9 +280,11 @@ export function useOfflineDownload() {
     cachedUrls,
     progress,
     singleTrackLoading,
+    singleTrackProgress,
     downloadTrack,
     downloadAllTracks,
     cancelDownload,
+    cancelSingleDownload,
     removeTrack,
     removeAllTracks,
     isTrackCached,
