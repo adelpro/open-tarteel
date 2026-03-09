@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import {
-  MdCloudDownload,
-  MdCloudDone,
-  MdDeleteOutline,
   MdClose,
+  MdCloudDone,
+  MdCloudDownload,
+  MdDeleteOutline,
+  MdWarning,
 } from 'react-icons/md';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -16,6 +17,9 @@ import type { Playlist } from '@/types';
 import { cn, formatBytes } from '@/utils';
 import { removeTashkeel } from '@/utils';
 
+/** Rough average MP3 size per surah (~5 MB) for pre-download estimate */
+const ESTIMATED_BYTES_PER_SURAH = 5 * 1024 * 1024;
+
 type Props = {
   playlist: Playlist;
   cachedCount: number;
@@ -24,6 +28,12 @@ type Props = {
   onDownloadAll: (playlist: Playlist) => void;
   onRemoveAll: (playlist: Playlist) => void;
   onCancel: () => void;
+  checkStorageAvailable?: (expectedBytes: number) => Promise<boolean | null>;
+  estimateStorage?: () => Promise<{
+    usage: number;
+    quota: number;
+    available: number;
+  } | null>;
 };
 
 export default function DownloadAllButton({
@@ -34,9 +44,48 @@ export default function DownloadAllButton({
   onDownloadAll,
   onRemoveAll,
   onCancel,
+  checkStorageAvailable,
+  estimateStorage,
 }: Props) {
   const { formatMessage, locale } = useIntl();
   const isDownloading = progress !== null;
+  const [storageWarning, setStorageWarning] = useState<string | null>(null);
+
+  const handleDownloadAll = useCallback(async () => {
+    setStorageWarning(null);
+    const uncachedCount = playlist.length - cachedCount;
+    const estimatedBytes = uncachedCount * ESTIMATED_BYTES_PER_SURAH;
+
+    if (checkStorageAvailable) {
+      const hasSpace = await checkStorageAvailable(estimatedBytes);
+      if (hasSpace === false && estimateStorage) {
+        const estimate = await estimateStorage();
+        setStorageWarning(
+          formatMessage(
+            {
+              id: 'storage.insufficientSpace',
+              defaultMessage:
+                'Not enough storage space. Available: {available}, estimated need: {needed}. Free up space or remove other downloads.',
+            },
+            {
+              available: estimate ? formatBytes(estimate.available) : '?',
+              needed: formatBytes(estimatedBytes),
+            }
+          )
+        );
+        return;
+      }
+    }
+
+    onDownloadAll(playlist);
+  }, [
+    playlist,
+    cachedCount,
+    checkStorageAvailable,
+    estimateStorage,
+    onDownloadAll,
+    formatMessage,
+  ]);
 
   if (isDownloading) {
     const percent = Math.round((progress.completed / progress.total) * 100);
@@ -47,13 +96,9 @@ export default function DownloadAllButton({
       if (!progress.currentUrl) return null;
       const currentItem = playlist.find((p) => p.link === progress.currentUrl);
       if (!currentItem) return null;
-      const surah = SURAHS.find(
-        (s) => s.id.toString() === currentItem.surahId
-      );
+      const surah = SURAHS.find((s) => s.id.toString() === currentItem.surahId);
       if (!surah) return null;
-      return locale === 'en'
-        ? surah.englishName
-        : removeTashkeel(surah.name);
+      return locale === 'en' ? surah.englishName : removeTashkeel(surah.name);
     })();
 
     return (
@@ -162,20 +207,37 @@ export default function DownloadAllButton({
   }
 
   return (
-    <button
-      onClick={() => onDownloadAll(playlist)}
-      className={cn(
-        'flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
-        'border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100',
-        'dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300 dark:hover:bg-blue-900/50'
+    <div className="space-y-2">
+      {storageWarning && (
+        <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+          <MdWarning size={16} className="mt-0.5 shrink-0" />
+          <span>{storageWarning}</span>
+        </div>
       )}
-    >
-      <MdCloudDownload size={20} />
-      <FormattedMessage
-        id="download.downloadAll"
-        defaultMessage="Download all surahs for offline ({cached}/{total})"
-        values={{ cached: cachedCount, total: playlist.length }}
-      />
-    </button>
+      {/* Low-storage hint */}
+      {cachedCount > 0 && !isAllCached && (
+        <p className="text-[10px] text-amber-600 dark:text-amber-400">
+          <FormattedMessage
+            id="storage.lowWarning"
+            defaultMessage="Downloads may be removed by your browser if storage is low."
+          />
+        </p>
+      )}
+      <button
+        onClick={handleDownloadAll}
+        className={cn(
+          'flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
+          'border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100',
+          'dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300 dark:hover:bg-blue-900/50'
+        )}
+      >
+        <MdCloudDownload size={20} />
+        <FormattedMessage
+          id="download.downloadAll"
+          defaultMessage="Download all surahs for offline ({cached}/{total})"
+          values={{ cached: cachedCount, total: playlist.length }}
+        />
+      </button>
+    </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import { MdCloudDownload, MdCloudDone, MdClose } from 'react-icons/md';
+import { MdClose, MdCloudDone, MdCloudDownload } from 'react-icons/md';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { SURAHS } from '@/constants';
@@ -23,12 +23,8 @@ export default function TrackInfo({
 }: Props) {
   const selectedReciter = useAtomValue(selectedReciterAtom);
   const language = useIntl().locale;
-  const {
-    progress,
-    downloadAllTracks,
-    cancelDownload,
-    isAllCached,
-  } = useOfflineDownload();
+  const { progress, downloadAllTracks, cancelDownload, isAllCached } =
+    useOfflineDownload();
   const playlist = selectedReciter?.moshaf.playlist;
   if (!Array.isArray(playlist)) return null;
 
@@ -68,7 +64,10 @@ export default function TrackInfo({
               <FormattedMessage
                 id="download.downloading"
                 defaultMessage="Downloading… {completed}/{total}"
-                values={{ completed: progress.completed, total: progress.total }}
+                values={{
+                  completed: progress.completed,
+                  total: progress.total,
+                }}
               />
               {progress.downloadedBytes > 0 && (
                 <span className="ms-1 text-[10px]">
@@ -87,7 +86,9 @@ export default function TrackInfo({
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-blue-200 dark:bg-blue-800">
             <div
               className="h-full rounded-full bg-blue-500 transition-all duration-300"
-              style={{ width: `${Math.round((progress.completed / progress.total) * 100)}%` }}
+              style={{
+                width: `${Math.round((progress.completed / progress.total) * 100)}%`,
+              }}
             />
           </div>
           {/* Current surah progress */}
@@ -95,7 +96,9 @@ export default function TrackInfo({
             <div className="h-1 w-full overflow-hidden rounded-full bg-blue-100 dark:bg-blue-900">
               <div
                 className="h-full rounded-full bg-blue-400 transition-all duration-200"
-                style={{ width: `${Math.round(progress.currentTrackProgress * 100)}%` }}
+                style={{
+                  width: `${Math.round(progress.currentTrackProgress * 100)}%`,
+                }}
               />
             </div>
           )}

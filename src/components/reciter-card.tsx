@@ -3,7 +3,7 @@
 import React from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
 import { FaRegShareFromSquare } from 'react-icons/fa6';
-import { MdHistory } from 'react-icons/md';
+import { MdCloudDone, MdHistory } from 'react-icons/md';
 import { FormattedMessage } from 'react-intl';
 
 import { useRecentlyPlayed } from '@/hooks/use-recently-played';
@@ -23,6 +23,7 @@ type Props = {
   index: number;
   isFavorite: boolean;
   isFocused: boolean;
+  hasOfflineContent?: boolean;
   onSelect: (reciter: Reciter) => void;
   onFavoriteToggle: () => void;
   onSelectRiwaya: (riwaya: Riwaya | 'all') => void;
@@ -34,6 +35,7 @@ export default function ReciterCard({
   favoriteCount,
   viewCount,
   isFavorite,
+  hasOfflineContent,
   onSelect,
   onFavoriteToggle,
   refCallback,
@@ -89,6 +91,15 @@ export default function ReciterCard({
                   <FormattedMessage
                     id="reciter.recent"
                     defaultMessage="Recent"
+                  />
+                </div>
+              )}
+              {hasOfflineContent && (
+                <div className="flex items-center gap-1 rounded-md border border-green-100 bg-green-50 px-2 py-1 text-[10px] font-bold text-green-600 dark:border-green-800 dark:bg-green-900/40 dark:text-green-400">
+                  <MdCloudDone size={12} />
+                  <FormattedMessage
+                    id="reciter.offlineBadge"
+                    defaultMessage="Offline"
                   />
                 </div>
               )}

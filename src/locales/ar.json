@@ -134,5 +134,20 @@
   "download.removeAll": "حذف جميع التحميلات",
   "download.surah": "تحميل السورة",
   "download.removeSurah": "حذف التحميل",
-  "download.downloadAllSurahs": "تحميل جميع السور"
+  "download.downloadAllSurahs": "تحميل جميع السور",
+
+  "storage.lowWarning": "قد يحذف المتصفح التحميلات إذا كانت مساحة التخزين منخفضة.",
+  "storage.insufficientSpace": "مساحة التخزين غير كافية. المتاح: {available}، المطلوب تقريباً: {needed}. قم بتحرير مساحة أو حذف تحميلات أخرى.",
+  "storage.checkFailed": "تعذر التحقق من مساحة التخزين. قد يفشل التحميل إذا كانت المساحة منخفضة.",
+
+  "reciter.offlineBadge": "بدون إنترنت",
+
+  "settings.cacheManagement": "التحميلات المحفوظة",
+  "settings.cacheManagementDescription": "إدارة التلاوات المحفوظة على جهازك.",
+  "settings.cacheLoading": "جارٍ فحص التحميلات المحفوظة…",
+  "settings.cacheEmpty": "لا توجد تحميلات محفوظة بعد.",
+  "settings.cacheTracks": "{count} سور",
+  "settings.cacheDeleteConfirm": "هل تريد حذف جميع تحميلات هذا القارئ؟",
+  "settings.cacheDelete": "حذف",
+  "settings.cacheStorageUsed": "المساحة المستخدمة: {used} من {quota}"
 }

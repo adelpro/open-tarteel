@@ -20,6 +20,7 @@ import {
 import { useFavorites } from '@/hooks/use-favorites';
 import { useFilterSort } from '@/hooks/use-filter-sort';
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
+import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { useRecentlyPlayed } from '@/hooks/use-recently-played';
 import { useReciters } from '@/hooks/use-reciters';
 import { enabledSourcesAtom, selectedReciterAtom } from '@/jotai/atom';
@@ -40,6 +41,7 @@ export default function RecitersList({ setIsOpen }: Props) {
   const [showRecentOnly, setShowRecentOnly] = useState(false);
 
   const { reciters, loading, error } = useReciters();
+  const { cachedUrls } = useOfflineDownload();
   const enabledSources = useAtomValue(enabledSourcesAtom);
   const recitersBySource = useMemo(
     () =>
@@ -321,6 +323,9 @@ export default function RecitersList({ setIsOpen }: Props) {
             filteredReciters.map((reciter, index) => {
               const favId = generateFavId(reciter);
               const isFavorited = favoriteReciters.includes(favId);
+              const hasOffline = reciter.moshaf.playlist.some((item) =>
+                cachedUrls.has(item.link)
+              );
 
               return (
                 <ReciterCard
@@ -331,6 +336,7 @@ export default function RecitersList({ setIsOpen }: Props) {
                   index={index}
                   isFavorite={isFavorited}
                   isFocused={focusedIndex === index}
+                  hasOfflineContent={hasOffline}
                   refCallback={(element) =>
                     (reciterRefs.current[index] = element)
                   }

@@ -17,6 +17,21 @@ export type DownloadProgress = {
   currentTrackProgress: number;
 };
 
+export type StorageEstimate = {
+  usage: number;
+  quota: number;
+  available: number;
+};
+
+export type CachedMoshaf = {
+  reciterName: string;
+  moshafName: string;
+  trackCount: number;
+  totalBytes: number;
+  /** Links belonging to this moshaf in the cache */
+  links: string[];
+};
+
 export function useOfflineDownload() {
   const [cachedUrls, setCachedUrls] = useState<Set<string>>(new Set());
   const [progress, setProgress] = useState<DownloadProgress | null>(null);
@@ -49,32 +64,32 @@ export function useOfflineDownload() {
       signal: AbortSignal,
       onProgress?: (received: number, total: number) => void
     ): Promise<Response | null> => {
-      const res = await fetch(url, { mode: 'cors', signal });
-      if (!res.ok) return null;
+      const response = await fetch(url, { mode: 'cors', signal });
+      if (!response.ok) return null;
 
-      const contentLength = Number(res.headers.get('content-length')) || 0;
-      if (!res.body || !contentLength) {
+      const contentLength = Number(response.headers.get('content-length')) || 0;
+      if (!response.body || !contentLength) {
         // Can't stream — just return the response as-is
-        return res;
+        return response;
       }
 
-      const reader = res.body.getReader();
-      const chunks: BlobPart[] = [];
+      const reader = response.body.getReader();
+      const chunks: ArrayBuffer[] = [];
       let received = 0;
 
       for (;;) {
         const { done, value } = await reader.read();
         if (done) break;
-        chunks.push(value);
+        chunks.push(value.buffer as ArrayBuffer);
         received += value.length;
         onProgress?.(received, contentLength);
       }
 
       const blob = new Blob(chunks);
       return new Response(blob, {
-        status: res.status,
-        statusText: res.statusText,
-        headers: res.headers,
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
       });
     },
     []
@@ -112,7 +127,7 @@ export function useOfflineDownload() {
 
         const clone = response.clone();
         await cache.put(url, clone);
-        setCachedUrls((prev) => new Set([...prev, url]));
+        setCachedUrls((previous) => new Set([...previous, url]));
         setSingleTrackLoading(null);
         setSingleTrackProgress(0);
         return true;
@@ -126,6 +141,9 @@ export function useOfflineDownload() {
   );
 
   // ── Download all tracks ─────────────────────────────
+  // Note: The Cache API shares the origin quota (often ~60% of free disk on
+  // Chrome) and can be evicted under storage pressure. Use `estimateStorage`
+  // to check available space before starting a bulk download.
   const downloadAllTracks = useCallback(
     async (playlist: Playlist) => {
       if (!('caches' in window)) return;
@@ -201,7 +219,7 @@ export function useOfflineDownload() {
             const blob = await response.blob();
             downloadedBytes += blob.size;
             await cache.put(item.link, clone);
-            setCachedUrls((prev) => new Set([...prev, item.link]));
+            setCachedUrls((previous) => new Set([...previous, item.link]));
             completed++;
           } else {
             failed++;
@@ -241,8 +259,8 @@ export function useOfflineDownload() {
     if (!('caches' in window)) return;
     const cache = await caches.open(OFFLINE_CACHE);
     await cache.delete(url);
-    setCachedUrls((prev) => {
-      const next = new Set(prev);
+    setCachedUrls((previous) => {
+      const next = new Set(previous);
       next.delete(url);
       return next;
     });
@@ -276,6 +294,94 @@ export function useOfflineDownload() {
     [cachedUrls]
   );
 
+  // ── Storage estimation ──────────────────────────────
+  const estimateStorage =
+    useCallback(async (): Promise<StorageEstimate | null> => {
+      if (!navigator.storage?.estimate) return null;
+      try {
+        const estimate = await navigator.storage.estimate();
+        const usage = estimate.usage ?? 0;
+        const quota = estimate.quota ?? 0;
+        return { usage, quota, available: quota - usage };
+      } catch {
+        return null;
+      }
+    }, []);
+
+  /**
+   * Check whether there is enough storage for a download.
+   * `expectedBytes` is a rough estimate of the total download size.
+   * Returns true if there's enough room, false if not, null if unknown.
+   */
+  const checkStorageAvailable = useCallback(
+    async (expectedBytes: number): Promise<boolean | null> => {
+      const estimate = await estimateStorage();
+      if (!estimate) return null; // cannot determine
+      return estimate.available > expectedBytes;
+    },
+    [estimateStorage]
+  );
+
+  // ── List cached mushafs with sizes (for cache management UI) ──
+  const getCachedMoshafs = useCallback(
+    async (
+      reciters: Array<{
+        name: string;
+        moshaf: { name: string; server: string; playlist: Playlist };
+      }>
+    ): Promise<CachedMoshaf[]> => {
+      if (!('caches' in window)) return [];
+      try {
+        const cache = await caches.open(OFFLINE_CACHE);
+        const results: CachedMoshaf[] = [];
+
+        for (const reciter of reciters) {
+          const playlistLinks = reciter.moshaf.playlist.map(
+            (item) => item.link
+          );
+          const cachedLinks: string[] = [];
+          let totalBytes = 0;
+
+          for (const link of playlistLinks) {
+            if (!cachedUrls.has(link)) continue;
+            cachedLinks.push(link);
+            const match = await cache.match(link);
+            if (match) {
+              const blob = await match.blob();
+              totalBytes += blob.size;
+            }
+          }
+
+          if (cachedLinks.length > 0) {
+            results.push({
+              reciterName: reciter.name,
+              moshafName: reciter.moshaf.name,
+              trackCount: cachedLinks.length,
+              totalBytes,
+              links: cachedLinks,
+            });
+          }
+        }
+
+        return results;
+      } catch {
+        return [];
+      }
+    },
+    [cachedUrls]
+  );
+
+  /** Delete all cached tracks for a given set of links */
+  const removeCachedLinks = useCallback(
+    async (links: string[]) => {
+      if (!('caches' in window)) return;
+      const cache = await caches.open(OFFLINE_CACHE);
+      await Promise.all(links.map((link) => cache.delete(link)));
+      await refreshCachedUrls();
+    },
+    [refreshCachedUrls]
+  );
+
   return {
     cachedUrls,
     progress,
@@ -291,5 +397,9 @@ export function useOfflineDownload() {
     getCachedCount,
     isAllCached,
     refreshCachedUrls,
+    estimateStorage,
+    checkStorageAvailable,
+    getCachedMoshafs,
+    removeCachedLinks,
   };
 }

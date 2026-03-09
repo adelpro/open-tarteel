@@ -1,11 +1,7 @@
 'use client';
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import {
-  MdCloudDownload,
-  MdCloudDone,
-  MdDeleteOutline,
-} from 'react-icons/md';
+import { MdCloudDone, MdCloudDownload } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import { SURAHS } from '@/constants';
@@ -37,6 +33,8 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
     isTrackCached,
     getCachedCount,
     isAllCached,
+    checkStorageAvailable,
+    estimateStorage,
   } = useOfflineDownload();
 
   const handlePlaylistItemClick = (index: number) => {
@@ -63,6 +61,8 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
           onDownloadAll={downloadAllTracks}
           onRemoveAll={removeAllTracks}
           onCancel={cancelDownload}
+          checkStorageAvailable={checkStorageAvailable}
+          estimateStorage={estimateStorage}
         />
       </div>
 
@@ -71,8 +71,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
           const surahIndex = Number.parseInt(item.surahId) - 1;
           const surah = SURAHS[surahIndex];
           const cached = isTrackCached(item.link);
-          const isCurrentlyDownloading =
-            progress?.currentUrl === item.link;
+          const isCurrentlyDownloading = progress?.currentUrl === item.link;
           const isSingleLoading = singleTrackLoading === item.link;
           const trackProgress = isCurrentlyDownloading
             ? Math.round(progress.currentTrackProgress * 100)
@@ -90,7 +89,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                 <span className="m-2 flex size-8 items-center justify-center rounded-full bg-gray-100 text-xs font-medium dark:bg-gray-800">
                   {index + 1}
                 </span>
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between">
                     <span className="text-lg font-medium">
                       {isEnglish
@@ -133,7 +132,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                     }
                   }}
                   disabled={isCurrentlyDownloading}
-                  className="relative ms-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
+                  className="relative ms-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-gray-200 disabled:opacity-50 dark:hover:bg-gray-700"
                   aria-label={
                     cached
                       ? formatMessage({
@@ -178,10 +177,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                       />
                     </svg>
                   ) : cached ? (
-                    <MdCloudDone
-                      size={18}
-                      className="text-green-500"
-                    />
+                    <MdCloudDone size={18} className="text-green-500" />
                   ) : (
                     <MdCloudDownload
                       size={18}

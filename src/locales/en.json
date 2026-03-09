@@ -134,5 +134,20 @@
   "download.removeAll": "Remove all downloads",
   "download.surah": "Download surah",
   "download.removeSurah": "Remove download",
-  "download.downloadAllSurahs": "Download all surahs"
+  "download.downloadAllSurahs": "Download all surahs",
+
+  "storage.lowWarning": "Downloads may be removed by your browser if storage is low.",
+  "storage.insufficientSpace": "Not enough storage space. Available: {available}, estimated need: {needed}. Free up space or remove other downloads.",
+  "storage.checkFailed": "Could not check available storage. Download may fail if space is low.",
+
+  "reciter.offlineBadge": "Offline",
+
+  "settings.cacheManagement": "Offline downloads",
+  "settings.cacheManagementDescription": "Manage downloaded recitations stored on your device.",
+  "settings.cacheLoading": "Scanning cached downloads…",
+  "settings.cacheEmpty": "No offline downloads yet.",
+  "settings.cacheTracks": "{count} surahs",
+  "settings.cacheDeleteConfirm": "Remove all downloads for this reciter?",
+  "settings.cacheDelete": "Remove",
+  "settings.cacheStorageUsed": "Storage used: {used} of {quota}"
 }

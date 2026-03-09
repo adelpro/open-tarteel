@@ -55,7 +55,7 @@ const quranAudioCache = {
 };
 
 // Intercept fetch events to check the offline-downloads cache first
-self.addEventListener('fetch', (event: FetchEvent) => {
+self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   const isAudio =
     (url.hostname.endsWith('.mp3quran.net') &&
