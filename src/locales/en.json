@@ -124,5 +124,15 @@
   "player.sleepTimer": "Sleep Timer",
   "player.untilEnd": "Until the end of the recitation",
   "reciterDialog.title": "Select a Reciter",
-  "player.cancelTimer": "Cancel Timer"
+  "player.cancelTimer": "Cancel Timer",
+
+  "download.downloadAll": "Download all surahs for offline ({cached}/{total})",
+  "download.downloading": "Downloading… {completed}/{total}",
+  "download.failed": "{count} failed",
+  "download.cancel": "Cancel download",
+  "download.allSaved": "All surahs saved offline",
+  "download.removeAll": "Remove all downloads",
+  "download.surah": "Download surah",
+  "download.removeSurah": "Remove download",
+  "download.downloadAllSurahs": "Download all surahs"
 }

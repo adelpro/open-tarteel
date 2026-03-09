@@ -1,4 +1,5 @@
 export * from './cn';
+export * from './format-bytes';
 export * from './config';
 export * from './format-time';
 export * from './generate-fav-id';

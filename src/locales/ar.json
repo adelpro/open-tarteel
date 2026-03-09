@@ -124,5 +124,15 @@
   "player.sleepTimer": "مؤقت النوم",
   "player.untilEnd": "حتى نهاية التلاوة",
   "reciterDialog.title": "اختر قارئًا",
-  "player.cancelTimer": "إلغاء المؤقت"
+  "player.cancelTimer": "إلغاء المؤقت",
+
+  "download.downloadAll": "تحميل جميع السور للاستماع بدون إنترنت ({cached}/{total})",
+  "download.downloading": "جاري التحميل… {completed}/{total}",
+  "download.failed": "{count} فشل",
+  "download.cancel": "إلغاء التحميل",
+  "download.allSaved": "جميع السور محفوظة للاستماع بدون إنترنت",
+  "download.removeAll": "حذف جميع التحميلات",
+  "download.surah": "تحميل السورة",
+  "download.removeSurah": "حذف التحميل",
+  "download.downloadAllSurahs": "تحميل جميع السور"
 }
