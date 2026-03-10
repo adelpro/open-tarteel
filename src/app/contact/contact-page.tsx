@@ -74,87 +74,145 @@ export default function ContactPage() {
   const buttonContent = loading ? (
     <Loader message={formatMessage({ id: 'contact.sending' })} rightIcon />
   ) : (
-    <div className="flex flex-row-reverse gap-2">
-      <span className="mr-2 text-3xl font-bold">
+    <div
+      className={`flex items-center justify-center gap-3 ${
+        formatMessage({ id: 'contact.send' }) === 'Send'
+          ? 'flex-row'
+          : 'flex-row-reverse'
+      }`}
+    >
+      <span className="text-xl font-bold">
         {formatMessage({ id: 'contact.send' })}
       </span>
       <Image
         src={sendSVG}
         alt={formatMessage({ id: 'contact.send' })}
-        width={40}
-        height={40}
+        width={24}
+        height={24}
       />
     </div>
   );
 
   return (
-    <>
+    <main className="flex min-h-[70vh] w-full items-center justify-center p-4 md:p-8">
       {formSubmitted ? (
         <div
-          className="flex h-[400px] flex-1 flex-col items-center justify-center gap-2"
-          dir="rtl"
+          className="flex w-full max-w-lg animate-fade-up flex-col items-center justify-center gap-6 rounded-3xl border border-gray-200/60 bg-white/60 p-10 shadow-2xl backdrop-blur-xl dark:border-gray-700/60 dark:bg-gray-900/60"
+          dir={formatMessage({ id: 'contact.send' }) === 'Send' ? 'ltr' : 'rtl'}
         >
-          <p className="mb-10 text-center text-5xl" role="alert">
+          <div className="flex size-24 items-center justify-center rounded-full bg-green-100 text-green-600 shadow-inner dark:bg-green-900/30 dark:text-green-400">
+            <svg
+              className="size-12"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+          <p
+            className="text-center text-3xl font-bold text-gray-800 dark:text-gray-100"
+            role="alert"
+          >
             {formatMessage({ id: 'contact.thank_you_for_contacting' })}
           </p>
-          <Link href="/" className="mt-4 flex items-center space-x-2">
-            <button className="text-2xl font-bold hover:underline">
+          <Link href="/" className="mt-4 flex w-full justify-center">
+            <button className="w-full rounded-xl bg-gray-100 px-6 py-4 text-lg font-bold text-gray-700 transition-all hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
               {formatMessage({ id: 'contact.back_to_home' })}
             </button>
           </Link>
         </div>
       ) : (
-        <div className="p-2 md:p-8">
-          <h1 className="mb-20 text-center text-5xl font-bold">
-            {formatMessage({ id: 'contact.contact_us' })}
-          </h1>
-          <section className="container mx-auto max-w-2xl" dir="rtl">
-            <form className="flex flex-col">
-              <input
-                type="text"
-                required
-                className="mb-4 border-b-2 border-gray-400 px-8 py-2 text-3xl ring-black focus:ring-4"
-                id="name"
-                placeholder={formatMessage({ id: 'contact.name' })}
-                value={name}
-                onChange={(event) => {
-                  setError('');
-                  setName(event.target.value);
-                }}
-              />
+        <div className="w-full max-w-2xl animate-fade-up">
+          <div className="mb-10 text-center">
+            <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 drop-shadow-sm dark:text-white sm:text-5xl">
+              {formatMessage({ id: 'contact.contact_us' })}
+            </h1>
+          </div>
+          <div className="rounded-3xl border border-gray-200/60 bg-white/60 p-6 shadow-2xl backdrop-blur-xl dark:border-gray-700/60 dark:bg-gray-900/60 sm:p-10">
+            <form
+              className="flex flex-col gap-6"
+              dir={
+                formatMessage({ id: 'contact.send' }) === 'Send' ? 'ltr' : 'rtl'
+              }
+            >
+              <div>
+                <label
+                  htmlFor="name"
+                  className="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                >
+                  {formatMessage({ id: 'contact.name' })}
+                </label>
+                <input
+                  type="text"
+                  required
+                  className="dark:focus:border-brand-CTA-blue-400 w-full rounded-xl border border-gray-300 bg-gray-50/50 p-4 text-lg text-gray-900 transition-all focus:border-brand-CTA-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500/20 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:focus:bg-gray-800"
+                  id="name"
+                  placeholder={formatMessage({ id: 'contact.name' })}
+                  value={name}
+                  onChange={(event) => {
+                    setError('');
+                    setName(event.target.value);
+                  }}
+                />
+              </div>
 
-              <input
-                type="email"
-                required
-                className="mb-4 border-b-2 border-gray-400 px-8 py-2 text-3xl ring-black focus:ring-4"
-                id="email"
-                placeholder={formatMessage({ id: 'contact.email' })}
-                value={email}
-                onChange={(event) => {
-                  setError('');
-                  setEmail(event.target.value);
-                }}
-              />
+              <div>
+                <label
+                  htmlFor="email"
+                  className="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                >
+                  {formatMessage({ id: 'contact.email' })}
+                </label>
+                <input
+                  type="email"
+                  required
+                  className="dark:focus:border-brand-CTA-blue-400 w-full rounded-xl border border-gray-300 bg-gray-50/50 p-4 text-lg text-gray-900 transition-all focus:border-brand-CTA-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500/20 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:focus:bg-gray-800"
+                  id="email"
+                  placeholder={formatMessage({ id: 'contact.email' })}
+                  value={email}
+                  onChange={(event) => {
+                    setError('');
+                    setEmail(event.target.value);
+                  }}
+                />
+              </div>
 
-              <textarea
-                className="mb-4 border-b-2 border-gray-400 px-8 py-2 text-3xl ring-black focus:ring-4"
-                id="message"
-                rows={3}
-                required
-                placeholder={formatMessage({ id: 'contact.message' })}
-                value={message}
-                onChange={(event) => {
-                  setError('');
-                  setMessage(event.target.value);
-                }}
-              ></textarea>
-              {error?.length > 0 ? (
-                <p className="m-2 p-2 text-xl text-red-600" role="alert">
-                  {error}
-                </p>
-              ) : (
-                <p className="m-2 p-2"></p>
+              <div>
+                <label
+                  htmlFor="message"
+                  className="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                >
+                  {formatMessage({ id: 'contact.message' })}
+                </label>
+                <textarea
+                  className="dark:focus:border-brand-CTA-blue-400 w-full rounded-xl border border-gray-300 bg-gray-50/50 p-4 text-lg text-gray-900 transition-all focus:border-brand-CTA-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500/20 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:focus:bg-gray-800"
+                  id="message"
+                  rows={4}
+                  required
+                  placeholder={formatMessage({ id: 'contact.message' })}
+                  value={message}
+                  onChange={(event) => {
+                    setError('');
+                    setMessage(event.target.value);
+                  }}
+                ></textarea>
+              </div>
+
+              {error?.length > 0 && (
+                <div
+                  className="rounded-lg bg-red-50 p-4 text-red-600 dark:bg-red-900/30 dark:text-red-400"
+                  role="alert"
+                >
+                  <p className="text-sm font-medium">{error}</p>
+                </div>
               )}
+
               <button
                 type="submit"
                 aria-label={formatMessage({ id: 'contact.send' })}
@@ -165,15 +223,15 @@ export default function ContactPage() {
                   event.preventDefault();
                   validateAndSend();
                 }}
-                className="hover:scale-101 hover:from-brand-CTA-blue-700 dark:from-brand-CTA-blue-400 dark:to-brand-CTA-blue-300 dark:hover:to-brand-CTA-blue-400 mb-4 flex transform items-center justify-center rounded bg-gradient-to-r from-brand-CTA-blue-600 to-brand-CTA-blue-500 px-2 py-4 text-gray-100 duration-200 ease-in-out hover:to-brand-CTA-blue-600 dark:text-gray-800 dark:hover:from-brand-CTA-blue-500"
+                className="dark:to-brand-CTA-blue-400 dark:shadow-brand-CTA-blue-400/20 dark:hover:shadow-brand-CTA-blue-400/30 mt-2 flex w-full items-center justify-center rounded-xl bg-brand-CTA-blue-500 py-4 text-lg font-bold text-white shadow-lg shadow-brand-CTA-blue-500/30 transition-all duration-200 hover:scale-[1.02] hover:shadow-brand-CTA-blue-500/40 active:scale-[0.98] disabled:scale-100 disabled:opacity-70"
                 disabled={loading}
               >
                 {buttonContent}
               </button>
             </form>
-          </section>
+          </div>
         </div>
       )}
-    </>
+    </main>
   );
 }

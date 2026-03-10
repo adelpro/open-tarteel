@@ -193,7 +193,7 @@ export default function RecitersList({ setIsOpen }: Props) {
   }, [favoriteRecitersList.length, setShowOnlyFavorites]);
 
   return (
-    <section className="mx-auto w-full px-1">
+    <section className="mx-auto w-full animate-fade-up px-1">
       <div className="flex flex-col gap-4">
         <div className="relative flex w-full">
           <input
@@ -202,7 +202,7 @@ export default function RecitersList({ setIsOpen }: Props) {
             placeholder={searchPlaceHolder}
             value={searchTerm}
             onChange={handleSearchTerm}
-            className="w-full rounded-full border border-gray-300 p-3 pr-24 text-black shadow-sm focus:border-brand-CTA-blue-500 focus:outline-none dark:text-white"
+            className="focus-visible:ring-accent/20 bg-background/20 w-full rounded-full border border-border bg-surface p-3 text-foreground shadow-sm placeholder:text-muted focus:border-accent focus:outline-none focus-visible:ring-2"
           />
           <div className="absolute inset-y-0 end-2 flex items-center gap-1 pr-2">
             <button
@@ -267,10 +267,10 @@ export default function RecitersList({ setIsOpen }: Props) {
         <div className="flex w-full flex-wrap items-center justify-center gap-2">
           <button
             onClick={() => setSelectedRiwaya('all')}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+            className={`rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold transition-all duration-200 dark:border-gray-300/40 ${
               selectedRiwaya === 'all'
-                ? 'bg-gradient-to-r from-brand-CTA-blue-600 to-brand-CTA-blue-500 text-white shadow-lg shadow-brand-CTA-blue-500/25'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                ? 'border-transparent bg-gradient-to-r from-brand-CTA-blue-600 to-brand-CTA-blue-500 text-white shadow-md shadow-brand-CTA-blue-500/20'
+                : 'border-border bg-surface text-foreground hover:border-zinc-300 hover:bg-zinc-50 dark:hover:border-slate-600 dark:hover:bg-slate-700/60'
             }`}
           >
             {allReciters}
@@ -284,7 +284,7 @@ export default function RecitersList({ setIsOpen }: Props) {
                   event.stopPropagation();
                   setSelectedRiwaya(value as Riwaya | 'all');
                 }}
-                className={`rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                className={`rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold transition-all duration-200 dark:border-gray-300/40 ${
                   isSelected
                     ? 'bg-gradient-to-r from-brand-CTA-blue-600 to-brand-CTA-blue-500 text-white shadow-lg shadow-brand-CTA-blue-500/25'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'

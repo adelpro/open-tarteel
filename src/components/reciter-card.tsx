@@ -63,9 +63,9 @@ export default function ReciterCard({
       }}
       className={cn(
         'relative w-full rounded-2xl border p-4 text-right transition-all duration-300',
-        'hover:border-brand-CTA-blue-200 border-gray-100 bg-white hover:scale-[103%] hover:shadow-xl hover:shadow-gray-200/50',
-        'dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-CTA-blue-500 focus-visible:ring-offset-2'
+        'hover:border-brand-CTA-blue-200 border-gray-100 bg-white hover:scale-[103%]',
+        'dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-400',
+        'p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-CTA-blue-500 focus-visible:ring-offset-2'
       )}
     >
       <div className="flex flex-col gap-3">

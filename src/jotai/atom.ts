@@ -48,6 +48,11 @@ export const selectedReciterAtom = createAtomWithStorage<Reciter | null>(
   null
 );
 
+export type Theme = 'light' | 'dark' | 'system';
+export const themeAtom = createAtomWithStorage<Theme>(
+  'theme-preference',
+  'system'
+);
 export const enabledSourcesAtom = createAtomWithStorage<LinkSource[]>(
   'enabled-sources',
   [LinkSource.MP3QURAN, LinkSource.ITQAN]
