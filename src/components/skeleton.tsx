@@ -1,16 +1,11 @@
-export default function Skeleton() {
+import Skeleton from 'react-loading-skeleton';
+
+export default function SkeletonLoading() {
   return (
-    <div
-      role="status"
-      className="m-auto w-full max-w-md animate-pulse rounded border border-gray-200 p-4 shadow dark:border-gray-700 md:p-6"
-    >
-      <div className="mb-4 flex h-48 items-center justify-center rounded bg-gray-300 dark:bg-gray-700">
-        <div className="h-10 w-10 text-gray-200 dark:text-gray-600"></div>
-      </div>
-      <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-      <div className="mb-2.5 h-2 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-      <div className="mb-2.5 h-2 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-      <div className="h-2 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+    <div className="space-y-4 p-6">
+      <Skeleton height={40} width={300} />
+      <Skeleton height={20} count={3} />
+      <Skeleton height={200} />
     </div>
   );
 }
