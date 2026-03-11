@@ -1,9 +1,17 @@
+import Skeleton from 'react-loading-skeleton';
+
 export default function SimpleSkeleton() {
   return (
-    <div className="flex w-full flex-col items-start justify-center gap-2">
-      <div className="h-3 w-4/6 animate-pulse rounded-full bg-gray-300" />
-      <div className="h-3 w-full max-w-md animate-pulse rounded-full bg-gray-300" />
-      <div className="h-3 w-5/6 max-w-md animate-pulse rounded-full bg-gray-300" />
+    <div
+      className={'hover:border-brand-CTA-blue-200 relative w-full rounded-xl'}
+    >
+      <div className="flex flex-col gap-3">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 overflow-hidden text-right">
+            <Skeleton className="h-[100px] w-full" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import Skeleton from 'react-loading-skeleton';
 
 export default function Loading() {
   return (
-    <div className="flex min-h-screen w-full justify-center px-4">
+    <div className="flex min-h-full w-full justify-center px-4">
       <div className="flex w-full max-w-2xl flex-col items-center gap-y-6 text-foreground">
         <section className="flex flex-col items-center justify-center p-2 text-center md:p-4">
           <div>

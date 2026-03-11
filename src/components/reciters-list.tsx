@@ -305,8 +305,14 @@ export default function RecitersList({ setIsOpen }: Props) {
           </section>
         )}
 
+        {/* change the true to loading */}
         {loading && (
-          <div className="text-center">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <SimpleSkeleton />
+            <SimpleSkeleton />
+            <SimpleSkeleton />
+            <SimpleSkeleton />
+            <SimpleSkeleton />
             <SimpleSkeleton />
           </div>
         )}

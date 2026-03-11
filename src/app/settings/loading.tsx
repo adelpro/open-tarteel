@@ -2,7 +2,7 @@
 
 import Skeleton from 'react-loading-skeleton';
 
-export default function SettingsLoading() {
+export default function Loading() {
   return (
     <div className="mt-10 flex w-full flex-col items-center justify-center bg-background text-foreground">
       <div className="mx-auto w-full max-w-2xl">
