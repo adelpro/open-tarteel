@@ -2,10 +2,10 @@
 
 import React, { useCallback, useState } from 'react';
 import {
-  MdClose,
   MdCloudDone,
   MdCloudDownload,
   MdDeleteOutline,
+  MdOutlineCancel,
   MdWarning,
 } from 'react-icons/md';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -102,7 +102,7 @@ export default function DownloadAllButton({
     })();
 
     return (
-      <div className="flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 dark:border-blue-900 dark:bg-blue-950/40">
+      <div className="flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2.5 dark:border-blue-900 dark:bg-blue-950/40">
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex items-center justify-between text-xs">
             <span className="font-medium text-blue-700 dark:text-blue-300">
@@ -162,13 +162,13 @@ export default function DownloadAllButton({
         >
           <button
             onClick={onCancel}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-red-500 hover:bg-red-100 active:bg-red-200 dark:hover:bg-red-900/30"
             aria-label={formatMessage({
               id: 'download.cancel',
               defaultMessage: 'Cancel download',
             })}
           >
-            <MdClose size={18} />
+            <MdOutlineCancel size={22} />
           </button>
         </Tooltip>
       </div>

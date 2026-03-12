@@ -6,9 +6,11 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
 import { FaRegShareFromSquare } from 'react-icons/fa6';
+import { MdCloudDone, MdCloudDownload } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import { useFavorites } from '@/hooks/use-favorites';
+import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { selectedReciterAtom } from '@/jotai/atom';
 import searchSVG from '@/svgs/search.svg';
 import { generateFavId } from '@/utils';
@@ -25,6 +27,7 @@ export default function ReciterSelector() {
   const { toggleFavorite, favoriteReciters } = useFavorites();
   const { formatMessage } = useIntl();
   const { shareReciter } = useShareReciter();
+  const { isAllCached, downloadAllTracks, progress } = useOfflineDownload();
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -37,6 +40,12 @@ export default function ReciterSelector() {
       autoOpenedRef.current = true;
     }
   }, [searchParams]);
+
+  const playlist = selectedReciter?.moshaf?.playlist ?? null;
+
+  // Only compute after mount to avoid hydration mismatch
+  const allCached = mounted && playlist ? isAllCached(playlist) : false;
+  const isDownloading = progress !== null;
 
   if (!mounted) {
     // SSR and first client render will match here
@@ -66,6 +75,13 @@ export default function ReciterSelector() {
     if (selectedReciter) shareReciter(selectedReciter);
   };
 
+  const handleDownloadToggle = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (playlist && !isDownloading && !allCached) {
+      downloadAllTracks(playlist);
+    }
+  };
+
   return (
     <div className="flex w-[95%] justify-center">
       <div className="flex w-full max-w-lg cursor-pointer items-center justify-between gap-3 rounded-xl border border-gray-300/80 bg-gradient-to-r from-gray-100 to-gray-200/80 p-3 shadow-md shadow-gray-300/20 transition-all duration-200 hover:from-gray-50 hover:to-gray-200 hover:shadow-lg hover:shadow-gray-300/25 focus:outline-none focus:ring-4 focus:ring-gray-400/50 active:scale-95 dark:border-gray-300/40 dark:from-gray-700 dark:shadow-gray-700/15 dark:hover:from-gray-700 dark:hover:to-gray-600 dark:hover:shadow-gray-600/20">
@@ -80,6 +96,65 @@ export default function ReciterSelector() {
           </span>
 
           <div className="flex items-center gap-2">
+            {/* Download state indicator */}
+            {selectedReciter &&
+              playlist &&
+              (allCached ? (
+                <MdCloudDone
+                  size={22}
+                  className="text-green-500"
+                  title={formatMessage({
+                    id: 'download.allSaved',
+                    defaultMessage: 'All surahs saved offline',
+                  })}
+                  aria-label="All surahs downloaded"
+                />
+              ) : isDownloading ? (
+                <svg
+                  className="h-5 w-5 animate-spin text-blue-500"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-label="Downloading"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  />
+                </svg>
+              ) : (
+                <MdCloudDownload
+                  size={22}
+                  className="cursor-pointer text-gray-600/80 transition-colors hover:text-blue-600 dark:text-gray-400/80 dark:hover:text-blue-400"
+                  onClick={handleDownloadToggle}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={formatMessage({
+                    id: 'download.startDownload',
+                    defaultMessage: 'Download reciter for offline listening',
+                  })}
+                  title={formatMessage({
+                    id: 'download.startDownload',
+                    defaultMessage: 'Download reciter for offline listening',
+                  })}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      handleDownloadToggle(
+                        event as unknown as React.MouseEvent
+                      );
+                    }
+                  }}
+                />
+              ))}
+
             {/* Share */}
             {selectedReciter && (
               <FaRegShareFromSquare

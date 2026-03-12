@@ -135,6 +135,9 @@
   "download.surah": "Download surah",
   "download.removeSurah": "Remove download",
   "download.downloadAllSurahs": "Download all surahs",
+  "download.startDownload": "Download reciter for offline listening",
+  "download.showDownloadedOnly": "Show downloaded only",
+  "download.showAll": "Show all reciters",
 
   "storage.lowWarning": "Downloads may be removed by your browser if storage is low.",
   "storage.insufficientSpace": "Not enough storage space. Available: {available}, estimated need: {needed}. Free up space or remove other downloads.",

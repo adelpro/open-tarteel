@@ -126,21 +126,24 @@
   "reciterDialog.title": "اختر قارئًا",
   "player.cancelTimer": "إلغاء المؤقت",
 
-  "download.downloadAll": "تحميل جميع السور للاستماع بدون إنترنت ({cached}/{total})",
+  "download.downloadAll": "تحميل جميع السور للاستماع دون إنترنت ({cached}/{total})",
   "download.downloading": "جاري التحميل… {completed}/{total}",
   "download.failed": "{count} فشل",
   "download.cancel": "إلغاء التحميل",
-  "download.allSaved": "جميع السور محفوظة للاستماع بدون إنترنت",
+  "download.allSaved": "جميع السور محفوظة للاستماع دون إنترنت",
   "download.removeAll": "حذف جميع التحميلات",
   "download.surah": "تحميل السورة",
   "download.removeSurah": "حذف التحميل",
   "download.downloadAllSurahs": "تحميل جميع السور",
+  "download.startDownload": "تحميل القارئ للاستماع دون إنترنت",
+  "download.showDownloadedOnly": "عرض المحفوظين فقط",
+  "download.showAll": "عرض جميع القراء",
 
   "storage.lowWarning": "قد يحذف المتصفح التحميلات إذا كانت مساحة التخزين منخفضة.",
   "storage.insufficientSpace": "مساحة التخزين غير كافية. المتاح: {available}، المطلوب تقريباً: {needed}. قم بتحرير مساحة أو حذف تحميلات أخرى.",
   "storage.checkFailed": "تعذر التحقق من مساحة التخزين. قد يفشل التحميل إذا كانت المساحة منخفضة.",
 
-  "reciter.offlineBadge": "بدون إنترنت",
+  "reciter.offlineBadge": "دون إنترنت",
 
   "settings.cacheManagement": "التحميلات المحفوظة",
   "settings.cacheManagementDescription": "إدارة التلاوات المحفوظة على جهازك.",

@@ -22,6 +22,11 @@ export default function CacheManagement() {
   const [loading, setLoading] = useState(true);
   const [storage, setStorage] = useState<StorageEstimate | null>(null);
 
+  const refreshStorage = useCallback(async () => {
+    const estimate = await estimateStorage();
+    setStorage(estimate);
+  }, [estimateStorage]);
+
   const scan = useCallback(async () => {
     setLoading(true);
     try {
@@ -41,13 +46,12 @@ export default function CacheManagement() {
         }))
       );
       setMoshafs(result);
-      const estimate = await estimateStorage();
-      setStorage(estimate);
+      await refreshStorage();
     } catch {
       // ignore
     }
     setLoading(false);
-  }, [locale, getCachedMoshafs, estimateStorage]);
+  }, [locale, getCachedMoshafs, refreshStorage]);
 
   // Re-scan when cached URLs change
   useEffect(() => {
@@ -56,6 +60,7 @@ export default function CacheManagement() {
 
   const handleDelete = async (moshaf: CachedMoshaf) => {
     await removeCachedLinks(moshaf.links);
+    // Storage estimate is refreshed automatically via cachedUrls → scan → refreshStorage
   };
 
   if (loading) {
