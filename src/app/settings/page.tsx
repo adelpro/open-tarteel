@@ -42,7 +42,7 @@ export default function SettingsPage() {
           className="m-1 space-y-4 rounded p-4 text-start md:m-2 md:border md:border-gray-200 md:bg-white md:p-8 md:shadow-sm md:dark:border-gray-600 md:dark:bg-gray-800"
           dir={isRTL ? 'rtl' : 'ltr'}
         >
-          <h2 className="text-xl font-semibold text-slate-900">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-300">
             <FormattedMessage
               id="settings.reciterSources"
               defaultMessage="Reciter sources"

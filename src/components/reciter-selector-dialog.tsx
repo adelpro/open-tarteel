@@ -19,7 +19,12 @@ export default function ReciterSelectorDialog({ isOpen, setIsOpen }: Props) {
     defaultMessage: 'Select a Reciter',
   });
   return (
-    <Dialog isOpen={isOpen} setIsOpen={setIsOpen} ariaLabel={dialogLabel}>
+    <Dialog
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      className="bg-transparent"
+      ariaLabel={dialogLabel}
+    >
       <RecitersList setIsOpen={setIsOpen} />
     </Dialog>
   );

@@ -15,7 +15,7 @@ export default function PlaylistDialog({
   setCurrentTrack,
 }: Props): React.ReactNode {
   return (
-    <Dialog isOpen={isOpen} setIsOpen={setIsOpen}>
+    <Dialog isOpen={isOpen} setIsOpen={setIsOpen} className="bg-transparent">
       <Playlist setIsOpen={setIsOpen} setCurrentTrack={setCurrentTrack} />
     </Dialog>
   );

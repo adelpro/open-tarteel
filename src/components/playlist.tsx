@@ -1,6 +1,8 @@
 'use client';
+
 import { useAtomValue } from 'jotai';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { BsBook } from 'react-icons/bs';
 import { MdCloudDone, MdCloudDownload } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
@@ -20,6 +22,7 @@ type Props = {
 export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
   const { formatMessage, locale: language } = useIntl();
   const selectedReciter = useAtomValue(selectedReciterAtom);
+  const [mounted, setMounted] = useState(false);
   const {
     progress,
     singleTrackLoading,
@@ -37,26 +40,51 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
     estimateStorage,
   } = useOfflineDownload();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handlePlaylistItemClick = (index: number) => {
     setIsOpen(false);
     setCurrentTrack(index);
   };
 
   const isEnglish = language === 'en';
-  const playlist = selectedReciter?.moshaf?.playlist;
 
-  if (!playlist) {
-    return <></>;
+  if (!selectedReciter?.moshaf?.playlist) {
+    return null;
   }
 
+  const playlist = selectedReciter.moshaf.playlist;
+
+  // Use real cached state only after hydration to avoid mismatch
+  const cachedCount = mounted ? getCachedCount(playlist) : 0;
+  const allCached = mounted ? isAllCached(playlist) : false;
+
   return (
-    <main>
+    <main className="animate-fade-up p-2 sm:p-4">
+      <div className="mb-4 flex items-center justify-between px-2">
+        <h2 className="flex items-center gap-3 text-2xl font-black text-gray-800 dark:text-gray-100">
+          <div className="dark:bg-brand-CTA-blue-400/10 dark:text-brand-CTA-blue-400 flex size-10 items-center justify-center rounded-xl bg-brand-CTA-blue-500/10 text-brand-CTA-blue-500">
+            <BsBook className="size-5" />
+          </div>
+          {isEnglish ? 'List of Surahs' : 'قائمة السور'}
+        </h2>
+
+        <span className="bg-brand-CTA-blue-100 dark:bg-brand-CTA-blue-900/30 dark:text-brand-CTA-blue-400 flex items-center rounded-full px-3 py-1 text-sm font-bold text-brand-CTA-blue-600 shadow-sm">
+          {playlist.length}{' '}
+          <span className="mx-1 font-normal">
+            {isEnglish ? 'Surahs' : 'سورة'}
+          </span>
+        </span>
+      </div>
+
       {/* Download-all banner */}
-      <div className="mx-4 mt-2">
+      <div className="mb-4 px-2">
         <DownloadAllButton
           playlist={playlist}
-          cachedCount={getCachedCount(playlist)}
-          isAllCached={isAllCached(playlist)}
+          cachedCount={cachedCount}
+          isAllCached={allCached}
           progress={progress}
           onDownloadAll={downloadAllTracks}
           onRemoveAll={removeAllTracks}
@@ -66,11 +94,11 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
         />
       </div>
 
-      <ul className="my-2 w-full pl-3">
+      <ul className="flex w-full flex-col gap-3">
         {playlist.map((item: PlaylistItem, index: number) => {
           const surahIndex = Number.parseInt(item.surahId) - 1;
           const surah = SURAHS[surahIndex];
-          const cached = isTrackCached(item.link);
+          const cached = mounted && isTrackCached(item.link);
           const isCurrentlyDownloading = progress?.currentUrl === item.link;
           const isSingleLoading = singleTrackLoading === item.link;
           const trackProgress = isCurrentlyDownloading
@@ -82,21 +110,23 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
           return (
             <li
               key={index}
-              className="mx-2 my-3 w-full cursor-pointer rounded border-b border-gray-100 p-3 text-slate-500 transition-colors duration-300 hover:bg-gray-50 hover:text-slate-800 dark:border-gray-800 dark:hover:bg-gray-800 dark:hover:text-slate-200"
               onClick={() => handlePlaylistItemClick(index)}
+              className="hover:border-brand-CTA-blue-200 hover:from-brand-CTA-blue-50/50 dark:hover:border-brand-CTA-blue-800/50 dark:hover:from-brand-CTA-blue-900/20 group w-full cursor-pointer rounded-xl border border-gray-200/60 bg-white p-3 shadow-sm transition-all duration-200 hover:scale-[1.01] hover:bg-gradient-to-r hover:to-white hover:shadow-md dark:border-gray-700/60 dark:bg-gray-800/50 dark:hover:to-gray-800/80"
             >
-              <div className="flex items-center">
-                <span className="m-2 flex size-8 items-center justify-center rounded-full bg-gray-100 text-xs font-medium dark:bg-gray-800">
+              <div className="flex items-center gap-4">
+                <span className="group-hover:bg-brand-CTA-blue-100 dark:group-hover:bg-brand-CTA-blue-900/60 dark:group-hover:text-brand-CTA-blue-400 flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-bold text-gray-500 transition-colors group-hover:text-brand-CTA-blue-600 dark:bg-gray-800 dark:text-gray-400">
                   {index + 1}
                 </span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-lg font-medium">
+
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="group-hover:text-brand-CTA-blue-700 dark:group-hover:text-brand-CTA-blue-300 text-lg font-bold text-gray-700 transition-colors dark:text-gray-200">
                       {isEnglish
-                        ? surah.englishName
-                        : removeTashkeel(surah.name)}
+                        ? surah?.englishName
+                        : removeTashkeel(surah?.name)}
                     </span>
-                    <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-gray-800 dark:text-gray-400">
+
+                    <span className="group-hover:bg-brand-CTA-blue-50 dark:group-hover:bg-brand-CTA-blue-900/30 dark:group-hover:text-brand-CTA-blue-300 inline-flex items-center rounded-lg bg-gray-50 px-2.5 py-1 text-xs font-semibold text-gray-500 ring-1 ring-inset ring-gray-500/20 transition-colors group-hover:text-brand-CTA-blue-600 group-hover:ring-brand-CTA-blue-500/20 dark:bg-gray-800/80 dark:text-gray-400 dark:ring-gray-600/50">
                       {surah.ayahCount}{' '}
                       {isEnglish
                         ? surah.ayahCount === 1
@@ -107,9 +137,10 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                           : 'آيات'}
                     </span>
                   </div>
+
                   {/* Per-track download progress bar */}
                   {(isCurrentlyDownloading || isSingleLoading) && (
-                    <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-blue-200 dark:bg-blue-800">
+                    <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-blue-200 dark:bg-blue-800">
                       <div
                         className="h-full rounded-full bg-blue-500 transition-all duration-200"
                         style={{
@@ -119,6 +150,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                     </div>
                   )}
                 </div>
+
                 {/* Per-track download/remove button */}
                 <button
                   onClick={(e) => {
