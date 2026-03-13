@@ -2,7 +2,7 @@
 
 import { useAtom, useAtomValue } from 'jotai';
 import dynamic from 'next/dynamic';
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 
 import PwaUpdater from '@/components/pwa-updater';
 import ReciterSelector from '@/components/reciter-selector';
@@ -13,8 +13,12 @@ const Player = dynamic(() => import('@/components/player'), { ssr: false });
 
 function ReciterContent() {
   const selectedReciter = useAtomValue(selectedReciterAtom);
-
   const [isFullscreen, setFullscreen] = useAtom(fullscreenAtom);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -25,8 +29,7 @@ function ReciterContent() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [setFullscreen]);
 
-  if (!selectedReciter) {
-    // Still no selected reciter: show skeleton (prevents hydration mismatch)
+  if (!mounted || !selectedReciter) {
     return <SimpleSkeleton />;
   }
 

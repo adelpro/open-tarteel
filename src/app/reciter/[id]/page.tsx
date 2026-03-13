@@ -13,7 +13,7 @@ export async function generateStaticParams() {
   try {
     const RECITERS = await getAllReciters();
     return RECITERS.map((reciter) => ({
-      id: reciter.id.toString(),
+      id: reciter.id,
     }));
   } catch {
     return [];
@@ -23,7 +23,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const RECITERS = await getAllReciters();
-  const reciter = RECITERS.find((r) => r.id === Number(id));
+  const reciter = RECITERS.find((r) => r.id === id);
 
   if (!reciter) {
     return {
@@ -76,7 +76,7 @@ export default async function Page({ params }: Props) {
     return notFound();
   }
 
-  const reciter = RECITERS.find((r) => r.id === Number(id));
+  const reciter = RECITERS.find((r) => r.id === id);
 
   if (!reciter) {
     return notFound();

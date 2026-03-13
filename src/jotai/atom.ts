@@ -1,4 +1,4 @@
-import { Reciter, Riwaya } from '@/types';
+import { LinkSource, Reciter, Riwaya } from '@/types';
 
 import { createAtomWithStorage } from './create-atom-with-storage';
 
@@ -46,4 +46,14 @@ export const recitersSortAtom = createAtomWithStorage<
 export const selectedReciterAtom = createAtomWithStorage<Reciter | null>(
   'selected-reciter',
   null
+);
+
+export type Theme = 'light' | 'dark' | 'system';
+export const themeAtom = createAtomWithStorage<Theme>(
+  'theme-preference',
+  'system'
+);
+export const enabledSourcesAtom = createAtomWithStorage<LinkSource[]>(
+  'enabled-sources',
+  [LinkSource.MP3QURAN, LinkSource.ITQAN]
 );

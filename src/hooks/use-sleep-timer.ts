@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 
 export const useSleepTimer = (togglePlayPause: () => void) => {
-  const [sleepTimerId, setSleepTimerId] = useState<NodeJS.Timeout | null>(null);
+  const [sleepTimerId, setSleepTimerId] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
   const [remainingTime, setRemainingTime] = useState<number | null>(null);
 
   // Real-time countdown (for accurate pause)
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+    let interval: ReturnType<typeof setInterval> | null = null;
     if (remainingTime !== null && remainingTime > 0) {
       interval = setInterval(() => {
         setRemainingTime((previous) =>

@@ -8,7 +8,16 @@
   "footer.about": "About the app",
   "footer.privacy": "Privacy Policy",
   "footer.contact": "Contact Us",
+  "footer.settings": "Settings",
   "underConstruction": "The app is under development",
+  "settings.title": "Settings",
+  "settings.reciterSources": "Reciter sources",
+  "settings.reciterSourcesDescription": "Choose which sources to show in the reciter list. At least one must be enabled.",
+  "settings.selectAll": "Select all",
+  "settings.deselectAll": "Deselect all",
+  "settings.source.mp3quran": "MP3 Quran",
+  "settings.source.itqan": "Itqan",
+  "settings.enableSource": "Enable at least one source in Settings.",
   "reciter.select": "Select A Reciter",
   "favorites": "favorites",
   "views": "views",
@@ -21,6 +30,7 @@
   "showFavorite": "Show Favorite",
   "noRecitersFound": "No reciters found.",
   "allReciters": "All Reciters",
+  "reciter.recent": "Recent",
 
   "riwaya.Hafs": "Hafs",
   "riwaya.Warsh": "Warsh",
@@ -112,5 +122,7 @@
 
   "player.sleepTimerActive": "Sleep timer active",
   "player.sleepTimer": "Sleep Timer",
-  "player.untilEnd": "Until the end of the recitation"
+  "player.untilEnd": "Until the end of the recitation",
+  "reciterDialog.title": "Select a Reciter",
+  "player.cancelTimer": "Cancel Timer"
 }

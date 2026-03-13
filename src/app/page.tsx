@@ -1,17 +1,19 @@
 'use client';
 
-import { useAtomValue } from 'jotai';
+import { useAtom } from 'jotai';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import ReciterSelector from '@/components/reciter-selector';
 import UnderConstruction from '@/components/under-construction';
+import { useReciters } from '@/hooks/use-reciters';
 import { selectedReciterAtom } from '@/jotai/atom';
 
 import Logo from '../components/hero';
 
 export default function Home() {
-  const selectedReciter = useAtomValue(selectedReciterAtom);
+  const [selectedReciter, setSelectedReciter] = useAtom(selectedReciterAtom);
+  const { reciters, loading } = useReciters();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -21,15 +23,40 @@ export default function Home() {
     setIsClient(true);
   }, []);
 
+  // Validate selectedReciter exists in reciters list
   useEffect(() => {
-    if (!isClient || !selectedReciter) return;
+    if (!isClient || loading || reciters.length === 0) return;
+
+    if (selectedReciter) {
+      const exists = reciters.some((r) => r.id === selectedReciter.id);
+      if (!exists) {
+        setSelectedReciter(null);
+        return;
+      }
+    }
+  }, [isClient, loading, reciters, selectedReciter, setSelectedReciter]);
+
+  useEffect(() => {
+    if (!isClient || !selectedReciter || loading) return;
+
+    // Verify reciter exists before redirecting
+    const exists = reciters.some((r) => r.id === selectedReciter.id);
+    if (!exists) return;
+
     const currentPath = `${pathname}?${searchParams.toString()}`;
     const targetPath = `/reciter/${selectedReciter.id}?moshafId=${selectedReciter.moshaf.id}`;
-
     if (currentPath !== targetPath) {
       router.push(targetPath);
     }
-  }, [selectedReciter, pathname, searchParams, router, isClient]);
+  }, [
+    selectedReciter,
+    pathname,
+    searchParams,
+    router,
+    isClient,
+    loading,
+    reciters,
+  ]);
 
   if (!isClient) {
     return (
