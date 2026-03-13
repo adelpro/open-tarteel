@@ -86,7 +86,7 @@ export default function ReciterCard({
                 </span>
               )}
               {isRecentlyPlayed && (
-                <div className="bg-brand-CTA-blue-50 dark:bg-brand-CTA-blue-900/40 dark:text-brand-CTA-blue-400 border-brand-CTA-blue-100 dark:border-brand-CTA-blue-800 flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-bold text-brand-CTA-blue-600">
+                <div className="bg-brand-CTA-blue-50 border-brand-CTA-blue-100 flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-bold text-brand-CTA-blue-600 dark:border-white dark:bg-white">
                   <MdHistory size={12} />
                   <FormattedMessage
                     id="reciter.recent"

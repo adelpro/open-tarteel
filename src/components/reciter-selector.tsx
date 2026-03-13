@@ -97,63 +97,17 @@ export default function ReciterSelector() {
 
           <div className="flex items-center gap-2">
             {/* Download state indicator */}
-            {selectedReciter &&
-              playlist &&
-              (allCached ? (
-                <MdCloudDone
-                  size={22}
-                  className="text-green-500"
-                  title={formatMessage({
-                    id: 'download.allSaved',
-                    defaultMessage: 'All surahs saved offline',
-                  })}
-                  aria-label="All surahs downloaded"
-                />
-              ) : isDownloading ? (
-                <svg
-                  className="h-5 w-5 animate-spin text-blue-500"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  aria-label="Downloading"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  />
-                </svg>
-              ) : (
-                <MdCloudDownload
-                  size={22}
-                  className="cursor-pointer text-gray-600/80 transition-colors hover:text-blue-600 dark:text-gray-400/80 dark:hover:text-blue-400"
-                  onClick={handleDownloadToggle}
-                  tabIndex={0}
-                  role="button"
-                  aria-label={formatMessage({
-                    id: 'download.startDownload',
-                    defaultMessage: 'Download reciter for offline listening',
-                  })}
-                  title={formatMessage({
-                    id: 'download.startDownload',
-                    defaultMessage: 'Download reciter for offline listening',
-                  })}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                      handleDownloadToggle(
-                        event as unknown as React.MouseEvent
-                      );
-                    }
-                  }}
-                />
-              ))}
+            {selectedReciter && playlist && allCached && (
+              <MdCloudDone
+                size={22}
+                className="text-green-500"
+                title={formatMessage({
+                  id: 'download.allSaved',
+                  defaultMessage: 'All surahs saved offline',
+                })}
+                aria-label="All surahs downloaded"
+              />
+            )}
 
             {/* Share */}
             {selectedReciter && (

@@ -130,20 +130,23 @@ export default function DownloadAllButton({
             />
           </div>
           {/* Current surah progress */}
-          {currentSurahName && (
-            <div className="mt-1.5">
-              <div className="flex items-center justify-between text-[10px] text-blue-600 dark:text-blue-400">
-                <span className="truncate">{currentSurahName}</span>
-                <span>{trackPercent}%</span>
-              </div>
-              <div className="mt-0.5 h-1 w-full overflow-hidden rounded-full bg-blue-100 dark:bg-blue-900">
-                <div
-                  className="h-full rounded-full bg-blue-400 transition-all duration-200"
-                  style={{ width: `${trackPercent}%` }}
-                />
-              </div>
+          <div
+            className={cn(
+              'mt-1.5 transition-opacity duration-200',
+              currentSurahName ? 'opacity-100' : 'opacity-0'
+            )}
+          >
+            <div className="flex items-center justify-between text-[10px] text-blue-600 dark:text-blue-400">
+              <span className="truncate">{currentSurahName || '\u00A0'}</span>
+              <span>{trackPercent}%</span>
             </div>
-          )}
+            <div className="mt-0.5 h-1 w-full overflow-hidden rounded-full bg-blue-100 dark:bg-blue-900">
+              <div
+                className="h-full rounded-full bg-blue-400 transition-all duration-200"
+                style={{ width: `${trackPercent}%` }}
+              />
+            </div>
+          </div>
           {progress.failed > 0 && (
             <span className="mt-1 text-[10px] text-red-500">
               <FormattedMessage
