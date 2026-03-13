@@ -1,25 +1,105 @@
 name: CI
-
-on: [push, pull_request]
+on:
+  pull_request:
+    branches: [develop, staging, master]
+  push:
+    branches: [develop, staging, master]
 
 jobs:
-  build:
+  package-manager-check:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Detect package manager
+        id: detect
+        run: |
+          if [ -f "yarn.lock" ]; then
+            echo "manager=yarn" >> $GITHUB_OUTPUT
+          elif [ -f "pnpm-lock.yaml" ]; then
+            echo "manager=pnpm" >> $GITHUB_OUTPUT
+          elif [ -f "package-lock.json" ]; then
+            echo "manager=npm" >> $GITHUB_OUTPUT
+          else
+            echo "manager=none" >> $GITHUB_OUTPUT
+          fi
+      - name: Validate package manager
+        run: |
+          if [ "${{ steps.detect.outputs.manager }}" != "yarn" ]; then
+            echo "Expected yarn but found: ${{ steps.detect.outputs.manager }}"
+            echo "Please use yarn for this project (yarn.lock not found)"
+            exit 1
+          fi
 
-      - name: Enable Corepack # ← MUST be first, before setup-node
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Enable Corepack # ← must be before setup-node
         run: corepack enable
-
-      - name: Setup Node.js
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'yarn' # ← now works because corepack is already enabled
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install --immutable # ← --frozen-lockfile is yarn v1, use --immutable for v4
+      - name: Check code formatting
+        run: yarn format:check
+      - name: Run linter
+        run: yarn lint
+      - name: Run tests with coverage
+        run: yarn test:coverage
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
 
+  type-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Enable Corepack # ← must be before setup-node
+        run: corepack enable
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
+      - name: Type Check
+        run: yarn type-check
 
-      - name: Build
+  build-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+        environment: [development, staging, production]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Enable Corepack # ← must be before setup-node
+        run: corepack enable
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Build ${{ matrix.environment }}
         run: yarn build
