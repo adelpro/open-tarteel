@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
 import { FaRegShareFromSquare } from 'react-icons/fa6';
-import { MdCloudDone, MdCloudDownload } from 'react-icons/md';
+import { MdCloudDone } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import { useFavorites } from '@/hooks/use-favorites';
@@ -27,7 +27,7 @@ export default function ReciterSelector() {
   const { toggleFavorite, favoriteReciters } = useFavorites();
   const { formatMessage } = useIntl();
   const { shareReciter } = useShareReciter();
-  const { isAllCached, downloadAllTracks, progress } = useOfflineDownload();
+  const { isAllCached } = useOfflineDownload();
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -45,7 +45,6 @@ export default function ReciterSelector() {
 
   // Only compute after mount to avoid hydration mismatch
   const allCached = mounted && playlist ? isAllCached(playlist) : false;
-  const isDownloading = progress !== null;
 
   if (!mounted) {
     // SSR and first client render will match here
@@ -73,13 +72,6 @@ export default function ReciterSelector() {
   const handleShare = async (event: React.MouseEvent | React.KeyboardEvent) => {
     event.stopPropagation();
     if (selectedReciter) shareReciter(selectedReciter);
-  };
-
-  const handleDownloadToggle = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    if (playlist && !isDownloading && !allCached) {
-      downloadAllTracks(playlist);
-    }
   };
 
   return (

@@ -1,9 +1,9 @@
 name: CI
 on:
   pull_request:
-    branches: [develop, staging, master]
+    branches: [develop, staging, main]
   push:
-    branches: [develop, staging, master]
+    branches: [develop, staging, main]
 
 jobs:
   package-manager-check:
