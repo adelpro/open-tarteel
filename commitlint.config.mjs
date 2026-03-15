@@ -13,7 +13,8 @@ const config = {
         'test', // Adding missing tests or correcting existing tests
         'docs', // Documentation changes
         'chore', // Changes to the build process or auxiliary tools and libraries such as documentation generation
-        'wip',
+        'wip',  // Work in progress (not ready for production)
+        'ci', // Changes to our CI configuration files and scripts
       ],
     ],
   },
