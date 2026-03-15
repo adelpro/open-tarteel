@@ -6,9 +6,11 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
 import { FaRegShareFromSquare } from 'react-icons/fa6';
+import { MdCloudDone, MdCloudDownload } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import { useFavorites } from '@/hooks/use-favorites';
+import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { selectedReciterAtom } from '@/jotai/atom';
 import searchSVG from '@/svgs/search.svg';
 import { generateFavId } from '@/utils';
@@ -25,6 +27,7 @@ export default function ReciterSelector() {
   const { toggleFavorite, favoriteReciters } = useFavorites();
   const { formatMessage } = useIntl();
   const { shareReciter } = useShareReciter();
+  const { isAllCached, downloadAllTracks, progress } = useOfflineDownload();
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -37,6 +40,12 @@ export default function ReciterSelector() {
       autoOpenedRef.current = true;
     }
   }, [searchParams]);
+
+  const playlist = selectedReciter?.moshaf?.playlist ?? null;
+
+  // Only compute after mount to avoid hydration mismatch
+  const allCached = mounted && playlist ? isAllCached(playlist) : false;
+  const isDownloading = progress !== null;
 
   if (!mounted) {
     // SSR and first client render will match here
@@ -66,6 +75,13 @@ export default function ReciterSelector() {
     if (selectedReciter) shareReciter(selectedReciter);
   };
 
+  const handleDownloadToggle = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (playlist && !isDownloading && !allCached) {
+      downloadAllTracks(playlist);
+    }
+  };
+
   return (
     <div className="flex w-[95%] justify-center">
       <div className="flex w-full max-w-lg cursor-pointer items-center justify-between gap-3 rounded-xl border border-gray-300/80 bg-gradient-to-r from-gray-100 to-gray-200/80 p-3 shadow-md shadow-gray-300/20 transition-all duration-200 hover:from-gray-50 hover:to-gray-200 hover:shadow-lg hover:shadow-gray-300/25 focus:outline-none focus:ring-4 focus:ring-gray-400/50 active:scale-95 dark:border-gray-300/40 dark:from-gray-700 dark:shadow-gray-700/15 dark:hover:from-gray-700 dark:hover:to-gray-600 dark:hover:shadow-gray-600/20">
@@ -80,6 +96,19 @@ export default function ReciterSelector() {
           </span>
 
           <div className="flex items-center gap-2">
+            {/* Download state indicator */}
+            {selectedReciter && playlist && allCached && (
+              <MdCloudDone
+                size={22}
+                className="text-green-500"
+                title={formatMessage({
+                  id: 'download.allSaved',
+                  defaultMessage: 'All surahs saved offline',
+                })}
+                aria-label="All surahs downloaded"
+              />
+            )}
+
             {/* Share */}
             {selectedReciter && (
               <FaRegShareFromSquare

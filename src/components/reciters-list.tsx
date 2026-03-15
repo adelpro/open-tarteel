@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
 import { ImSortAmountDesc } from 'react-icons/im';
-import { MdHistory } from 'react-icons/md';
+import { MdCloudDone, MdHistory } from 'react-icons/md';
 import {
   TbSortAscendingLetters,
   TbSortDescendingNumbers,
@@ -20,6 +20,7 @@ import {
 import { useFavorites } from '@/hooks/use-favorites';
 import { useFilterSort } from '@/hooks/use-filter-sort';
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
+import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { useRecentlyPlayed } from '@/hooks/use-recently-played';
 import { useReciters } from '@/hooks/use-reciters';
 import { enabledSourcesAtom, selectedReciterAtom } from '@/jotai/atom';
@@ -38,8 +39,10 @@ export default function RecitersList({ setIsOpen }: Props) {
   const setSelectedReciter = useSetAtom(selectedReciterAtom);
   const { recentIds, addToRecent } = useRecentlyPlayed();
   const [showRecentOnly, setShowRecentOnly] = useState(false);
+  const [showDownloadedOnly, setShowDownloadedOnly] = useState(false);
 
   const { reciters, loading, error } = useReciters();
+  const { cachedUrls } = useOfflineDownload();
   const enabledSources = useAtomValue(enabledSourcesAtom);
   const recitersBySource = useMemo(
     () =>
@@ -83,15 +86,29 @@ export default function RecitersList({ setIsOpen }: Props) {
   });
 
   const filteredReciters = useMemo(() => {
-    if (!showRecentOnly) return baseFilteredReciters;
-    return baseFilteredReciters
-      .filter((r) => recentIds.includes(generateFavId(r)))
-      .sort(
-        (a, b) =>
-          recentIds.indexOf(generateFavId(a)) -
-          recentIds.indexOf(generateFavId(b))
+    let result = baseFilteredReciters;
+    if (showRecentOnly) {
+      result = result
+        .filter((r) => recentIds.includes(generateFavId(r)))
+        .sort(
+          (a, b) =>
+            recentIds.indexOf(generateFavId(a)) -
+            recentIds.indexOf(generateFavId(b))
+        );
+    }
+    if (showDownloadedOnly) {
+      result = result.filter((r) =>
+        r.moshaf.playlist.some((item) => cachedUrls.has(item.link))
       );
-  }, [baseFilteredReciters, showRecentOnly, recentIds]);
+    }
+    return result;
+  }, [
+    baseFilteredReciters,
+    showRecentOnly,
+    recentIds,
+    showDownloadedOnly,
+    cachedUrls,
+  ]);
 
   const { formatMessage } = useIntl();
 
@@ -128,6 +145,16 @@ export default function RecitersList({ setIsOpen }: Props) {
   const showFavorite = formatMessage({
     id: 'showFavorite',
     defaultMessage: 'Show Favorite',
+  });
+
+  const showDownloadedOnlyLabel = formatMessage({
+    id: 'download.showDownloadedOnly',
+    defaultMessage: 'Show downloaded only',
+  });
+
+  const showAllRecitersLabel = formatMessage({
+    id: 'download.showAll',
+    defaultMessage: 'Show all reciters',
   });
 
   const noRecitersFound = formatMessage({
@@ -216,6 +243,27 @@ export default function RecitersList({ setIsOpen }: Props) {
               }`}
             >
               <MdHistory className="size-5" />
+            </button>
+            {/* Downloaded-only filter */}
+            <button
+              aria-label={
+                showDownloadedOnly
+                  ? showAllRecitersLabel
+                  : showDownloadedOnlyLabel
+              }
+              title={
+                showDownloadedOnly
+                  ? showAllRecitersLabel
+                  : showDownloadedOnlyLabel
+              }
+              onClick={() => setShowDownloadedOnly((previous) => !previous)}
+              className={`rounded-full p-2.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/50 ${
+                showDownloadedOnly
+                  ? 'bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400'
+                  : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+              }`}
+            >
+              <MdCloudDone className="size-5" />
             </button>
             <button
               aria-label={sort}
@@ -321,6 +369,9 @@ export default function RecitersList({ setIsOpen }: Props) {
             filteredReciters.map((reciter, index) => {
               const favId = generateFavId(reciter);
               const isFavorited = favoriteReciters.includes(favId);
+              const hasOffline = reciter.moshaf.playlist.some((item) =>
+                cachedUrls.has(item.link)
+              );
 
               return (
                 <ReciterCard
@@ -331,6 +382,7 @@ export default function RecitersList({ setIsOpen }: Props) {
                   index={index}
                   isFavorite={isFavorited}
                   isFocused={focusedIndex === index}
+                  hasOfflineContent={hasOffline}
                   refCallback={(element) =>
                     (reciterRefs.current[index] = element)
                   }

@@ -3,6 +3,7 @@
 import { useAtom } from 'jotai';
 import { FormattedMessage } from 'react-intl';
 
+import CacheManagement from '@/components/cache-management';
 import useDirection from '@/hooks/use-direction';
 import { enabledSourcesAtom } from '@/jotai/atom';
 import { LinkSource } from '@/types';
@@ -92,6 +93,26 @@ export default function SettingsPage() {
               );
             })}
           </ul>
+        </section>
+
+        {/* ── Offline downloads / cache management ── */}
+        <section
+          className="m-1 space-y-4 rounded p-4 text-start md:m-2 md:border md:border-gray-200 md:bg-white md:p-8 md:shadow-sm md:dark:border-gray-600 md:dark:bg-gray-800"
+          dir={isRTL ? 'rtl' : 'ltr'}
+        >
+          <h2 className="text-xl font-semibold text-slate-900">
+            <FormattedMessage
+              id="settings.cacheManagement"
+              defaultMessage="Offline downloads"
+            />
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            <FormattedMessage
+              id="settings.cacheManagementDescription"
+              defaultMessage="Manage downloaded recitations stored on your device."
+            />
+          </p>
+          <CacheManagement />
         </section>
       </div>
     </div>

@@ -1,5 +1,6 @@
 export * from './cn';
 export * from './config';
+export * from './format-bytes';
 export * from './format-time';
 export * from './generate-fav-id';
 export * from './get-circular-replacer';
