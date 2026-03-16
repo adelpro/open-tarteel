@@ -7,6 +7,10 @@ import { useIntl } from 'react-intl';
 import { enabledSourcesAtom, selectedReciterAtom } from '@/jotai/atom';
 import type { Reciter } from '@/types';
 import { getAllReciters } from '@/utils/api';
+import {
+  getCachedReciters,
+  setCachedReciters,
+} from '@/utils/cache/reciters-cache';
 
 export function useReciters() {
   const locale = useIntl().locale as 'ar' | 'en';
@@ -22,11 +26,21 @@ export function useReciters() {
 
     const fetchReciters = async () => {
       try {
-        setLoading(true);
+        // Load cached data immediately if available
+        const cachedData = getCachedReciters(locale, enabledSources);
+        if (cachedData && cachedData.length > 0) {
+          setReciters(cachedData);
+          setLoading(false);
+        }
+
+        // Fetch fresh data from API
         const data = await getAllReciters(locale, enabledSources);
         if (!isMounted) return;
 
         setReciters(data);
+
+        // Update cache with fresh data
+        setCachedReciters(data, locale, enabledSources);
 
         if (selectedReciter) {
           const matched = data.find((r) => r.id === selectedReciter.id);
