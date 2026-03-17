@@ -5,6 +5,9 @@ import {
   parseEnabledSources,
 } from '@/services/reciters';
 
+// Enable Next.js caching with 1 hour revalidation
+export const revalidate = 3600;
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const language =
@@ -16,7 +19,13 @@ export async function GET(request: NextRequest) {
 
   try {
     const reciters = await getAllRecitersFromAdapters(language, enabledSources);
-    return NextResponse.json(reciters);
+
+    // Add cache headers for client-side caching
+    return NextResponse.json(reciters, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
+      },
+    });
   } catch {
     return NextResponse.json(
       { error: 'Failed to fetch reciters' },

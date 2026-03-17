@@ -27,7 +27,9 @@ export async function getAllReciters(
   if (enabledSources && enabledSources.length > 0) {
     params.set('sources', enabledSources.join(','));
   }
-  const response = await fetch(`/api/reciters?${params}`);
+  const response = await fetch(`/api/reciters?${params}`, {
+    next: { revalidate: 3600 }, // Cache for 1 hour
+  });
 
   if (!response.ok) {
     throw new Error(`Failed to fetch reciters: ${response.statusText}`);
@@ -67,7 +69,10 @@ export async function getReciter(
     params.set('sources', enabledSources.join(','));
   }
   const response = await fetch(
-    `/api/reciters/${encodeURIComponent(id)}/${encodeURIComponent(moshafId)}?${params}`
+    `/api/reciters/${encodeURIComponent(id)}/${encodeURIComponent(moshafId)}?${params}`,
+    {
+      next: { revalidate: 3600 }, // Cache for 1 hour
+    }
   );
 
   if (!response.ok) return undefined;
