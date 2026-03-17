@@ -119,7 +119,10 @@ describe('getAllReciters', () => {
       const result = await getAllReciters('ar');
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/reciters?language=ar')
+        expect.stringContaining('/api/reciters?language=ar'),
+        expect.objectContaining({
+          next: { revalidate: 3600 },
+        })
       );
       expect(result).toEqual([reciterA]);
     });
@@ -130,7 +133,10 @@ describe('getAllReciters', () => {
       await getAllReciters('en');
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('language=eng')
+        expect.stringContaining('language=eng'),
+        expect.objectContaining({
+          next: { revalidate: 3600 },
+        })
       );
     });
 
@@ -201,7 +207,10 @@ describe('getReciter', () => {
       const result = await getReciter('mp3quran.net-1', '42', 'ar');
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/reciters/')
+        expect.stringContaining('/api/reciters/'),
+        expect.objectContaining({
+          next: { revalidate: 3600 },
+        })
       );
       expect(result).toEqual(reciterA);
     });
@@ -212,7 +221,10 @@ describe('getReciter', () => {
       await getReciter('mp3quran.net-1', '42', 'ar');
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining(encodeURIComponent('mp3quran.net-1'))
+        expect.stringContaining(encodeURIComponent('mp3quran.net-1')),
+        expect.objectContaining({
+          next: { revalidate: 3600 },
+        })
       );
     });
 
@@ -222,7 +234,10 @@ describe('getReciter', () => {
       await getReciter('mp3quran.net-1', '42', 'en');
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('language=eng')
+        expect.stringContaining('language=eng'),
+        expect.objectContaining({
+          next: { revalidate: 3600 },
+        })
       );
     });
 
