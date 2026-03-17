@@ -73,8 +73,27 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
-// Runtime caching: prepend our rule before defaults
-const runtimeCaching = [quranAudioCache, ...defaultCache];
+// API caching for reciters list
+const apiCache = {
+  matcher: ({ url }: { url: URL }) => {
+    return url.pathname.startsWith('/api/reciters');
+  },
+  handler: new CacheFirst({
+    cacheName: 'api-reciters',
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 50,
+        maxAgeSeconds: 60 * 60, // 1 hour
+      }),
+      new CacheableResponsePlugin({
+        statuses: [200],
+      }),
+    ],
+  }),
+};
+
+// Runtime caching: prepend our rules before defaults
+const runtimeCaching = [quranAudioCache, apiCache, ...defaultCache];
 
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
