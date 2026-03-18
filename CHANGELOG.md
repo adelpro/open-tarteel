@@ -4,17 +4,6 @@ All notable changes to this project will be documented in this file.
 
 ## [0.3.0-athar]
 
-## Contributors 🎉
-
-Thanks to our amazing contributors:
-
-- @Haitam-Elgharras - Sleep Timer Fix
-- @issam-seghir - Multi-Source Reciters & URL Sync
-- @elmghwary - Player Localization
-- @Mohamed-samy0 - TypeScript Improvements
-- @maryamabdallahhh - Recently Played & Rate Limiting
-- @iknevo - Develop Branch Integration
-
 ### Fixes
 
 - fix: correct privacy page content
