@@ -7,6 +7,7 @@ import { MdCloudDone, MdCloudDownload } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import { SURAHS } from '@/constants';
+import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { selectedReciterAtom } from '@/jotai/atom';
 import { PlaylistItem } from '@/types';
@@ -39,6 +40,9 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
     checkStorageAvailable,
     estimateStorage,
   } = useOfflineDownload();
+
+  const playlistLength = selectedReciter?.moshaf?.playlist?.length ?? 0;
+  const { focusedIndex, reciterRefs } = useKeyboardNavigation(playlistLength);
 
   useEffect(() => {
     setMounted(true);
@@ -110,8 +114,22 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
           return (
             <li
               key={index}
+              ref={(element) => {
+                reciterRefs.current[index] = element;
+              }}
               onClick={() => handlePlaylistItemClick(index)}
-              className="hover:border-brand-CTA-blue-200 hover:from-brand-CTA-blue-50/50 dark:hover:border-brand-CTA-blue-800/50 dark:hover:from-brand-CTA-blue-900/20 group w-full cursor-pointer rounded-xl border border-gray-200/60 bg-white p-3 shadow-sm transition-all duration-200 hover:scale-[1.01] hover:bg-gradient-to-r hover:to-white hover:shadow-md dark:border-gray-700/60 dark:bg-gray-800/50 dark:hover:to-gray-800/80"
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  handlePlaylistItemClick(index);
+                }
+              }}
+              tabIndex={focusedIndex === index ? 0 : -1}
+              className={`hover:border-brand-CTA-blue-200 hover:from-brand-CTA-blue-50/50 dark:hover:border-brand-CTA-blue-800/50 dark:hover:from-brand-CTA-blue-900/20 group w-full cursor-pointer rounded-xl border border-gray-200/60 bg-white p-3 shadow-sm transition-all duration-200 hover:scale-[1.01] hover:bg-gradient-to-r hover:to-white hover:shadow-md dark:border-gray-700/60 dark:bg-gray-800/50 dark:hover:to-gray-800/80 ${
+                focusedIndex === index
+                  ? 'border-brand-CTA-blue-500 ring-2 ring-brand-CTA-blue-500/50'
+                  : ''
+              }`}
             >
               <div className="flex items-center gap-4">
                 <span className="group-hover:bg-brand-CTA-blue-100 dark:group-hover:bg-brand-CTA-blue-900/60 dark:group-hover:text-brand-CTA-blue-400 flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-bold text-gray-500 transition-colors group-hover:text-brand-CTA-blue-600 dark:bg-gray-800 dark:text-gray-400">

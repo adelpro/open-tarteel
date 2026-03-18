@@ -5,7 +5,7 @@ export type ItqanRecitationResponse = {
     description: string;
     publisher: { id: number; name: string };
     reciter: { id: number; name: string };
-    riwayah: { id: number; name: string };
+    riwayah: { id: number; name: string } | null;
     surahs_count: number;
   }[];
 };

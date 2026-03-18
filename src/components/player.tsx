@@ -1,6 +1,7 @@
 'use client';
 
 import { useAtom, useAtomValue } from 'jotai';
+import dynamic from 'next/dynamic';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useMediaSession } from '@/hooks/use-media-session';
@@ -16,9 +17,19 @@ import { cn } from '@/utils';
 
 import AudioBarsVisualizer from './audio-bars-visualizer';
 import PlayerControls from './player-controls';
-import PlaylistDialog from './playlist-dialog';
 import Range from './range';
 import TrackInfo from './track-info';
+
+const PlaylistDialog = dynamic(
+  () =>
+    import('@/components/playlist-dialog').then((module_) => module_.default),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-12 w-full animate-pulse rounded-lg bg-gray-200" />
+    ),
+  }
+);
 
 type Props = {
   playlist: Playlist;
@@ -197,7 +208,7 @@ export default function Player({ playlist }: Props) {
             onDurationChange={handleTimeUpdate}
             onEnded={handleTrackEnded}
             src={playlist[currentTrack]?.link}
-            preload="auto"
+            preload="metadata"
             crossOrigin="anonymous"
           />
 

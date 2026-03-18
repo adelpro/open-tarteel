@@ -1,14 +1,38 @@
 'use client';
 
+import { useAtom } from 'jotai';
 import Head from 'next/head';
 import { ReactNode } from 'react';
+import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
 import useDirection from '@/hooks/use-direction';
+import { type Theme, themeAtom } from '@/jotai/atom';
+
+function resolveTheme(theme: Theme): 'dark' | 'light' {
+  if (theme === 'system') {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
+  }
+  return theme;
+}
 
 export default function HtmlWrapper({ children }: { children: ReactNode }) {
   const { locale } = useIntl();
   const { isRTL } = useDirection();
+  const [theme] = useAtom(themeAtom);
+
+  useEffect(() => {
+    const resolvedTheme = resolveTheme(theme);
+
+    if (resolvedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
+
   return (
     <html
       lang={locale}
@@ -19,13 +43,6 @@ export default function HtmlWrapper({ children }: { children: ReactNode }) {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
-      <script
-        defer
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: `try{let t=localStorage.getItem("theme-preference");if(!t||t==='"system"'){let e=window.matchMedia("(prefers-color-scheme: dark)").matches;if(!t)localStorage.setItem("theme-preference",'"system"');t=e?'"dark"':'"light"'}if(t==='"dark"'){document.documentElement.classList.add("dark")}else{document.documentElement.classList.remove("dark")}}catch(e){}`,
-        }}
-      />
       {children}
     </html>
   );

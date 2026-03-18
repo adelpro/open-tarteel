@@ -43,7 +43,7 @@ export const ItqanAdapter: ReciterSource = {
           }));
 
           const riwayaKey = getRiwayaKeyFromMoshafName(
-            recitation.riwayah.name,
+            recitation.riwayah?.name ?? 'Hafs',
             'ar'
           );
 

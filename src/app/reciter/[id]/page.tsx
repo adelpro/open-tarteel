@@ -11,7 +11,7 @@ type Props = {
 
 export async function generateStaticParams() {
   try {
-    const RECITERS = await getAllReciters();
+    const RECITERS = await getAllReciters('ar', null);
     return RECITERS.map((reciter) => ({
       id: reciter.id,
     }));
@@ -22,7 +22,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
-  const RECITERS = await getAllReciters();
+  const RECITERS = await getAllReciters('ar', null);
   const reciter = RECITERS.find((r) => r.id === id);
 
   if (!reciter) {
@@ -71,7 +71,7 @@ export default async function Page({ params }: Props) {
 
   let RECITERS = [];
   try {
-    RECITERS = await getAllReciters();
+    RECITERS = await getAllReciters('ar', null);
   } catch {
     return notFound();
   }

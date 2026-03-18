@@ -19,17 +19,18 @@ const nextConfig: NextConfig = {
   poweredByHeader: !isProduction,
   transpilePackages: ['jotai-devtools'],
   productionBrowserSourceMaps: isProduction,
+  allowedDevOrigins: ['localhost'],
   compiler: {
     removeConsole: isProduction && { exclude: ['error'] },
+  },
+  experimental: {
+    reactCompiler: true,
   },
   typescript: {
     ignoreBuildErrors: !isProduction,
   },
   eslint: {
     ignoreDuringBuilds: !isProduction,
-  },
-  experimental: {
-    // nextScriptWorkers: true,
   },
 };
 
