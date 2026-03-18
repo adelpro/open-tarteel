@@ -91,7 +91,7 @@ describe('getAllReciters', () => {
 
       const result = await runAsServer(() => getAllReciters('ar'));
 
-      expect(serviceMock).toHaveBeenCalledWith('ar', undefined);
+      expect(serviceMock).toHaveBeenCalledWith('ar', null);
       expect(result).toEqual([reciterA, reciterB]);
     });
 
@@ -100,7 +100,7 @@ describe('getAllReciters', () => {
 
       await runAsServer(() => getAllReciters('en'));
 
-      expect(serviceMock).toHaveBeenCalledWith('en', undefined);
+      expect(serviceMock).toHaveBeenCalledWith('en', null);
     });
 
     it('defaults locale to "ar"', async () => {
@@ -108,7 +108,7 @@ describe('getAllReciters', () => {
 
       await runAsServer(() => getAllReciters());
 
-      expect(serviceMock).toHaveBeenCalledWith('ar', undefined);
+      expect(serviceMock).toHaveBeenCalledWith('ar', null);
     });
   });
 
