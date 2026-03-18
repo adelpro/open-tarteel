@@ -1,12 +1,14 @@
 # Open Tarteel Privacy Policy
 
+**App Name:** Open Tarteel  
+**Developer:** adelpro  
 **Effective Date:** february 14, 2025
 
 ## Your Privacy Matters
 
 At Open Tarteel, we take your privacy seriously. This policy explains our approach to privacy and data collection in the app.
 
-## What Information Do We Collect?
+## What Information Do We Collect
 
 Open Tarteel **does not collect any personal information** or any other data from users. The app runs completely offline, and no data is transmitted from your device.
 

@@ -17,6 +17,12 @@ export default function PrivacyPage() {
           </h1>
           <p className="mt-2 text-gray-600">
             <FormattedMessage
+              defaultMessage="المطور/الشركة: Benyahia-DEV"
+              id="privacy.developer"
+            />
+          </p>
+          <p className="mt-2 text-gray-600">
+            <FormattedMessage
               defaultMessage="تاريخ السريان: 14 فبراير 2025"
               id="privacy.effectiveDate"
             />
