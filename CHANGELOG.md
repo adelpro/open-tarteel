@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0-athar]
+
+## Contributors 🎉
+
+Thanks to our amazing contributors:
+
+- @Haitam-Elgharras - Sleep Timer Fix
+- @issam-seghir - Multi-Source Reciters & URL Sync
+- @elmghwary - Player Localization
+- @Mohamed-samy0 - TypeScript Improvements
+- @maryamabdallahhh - Recently Played & Rate Limiting
+- @iknevo - Develop Branch Integration
+
+### Fixes
+
+- fix: correct privacy page content
+- fix: Open Graph metadata for proper SEO/social sharing
+- fix: remove cookie-based logic from reciter sources (production-safe)
+- fix: replace cookies with Jotai atom state management
+- fix: handle null riwaya in Itqan source, fallback to default (Hafs)
+- fix: Vitest type definitions
+
+### Improvements
+
+- perf(player): optimize player component rendering and state handling
+- feat(playlist): add keyboard navigation support
+- feat(fullscreen): introduce FullscreenController for better control
+- feat(api): extend getAllReciters with explicit enabledSources param
+- feat(react): enable React Compiler (experimental)
+- perf(bundle): lazy load PlaylistDialog via dynamic import
+- refactor(theme): remove client-side script, use useEffect
+
 ## [0.2.3]
 
 ### Features
