@@ -28,16 +28,16 @@
 
 .dark {
   /* Backgrounds */
-  --background: #0f1117; /* near-black with blue tint */
-  --surface: #1a1f2e; /* deep navy card */
-  --card: #1a1f2e;
+  --background: #191b23; /* softer dark – easier on the eyes than pure black */
+  --surface: #1f2332; /* deep navy card, slightly lifted from background */
+  --card: #1f2332;
 
   /* Text */
   --foreground: #f1f5f9; /* slate-100 */
-  --muted: #64748b; /* slate-500 */
+  --muted: #94a3b8; /* slate-400 – more visible placeholder text */
 
   /* Borders */
-  --border: #1e293b; /* slate-800 */
+  --border: #2a3349; /* slate-700/800 mix – visible against softer bg */
 
   /* Accent */
   --accent: #38bdf8; /* sky-400 (brighter on dark) */
