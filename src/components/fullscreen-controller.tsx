@@ -34,7 +34,7 @@ export default function FullscreenController({
       {isFullscreen ? null : (
         <div 
           className="fixed top-4 z-50 flex items-center gap-2"
-          style={{ left: '1rem', right: 'auto', direction: 'ltr' }}
+          style={{ right: '1rem', left: 'auto', direction: 'ltr' }}
         >
           <LanguageSwitcher />
           <ThemeSwitcher />
