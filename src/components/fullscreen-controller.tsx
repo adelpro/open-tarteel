@@ -32,9 +32,12 @@ export default function FullscreenController({
       {isFullscreen ? <ExitFullscreen /> : null}
       {isFullscreen ? null : <SettingsLink />}
       {isFullscreen ? null : (
-        <div className="fixed right-4 top-4 z-50 flex items-center gap-2">
-          <ThemeSwitcher />
+        <div 
+          className="fixed top-4 z-50 flex items-center gap-2"
+          style={{ left: '1rem', right: 'auto', direction: 'ltr' }}
+        >
           <LanguageSwitcher />
+          <ThemeSwitcher />
         </div>
       )}
       <div className="flex w-full flex-grow items-center justify-center">
