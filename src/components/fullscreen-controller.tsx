@@ -32,7 +32,7 @@ export default function FullscreenController({
       {isFullscreen ? <ExitFullscreen /> : null}
       {isFullscreen ? null : <SettingsLink />}
       {isFullscreen ? null : (
-        <div 
+        <div
           className="fixed top-4 z-50 flex items-center gap-2 p-1"
           style={{ right: '1rem', left: 'auto', direction: 'ltr' }}
         >

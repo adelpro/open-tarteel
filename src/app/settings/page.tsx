@@ -70,10 +70,7 @@ export default function SettingsPage() {
             {AVAILABLE_SOURCES.map(({ source, id }) => {
               const isChecked = enabledSources.includes(source);
               return (
-                <li
-                  key={source}
-                  className="flex items-center gap-3"
-                >
+                <li key={source} className="flex items-center gap-3">
                   <input
                     id={`source-${source}`}
                     type="checkbox"
