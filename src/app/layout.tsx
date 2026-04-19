@@ -12,6 +12,22 @@ import { clientConfig } from '@/utils';
 
 export const metadata: Metadata = {
   metadataBase: new URL(clientConfig.APP_URL),
+  title: 'Open Tarteel — Quran Audio Player',
+  description:
+    'Listen to the Holy Quran recited by world-renowned reciters. Free, open-source Quran audio player with playlist support.',
+  openGraph: {
+    title: 'Open Tarteel — Quran Audio Player',
+    description:
+      'Listen to the Holy Quran recited by world-renowned reciters. Free and open-source.',
+    type: 'website',
+    siteName: 'Open Tarteel',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Open Tarteel — Quran Audio Player',
+    description:
+      'Listen to the Holy Quran recited by world-renowned reciters. Free and open-source.',
+  },
 };
 
 const tajawal = Tajawal({
