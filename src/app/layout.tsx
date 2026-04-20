@@ -21,12 +21,14 @@ export const metadata: Metadata = {
       'Listen to the Holy Quran recited by world-renowned reciters. Free and open-source.',
     type: 'website',
     siteName: 'Open Tarteel',
+    images: ['/images/logo-og.png'],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Open Tarteel — Quran Audio Player',
     description:
       'Listen to the Holy Quran recited by world-renowned reciters. Free and open-source.',
+    images: ['/images/logo-og.png'],
   },
 };
 

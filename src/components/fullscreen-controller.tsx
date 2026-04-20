@@ -27,26 +27,26 @@ export default function FullscreenController({
       document.removeEventListener('fullscreenchange', onFullscreenChange);
   }, [setIsFullscreen]);
 
-  if (isFullscreen) {
-    return (
-      <div className="fixed inset-0 z-40 flex items-center justify-center bg-background">
-        <ExitFullscreen />
-        {children}
-      </div>
-    );
-  }
-
   return (
     <>
-      <SettingsLink />
-      <div className="fixed right-4 top-4 z-50 flex items-center gap-2">
-        <ThemeSwitcher />
-        <LanguageSwitcher />
-      </div>
-      <div className="flex w-full flex-grow items-center justify-center">
+      {!isFullscreen && <SettingsLink />}
+      {!isFullscreen && (
+        <div className="fixed right-4 top-4 z-50 flex items-center gap-2">
+          <ThemeSwitcher />
+          <LanguageSwitcher />
+        </div>
+      )}
+      <div
+        className={
+          isFullscreen
+            ? 'fixed inset-0 z-40 flex items-center justify-center bg-background'
+            : 'flex w-full flex-grow items-center justify-center'
+        }
+      >
+        {isFullscreen && <ExitFullscreen />}
         {children}
       </div>
-      <Footer />
+      {!isFullscreen && <Footer />}
     </>
   );
 }
