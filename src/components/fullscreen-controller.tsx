@@ -29,10 +29,12 @@ export default function FullscreenController({
 
   if (isFullscreen) {
     return (
-      <div className="fixed inset-0 z-40 flex items-center justify-center bg-background">
+      <>
         <ExitFullscreen />
-        {children}
-      </div>
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-background">
+          {children}
+        </div>
+      </>
     );
   }
 
