@@ -194,7 +194,7 @@ export default function Player({ playlist }: Props) {
       className={cn(
         'flex w-full max-w-xl flex-col items-center justify-center',
         isFullscreen
-          ? 'text-forground w-full bg-background'
+          ? 'w-full max-w-xl bg-background text-foreground'
           : 'max-w-xl rounded-md border border-gray-200 p-2 shadow-md transition-transform dark:border-gray-200/50'
       )}
     >
