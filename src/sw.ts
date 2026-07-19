@@ -24,11 +24,11 @@ function isQuranAudioUrl(url: URL): boolean {
   if (
     url.hostname.endsWith('.mp3quran.net') &&
     /^server\d+$/.test(url.hostname.split('.')[0]) &&
-    /^\d+\.mp3$/.test(url.pathname.slice(1))
+    /\/\d+\.mp3$/.test(url.pathname)
   ) {
     return true;
   }
-  if (url.hostname.includes('itqan')) {
+  if (url.hostname === 'itqan.dev' || url.hostname.endsWith('.itqan.dev')) {
     return true;
   }
   return false;

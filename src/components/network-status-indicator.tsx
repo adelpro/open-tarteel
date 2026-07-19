@@ -11,7 +11,7 @@ export default function NetworkStatusIndicator() {
     <div
       role="status"
       aria-live="polite"
-      className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-full bg-amber-600 px-4 py-2 text-sm font-medium text-white shadow-lg"
+      className="fixed bottom-20 left-1/2 z-50 -translate-x-1/2 rounded-full bg-amber-600 px-4 py-2 text-sm font-medium text-white shadow-lg sm:bottom-4"
     >
       <span className="mr-2 inline-block h-2 w-2 animate-pulse rounded-full bg-white" />
       Offline
