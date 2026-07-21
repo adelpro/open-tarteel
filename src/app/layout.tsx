@@ -9,6 +9,7 @@ import FullscreenController from '@/components/fullscreen-controller';
 import HtmlWrapper from '@/components/html-wrapper';
 import IntlProviderWrapper from '@/components/intl-provider-wrapper';
 import NetworkStatusIndicator from '@/components/network-status-indicator';
+import PwaUpdater from '@/components/pwa-updater';
 import StoragePersist from '@/components/storage-persist';
 import { clientConfig } from '@/utils';
 
@@ -61,6 +62,7 @@ export default function RootLayout({
               <EnabledSourcesCookieSync />
               <StoragePersist />
               <NetworkStatusIndicator />
+              <PwaUpdater />
               <FullscreenController>{children}</FullscreenController>
             </main>
           </body>
