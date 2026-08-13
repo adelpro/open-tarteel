@@ -127,6 +127,10 @@
   "reciterDialog.title": "Select a Reciter",
   "player.cancelTimer": "Cancel Timer",
 
+  "reading.toggle": "Reading mode",
+  "reading.estimated": "~ Estimated timing",
+  "reading.noText": "No text available for this surah.",
+
   "download.downloadAll": "Download all surahs for offline ({cached}/{total})",
   "download.downloading": "Downloading… {completed}/{total}",
   "download.failed": "{count} failed",

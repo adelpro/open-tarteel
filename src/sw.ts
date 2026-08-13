@@ -73,10 +73,13 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
-// API caching for reciters list
+// API caching for reciters list + surah text
 const apiCache = {
   matcher: ({ url }: { url: URL }) => {
-    return url.pathname.startsWith('/api/reciters');
+    return (
+      url.pathname.startsWith('/api/reciters') ||
+      url.pathname.startsWith('/api/surah')
+    );
   },
   handler: new CacheFirst({
     cacheName: 'api-reciters',

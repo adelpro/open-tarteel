@@ -10,6 +10,7 @@ import {
   fullscreenAtom,
   playbackModeAtom,
   playbackSpeedAtom,
+  readingModeAtom,
   volumeAtom,
 } from '@/jotai/atom';
 import { Playlist } from '@/types';
@@ -18,6 +19,7 @@ import { cn } from '@/utils';
 import AudioBarsVisualizer from './audio-bars-visualizer';
 import PlayerControls from './player-controls';
 import Range from './range';
+import ReadingView from './reading-view';
 import TrackInfo from './track-info';
 
 const PlaylistDialog = dynamic(
@@ -37,6 +39,7 @@ type Props = {
 
 export default function Player({ playlist }: Props) {
   const isFullscreen = useAtomValue(fullscreenAtom);
+  const [readingMode] = useAtom(readingModeAtom);
   const [playbackMode] = useAtom(playbackModeAtom);
   const previousTrackRef = useRef<number | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -112,6 +115,15 @@ export default function Player({ playlist }: Props) {
     if (!audioRef.current) return;
     isPlaying ? audioRef.current.pause() : audioRef.current.play();
     setIsPlaying(!isPlaying);
+  };
+
+  const handleAyahSelect = (seconds: number) => {
+    if (!audioRef.current) return;
+    audioRef.current.currentTime = seconds;
+    if (!isPlaying) {
+      void audioRef.current.play();
+      setIsPlaying(true);
+    }
   };
 
   const handleTimeUpdate = () => {
@@ -263,6 +275,17 @@ export default function Player({ playlist }: Props) {
                 currentTime={currentTime}
               />
             </>
+          )}
+
+          {readingMode && playlist[currentTrack]?.surahId && (
+            <ReadingView
+              key={playlist[currentTrack].surahId}
+              surahId={playlist[currentTrack].surahId}
+              currentTime={currentTime}
+              duration={duration}
+              isPlaying={isPlaying}
+              onAyahSelect={handleAyahSelect}
+            />
           )}
         </div>
       )}

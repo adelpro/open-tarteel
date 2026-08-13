@@ -36,6 +36,9 @@ const config: Config = {
         'brand-warning': '#FFA800',
         'brand-danger': '#FF4B4B',
       },
+      fontFamily: {
+        amiri: ['var(--font-amiri)', 'serif'],
+      },
     },
     keyframes: {
       slideIn: {

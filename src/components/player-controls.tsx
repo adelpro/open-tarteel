@@ -15,7 +15,7 @@ import Image from 'next/image';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { BiVolumeFull, BiVolumeMute } from 'react-icons/bi';
 import { BsFullscreen, BsFullscreenExit } from 'react-icons/bs';
-import { MdRepeatOne, MdSpeed } from 'react-icons/md';
+import { MdMenuBook, MdRepeatOne, MdSpeed } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import Tooltip from '@/components/tooltip';
@@ -25,6 +25,7 @@ import {
   fullscreenAtom,
   playbackModeAtom,
   playbackSpeedAtom,
+  readingModeAtom,
   showVisualizerAtom,
   volumeAtom,
 } from '@/jotai/atom';
@@ -68,6 +69,7 @@ export default function PlayerControls({
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackSpeed, setPlaybackSpeed] = useAtom(playbackSpeedAtom);
   const [playbackMode, setPlaybackMode] = useAtom(playbackModeAtom);
+  const [readingMode, setReadingMode] = useAtom(readingModeAtom);
 
   const moreMenuRef = useRef<HTMLDivElement>(null);
   const desktopSleepMenuRef = useRef<HTMLDivElement>(null);
@@ -225,6 +227,10 @@ export default function PlayerControls({
       defaultMessage: 'Volume control',
     }),
     more: formatMessage({ id: 'player.more', defaultMessage: 'More options' }),
+    readingMode: formatMessage({
+      id: 'reading.toggle',
+      defaultMessage: 'Reading mode',
+    }),
     sleepTimer: formatMessage({
       id: 'player.sleepTimer',
       defaultMessage: 'Sleep timer',
@@ -515,6 +521,21 @@ export default function PlayerControls({
 
             <button
               onClick={() => {
+                setReadingMode((previous) => !previous);
+                setShowMoreMenu(false);
+              }}
+              className={cn(
+                'flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700',
+                readingMode &&
+                  'dark:text-brand-CTA-blue-400 text-brand-CTA-blue-600'
+              )}
+            >
+              <MdMenuBook size={16} />
+              <span>{messages.readingMode}</span>
+            </button>
+
+            <button
+              onClick={() => {
                 togglePlaybackSpeed();
                 setShowMoreMenu(false);
               }}
@@ -658,6 +679,21 @@ export default function PlayerControls({
             </div>
           )}
         </div>
+
+        <Tooltip content={messages.readingMode}>
+          <button
+            onClick={() => setReadingMode((previous) => !previous)}
+            className={cn(
+              'flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700',
+              readingMode &&
+                'dark:text-brand-CTA-blue-400 bg-sky-100 text-brand-CTA-blue-600 dark:bg-sky-900/40'
+            )}
+            aria-label={messages.readingMode}
+            aria-pressed={readingMode}
+          >
+            <MdMenuBook size={ICON_SIZE} />
+          </button>
+        </Tooltip>
 
         {renderImageButton(
           playlistSVG,

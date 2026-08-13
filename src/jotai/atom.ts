@@ -1,3 +1,5 @@
+import { atom } from 'jotai';
+
 import { LinkSource, Reciter, Riwaya } from '@/types';
 
 import { createAtomWithStorage } from './create-atom-with-storage';
@@ -18,6 +20,11 @@ export const fullscreenAtom = createAtomWithStorage<boolean>(
   'fullscreen',
   false
 );
+export const readingModeAtom = createAtomWithStorage<boolean>(
+  'reading-mode',
+  false
+);
+export const currentAyahAtom = atom<number | null>(null);
 export const showVisualizerAtom = createAtomWithStorage<boolean>(
   'show-visualizer',
   true

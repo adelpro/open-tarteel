@@ -127,6 +127,10 @@
   "reciterDialog.title": "اختر قارئًا",
   "player.cancelTimer": "إلغاء المؤقت",
 
+  "reading.toggle": "وضع القراءة",
+  "reading.estimated": "~ توقيت تقريبي",
+  "reading.noText": "لا يتوفر نص لهذه السورة.",
+
   "download.downloadAll": "تحميل جميع السور للاستماع دون إنترنت ({cached}/{total})",
   "download.downloading": "جاري التحميل… {completed}/{total}",
   "download.failed": "{count} فشل",

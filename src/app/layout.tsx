@@ -1,7 +1,7 @@
 import './globals.css';
 
 import { Metadata } from 'next';
-import { Tajawal } from 'next/font/google';
+import { Amiri, Tajawal } from 'next/font/google';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import { EnabledSourcesCookieSync } from '@/components/enabled-sources-cookie-sync';
@@ -38,6 +38,15 @@ const tajawal = Tajawal({
   preload: true,
 });
 
+// Amiri for the mushaf (Quran text) in reading mode.
+const amiri = Amiri({
+  weight: ['400', '700'],
+  subsets: ['arabic'],
+  style: ['normal'],
+  display: 'swap',
+  variable: '--font-amiri',
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -48,7 +57,7 @@ export default function RootLayout({
       <IntlProviderWrapper>
         <HtmlWrapper>
           <body
-            className={`${tajawal.className} min-h-full bg-background antialiased`}
+            className={`${tajawal.className} ${amiri.variable} min-h-full bg-background antialiased`}
           >
             <main className="duration-350 relative flex min-h-dvh w-full flex-col items-center justify-center bg-background text-foreground transition-colors">
               <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
