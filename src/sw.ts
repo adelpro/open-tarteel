@@ -38,6 +38,10 @@ const quranAudioCache = {
     if (url.hostname.includes('itqan')) {
       return true;
     }
+    // Match Quran Foundation audio CDN
+    if (url.hostname.endsWith('quranicaudio.com')) {
+      return true;
+    }
     return false;
   },
   handler: new CacheFirst({
@@ -61,7 +65,8 @@ self.addEventListener('fetch', (event) => {
     (url.hostname.endsWith('.mp3quran.net') &&
       /^server\d+$/.test(url.hostname.split('.')[0]) &&
       /^\d+\.mp3$/.test(url.pathname.slice(1))) ||
-    url.hostname.includes('itqan');
+    url.hostname.includes('itqan') ||
+    url.hostname.endsWith('quranicaudio.com');
 
   if (isAudio) {
     event.respondWith(

@@ -1,11 +1,15 @@
+// Type-only DOM global; derive it from fetch's signature to satisfy ESLint no-undef.
+type FetchOptions = Parameters<typeof fetch>[1];
+
 export const fetchWithTimeout = (
   url: string,
-  timeoutMs = 10_000
+  timeoutMs = 10_000,
+  init?: FetchOptions
 ): Promise<Response> => {
   let timeoutId: ReturnType<typeof setTimeout>;
 
   return Promise.race([
-    fetch(url),
+    fetch(url, init),
     new Promise<Response>((_, reject) => {
       timeoutId = setTimeout(
         () => reject(new Error('Fetch timeout')),
@@ -21,13 +25,14 @@ const defaultDelay = (ms: number) =>
 export const retryFetch = async (
   url: string,
   maxAttempts = 3,
-  delayFunction: (ms: number) => Promise<void> = defaultDelay
+  delayFunction: (ms: number) => Promise<void> = defaultDelay,
+  init?: FetchOptions
 ): Promise<Response> => {
   let lastError: Error | null = null;
 
   for (let index = 0; index < maxAttempts; index++) {
     try {
-      const response = await fetchWithTimeout(url);
+      const response = await fetchWithTimeout(url, 10_000, init);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response;
     } catch (error) {

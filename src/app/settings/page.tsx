@@ -11,6 +11,10 @@ import { LinkSource } from '@/types';
 const AVAILABLE_SOURCES: { source: LinkSource; id: string }[] = [
   { source: LinkSource.MP3QURAN, id: 'settings.source.mp3quran' },
   { source: LinkSource.ITQAN, id: 'settings.source.itqan' },
+  {
+    source: LinkSource.QURAN_FOUNDATION,
+    id: 'settings.source.quranfoundation',
+  },
 ];
 
 export default function SettingsPage() {
