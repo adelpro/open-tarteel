@@ -48,9 +48,7 @@ const mapWithConcurrency = async <T, R>(
   return results;
 };
 
-const selectSurahEditions = (
-  editions: QuranAiEdition[]
-): QuranAiEdition[] => {
+const selectSurahEditions = (editions: QuranAiEdition[]): QuranAiEdition[] => {
   const seen = new Set<string>();
   const surahEditions: QuranAiEdition[] = [];
   for (const edition of editions) {
@@ -93,7 +91,11 @@ const fetchEditionPlaylist = async (
     const playlist: PlaylistItem[] = [
       { surahId: String(PROBE_SURAH_NUMBER), link: probeAudioUrl },
     ];
-    for (let surahNumber = PROBE_SURAH_NUMBER + 1; surahNumber <= SURAH_TOTAL; surahNumber += 1) {
+    for (
+      let surahNumber = PROBE_SURAH_NUMBER + 1;
+      surahNumber <= SURAH_TOTAL;
+      surahNumber += 1
+    ) {
       playlist.push({
         surahId: String(surahNumber),
         link: buildSurahAudioUrl(baseUrl, surahNumber),
@@ -115,37 +117,41 @@ export const QuranAiAdapter: ReciterSource = {
       ? selectSurahEditions(body.data)
       : [];
 
-    const results = await mapWithConcurrency(editions, EDITION_FETCH_CONCURRENCY, async (edition) => {
-      try {
-        const playlist = await fetchEditionPlaylist(edition.identifier);
-        if (playlist.length === 0) {
+    const results = await mapWithConcurrency(
+      editions,
+      EDITION_FETCH_CONCURRENCY,
+      async (edition) => {
+        try {
+          const playlist = await fetchEditionPlaylist(edition.identifier);
+          if (playlist.length === 0) {
+            console.warn(
+              `Quran.ai: skipping edition ${edition.identifier}: no playable surah audio`
+            );
+            return null;
+          }
+          const riwaya = resolveRiwayaFromNarrator(edition.narratorIdentifier);
+          const reciter: Reciter = {
+            id: `${LinkSource.QURANAI}-${edition.identifier}`,
+            name: resolveReciterName(edition, lang),
+            source: LinkSource.QURANAI,
+            moshaf: {
+              id: edition.identifier,
+              name: getRiwayaKeyFromValue(riwaya),
+              riwaya,
+              server: '',
+              surah_total: String(playlist.length),
+              playlist,
+            },
+          };
+          return reciter;
+        } catch (error) {
           console.warn(
-            `Quran.ai: skipping edition ${edition.identifier}: no playable surah audio`
+            `Quran.ai: skipping edition ${edition.identifier}: ${error instanceof Error ? error.message : String(error)}`
           );
           return null;
         }
-        const riwaya = resolveRiwayaFromNarrator(edition.narratorIdentifier);
-        const reciter: Reciter = {
-          id: `${LinkSource.QURANAI}-${edition.identifier}`,
-          name: resolveReciterName(edition, lang),
-          source: LinkSource.QURANAI,
-          moshaf: {
-            id: edition.identifier,
-            name: getRiwayaKeyFromValue(riwaya),
-            riwaya,
-            server: '',
-            surah_total: String(playlist.length),
-            playlist,
-          },
-        };
-        return reciter;
-      } catch (error) {
-        console.warn(
-          `Quran.ai: skipping edition ${edition.identifier}: ${error instanceof Error ? error.message : String(error)}`
-        );
-        return null;
       }
-    });
+    );
 
     return results.filter((reciter): reciter is Reciter => reciter !== null);
   },
@@ -156,14 +162,20 @@ export const validateAyahRange = (params: {
   startAyah: number;
   endAyah: number;
 }): void => {
-  if (!Number.isInteger(params.surahNumber) || params.surahNumber < 1 || params.surahNumber > SURAH_TOTAL) {
+  if (
+    !Number.isInteger(params.surahNumber) ||
+    params.surahNumber < 1 ||
+    params.surahNumber > SURAH_TOTAL
+  ) {
     throw new Error('surahNumber must be an integer between 1 and 114');
   }
   if (!Number.isInteger(params.startAyah) || params.startAyah < 1) {
     throw new Error('startAyah must be an integer greater than or equal to 1');
   }
   if (!Number.isInteger(params.endAyah) || params.endAyah < params.startAyah) {
-    throw new Error('endAyah must be an integer greater than or equal to startAyah');
+    throw new Error(
+      'endAyah must be an integer greater than or equal to startAyah'
+    );
   }
 };
 

@@ -5,9 +5,7 @@ import { LinkSource } from '@/types';
 
 export const revalidate = 3600;
 
-const parseInteger = (
-  value: string | null
-): number | undefined => {
+const parseInteger = (value: string | null): number | undefined => {
   if (value === null) return undefined;
   const parsed = Number(value);
   return Number.isInteger(parsed) ? parsed : undefined;

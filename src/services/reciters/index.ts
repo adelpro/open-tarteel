@@ -6,7 +6,11 @@ import { Mp3QuranAdapter } from './mp3quran.adapter';
 import { QuranAiAdapter } from './quranai.adapter';
 import type { ReciterSource } from './reciter-source';
 
-const adapters: ReciterSource[] = [Mp3QuranAdapter, ItqanAdapter, QuranAiAdapter];
+const adapters: ReciterSource[] = [
+  Mp3QuranAdapter,
+  ItqanAdapter,
+  QuranAiAdapter,
+];
 
 const VALID_SOURCES = new Set<string>(Object.values(LinkSource));
 

@@ -170,9 +170,7 @@ describe('getAllRecitersFromAdapters', () => {
   it('when only QURANAI enabled, only fetches from the quranai adapter', async () => {
     quranaiMock.mockResolvedValue([quranaiReciter]);
 
-    const result = await getAllRecitersFromAdapters('ar', [
-      LinkSource.QURANAI,
-    ]);
+    const result = await getAllRecitersFromAdapters('ar', [LinkSource.QURANAI]);
 
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual(quranaiReciter);

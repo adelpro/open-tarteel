@@ -11,10 +11,7 @@ import {
   resolveReciterName,
   resolveRiwayaFromNarrator,
 } from './quranai.helpers';
-import type {
-  QuranAiEdition,
-  QuranAiSurahResponse,
-} from './quranai.types';
+import type { QuranAiEdition, QuranAiSurahResponse } from './quranai.types';
 
 const makeEdition = (
   overrides: Partial<QuranAiEdition> = {}
@@ -46,9 +43,9 @@ describe('buildSurahEndpoint', () => {
   });
 
   it('appends only the provided options', () => {
-    expect(
-      buildSurahEndpoint(2, 'ar.ibrahimakhdar.hafs', { offset: 3 })
-    ).toBe(`${QURANAI_BASE_URL}/surah/2/ar.ibrahimakhdar.hafs?offset=3`);
+    expect(buildSurahEndpoint(2, 'ar.ibrahimakhdar.hafs', { offset: 3 })).toBe(
+      `${QURANAI_BASE_URL}/surah/2/ar.ibrahimakhdar.hafs?offset=3`
+    );
   });
 });
 
@@ -95,7 +92,8 @@ describe('resolveReciterName', () => {
 describe('extractSurahAudio', () => {
   it('returns the audio URL when present', () => {
     const data = {
-      audio: 'https://quranhub.b-cdn.net/quran/audio/surah/2/ar.ibrahimakhdar.hafs/1.mp3',
+      audio:
+        'https://quranhub.b-cdn.net/quran/audio/surah/2/ar.ibrahimakhdar.hafs/1.mp3',
     } as QuranAiSurahResponse['data'];
     expect(extractSurahAudio(data)).toBe(
       'https://quranhub.b-cdn.net/quran/audio/surah/2/ar.ibrahimakhdar.hafs/1.mp3'

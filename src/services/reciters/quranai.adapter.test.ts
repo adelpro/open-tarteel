@@ -15,9 +15,7 @@ const makeFetchResponse = (data: unknown): Promise<Response> =>
     json: () => Promise.resolve(data),
   } as unknown as Response);
 
-const makeEdition = (
-  overrides: Partial<QuranAiEdition>
-): QuranAiEdition => ({
+const makeEdition = (overrides: Partial<QuranAiEdition>): QuranAiEdition => ({
   identifier: 'ar.ibrahimakhdar.hafs',
   language: 'ar',
   name: 'إبراهيم الأخضر',
@@ -35,8 +33,17 @@ const makeEditionsResponse = (): QuranAiEditionListResponse => ({
   data: [
     makeEdition({}),
     makeEdition({ type: 'surah' }),
-    makeEdition({ identifier: 'ar.ghamdi.hafs', name: 'سعد الغامدي', englishName: 'Saad Al-Ghamdi' }),
-    makeEdition({ identifier: 'ar.sufi.hafs', name: 'عبد الباسط عبد الصمد', englishName: 'Abdul Basit', type: 'versebyverse' }),
+    makeEdition({
+      identifier: 'ar.ghamdi.hafs',
+      name: 'سعد الغامدي',
+      englishName: 'Saad Al-Ghamdi',
+    }),
+    makeEdition({
+      identifier: 'ar.sufi.hafs',
+      name: 'عبد الباسط عبد الصمد',
+      englishName: 'Abdul Basit',
+      type: 'versebyverse',
+    }),
   ],
 });
 
@@ -130,9 +137,7 @@ describe('QuranAiAdapter', () => {
 
     it('builds a source-prefixed string ID from the edition identifier', async () => {
       const [reciter] = await QuranAiAdapter.getReciters('ar');
-      expect(reciter.id).toBe(
-        `${LinkSource.QURANAI}-ar.ibrahimakhdar.hafs`
-      );
+      expect(reciter.id).toBe(`${LinkSource.QURANAI}-ar.ibrahimakhdar.hafs`);
     });
 
     it('maps the reciter name for ar', async () => {
@@ -236,11 +241,13 @@ describe('QuranAiAdapter', () => {
 
     it('deduplicates editions with the same identifier', async () => {
       await QuranAiAdapter.getReciters('ar');
-      const surahCalls = vi.mocked(fetch).mock.calls.filter(
-        ([url]) =>
-          String(url).includes('/surah/') &&
-          String(url).includes('ar.ibrahimakhdar.hafs')
-      );
+      const surahCalls = vi
+        .mocked(fetch)
+        .mock.calls.filter(
+          ([url]) =>
+            String(url).includes('/surah/') &&
+            String(url).includes('ar.ibrahimakhdar.hafs')
+        );
       expect(surahCalls).toHaveLength(1);
     });
 
@@ -330,9 +337,11 @@ describe('QuranAiAdapter', () => {
     it('returns an empty list when the editions response has no data array', async () => {
       vi.stubGlobal(
         'fetch',
-        vi.fn().mockResolvedValue(
-          makeFetchResponse({ code: 200, status: 'OK', data: undefined })
-        )
+        vi
+          .fn()
+          .mockResolvedValue(
+            makeFetchResponse({ code: 200, status: 'OK', data: undefined })
+          )
       );
       const reciters = await QuranAiAdapter.getReciters('ar');
       expect(reciters).toEqual([]);
@@ -404,7 +413,10 @@ describe('QuranAiAdapter', () => {
       response.data.ayahs = response.data.ayahs.map((ayah) =>
         ayah.numberInSurah === 2 ? { ...ayah, audio: '' } : ayah
       );
-      vi.stubGlobal('fetch', vi.fn().mockResolvedValue(makeFetchResponse(response)));
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(makeFetchResponse(response))
+      );
 
       const ayahs = await getAyahAudioRange({
         editionIdentifier: 'ar.ibrahimakhdar.hafs',
@@ -418,7 +430,11 @@ describe('QuranAiAdapter', () => {
     it('clamps the range to the surah ayah count', async () => {
       vi.stubGlobal(
         'fetch',
-        vi.fn().mockResolvedValue(makeFetchResponse(makeSurahResponse('', 7, 'audio-present')))
+        vi
+          .fn()
+          .mockResolvedValue(
+            makeFetchResponse(makeSurahResponse('', 7, 'audio-present'))
+          )
       );
       const ayahs = await getAyahAudioRange({
         editionIdentifier: 'ar.ibrahimakhdar.hafs',
@@ -432,9 +448,11 @@ describe('QuranAiAdapter', () => {
     it('throws when the response has no ayahs array', async () => {
       vi.stubGlobal(
         'fetch',
-        vi.fn().mockResolvedValue(
-          makeFetchResponse({ code: 200, status: 'OK', data: undefined })
-        )
+        vi
+          .fn()
+          .mockResolvedValue(
+            makeFetchResponse({ code: 200, status: 'OK', data: undefined })
+          )
       );
       await expect(
         getAyahAudioRange({
