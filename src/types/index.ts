@@ -1,3 +1,4 @@
+export * from './ayah-audio';
 export * from './link-source';
 export * from './playlist';
 export * from './reciter';
