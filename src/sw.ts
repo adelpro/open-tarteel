@@ -38,6 +38,15 @@ const quranAudioCache = {
     if (url.hostname.includes('itqan')) {
       return true;
     }
+    // Match Qurani.ai audio CDN (full-surah and verse-by-verse audio files)
+    if (
+      url.hostname === 'quranhub.b-cdn.net' &&
+      (url.pathname.startsWith('/quran/audio/surah/') ||
+        url.pathname.startsWith('/quran/audio/versebyverse/')) &&
+      /\.mp3$/i.test(url.pathname)
+    ) {
+      return true;
+    }
     return false;
   },
   handler: new CacheFirst({
@@ -61,7 +70,11 @@ self.addEventListener('fetch', (event) => {
     (url.hostname.endsWith('.mp3quran.net') &&
       /^server\d+$/.test(url.hostname.split('.')[0]) &&
       /^\d+\.mp3$/.test(url.pathname.slice(1))) ||
-    url.hostname.includes('itqan');
+    url.hostname.includes('itqan') ||
+    (url.hostname === 'quranhub.b-cdn.net' &&
+      (url.pathname.startsWith('/quran/audio/surah/') ||
+        url.pathname.startsWith('/quran/audio/versebyverse/')) &&
+      /\.mp3$/i.test(url.pathname));
 
   if (isAudio) {
     event.respondWith(
