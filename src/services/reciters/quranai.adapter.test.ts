@@ -2,7 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { LinkSource, Riwaya } from '@/types';
 
-import { getAyahAudioRange, QuranAiAdapter } from './quranai.adapter';
+import {
+  getAyahAudioRange,
+  MAX_AYAHS_IN_SURAH,
+  QuranAiAdapter,
+} from './quranai.adapter';
 import type {
   QuranAiEdition,
   QuranAiEditionListResponse,
@@ -368,6 +372,8 @@ describe('QuranAiAdapter', () => {
     const rangeUrl = (surahNumber: number, limit: number, offset: number) =>
       `https://api.qurani.ai/gw/qh/v1/surah/${surahNumber}/ar.ibrahimakhdar.hafs?limit=${limit}&offset=${offset}`;
 
+    const CACHED_FETCH_OPTIONS = { next: { revalidate: 3600 } };
+
     it('fetches the surah endpoint with a limit and offset derived from the range', async () => {
       await getAyahAudioRange({
         editionIdentifier: 'ar.ibrahimakhdar.hafs',
@@ -375,7 +381,10 @@ describe('QuranAiAdapter', () => {
         startAyah: 1,
         endAyah: 3,
       });
-      expect(fetch).toHaveBeenCalledWith(rangeUrl(2, 3, 0));
+      expect(fetch).toHaveBeenCalledWith(
+        rangeUrl(2, 3, 0),
+        CACHED_FETCH_OPTIONS
+      );
     });
 
     it('maps offset from startAyah (zero-based) and limit from the range size', async () => {
@@ -385,7 +394,10 @@ describe('QuranAiAdapter', () => {
         startAyah: 101,
         endAyah: 105,
       });
-      expect(fetch).toHaveBeenCalledWith(rangeUrl(2, 5, 100));
+      expect(fetch).toHaveBeenCalledWith(
+        rangeUrl(2, 5, 100),
+        CACHED_FETCH_OPTIONS
+      );
     });
 
     it('returns normalized ayah audio items', async () => {
@@ -445,6 +457,71 @@ describe('QuranAiAdapter', () => {
       expect(ayahs).toHaveLength(7);
     });
 
+    it('uses endAyah when numberOfAyahs is missing', async () => {
+      const response = makeSurahResponse('', 3, 'audio-present');
+      delete (response.data as { numberOfAyahs?: number }).numberOfAyahs;
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(makeFetchResponse(response))
+      );
+
+      const ayahs = await getAyahAudioRange({
+        editionIdentifier: 'ar.ibrahimakhdar.hafs',
+        surahNumber: 2,
+        startAyah: 1,
+        endAyah: 100,
+      });
+      expect(ayahs.map((a) => a.ayahNumber)).toEqual([1, 2, 3]);
+    });
+
+    it('uses endAyah when numberOfAyahs is not a valid integer', async () => {
+      const response = makeSurahResponse('', 3, 'audio-present');
+      response.data.numberOfAyahs = '7' as unknown as number;
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(makeFetchResponse(response))
+      );
+
+      const ayahs = await getAyahAudioRange({
+        editionIdentifier: 'ar.ibrahimakhdar.hafs',
+        surahNumber: 2,
+        startAyah: 1,
+        endAyah: 100,
+      });
+      expect(ayahs).toHaveLength(3);
+    });
+
+    it('rejects ranges that exceed the maximum surah size', async () => {
+      await expect(
+        getAyahAudioRange({
+          editionIdentifier: 'ar.ibrahimakhdar.hafs',
+          surahNumber: 2,
+          startAyah: MAX_AYAHS_IN_SURAH + 1,
+          endAyah: MAX_AYAHS_IN_SURAH + 1,
+        })
+      ).rejects.toThrow();
+      await expect(
+        getAyahAudioRange({
+          editionIdentifier: 'ar.ibrahimakhdar.hafs',
+          surahNumber: 2,
+          startAyah: 1,
+          endAyah: MAX_AYAHS_IN_SURAH + 1,
+        })
+      ).rejects.toThrow();
+    });
+
+    it('never sends a huge provider request for a huge ayah range', async () => {
+      await expect(
+        getAyahAudioRange({
+          editionIdentifier: 'ar.ibrahimakhdar.hafs',
+          surahNumber: 2,
+          startAyah: 1,
+          endAyah: 100_000,
+        })
+      ).rejects.toThrow();
+      expect(fetch).not.toHaveBeenCalled();
+    });
+
     it('throws when the response has no ayahs array', async () => {
       vi.stubGlobal(
         'fetch',
@@ -469,6 +546,8 @@ describe('QuranAiAdapter', () => {
       { surahNumber: 115, startAyah: 1, endAyah: 3 },
       { surahNumber: 2, startAyah: 0, endAyah: 3 },
       { surahNumber: 2, startAyah: 5, endAyah: 3 },
+      { surahNumber: 2, startAyah: 287, endAyah: 300 },
+      { surahNumber: 2, startAyah: 1, endAyah: 1000 },
     ])('throws for invalid range %o', async (params) => {
       await expect(
         getAyahAudioRange({

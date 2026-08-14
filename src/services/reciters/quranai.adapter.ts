@@ -20,10 +20,17 @@ import type { ReciterSource } from './reciter-source';
 import { retryFetch } from './shared-fetch';
 
 const SURAH_TOTAL = 114;
+export const MAX_AYAHS_IN_SURAH = 286;
 const EDITION_FETCH_CONCURRENCY = 3;
 const PROBE_SURAH_NUMBER = 1;
+const AYAH_RANGE_FETCH_CACHE_SECONDS = 3600;
 
 const EDITIONS_ENDPOINT = `${QURANAI_BASE_URL}/edition/?format=audio`;
+
+const fetchAyahRange = (url: string): Promise<Response> =>
+  retryFetch(url, 3, undefined, {
+    next: { revalidate: AYAH_RANGE_FETCH_CACHE_SECONDS },
+  });
 
 const mapWithConcurrency = async <T, R>(
   items: T[],
@@ -169,13 +176,19 @@ export const validateAyahRange = (params: {
   ) {
     throw new Error('surahNumber must be an integer between 1 and 114');
   }
-  if (!Number.isInteger(params.startAyah) || params.startAyah < 1) {
-    throw new Error('startAyah must be an integer greater than or equal to 1');
+  if (
+    !Number.isInteger(params.startAyah) ||
+    params.startAyah < 1 ||
+    params.startAyah > MAX_AYAHS_IN_SURAH
+  ) {
+    throw new Error('startAyah must be an integer between 1 and 286');
   }
-  if (!Number.isInteger(params.endAyah) || params.endAyah < params.startAyah) {
-    throw new Error(
-      'endAyah must be an integer greater than or equal to startAyah'
-    );
+  if (
+    !Number.isInteger(params.endAyah) ||
+    params.endAyah < params.startAyah ||
+    params.endAyah > MAX_AYAHS_IN_SURAH
+  ) {
+    throw new Error('endAyah must be an integer between startAyah and 286');
   }
 };
 
@@ -190,7 +203,7 @@ export const getAyahAudioRange = async (params: {
 
   const limit = endAyah - startAyah + 1;
   const offset = startAyah - 1;
-  const response = await retryFetch(
+  const response = await fetchAyahRange(
     buildSurahEndpoint(surahNumber, editionIdentifier, { limit, offset })
   );
   const body: QuranAiSurahResponse = await response.json();
@@ -201,7 +214,10 @@ export const getAyahAudioRange = async (params: {
     );
   }
 
-  const clampedEndAyah = Math.min(endAyah, body.data.numberOfAyahs);
+  const numberOfAyahs = body.data.numberOfAyahs;
+  const clampedEndAyah = Number.isInteger(numberOfAyahs)
+    ? Math.min(endAyah, numberOfAyahs)
+    : endAyah;
 
   return body.data.ayahs
     .filter(

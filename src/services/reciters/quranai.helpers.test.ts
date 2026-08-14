@@ -47,6 +47,19 @@ describe('buildSurahEndpoint', () => {
       `${QURANAI_BASE_URL}/surah/2/ar.ibrahimakhdar.hafs?offset=3`
     );
   });
+
+  it('encodes special characters in the edition identifier', () => {
+    expect(buildSurahEndpoint(2, 'ar hafs?x=1#frag/edition')).toBe(
+      `${QURANAI_BASE_URL}/surah/2/ar%20hafs%3Fx%3D1%23frag%2Fedition`
+    );
+  });
+
+  it('rejects edition identifiers that could traverse upstream path segments', () => {
+    expect(() => buildSurahEndpoint(2, '../../admin')).toThrow();
+    expect(() =>
+      buildSurahEndpoint(2, 'ar.ibrahimakhdar.hafs/../..')
+    ).toThrow();
+  });
 });
 
 describe('resolveRiwayaFromNarrator', () => {
@@ -72,6 +85,13 @@ describe('resolveRiwayaFromNarrator', () => {
   it('falls back to Hafs for unknown narrator identifiers', () => {
     expect(resolveRiwayaFromNarrator('quran-unknown')).toBe(Riwaya.Hafs);
   });
+
+  it.each(['constructor', 'toString', '__proto__'])(
+    'falls back to Hafs for object members like %s',
+    (narrator) => {
+      expect(resolveRiwayaFromNarrator(narrator)).toBe(Riwaya.Hafs);
+    }
+  );
 });
 
 describe('resolveReciterName', () => {

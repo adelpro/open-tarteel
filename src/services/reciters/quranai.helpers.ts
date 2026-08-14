@@ -9,6 +9,10 @@ export const buildSurahEndpoint = (
   editionIdentifier: string,
   options?: { limit?: number; offset?: number }
 ): string => {
+  const encodedEditionIdentifier = encodeURIComponent(editionIdentifier);
+  if (encodedEditionIdentifier.includes('..')) {
+    throw new Error('editionIdentifier must not contain ".."');
+  }
   const params = new URLSearchParams();
   if (options?.limit !== undefined) {
     params.set('limit', String(options.limit));
@@ -17,7 +21,7 @@ export const buildSurahEndpoint = (
     params.set('offset', String(options.offset));
   }
   const query = params.toString();
-  return `${QURANAI_BASE_URL}/surah/${surahNumber}/${editionIdentifier}${
+  return `${QURANAI_BASE_URL}/surah/${surahNumber}/${encodedEditionIdentifier}${
     query ? `?${query}` : ''
   }`;
 };
@@ -42,7 +46,10 @@ const NARRATOR_RIWAYA_MAP: Record<string, Riwaya> = {
 export const resolveRiwayaFromNarrator = (
   narratorIdentifier: string | null
 ): Riwaya => {
-  if (narratorIdentifier && narratorIdentifier in NARRATOR_RIWAYA_MAP) {
+  if (
+    narratorIdentifier !== null &&
+    Object.hasOwn(NARRATOR_RIWAYA_MAP, narratorIdentifier)
+  ) {
     return NARRATOR_RIWAYA_MAP[narratorIdentifier];
   }
   return Riwaya.Hafs;

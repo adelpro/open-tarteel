@@ -3,8 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAyahAudioRange } from '@/services/reciters';
 import { LinkSource } from '@/types';
 
-export const revalidate = 3600;
-
 const parseInteger = (value: string | null): number | undefined => {
   if (value === null) return undefined;
   const parsed = Number(value);
