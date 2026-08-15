@@ -9,7 +9,6 @@
   "footer.privacy": "Privacy Policy",
   "footer.contact": "Contact Us",
   "footer.settings": "Settings",
-  "underConstruction": "The app is under development",
   "settings.title": "Settings",
   "settings.reciterSources": "Reciter sources",
   "settings.reciterSourcesDescription": "Choose which sources to show in the reciter list. At least one must be enabled.",
@@ -99,11 +98,6 @@
   "share.message": "Listen to this reciter on Tarteel",
   "share.fallback": "Link copied to clipboard!",
   "share.fallback.error": "Failed to copy link.",
-
-  "underConstruction.message": "The app is under development",
-  "underConstruction.doNotShowAgain": "Do not show this message again",
-  "underConstruction.title": "Under Construction",
-
   "player.play": "Play",
   "player.pause": "Pause",
   "player.nextTrack": "Next Track",
