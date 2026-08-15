@@ -9,7 +9,7 @@ export const fetchWithTimeout = (
   let timeoutId: ReturnType<typeof setTimeout>;
 
   return Promise.race([
-    fetch(url, init),
+    init === undefined ? fetch(url) : fetch(url, init),
     new Promise<Response>((_, reject) => {
       timeoutId = setTimeout(
         () => reject(new Error('Fetch timeout')),
@@ -33,7 +33,11 @@ export const retryFetch = async (
   for (let index = 0; index < maxAttempts; index++) {
     try {
       const response = await fetchWithTimeout(url, 10_000, init);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
       return response;
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
