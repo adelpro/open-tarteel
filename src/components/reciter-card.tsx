@@ -15,6 +15,7 @@ const SOURCE_LABEL_IDS: Partial<Record<LinkSource, string>> = {
   [LinkSource.MP3QURAN]: 'settings.source.mp3quran',
   [LinkSource.ITQAN]: 'settings.source.itqan',
   [LinkSource.QURANAI]: 'settings.source.quranai',
+  [LinkSource.QURAN_FOUNDATION]: 'settings.source.quranfoundation',
 };
 
 type Props = {

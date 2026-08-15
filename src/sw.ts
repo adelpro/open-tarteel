@@ -34,10 +34,12 @@ const quranAudioCache = {
     ) {
       return true;
     }
+
     // Match Itqan audio CDN
     if (url.hostname.includes('itqan')) {
       return true;
     }
+
     // Match Qurani.ai audio CDN (full-surah and verse-by-verse audio files)
     if (
       url.hostname === 'quranhub.b-cdn.net' &&
@@ -47,8 +49,15 @@ const quranAudioCache = {
     ) {
       return true;
     }
+
+    // Match Quran Foundation audio CDN
+    if (url.hostname.endsWith('quranicaudio.com')) {
+      return true;
+    }
+
     return false;
   },
+
   handler: new CacheFirst({
     cacheName: 'quran-audio',
     plugins: [
@@ -66,6 +75,7 @@ const quranAudioCache = {
 // Intercept fetch events to check the offline-downloads cache first
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
+
   const isAudio =
     (url.hostname.endsWith('.mp3quran.net') &&
       /^server\d+$/.test(url.hostname.split('.')[0]) &&
@@ -74,7 +84,8 @@ self.addEventListener('fetch', (event) => {
     (url.hostname === 'quranhub.b-cdn.net' &&
       (url.pathname.startsWith('/quran/audio/surah/') ||
         url.pathname.startsWith('/quran/audio/versebyverse/')) &&
-      /\.mp3$/i.test(url.pathname));
+      /\.mp3$/i.test(url.pathname)) ||
+    url.hostname.endsWith('quranicaudio.com');
 
   if (isAudio) {
     event.respondWith(
@@ -91,6 +102,7 @@ const apiCache = {
   matcher: ({ url }: { url: URL }) => {
     return url.pathname.startsWith('/api/reciters');
   },
+
   handler: new CacheFirst({
     cacheName: 'api-reciters',
     plugins: [
