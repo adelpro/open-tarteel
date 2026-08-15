@@ -3,9 +3,14 @@ import { LinkSource } from '@/types';
 
 import { ItqanAdapter } from './itqan.adapter';
 import { Mp3QuranAdapter } from './mp3quran.adapter';
+import { QuranFoundationAdapter } from './quranfoundation.adapter';
 import type { ReciterSource } from './reciter-source';
 
-const adapters: ReciterSource[] = [Mp3QuranAdapter, ItqanAdapter];
+const adapters: ReciterSource[] = [
+  Mp3QuranAdapter,
+  ItqanAdapter,
+  QuranFoundationAdapter,
+];
 
 const VALID_SOURCES = new Set<string>(Object.values(LinkSource));
 
@@ -56,4 +61,5 @@ export async function getAllRecitersFromAdapters(
 
 export { ItqanAdapter } from './itqan.adapter';
 export { Mp3QuranAdapter } from './mp3quran.adapter';
+export { QuranFoundationAdapter } from './quranfoundation.adapter';
 export type { ReciterSource } from './reciter-source';
