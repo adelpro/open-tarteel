@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { AYAH_AUDIO_SUPPORTED_SOURCES, SURAHS } from '@/constants';
 import { getAyahAudioRange } from '@/services/reciters';
-import { LinkSource } from '@/types';
 
 const parseInteger = (value: string | null): number | undefined => {
   if (value === null) return undefined;
+
   const parsed = Number(value);
+
   return Number.isInteger(parsed) ? parsed : undefined;
 };
 
@@ -16,7 +18,11 @@ export async function GET(
   const { id, moshafId } = await params;
   const searchParams = request.nextUrl.searchParams;
 
-  if (!id.startsWith(`${LinkSource.QURANAI}-`)) {
+  const isSupportedSource = AYAH_AUDIO_SUPPORTED_SOURCES.some((source) =>
+    id.startsWith(`${source}-`)
+  );
+
+  if (!isSupportedSource) {
     return NextResponse.json(
       { error: 'Ayah audio is not supported for this source' },
       { status: 404 }
@@ -41,11 +47,15 @@ export async function GET(
     );
   }
 
+  const surah = SURAHS.find(({ id }) => id === surahNumber);
+
   if (
-    surahNumber < 1 ||
-    surahNumber > 114 ||
+    !surah ||
     startAyah < 1 ||
-    endAyah < startAyah
+    endAyah < 1 ||
+    startAyah > endAyah ||
+    startAyah > surah.ayahCount ||
+    endAyah > surah.ayahCount
   ) {
     return NextResponse.json(
       { error: 'Invalid surah or ayah range' },
