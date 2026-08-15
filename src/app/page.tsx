@@ -5,7 +5,6 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import ReciterSelector from '@/components/reciter-selector';
-import UnderConstruction from '@/components/under-construction';
 import { useReciters } from '@/hooks/use-reciters';
 import { selectedReciterAtom } from '@/jotai/atom';
 
@@ -67,7 +66,6 @@ export default function Home() {
             Select A Reciter
           </span>
         </div>
-        <UnderConstruction />
       </div>
     );
   }
@@ -76,7 +74,6 @@ export default function Home() {
     <div className="flex w-full flex-col items-center justify-center gap-y-4 text-foreground">
       <Logo />
       <ReciterSelector />
-      <UnderConstruction />
     </div>
   );
 }
