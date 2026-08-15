@@ -9,7 +9,6 @@
   "footer.privacy": "سياسة الخصوصية",
   "footer.contact": "إتصل بنا",
   "footer.settings": "الإعدادات",
-  "underConstruction": "جاري تطوير التطبيق",
   "settings.title": "الإعدادات",
   "settings.reciterSources": "مصادر القراء",
   "settings.reciterSourcesDescription": "اختر المصادر التي تريد عرضها في قائمة القراء. يجب تفعيل مصدر واحد على الأقل.",
@@ -97,11 +96,6 @@
   "share.message": "استمع إلى هذا القارئ على Tarteel",
   "share.fallback": "تم نسخ الرابط إلى الحافظة!",
   "share.fallback.error": "فشل نسخ الرابط.",
-
-  "underConstruction.message": "التطبيق قيد التطوير",
-  "underConstruction.doNotShowAgain": "لا تعرض هذا مرة أخرى",
-  "underConstruction.title": "قيد الإنشاء",
-
   "player.play": "تشغيل",
   "player.pause": "إيقاف",
   "player.nextTrack": "التالي",
