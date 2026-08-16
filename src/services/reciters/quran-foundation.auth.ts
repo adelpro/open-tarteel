@@ -20,8 +20,10 @@ function getEnvironment(): QfEnvironment {
 
 export async function getQuranFoundationToken(): Promise<string> {
   const environment = getEnvironment();
-  const clientId = process.env.QF_CLIENT_ID;
-  const clientSecret = process.env.QF_CLIENT_SECRET;
+  const clientId =
+    process.env.QF_CLIENT_ID ?? process.env.QURAN_FOUNDATION_CLIENT_ID;
+  const clientSecret =
+    process.env.QF_CLIENT_SECRET ?? process.env.QURAN_FOUNDATION_CLIENT_SECRET;
   if (!clientId || !clientSecret) {
     throw new Error('QF_CLIENT_ID / QF_CLIENT_SECRET missing');
   }

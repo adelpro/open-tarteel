@@ -1,3 +1,4 @@
+export * from './ayah-audio';
 export * from './gun-config';
 export * from './gun-keys';
 export * from './gun-peers';

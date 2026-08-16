@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [0.3.0-athar]
 
+### Features
+
+- feat(reciters): add quran.foundation as a new audio provider
+
 ### Fixes
 
 - fix: correct privacy page content
