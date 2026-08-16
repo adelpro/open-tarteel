@@ -1,6 +1,6 @@
 import { Riwaya } from '@/types';
 
-type Locale = 'ar' | 'en';
+type Locale = 'ar' | 'en' | 'de';
 type RiwayaKey = keyof typeof Riwaya;
 type RiwayaMatchMap = Record<RiwayaKey, string[]>;
 
@@ -35,6 +35,22 @@ const riwayaMatchPhrases: Record<Locale, RiwayaMatchMap> = {
     IbnJammaz: [],
     Yaqoub: [],
   },
+  de: {
+    Hafs: ["Hafs A'n Assem"],
+    Warsh: ["Warsh A'n Nafi'"],
+    Khalaf: [],
+    AlBazzi: ["Albizi and Qunbol A'n Ibn Katheer"],
+    Qaloon: ["Qalon A'n Nafi'"],
+    AlSoosi: [],
+    AlDooriKisai: ["AlDorai A'n Al-Kisa'ai"],
+    AlDooriAbuAmr: ["Aldori A'n Abi Amr"],
+    Shuaba: ["Sho'bah A'n Asim"],
+    IbnZakwan: ["Ibn Thakwan A'n Ibn Amer"],
+    Hisham: [],
+    IbnJammaz: [],
+    Yaqoub: [],
+  },
+
 };
 
 const findRiwayaKey = (moshafName: string, locale: Locale): RiwayaKey => {

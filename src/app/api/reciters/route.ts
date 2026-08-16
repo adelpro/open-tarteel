@@ -10,8 +10,14 @@ export const revalidate = 3600;
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
+  // const language =
+  //   (searchParams.get('language') || 'ar') === 'en' ? 'en' : 'ar';
   const language =
-    (searchParams.get('language') || 'ar') === 'eng' ? 'en' : 'ar';
+  searchParams.get('language') === 'en'
+    ? 'en'
+    : searchParams.get('language') === 'de'
+      ? 'de'
+      : 'ar';
 
   const sourcesParameter = searchParams.get('sources');
   const cookie = request.cookies.get('enabled-sources')?.value;

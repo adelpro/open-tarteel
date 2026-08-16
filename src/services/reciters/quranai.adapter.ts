@@ -117,7 +117,7 @@ const fetchEditionPlaylist = async (
 export const QuranAiAdapter: ReciterSource = {
   source: LinkSource.QURANAI,
 
-  async getReciters(lang: 'ar' | 'en'): Promise<Reciter[]> {
+  async getReciters(lang: 'ar' | 'en' | 'de'): Promise<Reciter[]> {
     const response = await retryFetch(EDITIONS_ENDPOINT);
     const body: QuranAiEditionListResponse = await response.json();
     const editions = Array.isArray(body.data)
@@ -139,7 +139,7 @@ export const QuranAiAdapter: ReciterSource = {
           const riwaya = resolveRiwayaFromNarrator(edition.narratorIdentifier);
           const reciter: Reciter = {
             id: `${LinkSource.QURANAI}-${edition.identifier}`,
-            name: resolveReciterName(edition, lang),
+            name: resolveReciterName(edition, lang=== 'de' ? 'en' : lang),
             source: LinkSource.QURANAI,
             moshaf: {
               id: edition.identifier,

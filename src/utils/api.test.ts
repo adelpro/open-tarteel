@@ -103,6 +103,14 @@ describe('getAllReciters', () => {
       expect(serviceMock).toHaveBeenCalledWith('en', null);
     });
 
+    it('passes locale "de" to the service', async () => {
+      serviceMock.mockResolvedValue([]);
+
+      await runAsServer(() => getAllReciters('de'));
+
+      expect(serviceMock).toHaveBeenCalledWith('de', null);
+    });
+
     it('defaults locale to "ar"', async () => {
       serviceMock.mockResolvedValue([]);
 
@@ -134,6 +142,18 @@ describe('getAllReciters', () => {
 
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('language=eng'),
+        expect.objectContaining({
+          next: { revalidate: 3600 },
+        })
+      );
+    });
+    it('calls the /api/reciters route with language=de for "de"', async () => {
+      vi.stubGlobal('fetch', makeJsonFetch([reciterA]));
+
+      await getAllReciters('de');
+
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('language=de'),
         expect.objectContaining({
           next: { revalidate: 3600 },
         })

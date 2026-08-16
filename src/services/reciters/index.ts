@@ -36,7 +36,7 @@ export function parseEnabledSources(
  * @param enabledSources - If provided, only fetch from these sources. Otherwise fetch from all.
  */
 export async function getAllRecitersFromAdapters(
-  lang: 'ar' | 'en' = 'ar',
+  lang: 'ar' | 'en' |'de' = 'ar',
   enabledSources?: LinkSource[] | null
 ): Promise<Reciter[]> {
   const toFetch =
