@@ -8,8 +8,8 @@ import { localeAtom } from '@/jotai/atom';
 
 import ar from '../locales/ar.json';
 import en from '../locales/en.json';
-
-const messages = { en, ar };
+import de from '../locales/de.json';
+const messages = { en, ar, de};
 
 interface Props {
   children: ReactNode;
