@@ -149,5 +149,19 @@
   "offline.status": "Offline Mode — Showing downloaded content",
   "offline.noDownloadedReciters": "No downloaded reciters found. Connect to the internet to browse and download reciters.",
   "offline.noDownloadedSurahs": "No downloaded surahs for this reciter. Connect to the internet to stream or download.",
-  "offline.playbackRestricted": "Offline mode: playing downloaded surahs only"
+  "offline.playbackRestricted": "Offline mode: playing downloaded surahs only",
+  "tahfeez.modeLabel": "Tahfeez",
+  "tahfeez.listeningLabel": "Listening",
+  "tahfeez.fromAyah": "From ayah",
+  "tahfeez.toAyah": "To ayah",
+  "tahfeez.repeat": "Repeat",
+  "tahfeez.delay": "Delay (s)",
+  "tahfeez.perAyah": "Per ayah",
+  "tahfeez.wholeRange": "Whole range",
+  "tahfeez.applySettings": "Apply Tahfeez Settings",
+  "tahfeez.loading": "Loading…",
+  "tahfeez.readyToStart": "Ready to start tahfeez mode",
+  "tahfeez.statusSummary": "Ayah {from} to {to} • Repeat: {repeat}x • Delay: {delay}s",
+  "tahfeez.errorTimestamps": "Failed to load timestamps. Check reciter ID and chapter number.",
+  "tahfeez.errorAyahs": "Could not find specified ayahs in timestamps"
 }

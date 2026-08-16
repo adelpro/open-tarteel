@@ -15,7 +15,6 @@ function ReciterContent() {
   const selectedReciter = useAtomValue(selectedReciterAtom);
   const [isFullscreen, setFullscreen] = useAtom(fullscreenAtom);
   const [mounted, setMounted] = useState(false);
-
   useEffect(() => {
     setMounted(true);
   }, []);
