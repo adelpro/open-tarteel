@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { resolveChapterReciterId } from '@/utils/resolveChapterReciterId';
 
 describe('resolveChapterReciterId', () => {
@@ -26,11 +27,29 @@ describe('resolveChapterReciterId', () => {
     expect(resolveChapterReciterId('mp3quran.net-5', '')).toBeNull();
   });
 
-  it('should return null for non-mp3quran IDs', () => {
-    expect(resolveChapterReciterId('itqan-123', '1')).toBeNull();
+  it('should return the correct Quran Foundation reciter ID for valid qurani.ai reciter and moshaf', () => {
+    const result = resolveChapterReciterId(
+      'qurani.ai-ar.ahmedajamy.hafs',
+      'ar.ahmedajamy.hafs',
+      'quranFoundation'
+    );
+    expect(result).toBe(19);
+  });
+
+  it('should return the correct Quran Foundation reciter ID for qurani.ai Abdulbasit Murattal', () => {
+    const result = resolveChapterReciterId(
+      'qurani.ai-ar.abdulbasitmurattal.hafs',
+      'ar.abdulbasitmurattal.hafs'
+    );
+    expect(result).toBe(1);
+  });
+
+  it('should return null for non-supported provider prefix', () => {
+    expect(resolveChapterReciterId('unsupported-123', '1')).toBeNull();
   });
 
   it('should return null for non-existent reciter or moshaf', () => {
     expect(resolveChapterReciterId('mp3quran.net-999999', '999999')).toBeNull();
+    expect(resolveChapterReciterId('qurani.ai-unknown', 'unknown')).toBeNull();
   });
 });
