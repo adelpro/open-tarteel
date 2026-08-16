@@ -1,7 +1,7 @@
 import type { LinkSource, Reciter } from '@/types';
 
 export async function getAllReciters(
-  locale: 'ar' | 'en' = 'ar',
+  locale: 'ar' | 'en'| 'de' = 'ar',
   enabledSources: LinkSource[] | null = null
 ): Promise<Reciter[]> {
   const isServer = typeof window === 'undefined';
@@ -11,7 +11,7 @@ export async function getAllReciters(
     return getAllRecitersFromAdapters(locale, enabledSources);
   }
 
-  const language = locale === 'en' ? 'eng' : 'ar';
+  const language = locale === 'en' ? 'en' : locale === 'de' ? 'de' : 'ar';
   const params = new URLSearchParams({ language });
   if (enabledSources && enabledSources.length > 0) {
     params.set('sources', enabledSources.join(','));
@@ -30,7 +30,7 @@ export async function getAllReciters(
 export async function getReciter(
   id: string,
   moshafId: string,
-  locale: 'ar' | 'en' = 'ar',
+  locale: 'ar' | 'en' | 'de' = 'ar',
   enabledSources: LinkSource[] | null = null
 ): Promise<Reciter | undefined> {
   const isServer = typeof window === 'undefined';
@@ -41,7 +41,7 @@ export async function getReciter(
     return reciters.find((r) => r.id === id && r.moshaf.id === moshafId);
   }
 
-  const language = locale === 'en' ? 'eng' : 'ar';
+  const language = locale === 'en' ? 'eng' : locale === 'de' ? 'de' : 'ar';
   const params = new URLSearchParams({ language });
   if (enabledSources && enabledSources.length > 0) {
     params.set('sources', enabledSources.join(','));

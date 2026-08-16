@@ -4,7 +4,7 @@ import { useAtomValue } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { BsBook } from 'react-icons/bs';
 import { MdCloudDone, MdCloudDownload } from 'react-icons/md';
-import { useIntl } from 'react-intl';
+import { FormattedMessage ,useIntl } from 'react-intl';
 
 import { SURAHS } from '@/constants';
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
@@ -72,13 +72,15 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
           <div className="dark:bg-brand-CTA-blue-400/10 dark:text-brand-CTA-blue-400 flex size-10 items-center justify-center rounded-xl bg-brand-CTA-blue-500/10 text-brand-CTA-blue-500">
             <BsBook className="size-5" />
           </div>
-          {isEnglish ? 'List of Surahs' : 'قائمة السور'}
+          <FormattedMessage id="playlist.title" />
+          {/* {isEnglish ? 'List of Surahs' : 'قائمة السور'} */}
         </h2>
 
         <span className="bg-brand-CTA-blue-100 dark:bg-brand-CTA-blue-900/30 dark:text-brand-CTA-blue-400 flex items-center rounded-full px-3 py-1 text-sm font-bold text-brand-CTA-blue-600 shadow-sm">
           {playlist.length}{' '}
           <span className="mx-1 font-normal">
-            {isEnglish ? 'Surahs' : 'سورة'}
+            <FormattedMessage id="playlist.surahs" />
+            {/* {isEnglish ? 'Surahs' : 'سورة'} */}
           </span>
         </span>
       </div>
@@ -146,13 +148,11 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
 
                     <span className="group-hover:bg-brand-CTA-blue-50 dark:group-hover:bg-brand-CTA-blue-900/30 dark:group-hover:text-brand-CTA-blue-300 inline-flex items-center rounded-lg bg-gray-50 px-2.5 py-1 text-xs font-semibold text-gray-500 ring-1 ring-inset ring-gray-500/20 transition-colors group-hover:text-brand-CTA-blue-600 group-hover:ring-brand-CTA-blue-500/20 dark:bg-gray-800/80 dark:text-gray-400 dark:ring-gray-600/50">
                       {surah.ayahCount}{' '}
-                      {isEnglish
-                        ? surah.ayahCount === 1
-                          ? 'Aya'
-                          : 'Ayas'
-                        : surah.ayahCount === 1
-                          ? 'آية'
-                          : 'آيات'}
+                      
+                      {surah.ayahCount === 1
+                          ? <FormattedMessage id="playlist.aya" />
+                          : <FormattedMessage id="playlist.ayas" />
+                        }
                     </span>
                   </div>
 

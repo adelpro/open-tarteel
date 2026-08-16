@@ -12,7 +12,7 @@ export const generatePlaylist = (moshaf: Mp3QuranApiMoshaf): Playlist =>
 
 export const resolveRiwaya = (
   moshafName: string,
-  locale: 'ar' | 'en'
+  locale: 'ar' | 'en' 
 ): Riwaya => {
   const key = getRiwayaKeyFromMoshafName(moshafName, locale);
   return Riwaya[key];
