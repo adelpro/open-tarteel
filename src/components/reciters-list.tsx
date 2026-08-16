@@ -109,7 +109,6 @@ export default function RecitersList({ setIsOpen }: Props) {
     showDownloadedOnly,
     cachedUrls,
   ]);
-
   const { formatMessage } = useIntl();
 
   const searchPlaceHolder = formatMessage({

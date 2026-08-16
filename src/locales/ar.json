@@ -153,5 +153,20 @@
   "settings.cacheTracks": "{count} سور",
   "settings.cacheDeleteConfirm": "هل تريد حذف جميع تحميلات هذا القارئ؟",
   "settings.cacheDelete": "حذف",
-  "settings.cacheStorageUsed": "المساحة المستخدمة: {used} من {quota}"
+  "settings.cacheStorageUsed": "المساحة المستخدمة: {used} من {quota}",
+
+  "tahfeez.modeLabel": "التحفيظ",
+  "tahfeez.listeningLabel": "الاستماع",
+  "tahfeez.fromAyah": "من الآية",
+  "tahfeez.toAyah": "إلى الآية",
+  "tahfeez.repeat": "التكرار",
+  "tahfeez.delay": "السكته (ث)",
+  "tahfeez.perAyah": "آية بآية",
+  "tahfeez.wholeRange": "للمجموعة كلها",
+  "tahfeez.applySettings": "تطبيق إعدادات التحفيظ",
+  "tahfeez.loading": "جارٍ التحميل…",
+  "tahfeez.readyToStart": "جاهز لبدء وضع التحفيظ",
+  "tahfeez.statusSummary": "من الآية {from} إلى {to} • التكرار: {repeat}x • التأخير: {delay}ث",
+  "tahfeez.errorTimestamps": "فشل تحميل الطوابع الزمنية. تحقق من معرف القارئ ورقم السورة.",
+  "tahfeez.errorAyahs": "تعذر العثور على الآيات المحددة في الطوابع الزمنية"
 }

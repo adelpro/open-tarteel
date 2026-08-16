@@ -153,5 +153,20 @@
   "settings.cacheTracks": "{count} surahs",
   "settings.cacheDeleteConfirm": "Remove all downloads for this reciter?",
   "settings.cacheDelete": "Remove",
-  "settings.cacheStorageUsed": "Storage used: {used} of {quota}"
+  "settings.cacheStorageUsed": "Storage used: {used} of {quota}",
+
+  "tahfeez.modeLabel": "Tahfeez",
+  "tahfeez.listeningLabel": "Listening",
+  "tahfeez.fromAyah": "From ayah",
+  "tahfeez.toAyah": "To ayah",
+  "tahfeez.repeat": "Repeat",
+  "tahfeez.delay": "Delay (s)",
+  "tahfeez.perAyah": "Per ayah",
+  "tahfeez.wholeRange": "Whole range",
+  "tahfeez.applySettings": "Apply Tahfeez Settings",
+  "tahfeez.loading": "Loading…",
+  "tahfeez.readyToStart": "Ready to start tahfeez mode",
+  "tahfeez.statusSummary": "Ayah {from} to {to} • Repeat: {repeat}x • Delay: {delay}s",
+  "tahfeez.errorTimestamps": "Failed to load timestamps. Check reciter ID and chapter number.",
+  "tahfeez.errorAyahs": "Could not find specified ayahs in timestamps"
 }
