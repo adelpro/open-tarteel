@@ -1,10 +1,12 @@
+import { Language } from '@/constants/language';
 import { Riwaya } from '@/types';
 
-type Locale = 'ar' | 'en' | 'de';
+type Locale = Language;
+type RiwayaLocale = 'ar' | 'latin';
 type RiwayaKey = keyof typeof Riwaya;
 type RiwayaMatchMap = Record<RiwayaKey, string[]>;
 
-const riwayaMatchPhrases: Record<Locale, RiwayaMatchMap> = {
+const riwayaMatchPhrases: Record<RiwayaLocale, RiwayaMatchMap> = {
   ar: {
     Hafs: ['حفص عن عاصم'],
     Warsh: ['ورش عن نافع'],
@@ -20,7 +22,7 @@ const riwayaMatchPhrases: Record<Locale, RiwayaMatchMap> = {
     IbnJammaz: ['ابن جماز عن أبي جعفر'],
     Yaqoub: ['يعقوب الحضرمي'],
   },
-  en: {
+  latin: {
     Hafs: ["Hafs A'n Assem"],
     Warsh: ["Warsh A'n Nafi'"],
     Khalaf: [],
@@ -34,27 +36,14 @@ const riwayaMatchPhrases: Record<Locale, RiwayaMatchMap> = {
     Hisham: [],
     IbnJammaz: [],
     Yaqoub: [],
-  },
-  de: {
-    Hafs: ["Hafs A'n Assem"],
-    Warsh: ["Warsh A'n Nafi'"],
-    Khalaf: [],
-    AlBazzi: ["Albizi and Qunbol A'n Ibn Katheer"],
-    Qaloon: ["Qalon A'n Nafi'"],
-    AlSoosi: [],
-    AlDooriKisai: ["AlDorai A'n Al-Kisa'ai"],
-    AlDooriAbuAmr: ["Aldori A'n Abi Amr"],
-    Shuaba: ["Sho'bah A'n Asim"],
-    IbnZakwan: ["Ibn Thakwan A'n Ibn Amer"],
-    Hisham: [],
-    IbnJammaz: [],
-    Yaqoub: [],
-  },
+  }
+
 
 };
 
 const findRiwayaKey = (moshafName: string, locale: Locale): RiwayaKey => {
-  const map = riwayaMatchPhrases[locale];
+  const matchLocale: RiwayaLocale = locale === 'ar' ? 'ar' : 'latin';
+  const map = riwayaMatchPhrases[matchLocale];
   for (const [key, phrases] of Object.entries(map)) {
     if (phrases.some((phrase) => moshafName.includes(phrase))) {
       return key as RiwayaKey;

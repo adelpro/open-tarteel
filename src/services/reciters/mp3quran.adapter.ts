@@ -5,8 +5,9 @@ import { generatePlaylist, resolveRiwaya } from './mp3quran.helpers';
 import type { Mp3QuranApiResponse } from './mp3quran.types';
 import type { ReciterSource } from './reciter-source';
 import { retryFetch } from './shared-fetch';
+import { Language } from '@/constants/language';
 
-export type Language = 'ar' | 'en' | 'de';
+
 
 const mp3QuranLanguages: Record<Language, string> = {
   ar: 'ar',
@@ -17,7 +18,6 @@ export const Mp3QuranAdapter: ReciterSource = {
   source: LinkSource.MP3QURAN,
 
   async getReciters(lang: Language): Promise<Reciter[]> {
-    //const apiLang = lang === 'en' ? 'eng' : lang === 'de' ? 'de' : 'ar';
     const apiLang = mp3QuranLanguages[lang];
     console.log('MP3Quran language:', lang, 'API language:', apiLang);
     const response = await retryFetch(
@@ -36,7 +36,7 @@ export const Mp3QuranAdapter: ReciterSource = {
           moshaf: {
             id: String(apiMoshaf.id),
             name: apiMoshaf.name,
-            riwaya: resolveRiwaya(apiMoshaf.name, lang === 'de' ? 'en' : lang),
+            riwaya: resolveRiwaya(apiMoshaf.name, lang),
             server: apiMoshaf.server,
             surah_total: String(apiMoshaf.surah_total),
             playlist: generatePlaylist(apiMoshaf),

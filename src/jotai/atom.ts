@@ -1,6 +1,7 @@
 import { LinkSource, Reciter, Riwaya } from '@/types';
 
 import { createAtomWithStorage } from './create-atom-with-storage';
+import { Language } from '@/constants/language';
 
 export const favoriteRecitersAtom = createAtomWithStorage<string[]>(
   'favorite-reciter',
@@ -22,7 +23,7 @@ export const showVisualizerAtom = createAtomWithStorage<boolean>(
 //add de as a locale option
 
 export const localeAtom =
-  createAtomWithStorage<'ar' | 'en' | 'de'>('locale', 'ar');
+  createAtomWithStorage<Language>('locale', 'ar');
 
 export const currentTimeAtom = createAtomWithStorage<number>('current-time', 0);
 

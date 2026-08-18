@@ -6,6 +6,7 @@ import { Mp3QuranAdapter } from './mp3quran.adapter';
 import { QuranAiAdapter } from './quranai.adapter';
 import { QuranFoundationAdapter } from './quranfoundation.adapter';
 import type { ReciterSource } from './reciter-source';
+import { Language } from '@/constants/language';
 
 const adapters: ReciterSource[] = [
   Mp3QuranAdapter,
@@ -36,7 +37,7 @@ export function parseEnabledSources(
  * @param enabledSources - If provided, only fetch from these sources. Otherwise fetch from all.
  */
 export async function getAllRecitersFromAdapters(
-  lang: 'ar' | 'en' |'de' = 'ar',
+  lang: Language = 'ar',
   enabledSources?: LinkSource[] | null
 ): Promise<Reciter[]> {
   const toFetch =

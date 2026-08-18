@@ -36,7 +36,7 @@ export default function TrackInfo({
 
   const { surahId } = currentTrack;
   const surahName = () => {
-    if (language === 'en') {
+    if (language !== 'ar') {
       return SURAHS.find((surah) => surah.id.toString() === surahId)
         ?.englishName;
     }

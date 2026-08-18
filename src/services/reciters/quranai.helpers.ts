@@ -1,6 +1,7 @@
 import { Riwaya } from '@/types';
 
 import type { QuranAiEdition, QuranAiSurahResponse } from './quranai.types';
+import { Language } from '@/constants/language';
 
 export const QURANAI_BASE_URL = 'https://api.qurani.ai/gw/qh/v1';
 
@@ -57,9 +58,9 @@ export const resolveRiwayaFromNarrator = (
 
 export const resolveReciterName = (
   edition: QuranAiEdition,
-  lang: 'ar' | 'en'
+  lang: Language
 ): string => {
-  if (lang === 'en') {
+  if (lang !== 'ar') {
     return edition.englishName || edition.name;
   }
   return edition.name || edition.englishName;

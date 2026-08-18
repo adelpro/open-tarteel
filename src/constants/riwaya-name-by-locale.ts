@@ -1,7 +1,8 @@
 import { Riwaya } from '@/types';
+import { Language } from './language';
 
 export const RiwayaNameByLocale: Record<
-  'ar' | 'en' | 'de',
+  Language,
   Record<keyof typeof Riwaya, string>
 > = {
   ar: {
