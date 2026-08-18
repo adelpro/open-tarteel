@@ -11,10 +11,7 @@ export const generatePlaylist = (moshaf: Mp3QuranApiMoshaf): Playlist =>
     link: `${moshaf.server}${id.padStart(3, '0')}.mp3`,
   }));
 
-export const resolveRiwaya = (
-  moshafName: string,
-  locale: Language 
-): Riwaya => {
+export const resolveRiwaya = (moshafName: string, locale: Language): Riwaya => {
   const key = getRiwayaKeyFromMoshafName(moshafName, locale);
   return Riwaya[key];
 };

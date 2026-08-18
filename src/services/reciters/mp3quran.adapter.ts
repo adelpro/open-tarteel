@@ -7,8 +7,6 @@ import type { ReciterSource } from './reciter-source';
 import { retryFetch } from './shared-fetch';
 import { Language } from '@/constants/language';
 
-
-
 const mp3QuranLanguages: Record<Language, string> = {
   ar: 'ar',
   en: 'eng',

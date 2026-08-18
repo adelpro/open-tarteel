@@ -1,14 +1,12 @@
 export const LANGUAGES = {
   ar: {
-    label: 'العربية'
-    
+    label: 'العربية',
   },
   en: {
-    label: 'English'
-    
+    label: 'English',
   },
   de: {
-    label: 'Deutsch'
+    label: 'Deutsch',
   },
 } as const;
 

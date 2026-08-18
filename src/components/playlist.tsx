@@ -4,7 +4,7 @@ import { useAtomValue } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { BsBook } from 'react-icons/bs';
 import { MdCloudDone, MdCloudDownload } from 'react-icons/md';
-import { FormattedMessage ,useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { SURAHS } from '@/constants';
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
@@ -53,7 +53,6 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
     setCurrentTrack(index);
   };
 
-  
   const isArabic = language === 'ar';
 
   if (!selectedReciter?.moshaf?.playlist) {
@@ -149,11 +148,11 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
 
                     <span className="group-hover:bg-brand-CTA-blue-50 dark:group-hover:bg-brand-CTA-blue-900/30 dark:group-hover:text-brand-CTA-blue-300 inline-flex items-center rounded-lg bg-gray-50 px-2.5 py-1 text-xs font-semibold text-gray-500 ring-1 ring-inset ring-gray-500/20 transition-colors group-hover:text-brand-CTA-blue-600 group-hover:ring-brand-CTA-blue-500/20 dark:bg-gray-800/80 dark:text-gray-400 dark:ring-gray-600/50">
                       {surah.ayahCount}{' '}
-                      
-                      {surah.ayahCount === 1
-                          ? <FormattedMessage id="playlist.aya" />
-                          : <FormattedMessage id="playlist.ayas" />
-                        }
+                      {surah.ayahCount === 1 ? (
+                        <FormattedMessage id="playlist.aya" />
+                      ) : (
+                        <FormattedMessage id="playlist.ayas" />
+                      )}
                     </span>
                   </div>
 
