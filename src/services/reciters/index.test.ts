@@ -35,8 +35,7 @@ const { getAllRecitersFromAdapters, parseEnabledSources } =
 const { Mp3QuranAdapter } = await import('./mp3quran.adapter');
 const { ItqanAdapter } = await import('./itqan.adapter');
 const { QuranAiAdapter } = await import('./quranai.adapter');
-const { QuranFoundationAdapter } =
-  await import('./quranfoundation.adapter');
+const { QuranFoundationAdapter } = await import('./quranfoundation.adapter');
 
 const mp3Mock = vi.mocked(Mp3QuranAdapter.getReciters);
 const itqanMock = vi.mocked(ItqanAdapter.getReciters);
@@ -65,15 +64,9 @@ const makeReciter = (id: string, source: LinkSource): Reciter => ({
   },
 });
 
-const mp3Reciter = makeReciter(
-  `${LinkSource.MP3QURAN}-1`,
-  LinkSource.MP3QURAN
-);
+const mp3Reciter = makeReciter(`${LinkSource.MP3QURAN}-1`, LinkSource.MP3QURAN);
 
-const itqanReciter = makeReciter(
-  `${LinkSource.ITQAN}-10`,
-  LinkSource.ITQAN
-);
+const itqanReciter = makeReciter(`${LinkSource.ITQAN}-10`, LinkSource.ITQAN);
 
 const quranaiReciter = makeReciter(
   `${LinkSource.QURANAI}-ar.ibrahimakhdar.hafs`,
@@ -148,9 +141,7 @@ describe('getAllRecitersFromAdapters', () => {
     mp3Mock.mockRejectedValue(new Error('mp3quran down'));
     itqanMock.mockRejectedValue(new Error('itqan down'));
     quranaiMock.mockRejectedValue(new Error('qurani.ai down'));
-    quranFoundationMock.mockRejectedValue(
-      new Error('quran.foundation down')
-    );
+    quranFoundationMock.mockRejectedValue(new Error('quran.foundation down'));
 
     const result = await getAllRecitersFromAdapters('ar');
 
@@ -211,9 +202,7 @@ describe('getAllRecitersFromAdapters', () => {
   it('when only QURANAI enabled, only fetches from the quranai adapter', async () => {
     quranaiMock.mockResolvedValue([quranaiReciter]);
 
-    const result = await getAllRecitersFromAdapters('ar', [
-      LinkSource.QURANAI,
-    ]);
+    const result = await getAllRecitersFromAdapters('ar', [LinkSource.QURANAI]);
 
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual(quranaiReciter);
@@ -256,9 +245,10 @@ describe('parseEnabledSources', () => {
   });
 
   it('filters out invalid source values', () => {
-    expect(
-      parseEnabledSources('mp3quran.net,invalid,itqan.dev')
-    ).toEqual([LinkSource.MP3QURAN, LinkSource.ITQAN]);
+    expect(parseEnabledSources('mp3quran.net,invalid,itqan.dev')).toEqual([
+      LinkSource.MP3QURAN,
+      LinkSource.ITQAN,
+    ]);
   });
 
   it('parses qurani.ai as a valid source value', () => {
@@ -269,15 +259,11 @@ describe('parseEnabledSources', () => {
   });
 
   it('parses qurani.ai on its own', () => {
-    expect(parseEnabledSources('qurani.ai')).toEqual([
-      LinkSource.QURANAI,
-    ]);
+    expect(parseEnabledSources('qurani.ai')).toEqual([LinkSource.QURANAI]);
   });
 
   it('parses qurani.ai alongside mp3quran and itqan', () => {
-    expect(
-      parseEnabledSources('mp3quran.net,qurani.ai,itqan.dev')
-    ).toEqual([
+    expect(parseEnabledSources('mp3quran.net,qurani.ai,itqan.dev')).toEqual([
       LinkSource.MP3QURAN,
       LinkSource.QURANAI,
       LinkSource.ITQAN,
@@ -285,9 +271,7 @@ describe('parseEnabledSources', () => {
   });
 
   it('preserves duplicate source values', () => {
-    expect(
-      parseEnabledSources('qurani.ai,mp3quran.net,qurani.ai')
-    ).toEqual([
+    expect(parseEnabledSources('qurani.ai,mp3quran.net,qurani.ai')).toEqual([
       LinkSource.QURANAI,
       LinkSource.MP3QURAN,
       LinkSource.QURANAI,
@@ -295,9 +279,7 @@ describe('parseEnabledSources', () => {
   });
 
   it('parses quran.foundation as a valid source', () => {
-    expect(
-      parseEnabledSources('mp3quran.net,quran.foundation')
-    ).toEqual([
+    expect(parseEnabledSources('mp3quran.net,quran.foundation')).toEqual([
       LinkSource.MP3QURAN,
       LinkSource.QURAN_FOUNDATION,
     ]);

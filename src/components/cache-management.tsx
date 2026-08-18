@@ -32,10 +32,7 @@ export default function CacheManagement() {
     setLoading(true);
     try {
       // Fetch all reciters from all sources to match cached URLs
-      const reciters: Reciter[] = await getAllReciters(
-        locale as Language,
-        []
-      );
+      const reciters: Reciter[] = await getAllReciters(locale as Language, []);
       const result = await getCachedMoshafs(
         reciters.map((r) => ({
           name: r.name,

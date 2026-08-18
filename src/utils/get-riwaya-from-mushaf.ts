@@ -36,9 +36,7 @@ const riwayaMatchPhrases: Record<RiwayaLocale, RiwayaMatchMap> = {
     Hisham: [],
     IbnJammaz: [],
     Yaqoub: [],
-  }
-
-
+  },
 };
 
 const findRiwayaKey = (moshafName: string, locale: Locale): RiwayaKey => {

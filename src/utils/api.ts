@@ -42,7 +42,6 @@ export async function getReciter(
     return reciters.find((r) => r.id === id && r.moshaf.id === moshafId);
   }
 
-  
   const params = new URLSearchParams({ language: locale });
   if (enabledSources && enabledSources.length > 0) {
     params.set('sources', enabledSources.join(','));

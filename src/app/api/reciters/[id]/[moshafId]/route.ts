@@ -13,10 +13,13 @@ export async function GET(
 ) {
   const { id, moshafId } = await params;
   const searchParams = request.nextUrl.searchParams;
-  
+
   const requestedLanguage = searchParams.get('language');
 
-  const language: Language = requestedLanguage && requestedLanguage in LANGUAGES ? (requestedLanguage as Language) : 'ar';
+  const language: Language =
+    requestedLanguage && requestedLanguage in LANGUAGES
+      ? (requestedLanguage as Language)
+      : 'ar';
 
   const sourcesParameter = searchParams.get('sources');
   const cookie = request.cookies.get('enabled-sources')?.value;

@@ -22,8 +22,7 @@ export const showVisualizerAtom = createAtomWithStorage<boolean>(
 
 //add de as a locale option
 
-export const localeAtom =
-  createAtomWithStorage<Language>('locale', 'ar');
+export const localeAtom = createAtomWithStorage<Language>('locale', 'ar');
 
 export const currentTimeAtom = createAtomWithStorage<number>('current-time', 0);
 
