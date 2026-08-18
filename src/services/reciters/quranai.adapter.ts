@@ -18,6 +18,7 @@ import type {
 } from './quranai.types';
 import type { ReciterSource } from './reciter-source';
 import { retryFetch } from './shared-fetch';
+import { Language } from '@/constants/language';
 
 const SURAH_TOTAL = 114;
 export const MAX_AYAHS_IN_SURAH = 286;
@@ -117,7 +118,7 @@ const fetchEditionPlaylist = async (
 export const QuranAiAdapter: ReciterSource = {
   source: LinkSource.QURANAI,
 
-  async getReciters(lang: 'ar' | 'en' | 'de'): Promise<Reciter[]> {
+  async getReciters(lang: Language): Promise<Reciter[]> {
     const response = await retryFetch(EDITIONS_ENDPOINT);
     const body: QuranAiEditionListResponse = await response.json();
     const editions = Array.isArray(body.data)
@@ -139,7 +140,7 @@ export const QuranAiAdapter: ReciterSource = {
           const riwaya = resolveRiwayaFromNarrator(edition.narratorIdentifier);
           const reciter: Reciter = {
             id: `${LinkSource.QURANAI}-${edition.identifier}`,
-            name: resolveReciterName(edition, lang=== 'de' ? 'en' : lang),
+            name: resolveReciterName(edition, lang),
             source: LinkSource.QURANAI,
             moshaf: {
               id: edition.identifier,

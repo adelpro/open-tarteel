@@ -4,19 +4,19 @@ import {
   getAllRecitersFromAdapters,
   parseEnabledSources,
 } from '@/services/reciters';
+import { LANGUAGES } from '@/constants/language';
+import type { Language } from '@/constants/language';
 
 // Enable Next.js caching with 1 hour revalidation
 export const revalidate = 3600;
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  // const language =
-  //   (searchParams.get('language') || 'ar') === 'en' ? 'en' : 'ar';
-  const language =
-  searchParams.get('language') === 'en'
-    ? 'en'
-    : searchParams.get('language') === 'de'
-      ? 'de'
+  const requestedLanguage = searchParams.get('language');
+
+  const language: Language =
+    requestedLanguage && requestedLanguage in LANGUAGES
+      ? (requestedLanguage as Language)
       : 'ar';
 
   const sourcesParameter = searchParams.get('sources');

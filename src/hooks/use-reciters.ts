@@ -7,9 +7,10 @@ import { useIntl } from 'react-intl';
 import { enabledSourcesAtom, selectedReciterAtom } from '@/jotai/atom';
 import type { Reciter } from '@/types';
 import { getAllReciters } from '@/utils/api';
+import { Language } from '@/constants/language';
 
 export function useReciters() {
-  const locale = useIntl().locale as 'ar' | 'en' | 'de';
+  const locale = useIntl().locale as Language;
   const [reciters, setReciters] = useState<Reciter[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -3,6 +3,7 @@ import { Riwaya } from '@/types';
 import { getRiwayaKeyFromMoshafName } from '@/utils/get-riwaya-from-mushaf';
 
 import type { Mp3QuranApiMoshaf } from './mp3quran.types';
+import { Language } from '@/constants/language';
 
 export const generatePlaylist = (moshaf: Mp3QuranApiMoshaf): Playlist =>
   moshaf.surah_list.split(',').map((id) => ({
@@ -12,7 +13,7 @@ export const generatePlaylist = (moshaf: Mp3QuranApiMoshaf): Playlist =>
 
 export const resolveRiwaya = (
   moshafName: string,
-  locale: 'ar' | 'en' 
+  locale: Language 
 ): Riwaya => {
   const key = getRiwayaKeyFromMoshafName(moshafName, locale);
   return Riwaya[key];

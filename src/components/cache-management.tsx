@@ -12,6 +12,7 @@ import {
 import type { Reciter } from '@/types';
 import { formatBytes } from '@/utils';
 import { getAllReciters } from '@/utils/api';
+import { Language } from '@/constants/language';
 
 export default function CacheManagement() {
   const { locale } = useIntl();
@@ -32,7 +33,7 @@ export default function CacheManagement() {
     try {
       // Fetch all reciters from all sources to match cached URLs
       const reciters: Reciter[] = await getAllReciters(
-        locale as 'ar'  | 'en' | 'de',
+        locale as Language,
         []
       );
       const result = await getCachedMoshafs(

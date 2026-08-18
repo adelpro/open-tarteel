@@ -53,7 +53,8 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
     setCurrentTrack(index);
   };
 
-  const isEnglish = language === 'en';
+  
+  const isArabic = language === 'ar';
 
   if (!selectedReciter?.moshaf?.playlist) {
     return null;
@@ -141,7 +142,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <span className="group-hover:text-brand-CTA-blue-700 dark:group-hover:text-brand-CTA-blue-300 text-lg font-bold text-gray-700 transition-colors dark:text-gray-200">
-                      {isEnglish
+                      {!isArabic
                         ? surah?.englishName
                         : removeTashkeel(surah?.name)}
                     </span>
