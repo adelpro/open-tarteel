@@ -6276,6 +6276,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"framer-motion@npm:^13.1.0":
+  version: 13.1.0
+  resolution: "framer-motion@npm:13.1.0"
+  dependencies:
+    motion-dom: "npm:^13.0.0"
+    motion-utils: "npm:^13.0.0"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 10c0/0fa4c5d17369f288bfff434191fbd112d44ae06f7a99370e691128db1e302804332e5ec5e980c7a59ffcdb3248fe68f96bce5931d0c066eff55ec6d493fc197c
+  languageName: node
+  linkType: hard
+
 "fs-extra@npm:9.1.0":
   version: 9.1.0
   resolution: "fs-extra@npm:9.1.0"
@@ -8748,6 +8767,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"motion-dom@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "motion-dom@npm:13.0.0"
+  dependencies:
+    motion-utils: "npm:^13.0.0"
+  checksum: 10c0/3029e249515976f1eea67b26c88cfc6037e3ed3a821400e9e10a211dafad7b70f1d0e9243878dcc3011249e8fd84bc0c587a667fe750c74ad41418a85365f61e
+  languageName: node
+  linkType: hard
+
+"motion-utils@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "motion-utils@npm:13.0.0"
+  checksum: 10c0/4b279ce85f71926d668ff5966feb898b174541d16952a61c7150982388553266602ecd2a76e057530076ff8f38d06672e585639ddc73c41dd1a67d04aaa3662d
+  languageName: node
+  linkType: hard
+
 "mri@npm:^1.1.0":
   version: 1.2.0
   resolution: "mri@npm:1.2.0"
@@ -9182,6 +9217,7 @@ __metadata:
     eslint-plugin-react: "npm:^7.37.4"
     eslint-plugin-simple-import-sort: "npm:^12.1.1"
     eslint-plugin-unicorn: "npm:^56.0.1"
+    framer-motion: "npm:^13.1.0"
     fuse.js: "npm:^7.1.0"
     gun: "npm:^0.2020.1241"
     husky: "npm:^9.1.7"
