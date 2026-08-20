@@ -1,3 +1,4 @@
+import { Language } from '@/constants/language';
 import type { Reciter } from '@/types';
 import { LinkSource } from '@/types';
 
@@ -5,7 +6,6 @@ import { generatePlaylist, resolveRiwaya } from './mp3quran.helpers';
 import type { Mp3QuranApiResponse } from './mp3quran.types';
 import type { ReciterSource } from './reciter-source';
 import { retryFetch } from './shared-fetch';
-import { Language } from '@/constants/language';
 
 const mp3QuranLanguages: Record<Language, string> = {
   ar: 'ar',

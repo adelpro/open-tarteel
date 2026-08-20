@@ -1,4 +1,5 @@
 import { Riwaya } from '@/types';
+
 import { Language } from './language';
 
 export const RiwayaNameByLocale: Record<

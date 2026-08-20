@@ -141,7 +141,7 @@ describe('getAllReciters', () => {
       await getAllReciters('en');
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('language=eng'),
+        expect.stringContaining('language=en'),
         expect.objectContaining({
           next: { revalidate: 3600 },
         })
@@ -254,7 +254,7 @@ describe('getReciter', () => {
       await getReciter('mp3quran.net-1', '42', 'en');
 
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('language=eng'),
+        expect.stringContaining('language=en'),
         expect.objectContaining({
           next: { revalidate: 3600 },
         })

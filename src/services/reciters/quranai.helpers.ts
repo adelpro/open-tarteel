@@ -1,7 +1,7 @@
+import { Language } from '@/constants/language';
 import { Riwaya } from '@/types';
 
 import type { QuranAiEdition, QuranAiSurahResponse } from './quranai.types';
-import { Language } from '@/constants/language';
 
 export const QURANAI_BASE_URL = 'https://api.qurani.ai/gw/qh/v1';
 

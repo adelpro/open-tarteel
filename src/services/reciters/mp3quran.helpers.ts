@@ -1,9 +1,9 @@
+import { Language } from '@/constants/language';
 import type { Playlist } from '@/types';
 import { Riwaya } from '@/types';
 import { getRiwayaKeyFromMoshafName } from '@/utils/get-riwaya-from-mushaf';
 
 import type { Mp3QuranApiMoshaf } from './mp3quran.types';
-import { Language } from '@/constants/language';
 
 export const generatePlaylist = (moshaf: Mp3QuranApiMoshaf): Playlist =>
   moshaf.surah_list.split(',').map((id) => ({

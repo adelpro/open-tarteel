@@ -3,10 +3,11 @@
 import { useAtom } from 'jotai';
 import { useState } from 'react';
 import { IoLanguageOutline } from 'react-icons/io5';
-import { localeAtom } from '@/jotai/atom';
-import { LANGUAGES } from '@/constants/language';
-import type { Language } from '@/constants/language';
 import { useIntl } from 'react-intl';
+
+import type { Language } from '@/constants/language';
+import { LANGUAGES } from '@/constants/language';
+import { localeAtom } from '@/jotai/atom';
 
 export default function LanguageSwitcher() {
   const { formatMessage } = useIntl();

@@ -1,3 +1,4 @@
+import { Language } from '@/constants/language';
 import type { Reciter } from '@/types';
 import { LinkSource } from '@/types';
 
@@ -6,7 +7,6 @@ import { Mp3QuranAdapter } from './mp3quran.adapter';
 import { QuranAiAdapter } from './quranai.adapter';
 import { QuranFoundationAdapter } from './quranfoundation.adapter';
 import type { ReciterSource } from './reciter-source';
-import { Language } from '@/constants/language';
 
 const adapters: ReciterSource[] = [
   Mp3QuranAdapter,

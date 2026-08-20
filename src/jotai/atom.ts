@@ -1,7 +1,7 @@
+import { Language } from '@/constants/language';
 import { LinkSource, Reciter, Riwaya } from '@/types';
 
 import { createAtomWithStorage } from './create-atom-with-storage';
-import { Language } from '@/constants/language';
 
 export const favoriteRecitersAtom = createAtomWithStorage<string[]>(
   'favorite-reciter',

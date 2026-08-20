@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import type { Language } from '@/constants/language';
+import { LANGUAGES } from '@/constants/language';
 import {
   getAllRecitersFromAdapters,
   parseEnabledSources,
 } from '@/services/reciters';
-import { LANGUAGES } from '@/constants/language';
-import type { Language } from '@/constants/language';
 
 // Enable Next.js caching with 1 hour revalidation
 export const revalidate = 3600;

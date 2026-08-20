@@ -4,10 +4,10 @@ import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
+import { Language } from '@/constants/language';
 import { enabledSourcesAtom, selectedReciterAtom } from '@/jotai/atom';
 import type { Reciter } from '@/types';
 import { getAllReciters } from '@/utils/api';
-import { Language } from '@/constants/language';
 
 export function useReciters() {
   const locale = useIntl().locale as Language;

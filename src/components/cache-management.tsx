@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { MdCloudDone, MdDeleteOutline } from 'react-icons/md';
 import { FormattedMessage, useIntl } from 'react-intl';
 
+import { Language } from '@/constants/language';
 import {
   type CachedMoshaf,
   type StorageEstimate,
@@ -12,7 +13,6 @@ import {
 import type { Reciter } from '@/types';
 import { formatBytes } from '@/utils';
 import { getAllReciters } from '@/utils/api';
-import { Language } from '@/constants/language';
 
 export default function CacheManagement() {
   const { locale } = useIntl();

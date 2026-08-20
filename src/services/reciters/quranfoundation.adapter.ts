@@ -1,3 +1,4 @@
+import { Language } from '@/constants/language';
 import type { Playlist, Reciter } from '@/types';
 import { LinkSource, Riwaya } from '@/types';
 
@@ -8,7 +9,6 @@ import type {
 } from './quranfoundation.types';
 import type { ReciterSource } from './reciter-source';
 import { retryFetch } from './shared-fetch';
-import { Language } from '@/constants/language';
 
 const DEFAULT_TOKEN_URL = 'https://oauth2.quran.foundation/oauth2/token';
 const DEFAULT_API_BASE = 'https://apis.quran.foundation';

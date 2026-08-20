@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import type { Language } from '@/constants/language';
+import { LANGUAGES } from '@/constants/language';
 import {
   getAllRecitersFromAdapters,
   parseEnabledSources,
 } from '@/services/reciters';
-import { LANGUAGES } from '@/constants/language';
-import type { Language } from '@/constants/language';
 
 export async function GET(
   request: NextRequest,

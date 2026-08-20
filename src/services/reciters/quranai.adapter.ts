@@ -1,3 +1,4 @@
+import { Language } from '@/constants/language';
 import type { AyahAudioItem, PlaylistItem, Reciter } from '@/types';
 import { LinkSource } from '@/types';
 import { getRiwayaKeyFromValue } from '@/utils/get-riwaya-from-mushaf';
@@ -18,7 +19,6 @@ import type {
 } from './quranai.types';
 import type { ReciterSource } from './reciter-source';
 import { retryFetch } from './shared-fetch';
-import { Language } from '@/constants/language';
 
 const SURAH_TOTAL = 114;
 export const MAX_AYAHS_IN_SURAH = 286;
