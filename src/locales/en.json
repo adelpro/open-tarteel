@@ -140,5 +140,6 @@
   "settings.cacheTracks": "{count} surahs",
   "settings.cacheDeleteConfirm": "Remove all downloads for this reciter?",
   "settings.cacheDelete": "Remove",
-  "settings.cacheStorageUsed": "Storage used: {used} of {quota}"
+  "settings.cacheStorageUsed": "Storage used: {used} of {quota}",
+  "language.select": "Select language"
 }

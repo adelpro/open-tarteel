@@ -140,5 +140,6 @@
   "settings.cacheTracks": "{count} سور",
   "settings.cacheDeleteConfirm": "هل تريد حذف جميع تحميلات هذا القارئ؟",
   "settings.cacheDelete": "حذف",
-  "settings.cacheStorageUsed": "المساحة المستخدمة: {used} من {quota}"
+  "settings.cacheStorageUsed": "المساحة المستخدمة: {used} من {quota}",
+  "language.select": "اختر اللغة"
 }

@@ -140,5 +140,6 @@
   "settings.cacheTracks": "{count} Suren",
   "settings.cacheDeleteConfirm": "Alle Downloads für diesen Rezitator entfernen?",
   "settings.cacheDelete": "Entfernen",
-  "settings.cacheStorageUsed": "Verwendeter Speicher: {used} von {quota}"
+  "settings.cacheStorageUsed": "Verwendeter Speicher: {used} von {quota}",
+  "language.select": "Sprache auswählen"
 }
