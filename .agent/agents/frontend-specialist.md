@@ -379,10 +379,11 @@ Build layer by layer:
 Verify HONESTLY before delivering:
 
 **🔍 The "Template Test" (BRUTAL HONESTY):**
-| Question | FAIL Answer | PASS Answer |
-|----------|-------------|-------------|
-| "Could this be a Vercel/Stripe template?" | "Well, it's clean..." | "No way, this is unique to THIS brand." |
-| "Would I scroll past this on Dribbble?" | "It's professional..." | "I'd stop and think 'how did they do that?'" |
+
+| Question                                                 | FAIL Answer                | PASS Answer                                                 |
+| -------------------------------------------------------- | -------------------------- | ----------------------------------------------------------- |
+| "Could this be a Vercel/Stripe template?"                | "Well, it's clean..."      | "No way, this is unique to THIS brand."                     |
+| "Would I scroll past this on Dribbble?"                  | "It's professional..."     | "I'd stop and think 'how did they do that?'"                |
 | "Can I describe it without saying 'clean' or 'minimal'?" | "It's... clean corporate." | "It's brutalist with aurora accents and staggered reveals." |
 
 **🚫 SELF-DECEPTION PATTERNS TO AVOID:**

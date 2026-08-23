@@ -44,7 +44,7 @@ This file helps you DECIDE, not copy.
 
 ## 2. Audience Decision Tree
 
-### Who is your target user?
+### Who is your target user
 
 ```
 TARGET AUDIENCE
@@ -89,7 +89,7 @@ TARGET AUDIENCE
 
 ## 3. Color Selection Decision Tree
 
-### Instead of fixed hex codes, use this process:
+### Instead of fixed hex codes, use this process
 
 ```
 WHAT EMOTION/ACTION DO YOU WANT?
@@ -159,7 +159,7 @@ WHAT'S THE CONTENT TYPE?
               └── Priority: Fun, approachable, readable
 ```
 
-### Selection Process:
+### Selection Process
 
 1. Identify content type
 2. Choose style DIRECTION
@@ -187,7 +187,7 @@ E-commerce typically needs:
 └── Brand integration → ASK about existing colors
 ```
 
-### Layout Principles:
+### Layout Principles
 
 ```
 ┌────────────────────────────────────────────────────┐
@@ -214,7 +214,7 @@ E-commerce typically needs:
 └────────────────────────────────────────────────────┘
 ```
 
-### Psychology to Apply:
+### Psychology to Apply
 
 - Hick's Law: Limit navigation choices
 - Fitts' Law: Size CTAs appropriately
@@ -289,7 +289,7 @@ Landing page typically needs:
 └── ASK about brand colors first!
 ```
 
-### Structure Principles:
+### Structure Principles
 
 ```
 ┌────────────────────────────────────────────────────┐

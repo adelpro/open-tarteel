@@ -122,7 +122,7 @@ Request Flow:
     └── ORM interactions
 ```
 
-### Why This Matters:
+### Why This Matters
 
 - **Testability**: Mock layers independently
 - **Flexibility**: Swap database without touching business logic
@@ -311,7 +311,7 @@ node --test src/**/*.test.ts
 - Trust external data without validation
 - Block event loop with CPU work
 
-### ✅ DO:
+### ✅ DO
 
 - Choose framework based on context
 - Ask user for preferences when unclear

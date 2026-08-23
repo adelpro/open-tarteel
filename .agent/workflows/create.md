@@ -12,7 +12,7 @@ $ARGUMENTS
 
 This command starts a new application creation process.
 
-### Steps:
+### Steps
 
 1. **Request Analysis**
    - Understand what the user wants
