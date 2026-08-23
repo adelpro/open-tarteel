@@ -64,7 +64,7 @@ export default function TahfeezModeControls({
     }
   }, [reciterId, chapterNumber, formatMessage]);
 
-  // Stop player and cancel tahfeez seek on unmount (e.g. mode switched to listening)
+  // Stop player and cancel tahfeez seek on unmount (e.g mode switched to listening)
   useEffect(() => {
     return () => {
       onCleanup?.();
@@ -227,12 +227,12 @@ export default function TahfeezModeControls({
       <div className="mb-4 flex w-full justify-center">
         <div className="flex rounded-lg bg-gray-200 p-1 dark:bg-gray-800">
           <button
-            onClick={() =>
+            onClick={() => {
               setTahfeezSettings((previous) => ({
                 ...previous,
                 strategy: 'per_ayah',
-              }))
-            }
+              }));
+            }}
             className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
               tahfeezSettings.strategy === 'per_ayah'
                 ? 'bg-blue-600 text-white'
