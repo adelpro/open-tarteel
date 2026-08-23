@@ -36,7 +36,7 @@ const fetchAyahRange = (url: string): Promise<Response> =>
 const mapWithConcurrency = async <T, R>(
   items: T[],
   concurrency: number,
-  mapper: (item: T, index: number) => Promise<R>
+  mapper: (_item: T, index: number) => Promise<R>
 ): Promise<R[]> => {
   const results: R[] = new Array(items.length);
   let nextIndex = 0;
@@ -209,6 +209,7 @@ export const getAyahAudioRange = async (params: {
   );
   const body: QuranAiSurahResponse = await response.json();
 
+  // body.data is typed as required, but API may return unexpected shapes at runtime
   if (!body.data || !Array.isArray(body.data.ayahs)) {
     throw new Error(
       `Quran.ai: invalid surah response for edition ${editionIdentifier}`

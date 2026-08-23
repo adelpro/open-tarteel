@@ -1,8 +1,11 @@
 import { RefObject, useEffect, useRef, useState } from 'react';
 
-export type TimeRange = { startTime: number; endTime: number };
+export interface TimeRange {
+  startTime: number;
+  endTime: number;
+}
 
-export type TahfeezSessionControls = {
+export interface TahfeezSessionControls {
   /** Start a new session. Tears down any existing session first. */
   start: (ranges: TimeRange[], repeat: number, delay: number) => void;
   /** Stop the session and pause audio. */
@@ -13,7 +16,7 @@ export type TahfeezSessionControls = {
   audioPlaying: boolean;
   /** Whether a session is currently wired up (even if paused mid-delay). */
   isActive: () => boolean;
-};
+}
 
 /**
  * Manages a tahfeez (memorisation) audio session.
@@ -27,7 +30,7 @@ export type TahfeezSessionControls = {
  */
 export function useTahfeezSession(
   audioRef: RefObject<HTMLAudioElement | null>,
-  onActiveChange: (active: boolean) => void
+  onActiveChange: (_active: boolean) => void
 ): TahfeezSessionControls {
   // ── Engine refs (no re-renders) ──────────────────────
   const cleanupRef = useRef<(() => void) | null>(null);
@@ -41,8 +44,12 @@ export function useTahfeezSession(
 
   useEffect(() => {
     let attachedAudio: HTMLAudioElement | null = null;
-    const onPlay = () => setAudioPlaying(true);
-    const onPause = () => setAudioPlaying(false);
+    const onPlay = () => {
+      setAudioPlaying(true);
+    };
+    const onPause = () => {
+      setAudioPlaying(false);
+    };
 
     const attach = (element: HTMLAudioElement) => {
       element.addEventListener('play', onPlay);
@@ -57,7 +64,9 @@ export function useTahfeezSession(
     const currentAudio = audioRef.current;
     if (currentAudio) {
       attach(currentAudio);
-      return () => detach(currentAudio);
+      return () => {
+        detach(currentAudio);
+      };
     }
 
     // audioRef.current may be null on first render — retry after a tick
@@ -101,7 +110,7 @@ export function useTahfeezSession(
     onActiveChange(true);
 
     const seekToCurrentRange = () => {
-      const range = rangesRef.current[indexRef.current];
+      const range: TimeRange | undefined = rangesRef.current[indexRef.current];
       if (!range) return;
       audio.currentTime = range.startTime;
       void audio.play();
@@ -110,7 +119,8 @@ export function useTahfeezSession(
     const scheduleNext = () => {
       audio.pause();
       delayTimerRef.current = setTimeout(() => {
-        const range = rangesRef.current[indexRef.current];
+        const range: TimeRange | undefined =
+          rangesRef.current[indexRef.current];
         if (!range) return;
         audio.currentTime = range.startTime;
         void audio.play();
@@ -118,7 +128,7 @@ export function useTahfeezSession(
     };
 
     const handleTimeUpdate = () => {
-      const range = rangesRef.current[indexRef.current];
+      const range: TimeRange | undefined = rangesRef.current[indexRef.current];
       if (!range) return;
 
       if (audio.currentTime >= range.endTime) {

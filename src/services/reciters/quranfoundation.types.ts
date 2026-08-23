@@ -1,6 +1,6 @@
 /** Quran Foundation content API types (v4-aligned, verified live against prelive). */
 
-export type QuranFoundationChapterReciter = {
+export interface QuranFoundationChapterReciter {
   id: number;
   name: string;
   style?: {
@@ -10,22 +10,22 @@ export type QuranFoundationChapterReciter = {
   /** Riwaya, e.g. "Hafs" or "Warsh". */
   qirat?: { name?: string; language_name?: string } | null;
   translated_name?: { name: string; language_name: string };
-};
+}
 
-export type QuranFoundationChapterRecitersResponse = {
+export interface QuranFoundationChapterRecitersResponse {
   reciters: QuranFoundationChapterReciter[];
-};
+}
 
 /** Word/verse segment timestamps (ms); only verse-level endpoints return them yet. */
-export type QuranFoundationSegment = {
+export interface QuranFoundationSegment {
   verse_key: string;
   timestamp_from: number;
   timestamp_to: number;
   /** Word-level segment data; shape varies by endpoint. */
   segments?: unknown[];
-};
+}
 
-export type QuranFoundationAudioFile = {
+export interface QuranFoundationAudioFile {
   id: number;
   chapter_id: number;
   audio_url: string;
@@ -33,14 +33,14 @@ export type QuranFoundationAudioFile = {
   format?: string;
   /** Present only on endpoints that return segments. */
   segments?: QuranFoundationSegment[];
-};
+}
 
-export type QuranFoundationChapterAudioResponse = {
+export interface QuranFoundationChapterAudioResponse {
   audio_files: QuranFoundationAudioFile[];
-};
+}
 
-export type QuranFoundationTokenResponse = {
+export interface QuranFoundationTokenResponse {
   access_token?: string;
   expires_in?: number;
   scope?: string;
-};
+}

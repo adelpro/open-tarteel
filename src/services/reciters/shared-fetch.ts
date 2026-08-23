@@ -25,7 +25,7 @@ const defaultDelay = (ms: number) =>
 export const retryFetch = async (
   url: string,
   maxAttempts = 3,
-  delayFunction: (ms: number) => Promise<void> = defaultDelay,
+  delayFunction: (_ms: number) => Promise<void> = defaultDelay,
   init?: FetchOptions
 ): Promise<Response> => {
   let lastError: Error | null = null;

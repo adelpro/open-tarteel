@@ -21,7 +21,7 @@ import { useIntl } from 'react-intl';
 import Tooltip from '@/components/tooltip';
 import { ICON_SIZE, SLEEP_MINUTES } from '@/constants';
 import { useSleepTimer } from '@/hooks/use-sleep-timer';
-import { useTahfeezSession, TimeRange } from '@/hooks/use-tahfeez-session';
+import { TimeRange, useTahfeezSession } from '@/hooks/use-tahfeez-session';
 import {
   fullscreenAtom,
   playbackModeAtom,
@@ -31,9 +31,9 @@ import {
   volumeAtom,
 } from '@/jotai/atom';
 import { cn } from '@/utils';
+import { resolveChapterReciterId } from '@/utils/resolveChapterReciterId';
 
 import TahfeezModeControls, { TahfeezSettings } from './tahfeez-mode-controls';
-import { resolveChapterReciterId } from '@/utils/resolveChapterReciterId';
 // ─── Helpers ─────────────────────────────────────────
 const getCurrentMinute = (seconds: number): number => Math.ceil(seconds / 60);
 
@@ -113,8 +113,8 @@ export default function PlayerControls({
   // Update tahfeez settings when track changes
   useEffect(() => {
     if (chapterNumber) {
-      setTahfeezSettings((prev) => ({
-        ...prev,
+      setTahfeezSettings((previous) => ({
+        ...previous,
         fromAyah: 1,
         toAyah: 5,
       }));
@@ -335,7 +335,9 @@ export default function PlayerControls({
         {/* Mode Switcher */}
         <div className="mb-4 flex w-full items-center justify-center gap-3">
           <button
-            onClick={() => setActiveMode('listening')}
+            onClick={() => {
+              setActiveMode('listening');
+            }}
             className={`max-w-xs flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
               activeMode === 'listening'
                 ? 'bg-blue-600 text-white hover:bg-blue-700'
@@ -345,7 +347,9 @@ export default function PlayerControls({
             {messages.listeningMode}
           </button>
           <button
-            onClick={() => setActiveMode('tahfeez')}
+            onClick={() => {
+              setActiveMode('tahfeez');
+            }}
             className={`max-w-xs flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
               activeMode === 'tahfeez'
                 ? 'bg-blue-600 text-white hover:bg-blue-700'

@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import * as auth from './quran-foundation.auth';
 import {
   getChapterReciters,
   getSurahTahfeezSegments,
 } from './quran-foundation.provider';
-import * as auth from './quran-foundation.auth';
 
 vi.mock('./quran-foundation.auth', () => ({
   qfFetch: vi.fn(),
@@ -19,7 +20,7 @@ describe('quran-foundation.provider', () => {
       const mockReciters = [{ id: 1, name: 'Mishari' }];
       vi.mocked(auth.qfFetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ reciters: mockReciters }),
+        json: () => Promise.resolve({ reciters: mockReciters }),
       } as Response);
 
       return expect(getChapterReciters()).resolves.toEqual(mockReciters);
@@ -63,7 +64,7 @@ describe('quran-foundation.provider', () => {
 
       vi.mocked(auth.qfFetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockAudioFile,
+        json: () => Promise.resolve(mockAudioFile),
       } as Response);
 
       const segments = await getSurahTahfeezSegments(1, 1);
