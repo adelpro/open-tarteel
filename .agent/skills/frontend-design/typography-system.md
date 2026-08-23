@@ -7,7 +7,7 @@
 
 ## 1. Modular Scale Principles
 
-### What is a Modular Scale?
+### What is a Modular Scale
 
 ```
 A mathematical relationship between font sizes:

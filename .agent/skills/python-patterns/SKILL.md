@@ -422,7 +422,7 @@ Before implementing:
 
 ## 11. Anti-Patterns to Avoid
 
-### ❌ DON'T:
+### ❌ DON'T
 
 - Default to Django for simple APIs (FastAPI may be better)
 - Use sync libraries in async code

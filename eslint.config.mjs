@@ -1,26 +1,26 @@
-import { fixupConfigRules } from '@eslint/compat';
-import js from '@eslint/js';
-import globals from 'globals';
-import nextPlugin from '@next/eslint-plugin-next';
-import reactHooks from 'eslint-plugin-react-hooks';
-import react from 'eslint-plugin-react';
-import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import unicorn from 'eslint-plugin-unicorn';
-import prettier from 'eslint-config-prettier';
-import tseslintParser from '@typescript-eslint/parser';
-import tseslintPlugin from '@typescript-eslint/eslint-plugin';
+import { fixupConfigRules } from "@eslint/compat";
+import js from "@eslint/js";
+import globals from "globals";
+import nextPlugin from "@next/eslint-plugin-next";
+import reactHooks from "eslint-plugin-react-hooks";
+import react from "eslint-plugin-react";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
+import unicorn from "eslint-plugin-unicorn";
+import prettier from "eslint-config-prettier";
+import tseslintParser from "@typescript-eslint/parser";
+import tseslintPlugin from "@typescript-eslint/eslint-plugin";
 
 const config = [
   js.configs.recommended,
   ...fixupConfigRules(prettier),
   fixupConfigRules(nextPlugin.flatConfig.coreWebVitals)[0],
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ["**/*.{js,jsx,ts,tsx}"],
     languageOptions: {
       parser: tseslintParser,
       parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
+        ecmaVersion: "latest",
+        sourceType: "module",
         ecmaFeatures: {
           jsx: true,
         },
@@ -29,22 +29,22 @@ const config = [
         ...globals.browser,
         ...globals.node,
         ...globals.es2021,
-        React: 'readonly',
-        NodeJS: 'readonly',
+        React: "readonly",
+        NodeJS: "readonly",
       },
     },
     plugins: {
       react,
-      'react-hooks': reactHooks,
+      "react-hooks": reactHooks,
       unicorn,
-      'simple-import-sort': simpleImportSort,
-      '@typescript-eslint': tseslintPlugin,
+      "simple-import-sort": simpleImportSort,
+      "@typescript-eslint": tseslintPlugin,
     },
     rules: {
-      'react/react-in-jsx-scope': 'off',
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
-      'simple-import-sort/exports': 'error',
+      "react/react-in-jsx-scope": "off",
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
+      "simple-import-sort/exports": "error",
       'simple-import-sort/imports': 'error',
       'unicorn/no-array-callback-reference': 'warn',
       'unicorn/no-null': 'off',

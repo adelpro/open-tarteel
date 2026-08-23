@@ -10,7 +10,7 @@ allowed-tools: Read, Glob, Grep
 
 ---
 
-## 1. What is GEO?
+## 1. What is GEO
 
 **GEO** = Generative Engine Optimization
 

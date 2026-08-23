@@ -7,7 +7,7 @@
 
 ## 1. Lottie Animations
 
-### What is Lottie?
+### What is Lottie
 
 ```
 JSON-based vector animations:
