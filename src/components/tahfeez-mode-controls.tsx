@@ -79,7 +79,7 @@ export default function TahfeezModeControls({
     }
   }, [reciterId, chapterNumber, fetchTimestamps]);
 
-  /** Compute flat TimeRange array from current segments + settings. Returns null on invalid input. */
+  /**  Compute flat TimeRange array from current segments + settings. Returns null on invalid input. */
   const computeRanges = useCallback(
     (
       fromAyah: number,
@@ -90,10 +90,10 @@ export default function TahfeezModeControls({
 
       if (strategy === 'per_ayah') {
         const ranges: TimeRange[] = [];
-        for (let i = fromAyah - 1; i < toAyah; i++) {
+        for (let index = fromAyah - 1; index < toAyah; index++) {
           ranges.push({
-            startTime: segments[i].startMs / 1000,
-            endTime: segments[i].endMs / 1000,
+            startTime: segments[index].startMs / 1000,
+            endTime: segments[index].endMs / 1000,
           });
         }
         return ranges;
@@ -140,11 +140,14 @@ export default function TahfeezModeControls({
             value={tahfeezSettings.fromAyah ?? 1}
             onChange={(e) => {
               const max = segments.length > 0 ? segments.length - 1 : Infinity;
-              const val = Math.min(
+              const value = Math.min(
                 Math.max(parseInt(e.target.value) || 1, 1),
                 max
               );
-              setTahfeezSettings((prev) => ({ ...prev, fromAyah: val }));
+              setTahfeezSettings((previous) => ({
+                ...previous,
+                fromAyah: value,
+              }));
             }}
             min={1}
             max={segments.length - 1}
@@ -161,11 +164,14 @@ export default function TahfeezModeControls({
             value={tahfeezSettings.toAyah ?? 5}
             onChange={(e) => {
               const max = segments.length > 0 ? segments.length : Infinity;
-              const val = Math.min(
+              const value = Math.min(
                 Math.max(parseInt(e.target.value) || 1, 1),
                 max
               );
-              setTahfeezSettings((prev) => ({ ...prev, toAyah: val }));
+              setTahfeezSettings((previous) => ({
+                ...previous,
+                toAyah: value,
+              }));
             }}
             min={1}
             max={segments.length}
@@ -181,11 +187,14 @@ export default function TahfeezModeControls({
             type="number"
             value={tahfeezSettings.repeat}
             onChange={(e) => {
-              const val = Math.min(
+              const value = Math.min(
                 Math.max(parseInt(e.target.value) || 1, 1),
                 100
               );
-              setTahfeezSettings((prev) => ({ ...prev, repeat: val }));
+              setTahfeezSettings((previous) => ({
+                ...previous,
+                repeat: value,
+              }));
             }}
             min={1}
             max={100}
@@ -201,11 +210,11 @@ export default function TahfeezModeControls({
             type="number"
             value={tahfeezSettings.delay}
             onChange={(e) => {
-              const val = Math.min(
+              const value = Math.min(
                 Math.max(parseInt(e.target.value) || 0, 0),
                 60
               );
-              setTahfeezSettings((prev) => ({ ...prev, delay: val }));
+              setTahfeezSettings((previous) => ({ ...previous, delay: value }));
             }}
             min={0}
             max={60}
@@ -219,7 +228,10 @@ export default function TahfeezModeControls({
         <div className="flex rounded-lg bg-gray-200 p-1 dark:bg-gray-800">
           <button
             onClick={() =>
-              setTahfeezSettings((prev) => ({ ...prev, strategy: 'per_ayah' }))
+              setTahfeezSettings((previous) => ({
+                ...previous,
+                strategy: 'per_ayah',
+              }))
             }
             className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
               tahfeezSettings.strategy === 'per_ayah'
@@ -231,8 +243,8 @@ export default function TahfeezModeControls({
           </button>
           <button
             onClick={() =>
-              setTahfeezSettings((prev) => ({
-                ...prev,
+              setTahfeezSettings((previous) => ({
+                ...previous,
                 strategy: 'whole_range',
               }))
             }
