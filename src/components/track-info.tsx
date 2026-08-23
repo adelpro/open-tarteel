@@ -35,6 +35,7 @@ export default function TrackInfo({
   if (!currentTrack) return null;
 
   const { surahId } = currentTrack;
+  // TODO(#85) extend surah.json to include Deutsch surah names
   const surahName = () => {
     if (language !== 'ar') {
       return SURAHS.find((surah) => surah.id.toString() === surahId)
