@@ -3,13 +3,13 @@ import { useIntl } from 'react-intl';
 
 import { TimeRange } from '@/hooks/use-tahfeez-session';
 
-export type TahfeezSettings = {
+export interface TahfeezSettings {
   fromAyah: number;
   toAyah: number;
   repeat: number;
   delay: number;
   strategy: 'per_ayah' | 'whole_range';
-};
+}
 
 interface TahfeezModeControlsProps {
   tahfeezSettings: TahfeezSettings;
@@ -22,14 +22,14 @@ interface TahfeezModeControlsProps {
   onCleanup?: () => void;
 }
 
-type Segment = {
+interface Segment {
   surah: string;
   ayah: number;
   audioSource: string;
   duration: number;
   startMs: number;
   endMs: number;
-};
+}
 
 // Tahfeez Mode Controls Component
 export default function TahfeezModeControls({
@@ -69,8 +69,7 @@ export default function TahfeezModeControls({
     return () => {
       onCleanup?.();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch timestamps when reciter or chapter changes
   useEffect(() => {
@@ -91,9 +90,11 @@ export default function TahfeezModeControls({
       if (strategy === 'per_ayah') {
         const ranges: TimeRange[] = [];
         for (let index = fromAyah - 1; index < toAyah; index++) {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          const seg = segments[index]!;
           ranges.push({
-            startTime: segments[index].startMs / 1000,
-            endTime: segments[index].endMs / 1000,
+            startTime: seg.startMs / 1000,
+            endTime: seg.endMs / 1000,
           });
         }
         return ranges;
@@ -137,7 +138,7 @@ export default function TahfeezModeControls({
           </span>
           <input
             type="number"
-            value={tahfeezSettings.fromAyah ?? 1}
+            value={tahfeezSettings.fromAyah}
             onChange={(e) => {
               const max = segments.length > 0 ? segments.length - 1 : Infinity;
               const value = Math.min(
@@ -161,7 +162,7 @@ export default function TahfeezModeControls({
           </span>
           <input
             type="number"
-            value={tahfeezSettings.toAyah ?? 5}
+            value={tahfeezSettings.toAyah}
             onChange={(e) => {
               const max = segments.length > 0 ? segments.length : Infinity;
               const value = Math.min(
@@ -242,12 +243,12 @@ export default function TahfeezModeControls({
             {formatMessage({ id: 'tahfeez.perAyah' })}
           </button>
           <button
-            onClick={() =>
+            onClick={() => {
               setTahfeezSettings((previous) => ({
                 ...previous,
                 strategy: 'whole_range',
-              }))
-            }
+              }));
+            }}
             className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
               tahfeezSettings.strategy === 'whole_range'
                 ? 'bg-blue-600 text-white'

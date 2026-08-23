@@ -25,7 +25,7 @@ export const resolveChapterReciterId = (
           f.id === id &&
           (Array.isArray(f.moshaf)
             ? f.moshaf.some((m) => m.id === moshafId)
-            : (f.moshaf as unknown as { id: string })?.id === moshafId)
+            : (f.moshaf as unknown as { id: string }).id === moshafId)
       );
     }
 

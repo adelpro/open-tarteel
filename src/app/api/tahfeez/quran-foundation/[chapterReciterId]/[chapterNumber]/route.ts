@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import { getSurahTahfeezSegments } from '@/services/reciters/quran-foundation.provider';
 
 export async function GET(
-  _req: NextRequest,
+  _request: NextRequest,
   {
     params,
   }: { params: Promise<{ chapterReciterId: string; chapterNumber: string }> }

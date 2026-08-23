@@ -62,6 +62,8 @@ const rateLimitMs = (): number => {
     : DEFAULT_RATE_LIMIT_MS;
 };
 
+const noop = (): Promise<void> => Promise.resolve();
+
 /** Exchanges client credentials for a fresh access token (cached hourly). */
 const getAccessToken = async (): Promise<string> => {
   if (cachedToken && cachedToken.expiresAt > Date.now() + 60_000) {
@@ -70,25 +72,20 @@ const getAccessToken = async (): Promise<string> => {
 
   const clientId = readEnvironment(CLIENT_ID_ENV_VAR);
   const clientSecret = readEnvironment(CLIENT_SECRET_ENV_VAR);
-  const tokenUrl = process.env[TOKEN_URL_ENV_VAR] || DEFAULT_TOKEN_URL;
+  const tokenUrl = process.env[TOKEN_URL_ENV_VAR] ?? DEFAULT_TOKEN_URL;
 
   let response: Response;
   try {
-    response = await retryFetch(
-      tokenUrl,
-      3,
-      rateLimitMs() > 0 ? delay : async () => {},
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Basic ${Buffer.from(
-            `${clientId}:${clientSecret}`
-          ).toString('base64')}`,
-        },
-        body: 'grant_type=client_credentials&scope=content',
-      }
-    );
+    response = await retryFetch(tokenUrl, 3, rateLimitMs() > 0 ? delay : noop, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${Buffer.from(
+          `${clientId}:${clientSecret}`
+        ).toString('base64')}`,
+      },
+      body: 'grant_type=client_credentials&scope=content',
+    });
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     throw new Error(
@@ -113,7 +110,7 @@ const getAccessToken = async (): Promise<string> => {
 
 /** Maps the API's `qirat.name` (e.g. "Hafs") to a Riwaya key, default Hafs. */
 const riwayaKeyFromQirat = (qirat?: string | null): keyof typeof Riwaya =>
-  (Object.keys(Riwaya) as Array<keyof typeof Riwaya>).find(
+  (Object.keys(Riwaya) as (keyof typeof Riwaya)[]).find(
     (key) => key.toLowerCase() === (qirat ?? '').toLowerCase()
   ) ?? 'Hafs';
 
@@ -133,8 +130,8 @@ export const QuranFoundationAdapter: ReciterSource = {
       const token = await getAccessToken();
       const clientId = readEnvironment(CLIENT_ID_ENV_VAR);
       const intervalMs = rateLimitMs();
-      const backoff = intervalMs > 0 ? delay : async () => {};
-      const apiBase = process.env[API_BASE_ENV_VAR] || DEFAULT_API_BASE;
+      const backoff = intervalMs > 0 ? delay : noop;
+      const apiBase = process.env[API_BASE_ENV_VAR] ?? DEFAULT_API_BASE;
 
       const fetchWithThrottle = async (url: string): Promise<Response> => {
         const response = await retryFetch(url, 3, backoff, {
@@ -160,7 +157,7 @@ export const QuranFoundationAdapter: ReciterSource = {
         throw new Error('Unexpected quran.foundation reciters response');
       }
 
-      const results: Array<Reciter | null> = [];
+      const results: (Reciter | null)[] = [];
 
       for (const reciter of listData.reciters) {
         try {
@@ -176,7 +173,7 @@ export const QuranFoundationAdapter: ReciterSource = {
             );
           }
 
-          const name = reciter.translated_name?.name ?? reciter.name ?? '';
+          const name = reciter.translated_name?.name ?? reciter.name;
 
           if (!name) {
             console.warn(
@@ -226,7 +223,9 @@ export const QuranFoundationAdapter: ReciterSource = {
     };
 
     const result = queue.then(run, run);
-    queue = result.catch(() => {});
+    queue = result.catch((_err: unknown) => {
+      /* intentional: keep queue alive */
+    });
     return result;
   },
 };
