@@ -103,10 +103,10 @@ Write-Output "Value: $value"
 
 ### Correct Patterns
 
-| Operation     | Syntax            |
+| Operation | Syntax |
 | ------------- | ----------------- | --------- |
-| Empty array   | `$array = @()`    |
-| Add item      | `$array += $item` |
+| Empty array | `$array = @()` |
+| Add item | `$array += $item` |
 | ArrayList add | `$list.Add($item) | Out-Null` |
 
 ---
@@ -123,10 +123,10 @@ Write-Output "Value: $value"
 
 ### File Operations
 
-| Operation | Pattern                       |
+| Operation | Pattern |
 | --------- | ----------------------------- | ------------------------ | ------------------------------------ |
-| Read      | `Get-Content "file.json" -Raw | ConvertFrom-Json`        |
-| Write     | `$data                        | ConvertTo-Json -Depth 10 | Out-File "file.json" -Encoding UTF8` |
+| Read | `Get-Content "file.json" -Raw | ConvertFrom-Json` |
+| Write | `$data                        | ConvertTo-Json -Depth 10 | Out-File "file.json" -Encoding UTF8` |
 
 ---
 

@@ -33,8 +33,7 @@ export type PositiveNumber = Brand<number, 'PositiveNumber'>;
  * Type-safe error handling without exceptions.
  */
 export type Result<T, E = Error> =
-  | { success: true; data: T }
-  | { success: false; error: E };
+  { success: true; data: T } | { success: false; error: E };
 
 export const ok = <T>(data: T): Result<T, never> => ({
   success: true,
