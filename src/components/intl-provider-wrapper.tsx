@@ -1,7 +1,7 @@
 'use client';
 
 import { useAtomValue } from 'jotai';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { IntlProvider } from 'react-intl';
 
 import { localeAtom } from '@/jotai/atom';
@@ -16,7 +16,14 @@ interface Props {
 }
 
 export default function IntlProviderWrapper({ children }: Props) {
-  const locale = useAtomValue(localeAtom);
+  const storedLocale = useAtomValue(localeAtom);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const locale = mounted ? storedLocale : 'ar';
 
   return (
     <IntlProvider locale={locale} messages={messages[locale]}>

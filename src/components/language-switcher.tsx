@@ -1,13 +1,23 @@
 'use client';
 
 import { useAtom } from 'jotai';
+import { useEffect, useState } from 'react';
 
 import { localeAtom } from '@/jotai/atom';
 
 export default function LanguageSwitcher() {
   const [locale, setLocale] = useAtom(localeAtom);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const toggleLocale = () => setLocale(locale === 'ar' ? 'en' : 'ar');
+
+  if (!mounted) {
+    return <div className="h-8 w-10 flex-shrink-0 rounded-full" />;
+  }
 
   return (
     <button
