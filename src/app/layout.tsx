@@ -50,7 +50,7 @@ export default function RootLayout({
           <body
             className={`${tajawal.className} min-h-full bg-background antialiased`}
           >
-            <main className="duration-350 relative flex min-h-dvh w-full flex-col items-center justify-center bg-background text-foreground transition-colors">
+            <main className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background text-foreground">
               <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
                 <div className="absolute -left-[10%] -top-[15%] h-[520px] w-[520px] rounded-full bg-sky-500/[0.06] blur-[80px] dark:bg-sky-400/[0.07]" />
                 <div className="absolute -right-[8%] top-[25%] h-[420px] w-[420px] rounded-full bg-indigo-500/[0.05] blur-[80px] dark:bg-indigo-400/[0.07]" />

@@ -25,10 +25,13 @@ export default function ThemeSwitcher() {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
 
+    const cl = document.documentElement.classList;
     if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
+      cl.add('dark');
+      cl.remove('light');
     } else {
-      document.documentElement.classList.remove('dark');
+      cl.add('light');
+      cl.remove('dark');
     }
   };
 
