@@ -2,13 +2,14 @@ import './globals.css';
 
 import { Metadata } from 'next';
 import { Tajawal } from 'next/font/google';
+import { cookies, headers } from 'next/headers';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import { EnabledSourcesCookieSync } from '@/components/enabled-sources-cookie-sync';
 import FullscreenController from '@/components/fullscreen-controller';
 import HtmlWrapper from '@/components/html-wrapper';
 import IntlProviderWrapper from '@/components/intl-provider-wrapper';
-import { clientConfig } from '@/utils';
+import { clientConfig, getDefaultLocale } from '@/utils';
 
 export const metadata: Metadata = {
   metadataBase: new URL(clientConfig.APP_URL),
@@ -38,14 +39,25 @@ const tajawal = Tajawal({
   preload: true,
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const headerStore = await headers();
+
+  const cookieLocale = cookieStore.get('locale')?.value;
+  const acceptLanguage = headerStore.get('accept-language');
+
+  const resolvedLocale: 'ar' | 'en' =
+    cookieLocale === 'ar' || cookieLocale === 'en'
+      ? cookieLocale
+      : getDefaultLocale(acceptLanguage);
+
   return (
     <NuqsAdapter>
-      <IntlProviderWrapper>
+      <IntlProviderWrapper initialLocale={resolvedLocale}>
         <HtmlWrapper>
           <body
             className={`${tajawal.className} min-h-full bg-background antialiased`}

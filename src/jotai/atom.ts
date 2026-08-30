@@ -1,4 +1,5 @@
 import { LinkSource, Reciter, Riwaya } from '@/types';
+import { getDefaultLocale } from '@/utils/get-default-locale';
 
 import { createAtomWithStorage } from './create-atom-with-storage';
 
@@ -19,7 +20,17 @@ export const showVisualizerAtom = createAtomWithStorage<boolean>(
   true
 );
 
-export const localeAtom = createAtomWithStorage<'ar' | 'en'>('locale', 'ar');
+const getInitialLocale = (): 'ar' | 'en' => {
+  if (typeof window !== 'undefined') {
+    return getDefaultLocale(navigator.language);
+  }
+  return 'ar';
+};
+
+export const localeAtom = createAtomWithStorage<'ar' | 'en'>(
+  'locale',
+  getInitialLocale()
+);
 
 export const currentTimeAtom = createAtomWithStorage<number>('current-time', 0);
 

@@ -1,23 +1,22 @@
 'use client';
 
 import { useAtom } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 import { localeAtom } from '@/jotai/atom';
 
+const COOKIE_NAME = 'locale';
+const MAX_AGE = 60 * 60 * 24 * 365; // 1 year
+
 export default function LanguageSwitcher() {
-  const [locale, setLocale] = useAtom(localeAtom);
-  const [mounted, setMounted] = useState(false);
+  const { locale } = useIntl();
+  const [, setLocale] = useAtom(localeAtom);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const toggleLocale = () => setLocale(locale === 'ar' ? 'en' : 'ar');
-
-  if (!mounted) {
-    return <div className="h-8 w-10 flex-shrink-0 rounded-full" />;
-  }
+  const toggleLocale = () => {
+    const nextLocale = locale === 'ar' ? 'en' : 'ar';
+    setLocale(nextLocale);
+    document.cookie = `${COOKIE_NAME}=${nextLocale}; path=/; max-age=${MAX_AGE}; SameSite=Lax`;
+  };
 
   return (
     <button
