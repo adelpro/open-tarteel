@@ -98,7 +98,9 @@ export default function DownloadAllButton({
       if (!currentItem) return null;
       const surah = SURAHS.find((s) => s.id.toString() === currentItem.surahId);
       if (!surah) return null;
-      return locale !== 'ar' ? surah.englishName : removeTashkeel(surah.name);
+      if (locale === 'en') return surah.englishName;
+      if (locale === 'de') return surah.germanName;
+      return removeTashkeel(surah.name);
     })();
 
     return (

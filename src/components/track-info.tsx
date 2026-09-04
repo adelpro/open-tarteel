@@ -42,6 +42,11 @@ export default function TrackInfo({
         ?.englishName;
     }
 
+    if (language === 'de') {
+      return SURAHS.find((surah) => surah.id.toString() === surahId)
+        ?.germanName;
+    }
+
     return removeTashkeel(
       SURAHS.find((surah) => surah.id.toString() === surahId)?.name || ''
     );
