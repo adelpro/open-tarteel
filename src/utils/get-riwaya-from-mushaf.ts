@@ -1,10 +1,12 @@
+import { Language } from '@/constants/language';
 import { Riwaya } from '@/types';
 
-type Locale = 'ar' | 'en';
+type Locale = Language;
+type RiwayaLocale = 'ar' | 'latin';
 type RiwayaKey = keyof typeof Riwaya;
 type RiwayaMatchMap = Record<RiwayaKey, string[]>;
 
-const riwayaMatchPhrases: Record<Locale, RiwayaMatchMap> = {
+const riwayaMatchPhrases: Record<RiwayaLocale, RiwayaMatchMap> = {
   ar: {
     Hafs: ['حفص عن عاصم'],
     Warsh: ['ورش عن نافع'],
@@ -20,7 +22,7 @@ const riwayaMatchPhrases: Record<Locale, RiwayaMatchMap> = {
     IbnJammaz: ['ابن جماز عن أبي جعفر'],
     Yaqoub: ['يعقوب الحضرمي'],
   },
-  en: {
+  latin: {
     Hafs: ["Hafs A'n Assem"],
     Warsh: ["Warsh A'n Nafi'"],
     Khalaf: [],
@@ -38,7 +40,8 @@ const riwayaMatchPhrases: Record<Locale, RiwayaMatchMap> = {
 };
 
 const findRiwayaKey = (moshafName: string, locale: Locale): RiwayaKey => {
-  const map = riwayaMatchPhrases[locale];
+  const matchLocale: RiwayaLocale = locale === 'ar' ? 'ar' : 'latin';
+  const map = riwayaMatchPhrases[matchLocale];
   for (const [key, phrases] of Object.entries(map)) {
     if (phrases.some((phrase) => moshafName.includes(phrase))) {
       return key as RiwayaKey;

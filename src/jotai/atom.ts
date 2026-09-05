@@ -1,3 +1,4 @@
+import { Language } from '@/constants/language';
 import { LinkSource, Reciter, Riwaya } from '@/types';
 
 import { createAtomWithStorage } from './create-atom-with-storage';
@@ -19,7 +20,9 @@ export const showVisualizerAtom = createAtomWithStorage<boolean>(
   true
 );
 
-export const localeAtom = createAtomWithStorage<'ar' | 'en'>('locale', 'ar');
+//add de as a locale option
+
+export const localeAtom = createAtomWithStorage<Language>('locale', 'ar');
 
 export const currentTimeAtom = createAtomWithStorage<number>('current-time', 0);
 
