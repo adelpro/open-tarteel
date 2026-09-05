@@ -1,3 +1,4 @@
+import type { Language } from '@/constants/language';
 import { LinkSource, Reciter, Riwaya } from '@/types';
 import { getDefaultLocale } from '@/utils/get-default-locale';
 
@@ -20,14 +21,14 @@ export const showVisualizerAtom = createAtomWithStorage<boolean>(
   true
 );
 
-const getInitialLocale = (): 'ar' | 'en' => {
+const getInitialLocale = (): Language => {
   if (typeof window !== 'undefined') {
     return getDefaultLocale(navigator.language);
   }
   return 'ar';
 };
 
-export const localeAtom = createAtomWithStorage<'ar' | 'en'>(
+export const localeAtom = createAtomWithStorage<Language>(
   'locale',
   getInitialLocale()
 );

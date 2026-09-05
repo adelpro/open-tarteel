@@ -9,6 +9,7 @@ import { EnabledSourcesCookieSync } from '@/components/enabled-sources-cookie-sy
 import FullscreenController from '@/components/fullscreen-controller';
 import HtmlWrapper from '@/components/html-wrapper';
 import IntlProviderWrapper from '@/components/intl-provider-wrapper';
+import type { Language } from '@/constants/language';
 import { clientConfig, getDefaultLocale } from '@/utils';
 
 export const metadata: Metadata = {
@@ -50,8 +51,8 @@ export default async function RootLayout({
   const cookieLocale = cookieStore.get('locale')?.value;
   const acceptLanguage = headerStore.get('accept-language');
 
-  const resolvedLocale: 'ar' | 'en' =
-    cookieLocale === 'ar' || cookieLocale === 'en'
+  const resolvedLocale: Language =
+    cookieLocale === 'ar' || cookieLocale === 'en' || cookieLocale === 'de'
       ? cookieLocale
       : getDefaultLocale(acceptLanguage);
 
