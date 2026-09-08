@@ -1,6 +1,7 @@
-import { Language } from '../../constants/language';
-import type { Playlist, Reciter } from '../../types';
-import { LinkSource, Riwaya } from '../../types';
+import { Language } from '@/constants/language';
+import type { Playlist, Reciter } from '@/types';
+import { LinkSource, Riwaya } from '@/types';
+
 import type {
   QuranFoundationChapterAudioResponse,
   QuranFoundationChapterRecitersResponse,
