@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import type { Language } from '@/constants/language';
+import { LANGUAGES } from '@/constants/language';
 import {
   getAllRecitersFromAdapters,
   parseEnabledSources,
@@ -11,8 +13,13 @@ export async function GET(
 ) {
   const { id, moshafId } = await params;
   const searchParams = request.nextUrl.searchParams;
-  const language =
-    (searchParams.get('language') || 'ar') === 'eng' ? 'en' : 'ar';
+
+  const requestedLanguage = searchParams.get('language');
+
+  const language: Language =
+    requestedLanguage && requestedLanguage in LANGUAGES
+      ? (requestedLanguage as Language)
+      : 'ar';
 
   const sourcesParameter = searchParams.get('sources');
   const cookie = request.cookies.get('enabled-sources')?.value;

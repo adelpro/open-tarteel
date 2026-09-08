@@ -1,3 +1,4 @@
+import { Language } from '@/constants/language';
 import type { Playlist, Reciter } from '@/types';
 import { LinkSource, Riwaya } from '@/types';
 
@@ -35,7 +36,7 @@ let cachedToken: { value: string; expiresAt: number } | null = null;
 // Cache results in-process so SSG/build and concurrent calls don't hammer the provider.
 const RESULTS_CACHE_TTL_MS = 55 * 60_000;
 const resultsCache = new Map<
-  'ar' | 'en',
+  Language,
   { reciters: Reciter[]; expiresAt: number }
 >();
 
@@ -120,7 +121,7 @@ let queue: Promise<unknown> = Promise.resolve();
 export const QuranFoundationAdapter: ReciterSource = {
   source: LinkSource.QURAN_FOUNDATION,
 
-  getReciters(lang: 'ar' | 'en'): Promise<Reciter[]> {
+  getReciters(lang: Language): Promise<Reciter[]> {
     const run = async (): Promise<Reciter[]> => {
       const cached = resultsCache.get(lang);
       if (cached && cached.expiresAt > Date.now()) {

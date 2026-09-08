@@ -1,3 +1,4 @@
+import { Language } from '@/constants/language';
 import type { Reciter } from '@/types';
 import { LinkSource } from '@/types';
 
@@ -36,7 +37,7 @@ export function parseEnabledSources(
  * @param enabledSources - If provided, only fetch from these sources. Otherwise fetch from all.
  */
 export async function getAllRecitersFromAdapters(
-  lang: 'ar' | 'en' = 'ar',
+  lang: Language = 'ar',
   enabledSources?: LinkSource[] | null
 ): Promise<Reciter[]> {
   const toFetch =

@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { MdCloudDone, MdDeleteOutline } from 'react-icons/md';
 import { FormattedMessage, useIntl } from 'react-intl';
 
+import { Language } from '@/constants/language';
 import {
   type CachedMoshaf,
   type StorageEstimate,
@@ -31,10 +32,7 @@ export default function CacheManagement() {
     setLoading(true);
     try {
       // Fetch all reciters from all sources to match cached URLs
-      const reciters: Reciter[] = await getAllReciters(
-        locale as 'ar' | 'en',
-        []
-      );
+      const reciters: Reciter[] = await getAllReciters(locale as Language, []);
       const result = await getCachedMoshafs(
         reciters.map((r) => ({
           name: r.name,

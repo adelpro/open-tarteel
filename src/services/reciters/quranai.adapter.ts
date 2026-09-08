@@ -1,3 +1,4 @@
+import { Language } from '@/constants/language';
 import type { AyahAudioItem, PlaylistItem, Reciter } from '@/types';
 import { LinkSource } from '@/types';
 import { getRiwayaKeyFromValue } from '@/utils/get-riwaya-from-mushaf';
@@ -117,7 +118,7 @@ const fetchEditionPlaylist = async (
 export const QuranAiAdapter: ReciterSource = {
   source: LinkSource.QURANAI,
 
-  async getReciters(lang: 'ar' | 'en'): Promise<Reciter[]> {
+  async getReciters(lang: Language): Promise<Reciter[]> {
     const response = await retryFetch(EDITIONS_ENDPOINT);
     const body: QuranAiEditionListResponse = await response.json();
     const editions = Array.isArray(body.data)

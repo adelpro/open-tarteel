@@ -1,3 +1,4 @@
+import { Language } from '@/constants/language';
 import { Riwaya } from '@/types';
 
 import type { QuranAiEdition, QuranAiSurahResponse } from './quranai.types';
@@ -57,9 +58,9 @@ export const resolveRiwayaFromNarrator = (
 
 export const resolveReciterName = (
   edition: QuranAiEdition,
-  lang: 'ar' | 'en'
+  lang: Language
 ): string => {
-  if (lang === 'en') {
+  if (lang !== 'ar') {
     return edition.englishName || edition.name;
   }
   return edition.name || edition.englishName;
