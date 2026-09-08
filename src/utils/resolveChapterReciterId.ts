@@ -2,6 +2,27 @@ import { mergedReciters } from '@/data/merged-reciters';
 
 export type TargetProvider = 'quranFoundation' | 'mp3quran';
 
+interface ProviderEntry {
+  id?: string;
+  moshaf?: { id?: string }[] | { id?: string };
+}
+
+const matchesMoshaf = (
+  moshaf: { id?: string }[] | { id?: string } | undefined,
+  targetMoshafId: string
+): boolean => {
+  if (Array.isArray(moshaf)) {
+    return moshaf.some((m) => m.id === targetMoshafId);
+  }
+  return moshaf?.id === targetMoshafId;
+};
+
+const matchesProviderEntry = (
+  entry: ProviderEntry,
+  id: string,
+  moshafId: string
+): boolean => entry.id === id && matchesMoshaf(entry.moshaf, moshafId);
+
 export const resolveChapterReciterId = (
   id?: string | null,
   moshafId?: string | null,
@@ -20,30 +41,16 @@ export const resolveChapterReciterId = (
 
   const reciter = mergedReciters.find((r) => {
     if (isMp3Quran) {
-      return r.providers.mp3quran?.some(
-        (f) =>
-          f.id === id &&
-          (Array.isArray(f.moshaf)
-            ? f.moshaf.some((m) => m.id === moshafId)
-            : (f.moshaf as unknown as { id: string }).id === moshafId)
+      return r.providers.mp3quran?.some((f) =>
+        matchesProviderEntry(f as unknown as ProviderEntry, id, moshafId)
       );
     }
 
-    if (isQuranAi) {
-      const quranAiProviders = (r.providers as Record<string, unknown>)
-        .qurani_ai;
-      if (Array.isArray(quranAiProviders)) {
-        return quranAiProviders.some(
-          (f: { id?: string; moshaf?: { id?: string }[] | { id?: string } }) =>
-            f.id === id &&
-            (Array.isArray(f.moshaf)
-              ? f.moshaf.some((m) => m.id === moshafId)
-              : f.moshaf?.id === moshafId)
-        );
-      }
-    }
-
-    return false;
+    const quranAi = (r.providers as Record<string, unknown>).qurani_ai;
+    return (
+      Array.isArray(quranAi) &&
+      quranAi.some((f: ProviderEntry) => matchesProviderEntry(f, id, moshafId))
+    );
   });
 
   if (

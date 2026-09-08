@@ -1,4 +1,6 @@
-import { LinkSource, Playlist, Riwaya } from '@/types';
+import type { LinkSource } from './link-source';
+import type { Playlist } from './playlist';
+import type { Riwaya } from './riwaya';
 
 export type Moshaf = {
   id: string;
