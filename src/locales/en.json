@@ -145,7 +145,6 @@
   "pwa.update_description": "A new version of the app is available. Would you like to update now?",
   "pwa.update_later": "Later",
   "pwa.update_now": "Update",
-  "language.select": "Select language",
   "offline.status": "Offline Mode — Showing downloaded content",
   "offline.noDownloadedReciters": "No downloaded reciters found. Connect to the internet to browse and download reciters.",
   "offline.noDownloadedSurahs": "No downloaded surahs for this reciter. Connect to the internet to stream or download.",
@@ -163,5 +162,6 @@
   "tahfeez.readyToStart": "Ready to start tahfeez mode",
   "tahfeez.statusSummary": "Ayah {from} to {to} • Repeat: {repeat}x • Delay: {delay}s",
   "tahfeez.errorTimestamps": "Failed to load timestamps. Check reciter ID and chapter number.",
-  "tahfeez.errorAyahs": "Could not find specified ayahs in timestamps"
+  "tahfeez.errorAyahs": "Could not find specified ayahs in timestamps",
+  "language.select": "Select language"
 }

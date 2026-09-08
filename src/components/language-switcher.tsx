@@ -29,7 +29,9 @@ export default function LanguageSwitcher() {
     <div className="relative">
       <button
         type="button"
-        onClick={() => setIsOpen((current) => !current)}
+        onClick={() => {
+          setIsOpen((current) => !current);
+        }}
         aria-label={formatMessage({
           id: 'language.select',
           defaultMessage: 'Select language',
@@ -46,7 +48,9 @@ export default function LanguageSwitcher() {
             <button
               key={code}
               type="button"
-              onClick={() => handleLanguageChange(code as Language)}
+              onClick={() => {
+                handleLanguageChange(code as Language);
+              }}
               className={[
                 'flex w-full items-center px-3 py-2 text-left text-sm',
                 'hover:bg-gray-100 dark:hover:bg-gray-700',

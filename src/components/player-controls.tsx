@@ -397,7 +397,9 @@ export default function PlayerControls({
       {/* Mode Switcher */}
       <div className="mb-4 flex w-full items-center justify-center gap-3">
         <button
-          onClick={() => setActiveMode('listening')}
+          onClick={() => {
+            setActiveMode('listening');
+          }}
           className={`max-w-xs flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
             activeMode === 'listening'
               ? 'bg-blue-600 text-white hover:bg-blue-700'
@@ -407,7 +409,9 @@ export default function PlayerControls({
           {messages.listeningMode}
         </button>
         <button
-          onClick={() => setActiveMode('tahfeez')}
+          onClick={() => {
+            setActiveMode('tahfeez');
+          }}
           className={`max-w-xs flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
             activeMode === 'tahfeez'
               ? 'bg-blue-600 text-white hover:bg-blue-700'
