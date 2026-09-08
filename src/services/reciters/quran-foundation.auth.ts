@@ -10,6 +10,18 @@ export const API_BASE_BY_ENV = {
 
 type QfEnvironment = keyof typeof AUTH_BASE_BY_ENV;
 
+function getAuthBase(environment: QfEnvironment): string {
+  return environment === 'production'
+    ? AUTH_BASE_BY_ENV.production
+    : AUTH_BASE_BY_ENV.prelive;
+}
+
+function getApiBase(environment: QfEnvironment): string {
+  return environment === 'production'
+    ? API_BASE_BY_ENV.production
+    : API_BASE_BY_ENV.prelive;
+}
+
 function getEnvironment(): QfEnvironment {
   const environment = process.env.QF_ENV ?? 'prelive';
   if (environment !== 'prelive' && environment !== 'production') {
@@ -32,21 +44,18 @@ export async function getQuranFoundationToken(): Promise<string> {
     'base64'
   );
 
-  const response = await fetch(
-    `${AUTH_BASE_BY_ENV[environment]}/oauth2/token`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Basic ${basicAuth}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        grant_type: 'client_credentials',
-        scope: 'content',
-      }),
-      cache: 'no-store',
-    }
-  );
+  const response = await fetch(`${getAuthBase(environment)}/oauth2/token`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Basic ${basicAuth}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      grant_type: 'client_credentials',
+      scope: 'content',
+    }),
+    cache: 'no-store',
+  });
 
   if (!response.ok) {
     throw new Error(`QF token request failed: ${response.status}`);
@@ -69,7 +78,7 @@ export async function qfFetch(path: string): Promise<Response> {
     headers['x-client-id'] = clientId;
   }
 
-  let response = await fetch(`${API_BASE_BY_ENV[environment]}${path}`, {
+  let response = await fetch(`${getApiBase(environment)}${path}`, {
     headers,
     next: { revalidate: 3600 },
   });
@@ -83,7 +92,7 @@ export async function qfFetch(path: string): Promise<Response> {
       retryHeaders['x-client-id'] = clientId;
     }
 
-    response = await fetch(`${API_BASE_BY_ENV[environment]}${path}`, {
+    response = await fetch(`${getApiBase(environment)}${path}`, {
       headers: retryHeaders,
       cache: 'no-store',
     });
