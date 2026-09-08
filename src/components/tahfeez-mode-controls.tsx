@@ -90,8 +90,7 @@ export default function TahfeezModeControls({
       if (strategy === 'per_ayah') {
         const ranges: TimeRange[] = [];
         for (let index = fromAyah - 1; index < toAyah; index++) {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          const seg = segments[index]!;
+          const seg = segments[index];
           ranges.push({
             startTime: seg.startMs / 1000,
             endTime: seg.endMs / 1000,

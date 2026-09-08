@@ -154,7 +154,6 @@
   "tahfeez.readyToStart": "جاهز لبدء وضع التحفيظ",
   "tahfeez.statusSummary": "من الآية {from} إلى {to} • التكرار: {repeat}x • التأخير: {delay}ث",
   "tahfeez.errorTimestamps": "فشل تحميل الطوابع الزمنية. تحقق من معرف القارئ ورقم السورة.",
-  "tahfeez.errorAyahs": "تعذر العثور على الآيات المحددة في الطوابع الزمنية"
-}
+  "tahfeez.errorAyahs": "تعذر العثور على الآيات المحددة في الطوابع الزمنية",
   "language.select": "اختر اللغة"
 }
