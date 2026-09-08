@@ -36,7 +36,7 @@ const fetchAyahRange = (url: string): Promise<Response> =>
 const mapWithConcurrency = async <T, R>(
   items: T[],
   concurrency: number,
-  mapper: (item: T, index: number) => Promise<R>
+  mapper: (_item: T, _index: number) => Promise<R>
 ): Promise<R[]> => {
   const indexedItems = items.map((item, index) => ({ item, index }));
   const results = new Map<number, R>();

@@ -178,7 +178,7 @@ const riwayaKeyFromQirat = (qirat?: string | null): keyof typeof Riwaya =>
 
 const fetchSingleReciter = async (
   reciter: QuranFoundationChapterRecitersResponse['reciters'][number],
-  fetchWithThrottle: (url: string) => Promise<Response>,
+  fetchWithThrottle: (_url: string) => Promise<Response>,
   apiBase: string
 ): Promise<Reciter | null> => {
   try {

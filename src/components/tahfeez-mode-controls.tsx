@@ -17,7 +17,7 @@ interface TahfeezModeControlsProps {
   reciterId?: number;
   chapterNumber?: number;
   /** Called whenever the computed ranges change (segments loaded, settings changed). */
-  onRangesReady?: (ranges: TimeRange[]) => void;
+  onRangesReady?: (_ranges: TimeRange[]) => void;
   /** Called on unmount so the parent can stop audio and tear down the session. */
   onCleanup?: () => void;
 }

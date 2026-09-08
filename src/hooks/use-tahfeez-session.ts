@@ -7,11 +7,15 @@ export interface TimeRange {
 
 export interface TahfeezSessionControls {
   /** Start a new session. Tears down any existing session first. */
-  start: (ranges: TimeRange[], repeat: number, delay: number) => void;
+  start: (_ranges: TimeRange[], _repeat: number, _delay: number) => void;
   /** Stop the session and pause audio. */
   stop: () => void;
   /** Smart play/pause: start if idle, resume if paused, pause if playing. */
-  handlePlayPause: (ranges: TimeRange[], repeat: number, delay: number) => void;
+  handlePlayPause: (
+    _ranges: TimeRange[],
+    _repeat: number,
+    _delay: number
+  ) => void;
   /** Whether the audio element is currently playing (DOM-truth, not React state). */
   audioPlaying: boolean;
   /** Whether a session is currently wired up (even if paused mid-delay). */
