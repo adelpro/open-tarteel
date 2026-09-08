@@ -79,6 +79,8 @@ const config = [
         },
       ],
       '@typescript-eslint/no-non-null-assertion': 'warn',
+      'no-redeclare': 'off',
+      '@typescript-eslint/no-redeclare': 'off',
       'no-unused-vars': 'off',
       'no-empty': 'warn',
     },

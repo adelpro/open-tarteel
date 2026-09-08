@@ -22,7 +22,7 @@ export const fetchWithTimeout = (
 const defaultDelay = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-export type DelayFunction = (ms: number) => Promise<void>;
+export type DelayFunction = (_ms: number) => Promise<void>;
 
 export const retryFetch = async (
   url: string,
