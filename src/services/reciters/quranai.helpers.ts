@@ -30,30 +30,27 @@ export const buildSurahEndpoint = (
 // APPROXIMATION: Quran.ai exposes 'quran-qunbul' as its own narrator identifier,
 // but the repository's Riwaya enum has no Qunbul member. Qunbul is collapsed onto
 // AlBazzi (the two rāwīs of the Ibn Kathir reading). This is not an exact mapping.
-const NARRATOR_RIWAYA_MAP: Record<string, Riwaya> = {
-  'quran-hafs': Riwaya.Hafs,
-  'quran-warsh': Riwaya.Warsh,
-  'quran-qaloon': Riwaya.Qaloon,
-  'quran-albazzi': Riwaya.AlBazzi,
-  'quran-qunbul': Riwaya.AlBazzi,
+const NARRATOR_RIWAYA_MAP = new Map<string, Riwaya>([
+  ['quran-hafs', Riwaya.Hafs],
+  ['quran-warsh', Riwaya.Warsh],
+  ['quran-qaloon', Riwaya.Qaloon],
+  ['quran-albazzi', Riwaya.AlBazzi],
+  ['quran-qunbul', Riwaya.AlBazzi],
   // APPROXIMATION: Quran.ai only reports 'quran-aldouri', which does not disambiguate
   // between Al-Doori 'an Abi 'Amr and Al-Doori 'an Al-Kisai. It is mapped to
   // AlDooriAbuAmr based on the known recordings of the reciter, not on provider data.
-  'quran-aldouri': Riwaya.AlDooriAbuAmr,
-  'quran-alsoosi': Riwaya.AlSoosi,
-  'quran-shoba': Riwaya.Shuaba,
-};
+  ['quran-aldouri', Riwaya.AlDooriAbuAmr],
+  ['quran-alsoosi', Riwaya.AlSoosi],
+  ['quran-shoba', Riwaya.Shuaba],
+]);
 
 export const resolveRiwayaFromNarrator = (
   narratorIdentifier: string | null
 ): Riwaya => {
-  if (
-    narratorIdentifier !== null &&
-    Object.hasOwn(NARRATOR_RIWAYA_MAP, narratorIdentifier)
-  ) {
-    return NARRATOR_RIWAYA_MAP[narratorIdentifier];
+  if (!narratorIdentifier) {
+    return Riwaya.Hafs;
   }
-  return Riwaya.Hafs;
+  return NARRATOR_RIWAYA_MAP.get(narratorIdentifier) ?? Riwaya.Hafs;
 };
 
 export const resolveReciterName = (
