@@ -47,7 +47,7 @@ const NARRATOR_RIWAYA_MAP = new Map<string, Riwaya>([
 export const resolveRiwayaFromNarrator = (
   narratorIdentifier: string | null
 ): Riwaya => {
-  if (!narratorIdentifier) {
+  if (narratorIdentifier === null) {
     return Riwaya.Hafs;
   }
   return NARRATOR_RIWAYA_MAP.get(narratorIdentifier) ?? Riwaya.Hafs;

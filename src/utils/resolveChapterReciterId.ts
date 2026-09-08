@@ -46,11 +46,17 @@ export const resolveChapterReciterId = (
       );
     }
 
-    const quranAi = (r.providers as Record<string, unknown>).qurani_ai;
-    return (
-      Array.isArray(quranAi) &&
-      quranAi.some((f: ProviderEntry) => matchesProviderEntry(f, id, moshafId))
-    );
+    if (isQuranAi) {
+      const quranAi = (r.providers as Record<string, unknown>).qurani_ai;
+      return (
+        Array.isArray(quranAi) &&
+        quranAi.some((f: ProviderEntry) =>
+          matchesProviderEntry(f, id, moshafId)
+        )
+      );
+    }
+
+    return false;
   });
 
   if (
