@@ -7,6 +7,14 @@ interface ProviderEntry {
   moshaf?: { id?: string }[] | { id?: string };
 }
 
+interface MergedReciterEntry {
+  providers: {
+    quran_foundation?: { id?: number }[];
+    mp3quran?: ProviderEntry[];
+    qurani_ai?: ProviderEntry[];
+  };
+}
+
 const matchesMoshaf = (
   moshaf: { id?: string }[] | { id?: string } | undefined,
   targetMoshafId: string
@@ -24,7 +32,7 @@ const matchesProviderEntry = (
 ): boolean => entry.id === id && matchesMoshaf(entry.moshaf, moshafId);
 
 const matchesReciter = (
-  r: (typeof mergedReciters)[number],
+  r: MergedReciterEntry,
   id: string,
   moshafId: string,
   isMp3Quran: boolean,
@@ -50,12 +58,12 @@ const matchesReciter = (
 };
 
 const resolveTargetReciterId = (
-  reciter: (typeof mergedReciters)[number] | undefined,
+  reciter: MergedReciterEntry,
   targetProvider: TargetProvider
 ): number | null => {
   if (
     targetProvider === 'quranFoundation' &&
-    reciter?.providers.quran_foundation
+    reciter.providers.quran_foundation
   ) {
     return reciter.providers.quran_foundation[0]?.id ?? null;
   }
@@ -79,9 +87,13 @@ export const resolveChapterReciterId = (
     return null;
   }
 
-  const reciter = mergedReciters.find((r) =>
-    matchesReciter(r, id, moshafId, isMp3Quran, isQuranAi)
+  const reciter = (mergedReciters as unknown as MergedReciterEntry[]).find(
+    (r) => matchesReciter(r, id, moshafId, isMp3Quran, isQuranAi)
   );
+
+  if (!reciter) {
+    return null;
+  }
 
   return resolveTargetReciterId(reciter, targetProvider);
 };
