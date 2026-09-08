@@ -1,27 +1,24 @@
 import {
   MergedReciter,
-  MergedReciterMoshaf,
   MergedReciterProviderEntry,
   mergedReciters,
 } from '@/data/merged-reciters';
 
 export type TargetProvider = 'quranFoundation' | 'mp3quran';
 
-const matchesMoshaf = (
-  moshaf: MergedReciterMoshaf[] | MergedReciterMoshaf | undefined,
-  targetMoshafId: string
-): boolean => {
-  if (Array.isArray(moshaf)) {
-    return moshaf.some((m) => m.id === targetMoshafId);
-  }
-  return moshaf?.id === targetMoshafId;
-};
-
 const matchesProviderEntry = (
   entry: MergedReciterProviderEntry,
   id: string,
   moshafId: string
-): boolean => entry.id === id && matchesMoshaf(entry.moshaf, moshafId);
+): boolean => {
+  if (entry.id !== id || !entry.moshaf) {
+    return false;
+  }
+  const moshafList = Array.isArray(entry.moshaf)
+    ? entry.moshaf
+    : [entry.moshaf];
+  return moshafList.some((m) => m.id === moshafId);
+};
 
 const matchesReciter = (
   r: MergedReciter,
