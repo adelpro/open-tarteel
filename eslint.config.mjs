@@ -79,8 +79,6 @@ const config = [
         },
       ],
       '@typescript-eslint/no-non-null-assertion': 'warn',
-      'no-redeclare': 'off',
-      '@typescript-eslint/no-redeclare': 'off',
       'no-unused-vars': 'off',
       'no-empty': 'warn',
     },
@@ -103,6 +101,12 @@ const config = [
     files: ['src/utils/is-valid-email.ts', 'src/utils/is-valid-magnet-uri.ts'],
     rules: {
       'no-useless-escape': 'off',
+    },
+  },
+  {
+    files: ['src/types/link-source.ts'],
+    rules: {
+      'no-redeclare': 'off',
     },
   },
   {
