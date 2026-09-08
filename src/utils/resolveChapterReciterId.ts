@@ -1,22 +1,14 @@
-import { mergedReciters } from '@/data/merged-reciters';
+import {
+  MergedReciter,
+  MergedReciterMoshaf,
+  MergedReciterProviderEntry,
+  mergedReciters,
+} from '@/data/merged-reciters';
 
 export type TargetProvider = 'quranFoundation' | 'mp3quran';
 
-interface ProviderEntry {
-  id?: string;
-  moshaf?: { id?: string }[] | { id?: string };
-}
-
-interface MergedReciterEntry {
-  providers: {
-    quran_foundation?: { id?: number }[];
-    mp3quran?: ProviderEntry[];
-    qurani_ai?: ProviderEntry[];
-  };
-}
-
 const matchesMoshaf = (
-  moshaf: { id?: string }[] | { id?: string } | undefined,
+  moshaf: MergedReciterMoshaf[] | MergedReciterMoshaf | undefined,
   targetMoshafId: string
 ): boolean => {
   if (Array.isArray(moshaf)) {
@@ -26,13 +18,13 @@ const matchesMoshaf = (
 };
 
 const matchesProviderEntry = (
-  entry: ProviderEntry,
+  entry: MergedReciterProviderEntry,
   id: string,
   moshafId: string
 ): boolean => entry.id === id && matchesMoshaf(entry.moshaf, moshafId);
 
 const matchesReciter = (
-  r: MergedReciterEntry,
+  r: MergedReciter,
   id: string,
   moshafId: string,
   isMp3Quran: boolean,
@@ -41,16 +33,16 @@ const matchesReciter = (
   if (isMp3Quran) {
     return (
       r.providers.mp3quran?.some((f) =>
-        matchesProviderEntry(f as unknown as ProviderEntry, id, moshafId)
+        matchesProviderEntry(f, id, moshafId)
       ) ?? false
     );
   }
 
   if (isQuranAi) {
-    const quranAi = (r.providers as Record<string, unknown>).qurani_ai;
     return (
-      Array.isArray(quranAi) &&
-      quranAi.some((f: ProviderEntry) => matchesProviderEntry(f, id, moshafId))
+      r.providers.qurani_ai?.some((f) =>
+        matchesProviderEntry(f, id, moshafId)
+      ) ?? false
     );
   }
 
@@ -58,7 +50,7 @@ const matchesReciter = (
 };
 
 const resolveTargetReciterId = (
-  reciter: MergedReciterEntry,
+  reciter: MergedReciter,
   targetProvider: TargetProvider
 ): number | null => {
   if (
@@ -87,8 +79,8 @@ export const resolveChapterReciterId = (
     return null;
   }
 
-  const reciter = (mergedReciters as unknown as MergedReciterEntry[]).find(
-    (r) => matchesReciter(r, id, moshafId, isMp3Quran, isQuranAi)
+  const reciter = mergedReciters.find((r) =>
+    matchesReciter(r, id, moshafId, isMp3Quran, isQuranAi)
   );
 
   if (!reciter) {

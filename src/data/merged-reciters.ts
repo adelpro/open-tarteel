@@ -1,4 +1,37 @@
-export const mergedReciters = [
+export interface MergedReciterMoshaf {
+  id?: string;
+  name?: string;
+  riwaya?: string;
+  server?: string;
+  surah_total?: string;
+}
+
+export interface MergedReciterProviderEntry {
+  id?: string;
+  name?: string;
+  moshaf?: MergedReciterMoshaf[] | MergedReciterMoshaf;
+}
+
+export interface MergedReciter {
+  canonical_name?: {
+    en?: string | null;
+    ar?: string | null;
+  };
+  providers: {
+    quran_foundation?: {
+      id?: number;
+      name?: string;
+      translated_name?: string;
+      style?: string;
+      qirat?: string;
+    }[];
+    mp3quran?: MergedReciterProviderEntry[];
+    qurani_ai?: MergedReciterProviderEntry[];
+    [key: string]: unknown;
+  };
+}
+
+export const mergedReciters: MergedReciter[] = [
   {
     canonical_name: {
       en: 'Ahmed ibn Ali al-Ajmy',
