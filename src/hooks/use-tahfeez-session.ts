@@ -110,28 +110,29 @@ export function useTahfeezSession(
     onActiveChange(true);
 
     const seekToCurrentRange = () => {
-      const range: TimeRange | undefined = rangesRef.current[indexRef.current];
-      if (!range) return;
-      audio.currentTime = range.startTime;
-      void audio.play();
+      const currentRange = rangesRef.current.at(indexRef.current);
+      if (currentRange) {
+        audio.currentTime = currentRange.startTime;
+        void audio.play();
+      }
     };
 
     const scheduleNext = () => {
       audio.pause();
       delayTimerRef.current = setTimeout(() => {
-        const range: TimeRange | undefined =
-          rangesRef.current[indexRef.current];
-        if (!range) return;
-        audio.currentTime = range.startTime;
-        void audio.play();
+        const nextRange = rangesRef.current.at(indexRef.current);
+        if (nextRange) {
+          audio.currentTime = nextRange.startTime;
+          void audio.play();
+        }
       }, delay * 1000);
     };
 
     const handleTimeUpdate = () => {
-      const range: TimeRange | undefined = rangesRef.current[indexRef.current];
-      if (!range) return;
+      const currentRange = rangesRef.current.at(indexRef.current);
+      if (!currentRange) return;
 
-      if (audio.currentTime >= range.endTime) {
+      if (audio.currentTime >= currentRange.endTime) {
         repeatCountRef.current += 1;
 
         if (repeatCountRef.current < repeat) {

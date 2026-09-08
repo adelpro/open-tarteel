@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import { TimeRange } from '@/hooks/use-tahfeez-session';
@@ -44,6 +44,11 @@ export default function TahfeezModeControls({
   const [isLoadingTimestamps, setIsLoadingTimestamps] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { formatMessage } = useIntl();
+  const onCleanupRef = useRef(onCleanup);
+
+  useEffect(() => {
+    onCleanupRef.current = onCleanup;
+  }, [onCleanup]);
 
   const fetchTimestamps = useCallback(async () => {
     if (!reciterId || !chapterNumber) return;
@@ -67,9 +72,9 @@ export default function TahfeezModeControls({
   // Stop player and cancel tahfeez seek on unmount (e.g mode switched to listening)
   useEffect(() => {
     return () => {
-      onCleanup?.();
+      onCleanupRef.current?.();
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // Fetch timestamps when reciter or chapter changes
   useEffect(() => {
@@ -87,22 +92,24 @@ export default function TahfeezModeControls({
     ): TimeRange[] | null => {
       if (!fromAyah || !toAyah || segments.length === 0) return null;
 
+      const selectedSegments = segments.slice(fromAyah - 1, toAyah);
+      if (selectedSegments.length === 0) return null;
+
       if (strategy === 'per_ayah') {
-        const ranges: TimeRange[] = [];
-        for (let index = fromAyah - 1; index < toAyah; index++) {
-          const seg = segments[index];
-          ranges.push({
-            startTime: seg.startMs / 1000,
-            endTime: seg.endMs / 1000,
-          });
-        }
-        return ranges;
+        return selectedSegments.map((seg) => ({
+          startTime: seg.startMs / 1000,
+          endTime: seg.endMs / 1000,
+        }));
       }
+
+      const firstSeg = selectedSegments.at(0);
+      const lastSeg = selectedSegments.at(-1);
+      if (!firstSeg || !lastSeg) return null;
 
       return [
         {
-          startTime: segments[fromAyah - 1].startMs / 1000,
-          endTime: segments[toAyah - 1].endMs / 1000,
+          startTime: firstSeg.startMs / 1000,
+          endTime: lastSeg.endMs / 1000,
         },
       ];
     },
