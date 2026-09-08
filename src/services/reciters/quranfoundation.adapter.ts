@@ -137,37 +137,24 @@ const getAccessToken = async (): Promise<string> => {
   return data.access_token;
 };
 
-const resolveRiwayaEnum = (key: keyof typeof Riwaya): Riwaya => {
-  switch (key) {
-    case 'Warsh':
-      return Riwaya.Warsh;
-    case 'Khalaf':
-      return Riwaya.Khalaf;
-    case 'AlBazzi':
-      return Riwaya.AlBazzi;
-    case 'Qaloon':
-      return Riwaya.Qaloon;
-    case 'AlSoosi':
-      return Riwaya.AlSoosi;
-    case 'AlDooriKisai':
-      return Riwaya.AlDooriKisai;
-    case 'AlDooriAbuAmr':
-      return Riwaya.AlDooriAbuAmr;
-    case 'Shuaba':
-      return Riwaya.Shuaba;
-    case 'IbnZakwan':
-      return Riwaya.IbnZakwan;
-    case 'Hisham':
-      return Riwaya.Hisham;
-    case 'IbnJammaz':
-      return Riwaya.IbnJammaz;
-    case 'Yaqoub':
-      return Riwaya.Yaqoub;
-    case 'Hafs':
-    default:
-      return Riwaya.Hafs;
-  }
-};
+const RIWAYA_KEY_MAP = new Map<keyof typeof Riwaya, Riwaya>([
+  ['Warsh', Riwaya.Warsh],
+  ['Khalaf', Riwaya.Khalaf],
+  ['AlBazzi', Riwaya.AlBazzi],
+  ['Qaloon', Riwaya.Qaloon],
+  ['AlSoosi', Riwaya.AlSoosi],
+  ['AlDooriKisai', Riwaya.AlDooriKisai],
+  ['AlDooriAbuAmr', Riwaya.AlDooriAbuAmr],
+  ['Shuaba', Riwaya.Shuaba],
+  ['IbnZakwan', Riwaya.IbnZakwan],
+  ['Hisham', Riwaya.Hisham],
+  ['IbnJammaz', Riwaya.IbnJammaz],
+  ['Yaqoub', Riwaya.Yaqoub],
+  ['Hafs', Riwaya.Hafs],
+]);
+
+const resolveRiwayaEnum = (key: keyof typeof Riwaya): Riwaya =>
+  RIWAYA_KEY_MAP.get(key) ?? Riwaya.Hafs;
 
 /** Maps the API's `qirat.name` (e.g. "Hafs") to a Riwaya key, default Hafs. */
 const riwayaKeyFromQirat = (qirat?: string | null): keyof typeof Riwaya =>
