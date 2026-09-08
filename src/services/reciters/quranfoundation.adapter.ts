@@ -1,7 +1,6 @@
-import { Language } from '@/constants/language';
-import type { Playlist, Reciter } from '@/types';
-import { LinkSource, Riwaya } from '@/types';
-
+import { Language } from '../../constants/language';
+import type { Playlist, Reciter } from '../../types';
+import { LinkSource, Riwaya } from '../../types';
 import type {
   QuranFoundationChapterAudioResponse,
   QuranFoundationChapterRecitersResponse,
@@ -272,14 +271,17 @@ export const QuranFoundationAdapter: ReciterSource = {
         throw new Error('Unexpected quran.foundation reciters response');
       }
 
-      const results: (Reciter | null)[] = [];
+      const reciters: Reciter[] = [];
       for (const reciter of listData.reciters) {
-        results.push(
-          await fetchSingleReciter(reciter, fetchWithThrottle, apiBase)
+        const item = await fetchSingleReciter(
+          reciter,
+          fetchWithThrottle,
+          apiBase
         );
+        if (item) {
+          reciters.push(item);
+        }
       }
-
-      const reciters = results.filter((r): r is Reciter => r !== null);
       resultsCache.set(lang, {
         reciters,
         expiresAt: Date.now() + RESULTS_CACHE_TTL_MS,
