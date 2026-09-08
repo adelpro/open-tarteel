@@ -167,52 +167,46 @@ const fetchSingleReciter = async (
   reciter: QuranFoundationChapterRecitersResponse['reciters'][number],
   fetchWithThrottle: (_url: string) => Promise<Response>,
   apiBase: string
-): Promise<Reciter | null> => {
-  try {
-    const audioResponse = await fetchWithThrottle(
-      `${apiBase}${CHAPTER_AUDIO_PATH}/${reciter.id}`
-    );
-    const audioData: QuranFoundationChapterAudioResponse =
-      await audioResponse.json();
+): Promise<Reciter> => {
+  const audioResponse = await fetchWithThrottle(
+    `${apiBase}${CHAPTER_AUDIO_PATH}/${reciter.id}`
+  );
+  const audioData: QuranFoundationChapterAudioResponse =
+    await audioResponse.json();
 
-    if (!Array.isArray(audioData.audio_files)) {
-      throw new Error(`Unexpected audio response for reciter ${reciter.id}`);
-    }
-
-    const name = reciter.translated_name?.name ?? reciter.name;
-    if (!name) {
-      console.warn(
-        `Skipping quran.foundation reciter ${reciter.id}: missing name`
-      );
-      return null;
-    }
-
-    const playlist: Playlist = [...audioData.audio_files]
-      .sort((a, b) => a.chapter_id - b.chapter_id)
-      .map((audioFile) => ({
-        surahId: String(audioFile.chapter_id),
-        link: audioFile.audio_url,
-      }));
-
-    const riwayaKey = riwayaKeyFromQirat(reciter.qirat?.name);
-
-    return {
-      id: `${LinkSource.QURAN_FOUNDATION}-${reciter.id}`,
-      name,
-      source: LinkSource.QURAN_FOUNDATION,
-      moshaf: {
-        id: String(reciter.id),
-        name,
-        riwaya: resolveRiwayaEnum(riwayaKey),
-        server: '',
-        surah_total: String(playlist.length),
-        playlist,
-      },
-    } satisfies Reciter;
-  } catch (error) {
-    console.warn(`Skipping quran.foundation reciter ${reciter.id}:`, error);
-    return null;
+  if (!Array.isArray(audioData.audio_files)) {
+    throw new Error(`Unexpected audio response for reciter ${reciter.id}`);
   }
+
+  const name = reciter.translated_name?.name ?? reciter.name;
+  if (!name) {
+    throw new Error(
+      `Skipping quran.foundation reciter ${reciter.id}: missing name`
+    );
+  }
+
+  const playlist: Playlist = [...audioData.audio_files]
+    .sort((a, b) => a.chapter_id - b.chapter_id)
+    .map((audioFile) => ({
+      surahId: String(audioFile.chapter_id),
+      link: audioFile.audio_url,
+    }));
+
+  const riwayaKey = riwayaKeyFromQirat(reciter.qirat?.name);
+
+  return {
+    id: `${LinkSource.QURAN_FOUNDATION}-${reciter.id}`,
+    name,
+    source: LinkSource.QURAN_FOUNDATION,
+    moshaf: {
+      id: String(reciter.id),
+      name,
+      riwaya: resolveRiwayaEnum(riwayaKey),
+      server: '',
+      surah_total: String(playlist.length),
+      playlist,
+    },
+  };
 };
 
 // Serialize concurrent calls so pacing stays under the free-tier limit.
@@ -261,13 +255,18 @@ export const QuranFoundationAdapter: ReciterSource = {
 
       const reciters: Reciter[] = [];
       for (const reciter of listData.reciters) {
-        const item = await fetchSingleReciter(
-          reciter,
-          fetchWithThrottle,
-          apiBase
-        );
-        if (item) {
+        try {
+          const item = await fetchSingleReciter(
+            reciter,
+            fetchWithThrottle,
+            apiBase
+          );
           reciters.push(item);
+        } catch (error) {
+          console.warn(
+            `Skipping quran.foundation reciter ${reciter.id}:`,
+            error
+          );
         }
       }
       resultsCache.set(lang, {
