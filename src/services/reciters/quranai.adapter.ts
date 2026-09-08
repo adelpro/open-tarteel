@@ -36,16 +36,20 @@ const fetchAyahRange = (url: string): Promise<Response> =>
 const mapWithConcurrency = async <T, R>(
   items: T[],
   concurrency: number,
-  mapper: (_item: T, index: number) => Promise<R>
+  mapper: (item: T, index: number) => Promise<R>
 ): Promise<R[]> => {
-  const results: R[] = new Array(items.length);
+  const indexedItems = items.map((item, index) => ({ item, index }));
+  const results = new Map<number, R>();
   let nextIndex = 0;
 
   const worker = async (): Promise<void> => {
-    while (nextIndex < items.length) {
-      const index = nextIndex;
+    while (nextIndex < indexedItems.length) {
+      const entry = indexedItems.at(nextIndex);
       nextIndex += 1;
-      results[index] = await mapper(items[index], index);
+      if (entry) {
+        const mapped = await mapper(entry.item, entry.index);
+        results.set(entry.index, mapped);
+      }
     }
   };
 
@@ -53,7 +57,7 @@ const mapWithConcurrency = async <T, R>(
     Array.from({ length: Math.min(concurrency, items.length) }, () => worker())
   );
 
-  return results;
+  return items.map((_, index) => results.get(index) as R);
 };
 
 const selectSurahEditions = (editions: QuranAiEdition[]): QuranAiEdition[] => {
@@ -207,7 +211,7 @@ export const getAyahAudioRange = async (params: {
   const response = await fetchAyahRange(
     buildSurahEndpoint(surahNumber, editionIdentifier, { limit, offset })
   );
-  const body: QuranAiSurahResponse = await response.json();
+  const body = (await response.json()) as Partial<QuranAiSurahResponse>;
 
   // body.data is typed as required, but API may return unexpected shapes at runtime
   if (!body.data || !Array.isArray(body.data.ayahs)) {

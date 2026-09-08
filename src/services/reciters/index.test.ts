@@ -37,10 +37,10 @@ const { ItqanAdapter } = await import('./itqan.adapter');
 const { QuranAiAdapter } = await import('./quranai.adapter');
 const { QuranFoundationAdapter } = await import('./quranfoundation.adapter');
 
-const mp3Mock = vi.mocked(Mp3QuranAdapter.getReciters);
-const itqanMock = vi.mocked(ItqanAdapter.getReciters);
-const quranaiMock = vi.mocked(QuranAiAdapter.getReciters);
-const quranFoundationMock = vi.mocked(QuranFoundationAdapter.getReciters);
+const mp3Mock = vi.spyOn(Mp3QuranAdapter, 'getReciters');
+const itqanMock = vi.spyOn(ItqanAdapter, 'getReciters');
+const quranaiMock = vi.spyOn(QuranAiAdapter, 'getReciters');
+const quranFoundationMock = vi.spyOn(QuranFoundationAdapter, 'getReciters');
 
 // ─────────────────────────────────────────────────────
 // Fixtures

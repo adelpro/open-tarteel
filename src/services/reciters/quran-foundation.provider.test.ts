@@ -99,7 +99,7 @@ describe('quran-foundation.provider', () => {
 
       vi.mocked(auth.qfFetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockAudioFile,
+        json: () => Promise.resolve(mockAudioFile),
       } as Response);
 
       const segments = await getSurahTahfeezSegments(1, 1);
