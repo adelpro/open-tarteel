@@ -1,15 +1,12 @@
 {
   "appName": "القرآن الكريم",
   "appDescription": "تلاوات تلامس القلب دون إلهاءات.",
-
   "close": "إغلاق",
-
   "footer.home": "الصفحة الرئيسية",
   "footer.about": "معلومات عن التطبيق",
   "footer.privacy": "سياسة الخصوصية",
   "footer.contact": "إتصل بنا",
   "footer.settings": "الإعدادات",
-  "underConstruction": "جاري تطوير التطبيق",
   "settings.title": "الإعدادات",
   "settings.reciterSources": "مصادر القراء",
   "settings.reciterSourcesDescription": "اختر المصادر التي تريد عرضها في قائمة القراء. يجب تفعيل مصدر واحد على الأقل.",
@@ -17,6 +14,8 @@
   "settings.deselectAll": "إلغاء تفعيل الكل",
   "settings.source.mp3quran": "MP3 القرآن",
   "settings.source.itqan": "إتقان",
+  "settings.source.quranai": "قرآني",
+  "settings.source.quranfoundation": "مؤسسة القرآن",
   "settings.enableSource": "قم بتفعيل مصدر واحد على الأقل من الإعدادات.",
   "reciter.select": "اختر القارئ",
   "favorites": "المفضلة",
@@ -31,7 +30,6 @@
   "noRecitersFound": "لا يوجد قراء مطابقين للبحث.",
   "allReciters": "جميع الروايات",
   "reciter.recent": "سمعت مؤخراً",
-
   "riwaya.Hafs": "حفص",
   "riwaya.Warsh": "ورش",
   "riwaya.Qaloon": "قالون",
@@ -46,7 +44,6 @@
   "riwaya.Hisham": "هشام",
   "riwaya.IbnJammaz": "ابن جماز",
   "riwaya.Yaqoub": "يعقوب",
-
   "contact.please_enter_name": "يرجى إدخال اسمك",
   "contact.please_enter_email": "يرجى إدخال البريد الإلكتروني",
   "contact.please_enter_valid_email": "يرجى إدخال البريد الإلكتروني بشكل صحيح",
@@ -60,7 +57,6 @@
   "contact.name": "اسم",
   "contact.email": "بريد إلكتروني",
   "contact.message": "رسالة",
-
   "about.title": "حول تطبيق Quran.us.kg",
   "about.description": "Quran.us.kg هو تطبيق قرآن مفتوح المصدر صمم لتوفير تجربة استماع مثالية عبر مختلف المنصات. بُني التطبيق باستخدام تقنيات ويب حديثة لضمان:",
   "about.feature.performance": "أداء عالي السرعة واستجابة سريعة",
@@ -71,7 +67,6 @@
   "about.servers.description1": "يستخدم التطبيق ملفات الصوت عالية الجودة للقرآن الكريم التي توفرها خدمة mp3quran، وهي خدمة طرف ثالث مستقلة. هذه الخدمة تضمن استقرار وسرعة في تحميل الملفات، مما يتيح للمستخدمين الاستماع إلى التلاوات دون انقطاع أو تأخير.",
   "about.servers.description2": "نود التأكيد على أن mp3quran ليست جزءًا من خدماتنا، بل هي مزود خارجي يدعم ملايين المستخدمين حول العالم من خلال مكتبة صوتية واسعة ومتنوعة.",
   "about.footer.rights": "جميع الحقوق محفوظة",
-
   "privacy.title": "سياسة خصوصية Open Tarteel",
   "privacy.developer": "المطور: adelpro",
   "privacy.effectiveDate": "تاريخ السريان: 14 فبراير 2025",
@@ -93,15 +88,9 @@
   "privacy.section7.body": "لا يستخدم Quran.us.kg أي خدمات طرف ثالث للتحليلات أو التتبع أو جمع البيانات. يعمل التطبيق بالكامل على جهازك دون إرسال أي معلومات خارجيًا.",
   "privacy.section8.title": "اتصل بنا",
   "privacy.section8.body": "إذا كانت لديك أي أسئلة حول هذه السياسة، فلا تتردد في الاتصال بنا على:",
-
   "share.message": "استمع إلى هذا القارئ على Tarteel",
   "share.fallback": "تم نسخ الرابط إلى الحافظة!",
   "share.fallback.error": "فشل نسخ الرابط.",
-
-  "underConstruction.message": "التطبيق قيد التطوير",
-  "underConstruction.doNotShowAgain": "لا تعرض هذا مرة أخرى",
-  "underConstruction.title": "قيد الإنشاء",
-
   "player.play": "تشغيل",
   "player.pause": "إيقاف",
   "player.nextTrack": "التالي",
@@ -118,15 +107,12 @@
   "player.togglePlaylist": "قائمة التشغيل",
   "player.playbackSpeed": "سرعة التشغيل: {speed}x",
   "player.volumeControl": "تحكم بمستوى الصوت",
-
   "player.more": "المزيد",
-
   "player.sleepTimerActive": "مؤقت النوم نشط",
   "player.sleepTimer": "مؤقت النوم",
   "player.untilEnd": "حتى نهاية التلاوة",
   "reciterDialog.title": "اختر قارئًا",
   "player.cancelTimer": "إلغاء المؤقت",
-
   "download.downloadAll": "تحميل جميع السور للاستماع دون إنترنت ({cached}/{total})",
   "download.downloading": "جاري التحميل… {completed}/{total}",
   "download.failed": "{count} فشل",
@@ -139,13 +125,14 @@
   "download.startDownload": "تحميل القارئ للاستماع دون إنترنت",
   "download.showDownloadedOnly": "عرض المحفوظين فقط",
   "download.showAll": "عرض جميع القراء",
-
   "storage.lowWarning": "قد يحذف المتصفح التحميلات إذا كانت مساحة التخزين منخفضة.",
   "storage.insufficientSpace": "مساحة التخزين غير كافية. المتاح: {available}، المطلوب تقريباً: {needed}. قم بتحرير مساحة أو حذف تحميلات أخرى.",
   "storage.checkFailed": "تعذر التحقق من مساحة التخزين. قد يفشل التحميل إذا كانت المساحة منخفضة.",
-
   "reciter.offlineBadge": "دون إنترنت",
-
+  "playlist.title": "قائمة السور",
+  "playlist.surahs": "سور",
+  "playlist.aya": "آية",
+  "playlist.ayas": "آيات",
   "settings.cacheManagement": "التحميلات المحفوظة",
   "settings.cacheManagementDescription": "إدارة التلاوات المحفوظة على جهازك.",
   "settings.cacheLoading": "جارٍ فحص التحميلات المحفوظة…",
@@ -154,9 +141,9 @@
   "settings.cacheDeleteConfirm": "هل تريد حذف جميع تحميلات هذا القارئ؟",
   "settings.cacheDelete": "حذف",
   "settings.cacheStorageUsed": "المساحة المستخدمة: {used} من {quota}",
-
   "pwa.update_title": "يتوفر إصدار جديد",
   "pwa.update_description": "يتوفر إصدار جديد من التطبيق. هل ترغب في التحديث الآن؟",
   "pwa.update_later": "لاحقاً",
-  "pwa.update_now": "تحديث"
+  "pwa.update_now": "تحديث",
+  "language.select": "اختر اللغة"
 }

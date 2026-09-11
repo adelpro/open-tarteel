@@ -50,15 +50,28 @@ const audioCacheFirst = new CacheFirst({
 });
 
 const quranAudioCache = {
-  matcher: ({ url }: { url: URL }) => isQuranAudioUrl(url),
+  matcher: ({ url }: { url: URL }) => {
+    if (isQuranAudioUrl(url)) return true;
+
+    // Qurani.ai audio CDN (full-surah and verse-by-verse audio files)
+    if (
+      url.hostname === 'quranhub.b-cdn.net' &&
+      (url.pathname.startsWith('/quran/audio/surah/') ||
+        url.pathname.startsWith('/quran/audio/versebyverse/')) &&
+      /\.mp3$/i.test(url.pathname)
+    ) {
+      return true;
+    }
+
+    // Quran Foundation audio CDN
+    return url.hostname.endsWith('quranicaudio.com');
+  },
   handler: {
     handle: async (options: HandlerCallbackOptions) => {
-      // Check the explicit offline-downloads cache first
       const offlineCache = await caches.open(OFFLINE_CACHE);
       const offlineHit = await offlineCache.match(options.request);
       if (offlineHit) return offlineHit;
 
-      // Fall through to runtime CacheFirst (fetches + caches if miss)
       return audioCacheFirst.handle(options);
     },
   },
@@ -74,7 +87,7 @@ const apiRecitersCache = {
     plugins: [
       new ExpirationPlugin({
         maxEntries: 50,
-        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+        maxAgeSeconds: 30 * 24 * 60 * 60,
       }),
       new CacheableResponsePlugin({
         statuses: [200],
@@ -86,8 +99,6 @@ const apiRecitersCache = {
 const runtimeCaching = [quranAudioCache, apiRecitersCache, ...defaultCache];
 
 // App shell URLs to pre-cache on install for offline cold-start support.
-// Cached into 'pages' — the same cache Serwist's defaultCache navigation
-// handler (NetworkFirst) checks when offline.
 const APP_SHELL_URLS = ['/', '/offline', '/about', '/settings'];
 
 self.addEventListener('install', (event) => {
@@ -103,11 +114,15 @@ self.addEventListener('install', (event) => {
       );
       const apiCache = await caches.open('api-reciters');
       await Promise.allSettled([
-        fetch('/api/reciters?language=ar').then((r) =>
-          r.ok ? apiCache.put('/api/reciters?language=ar', r) : undefined
+        fetch('/api/reciters?language=ar').then((response) =>
+          response.ok
+            ? apiCache.put('/api/reciters?language=ar', response)
+            : undefined
         ),
-        fetch('/api/reciters?language=eng').then((r) =>
-          r.ok ? apiCache.put('/api/reciters?language=eng', r) : undefined
+        fetch('/api/reciters?language=eng').then((response) =>
+          response.ok
+            ? apiCache.put('/api/reciters?language=eng', response)
+            : undefined
         ),
       ]);
     })()

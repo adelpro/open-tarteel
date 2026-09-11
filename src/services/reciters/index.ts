@@ -1,11 +1,19 @@
+import { Language } from '@/constants/language';
 import type { Reciter } from '@/types';
 import { LinkSource } from '@/types';
 
 import { ItqanAdapter } from './itqan.adapter';
 import { Mp3QuranAdapter } from './mp3quran.adapter';
+import { QuranAiAdapter } from './quranai.adapter';
+import { QuranFoundationAdapter } from './quranfoundation.adapter';
 import type { ReciterSource } from './reciter-source';
 
-const adapters: ReciterSource[] = [Mp3QuranAdapter, ItqanAdapter];
+const adapters: ReciterSource[] = [
+  Mp3QuranAdapter,
+  ItqanAdapter,
+  QuranAiAdapter,
+  QuranFoundationAdapter,
+];
 
 const VALID_SOURCES = new Set<string>(Object.values(LinkSource));
 
@@ -29,7 +37,7 @@ export function parseEnabledSources(
  * @param enabledSources - If provided, only fetch from these sources. Otherwise fetch from all.
  */
 export async function getAllRecitersFromAdapters(
-  lang: 'ar' | 'en' = 'ar',
+  lang: Language = 'ar',
   enabledSources?: LinkSource[] | null
 ): Promise<Reciter[]> {
   const toFetch =
@@ -56,4 +64,7 @@ export async function getAllRecitersFromAdapters(
 
 export { ItqanAdapter } from './itqan.adapter';
 export { Mp3QuranAdapter } from './mp3quran.adapter';
+export { getAyahAudioRange } from './quranai.adapter';
+export { QuranAiAdapter } from './quranai.adapter';
+export { QuranFoundationAdapter } from './quranfoundation.adapter';
 export type { ReciterSource } from './reciter-source';

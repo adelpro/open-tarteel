@@ -1,7 +1,9 @@
 import { Riwaya } from '@/types';
 
+import { Language } from './language';
+
 export const RiwayaNameByLocale: Record<
-  'ar' | 'en',
+  Language,
   Record<keyof typeof Riwaya, string>
 > = {
   ar: {
@@ -20,6 +22,21 @@ export const RiwayaNameByLocale: Record<
     Yaqoub: 'يعقوب',
   },
   en: {
+    Hafs: 'Hafs',
+    Warsh: 'Warsh',
+    Qaloon: 'Qaloon',
+    Khalaf: 'Khalaf',
+    AlBazzi: 'Al-Bazzi',
+    AlSoosi: 'Al-Soosi',
+    AlDooriKisai: 'Al-Doori (Kisai)',
+    AlDooriAbuAmr: 'Al-Doori (Abu Amr)',
+    Shuaba: 'Shuaba',
+    IbnZakwan: 'Ibn Zakwan',
+    Hisham: 'Hisham',
+    IbnJammaz: 'Ibn Jammaz',
+    Yaqoub: 'Yaqoub',
+  },
+  de: {
     Hafs: 'Hafs',
     Warsh: 'Warsh',
     Qaloon: 'Qaloon',

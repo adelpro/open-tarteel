@@ -1,3 +1,4 @@
+import { Language } from '@/constants/language';
 import type { Playlist } from '@/types';
 import { Riwaya } from '@/types';
 import { getRiwayaKeyFromMoshafName } from '@/utils/get-riwaya-from-mushaf';
@@ -10,10 +11,7 @@ export const generatePlaylist = (moshaf: Mp3QuranApiMoshaf): Playlist =>
     link: `${moshaf.server}${id.padStart(3, '0')}.mp3`,
   }));
 
-export const resolveRiwaya = (
-  moshafName: string,
-  locale: 'ar' | 'en'
-): Riwaya => {
+export const resolveRiwaya = (moshafName: string, locale: Language): Riwaya => {
   const key = getRiwayaKeyFromMoshafName(moshafName, locale);
   return Riwaya[key];
 };

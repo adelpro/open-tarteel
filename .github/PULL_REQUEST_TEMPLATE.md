@@ -1,25 +1,46 @@
 ## Description
 
-Please include a summary of the change and which issue is fixed. Please also include relevant motivation and context.
+<!-- 1-3 sentences. What changed and why. -->
 
-Fixes # (issue)
+Fixes #<!-- issue number, or remove this line if unrelated -->
 
 ## Type of change
 
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Bug fix (non-breaking)
+- [ ] New feature (non-breaking)
+- [ ] Breaking change
 - [ ] Documentation update
+- [ ] Chore / refactor / test (no user-facing change)
 
-## How Has This Been Tested?
+## Changes
 
-Please describe the tests that you ran to verify your changes.
+<!-- Bullet list of user-visible changes. -->
 
-## Checklist:
+## Testing
 
-- [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my own code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] Any dependent changes have been merged and published in downstream modules
+<!-- What you ran locally. -->
+
+- [ ] `yarn format:check`
+- [ ] `yarn lint`
+- [ ] `yarn type-check`
+- [ ] `yarn test:coverage`
+- [ ] `yarn build`
+- [ ] Manual QA on `yarn dev` (route(s) exercised: <!-- ... -->)
+
+## Screenshots
+
+<!-- Required for any UI change; paste or drag-and-drop. -->
+
+## Checklist
+
+- [ ] Branched from the default base (`develop`)
+- [ ] My code follows the style guidelines in `eslint.config.mjs` and
+      `.prettierrc.mjs`
+- [ ] I have performed a self-review of the diff
+- [ ] I have commented code only where the intent is non-obvious
+- [ ] I have updated docs / `CHANGELOG.md` where appropriate
+- [ ] I have added or updated tests for new behavior
+- [ ] If AI-assisted, I have re-read the diff and verified each change
+      manually
+- [ ] No new warnings from `yarn lint` or `yarn build`
+- [ ] Related issue linked (`Fixes #` or `Refs #`)
