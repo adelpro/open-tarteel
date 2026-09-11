@@ -1,5 +1,12 @@
 import { Surah } from '@/types/surah';
 
+/**
+ * German surah titles (`germanName`, refs #85) follow the Bubenheim & Elyas
+ * translation tradition, cross-checked against the German Wikipedia surah
+ * list ("Liste der Koransuren", deutsch column) and nurkoran.com.
+ * Letter-named surahs (Qaf, Sad, Ya-Sin, Ta Ha) and proper nouns without a
+ * German form (Hud, Luqman, Saba) are kept as-is.
+ */
 export const SURAHS: Surah[] = [
   {
     id: 1,
