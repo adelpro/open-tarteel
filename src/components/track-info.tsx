@@ -8,7 +8,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { SURAHS } from '@/constants';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { selectedReciterAtom } from '@/jotai/atom';
-import { formatBytes, formatTime, removeTashkeel } from '@/utils';
+import { formatBytes, formatTime, getSurahDisplayName } from '@/utils';
 
 type Props = {
   currentTrackId: number;
@@ -35,21 +35,9 @@ export default function TrackInfo({
   if (!currentTrack) return null;
 
   const { surahId } = currentTrack;
-  // TODO(#85) extend surah.json to include Deutsch surah names
   const surahName = () => {
-    if (language !== 'ar') {
-      return SURAHS.find((surah) => surah.id.toString() === surahId)
-        ?.englishName;
-    }
-
-    if (language === 'de') {
-      return SURAHS.find((surah) => surah.id.toString() === surahId)
-        ?.germanName;
-    }
-
-    return removeTashkeel(
-      SURAHS.find((surah) => surah.id.toString() === surahId)?.name || ''
-    );
+    const surah = SURAHS.find((s) => s.id.toString() === surahId);
+    return surah ? getSurahDisplayName(surah, language) : '';
   };
 
   const allCached = isAllCached(playlist);
