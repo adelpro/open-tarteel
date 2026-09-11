@@ -1,5 +1,6 @@
 import Image from 'next/image';
 
+import OfflinePlayer from './offline-player';
 import OfflineRetryButton from './retry-button';
 
 export const metadata = {
@@ -14,6 +15,7 @@ export default function OfflinePage() {
         alt="Open Tarteel"
         width={80}
         height={80}
+        unoptimized
         className="mb-6 opacity-80"
       />
 
@@ -26,6 +28,7 @@ export default function OfflinePage() {
         لا يزال متاحاً.
       </p>
 
+      <OfflinePlayer />
       <OfflineRetryButton />
     </div>
   );
