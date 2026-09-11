@@ -1,3 +1,4 @@
+import type { Language } from '@/constants/language';
 import type { Surah } from '@/types/surah';
 
 import { removeTashkeel } from './search';
@@ -7,7 +8,10 @@ import { removeTashkeel } from './search';
  * for `en`, and tashkeel-stripped Arabic otherwise. Centralizes the locale
  * selection so player and download-progress labels cannot drift apart.
  */
-export const getSurahDisplayName = (surah: Surah, locale: string): string => {
+export const getSurahDisplayName = (
+  surah: Surah,
+  locale: Language | string
+): string => {
   if (locale === 'en') return surah.englishName;
   if (locale === 'de') return surah.germanName;
   return removeTashkeel(surah.name);
