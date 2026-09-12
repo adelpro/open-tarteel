@@ -8,6 +8,10 @@ import { EnabledSourcesCookieSync } from '@/components/enabled-sources-cookie-sy
 import FullscreenController from '@/components/fullscreen-controller';
 import HtmlWrapper from '@/components/html-wrapper';
 import IntlProviderWrapper from '@/components/intl-provider-wrapper';
+import NetworkStatusIndicator from '@/components/network-status-indicator';
+import OfflineRedirect from '@/components/offline-redirect';
+import PwaUpdater from '@/components/pwa-updater';
+import StoragePersist from '@/components/storage-persist';
 import { clientConfig } from '@/utils';
 
 export const metadata: Metadata = {
@@ -57,6 +61,10 @@ export default function RootLayout({
                 <div className="absolute bottom-[-10%] left-[35%] h-[340px] w-[340px] rounded-full bg-violet-500/[0.04] blur-[70px] dark:bg-violet-400/[0.06]" />
               </div>
               <EnabledSourcesCookieSync />
+              <StoragePersist />
+              <NetworkStatusIndicator />
+              <OfflineRedirect />
+              <PwaUpdater />
               <FullscreenController>{children}</FullscreenController>
             </main>
           </body>

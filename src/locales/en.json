@@ -141,5 +141,9 @@
   "settings.cacheDeleteConfirm": "Remove all downloads for this reciter?",
   "settings.cacheDelete": "Remove",
   "settings.cacheStorageUsed": "Storage used: {used} of {quota}",
+  "pwa.update_title": "New version available",
+  "pwa.update_description": "A new version of the app is available. Would you like to update now?",
+  "pwa.update_later": "Later",
+  "pwa.update_now": "Update",
   "language.select": "Select language"
 }
