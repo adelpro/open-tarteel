@@ -24,7 +24,7 @@ Mobile clients are DIFFERENT from web clients:
 
 ## 🚫 AI MOBILE BACKEND ANTI-PATTERNS
 
-### These are common AI mistakes when building mobile backends:
+### These are common AI mistakes when building mobile backends
 
 | ❌ AI Default               | Why It's Wrong                        | ✅ Mobile-Correct                              |
 | --------------------------- | ------------------------------------- | ---------------------------------------------- |

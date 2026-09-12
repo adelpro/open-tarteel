@@ -156,7 +156,7 @@ Use `git bisect` to find regression:
 
 ## Error Analysis Template
 
-### When investigating any bug:
+### When investigating any bug
 
 1. **What is happening?** (exact error, symptoms)
 2. **What should happen?** (expected behavior)

@@ -12,7 +12,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ## 1. MCP Overview
 
-### What is MCP?
+### What is MCP
 
 Model Context Protocol - standard for connecting AI systems with external tools and data sources.
 

@@ -46,8 +46,28 @@ export const resetQuranFoundationCache = (): void => {
   resultsCache.clear();
 };
 
+const getQfEnvironmentVariable = (name: string): string | undefined => {
+  switch (name) {
+    case CLIENT_ID_ENV_VAR:
+      return process.env.QURAN_FOUNDATION_CLIENT_ID ?? process.env.QF_CLIENT_ID;
+    case CLIENT_SECRET_ENV_VAR:
+      return (
+        process.env.QURAN_FOUNDATION_CLIENT_SECRET ??
+        process.env.QF_CLIENT_SECRET
+      );
+    case TOKEN_URL_ENV_VAR:
+      return process.env.QURAN_FOUNDATION_TOKEN_URL;
+    case API_BASE_ENV_VAR:
+      return process.env.QURAN_FOUNDATION_API_BASE;
+    case RATE_LIMIT_MS_ENV_VAR:
+      return process.env.QURAN_FOUNDATION_RATE_LIMIT_MS;
+    default:
+      return undefined;
+  }
+};
+
 const readEnvironment = (name: string): string => {
-  const value = process.env[name];
+  const value = getQfEnvironmentVariable(name);
   if (!value) {
     throw new Error(
       `${name} is not set; quran.foundation provider is disabled`
@@ -57,10 +77,44 @@ const readEnvironment = (name: string): string => {
 };
 
 const rateLimitMs = (): number => {
-  const override = Number(process.env[RATE_LIMIT_MS_ENV_VAR]);
+  const override = Number(getQfEnvironmentVariable(RATE_LIMIT_MS_ENV_VAR));
   return Number.isFinite(override) && override >= 0
     ? override
     : DEFAULT_RATE_LIMIT_MS;
+};
+
+const noop = (): Promise<void> => Promise.resolve();
+
+const fetchFreshToken = async (
+  tokenUrl: string,
+  clientId: string,
+  clientSecret: string
+): Promise<{ access_token: string; expires_in?: number }> => {
+  const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString(
+    'base64'
+  );
+  let response: Response;
+  try {
+    response = await retryFetch(tokenUrl, 3, rateLimitMs() > 0 ? delay : noop, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${basicAuth}`,
+      },
+      body: 'grant_type=client_credentials&scope=content',
+    });
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `Failed to fetch quran.foundation access token (${reason})`
+    );
+  }
+
+  const data = (await response.json()) as QuranFoundationTokenResponse;
+  if (!data.access_token) {
+    throw new Error('quran.foundation token response missing access_token');
+  }
+  return { access_token: data.access_token, expires_in: data.expires_in };
 };
 
 /** Exchanges client credentials for a fresh access token (cached hourly). */
@@ -71,52 +125,89 @@ const getAccessToken = async (): Promise<string> => {
 
   const clientId = readEnvironment(CLIENT_ID_ENV_VAR);
   const clientSecret = readEnvironment(CLIENT_SECRET_ENV_VAR);
-  const tokenUrl = process.env[TOKEN_URL_ENV_VAR] || DEFAULT_TOKEN_URL;
+  const tokenUrl =
+    getQfEnvironmentVariable(TOKEN_URL_ENV_VAR) ?? DEFAULT_TOKEN_URL;
 
-  let response: Response;
-  try {
-    response = await retryFetch(
-      tokenUrl,
-      3,
-      rateLimitMs() > 0 ? delay : async () => {},
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Basic ${Buffer.from(
-            `${clientId}:${clientSecret}`
-          ).toString('base64')}`,
-        },
-        body: 'grant_type=client_credentials&scope=content',
-      }
-    );
-  } catch (error) {
-    const reason = error instanceof Error ? error.message : String(error);
-    throw new Error(
-      `Failed to fetch quran.foundation access token (${reason})`
-    );
-  }
-
-  const data = (await response.json()) as QuranFoundationTokenResponse;
-
-  if (!data.access_token) {
-    throw new Error('quran.foundation token response missing access_token');
-  }
-
+  const data = await fetchFreshToken(tokenUrl, clientId, clientSecret);
   // Buffer 60s so the token is refreshed before it actually expires.
   cachedToken = {
     value: data.access_token,
     expiresAt: Date.now() + (data.expires_in ?? 3600) * 1000 - 60_000,
   };
 
-  return cachedToken.value;
+  return data.access_token;
 };
+
+const RIWAYA_KEY_MAP = new Map<keyof typeof Riwaya, Riwaya>([
+  ['Warsh', Riwaya.Warsh],
+  ['Khalaf', Riwaya.Khalaf],
+  ['AlBazzi', Riwaya.AlBazzi],
+  ['Qaloon', Riwaya.Qaloon],
+  ['AlSoosi', Riwaya.AlSoosi],
+  ['AlDooriKisai', Riwaya.AlDooriKisai],
+  ['AlDooriAbuAmr', Riwaya.AlDooriAbuAmr],
+  ['Shuaba', Riwaya.Shuaba],
+  ['IbnZakwan', Riwaya.IbnZakwan],
+  ['Hisham', Riwaya.Hisham],
+  ['IbnJammaz', Riwaya.IbnJammaz],
+  ['Yaqoub', Riwaya.Yaqoub],
+  ['Hafs', Riwaya.Hafs],
+]);
+
+const resolveRiwayaEnum = (key: keyof typeof Riwaya): Riwaya =>
+  RIWAYA_KEY_MAP.get(key) ?? Riwaya.Hafs;
 
 /** Maps the API's `qirat.name` (e.g. "Hafs") to a Riwaya key, default Hafs. */
 const riwayaKeyFromQirat = (qirat?: string | null): keyof typeof Riwaya =>
-  (Object.keys(Riwaya) as Array<keyof typeof Riwaya>).find(
+  (Object.keys(Riwaya) as (keyof typeof Riwaya)[]).find(
     (key) => key.toLowerCase() === (qirat ?? '').toLowerCase()
   ) ?? 'Hafs';
+
+const fetchSingleReciter = async (
+  reciter: QuranFoundationChapterRecitersResponse['reciters'][number],
+  fetchWithThrottle: (_url: string) => Promise<Response>,
+  apiBase: string
+): Promise<Reciter> => {
+  const audioResponse = await fetchWithThrottle(
+    `${apiBase}${CHAPTER_AUDIO_PATH}/${reciter.id}`
+  );
+  const audioData: QuranFoundationChapterAudioResponse =
+    await audioResponse.json();
+
+  if (!Array.isArray(audioData.audio_files)) {
+    throw new Error(`Unexpected audio response for reciter ${reciter.id}`);
+  }
+
+  const name = reciter.translated_name?.name ?? reciter.name;
+  if (!name) {
+    throw new Error(
+      `Skipping quran.foundation reciter ${reciter.id}: missing name`
+    );
+  }
+
+  const playlist: Playlist = [...audioData.audio_files]
+    .sort((a, b) => a.chapter_id - b.chapter_id)
+    .map((audioFile) => ({
+      surahId: String(audioFile.chapter_id),
+      link: audioFile.audio_url,
+    }));
+
+  const riwayaKey = riwayaKeyFromQirat(reciter.qirat?.name);
+
+  return {
+    id: `${LinkSource.QURAN_FOUNDATION}-${reciter.id}`,
+    name,
+    source: LinkSource.QURAN_FOUNDATION,
+    moshaf: {
+      id: String(reciter.id),
+      name,
+      riwaya: resolveRiwayaEnum(riwayaKey),
+      server: '',
+      surah_total: String(playlist.length),
+      playlist,
+    },
+  };
+};
 
 // Serialize concurrent calls so pacing stays under the free-tier limit.
 let queue: Promise<unknown> = Promise.resolve();
@@ -134,8 +225,9 @@ export const QuranFoundationAdapter: ReciterSource = {
       const token = await getAccessToken();
       const clientId = readEnvironment(CLIENT_ID_ENV_VAR);
       const intervalMs = rateLimitMs();
-      const backoff = intervalMs > 0 ? delay : async () => {};
-      const apiBase = process.env[API_BASE_ENV_VAR] || DEFAULT_API_BASE;
+      const backoff = intervalMs > 0 ? delay : noop;
+      const apiBase =
+        getQfEnvironmentVariable(API_BASE_ENV_VAR) ?? DEFAULT_API_BASE;
 
       const fetchWithThrottle = async (url: string): Promise<Response> => {
         const response = await retryFetch(url, 3, backoff, {
@@ -161,64 +253,22 @@ export const QuranFoundationAdapter: ReciterSource = {
         throw new Error('Unexpected quran.foundation reciters response');
       }
 
-      const results: Array<Reciter | null> = [];
-
+      const reciters: Reciter[] = [];
       for (const reciter of listData.reciters) {
         try {
-          const audioResponse = await fetchWithThrottle(
-            `${apiBase}${CHAPTER_AUDIO_PATH}/${reciter.id}`
+          const item = await fetchSingleReciter(
+            reciter,
+            fetchWithThrottle,
+            apiBase
           );
-          const audioData: QuranFoundationChapterAudioResponse =
-            await audioResponse.json();
-
-          if (!Array.isArray(audioData.audio_files)) {
-            throw new Error(
-              `Unexpected audio response for reciter ${reciter.id}`
-            );
-          }
-
-          const name = reciter.translated_name?.name ?? reciter.name ?? '';
-
-          if (!name) {
-            console.warn(
-              `Skipping quran.foundation reciter ${reciter.id}: missing name`
-            );
-            results.push(null);
-            continue;
-          }
-
-          const playlist: Playlist = [...audioData.audio_files]
-            .sort((a, b) => a.chapter_id - b.chapter_id)
-            .map((audioFile) => ({
-              surahId: String(audioFile.chapter_id),
-              link: audioFile.audio_url,
-            }));
-
-          const riwayaKey = riwayaKeyFromQirat(reciter.qirat?.name);
-
-          results.push({
-            id: `${LinkSource.QURAN_FOUNDATION}-${reciter.id}`,
-            name,
-            source: LinkSource.QURAN_FOUNDATION,
-            moshaf: {
-              id: String(reciter.id),
-              name,
-              riwaya: Riwaya[riwayaKey],
-              server: '',
-              surah_total: String(playlist.length),
-              playlist,
-            },
-          } satisfies Reciter);
+          reciters.push(item);
         } catch (error) {
           console.warn(
             `Skipping quran.foundation reciter ${reciter.id}:`,
             error
           );
-          results.push(null);
         }
       }
-
-      const reciters = results.filter((r): r is Reciter => r !== null);
       resultsCache.set(lang, {
         reciters,
         expiresAt: Date.now() + RESULTS_CACHE_TTL_MS,
@@ -227,7 +277,9 @@ export const QuranFoundationAdapter: ReciterSource = {
     };
 
     const result = queue.then(run, run);
-    queue = result.catch(() => {});
+    queue = result.catch(() => {
+      /* intentional: keep queue alive */
+    });
     return result;
   },
 };

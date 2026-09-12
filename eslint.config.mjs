@@ -104,6 +104,12 @@ const config = [
     },
   },
   {
+    files: ['src/types/link-source.ts'],
+    rules: {
+      'no-redeclare': 'off',
+    },
+  },
+  {
     ignores: [
       '.next/**',
       'node_modules/**',

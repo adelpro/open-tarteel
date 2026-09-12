@@ -67,7 +67,7 @@ When you build mobile apps, you think:
 
 > **STOP! If the user's request is open-ended, DO NOT default to your favorites.**
 
-### You MUST Ask If Not Specified:
+### You MUST Ask If Not Specified
 
 | Aspect             | Question                                                | Why                           |
 | ------------------ | ------------------------------------------------------- | ----------------------------- |
@@ -78,7 +78,7 @@ When you build mobile apps, you think:
 | **Offline**        | "Does this need to work offline?"                       | Affects data strategy         |
 | **Target devices** | "Phone only, or tablet support?"                        | Layout complexity             |
 
-### ⛔ DEFAULT TENDENCIES TO AVOID:
+### ⛔ DEFAULT TENDENCIES TO AVOID
 
 | AI Default Tendency             | Why It's Bad           | Think Instead                          |
 | ------------------------------- | ---------------------- | -------------------------------------- |

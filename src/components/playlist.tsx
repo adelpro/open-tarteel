@@ -73,14 +73,12 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
             <BsBook className="size-5" />
           </div>
           <FormattedMessage id="playlist.title" />
-          {/* {isEnglish ? 'List of Surahs' : 'قائمة السور'} */}
         </h2>
 
         <span className="bg-brand-CTA-blue-100 dark:bg-brand-CTA-blue-900/30 dark:text-brand-CTA-blue-400 flex items-center rounded-full px-3 py-1 text-sm font-bold text-brand-CTA-blue-600 shadow-sm">
           {playlist.length}{' '}
           <span className="mx-1 font-normal">
             <FormattedMessage id="playlist.surahs" />
-            {/* {isEnglish ? 'Surahs' : 'سورة'} */}
           </span>
         </span>
       </div>

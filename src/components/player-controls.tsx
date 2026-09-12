@@ -21,15 +21,20 @@ import { useIntl } from 'react-intl';
 import Tooltip from '@/components/tooltip';
 import { ICON_SIZE, SLEEP_MINUTES } from '@/constants';
 import { useSleepTimer } from '@/hooks/use-sleep-timer';
+import { TimeRange, useTahfeezSession } from '@/hooks/use-tahfeez-session';
 import {
   fullscreenAtom,
   playbackModeAtom,
   playbackSpeedAtom,
+  selectedReciterAtom,
   showVisualizerAtom,
   volumeAtom,
 } from '@/jotai/atom';
+import { LinkSource } from '@/types';
 import { cn } from '@/utils';
+import { resolveChapterReciterId } from '@/utils/resolveChapterReciterId';
 
+import TahfeezModeControls, { TahfeezSettings } from './tahfeez-mode-controls';
 // ─── Helpers ─────────────────────────────────────────
 const getCurrentMinute = (seconds: number): number => Math.ceil(seconds / 60);
 
@@ -48,6 +53,9 @@ type Props = {
   isPlaying: boolean;
   handlePreviousTrack: () => void;
   volumeRef: RefObject<HTMLDivElement | null>;
+  audioRef: RefObject<HTMLAudioElement | null>;
+  currentTrackId: number | undefined;
+  tahfeezActiveRef: React.RefObject<boolean>;
 };
 
 export default function PlayerControls({
@@ -57,6 +65,9 @@ export default function PlayerControls({
   isPlaying,
   handlePreviousTrack,
   volumeRef,
+  audioRef,
+  currentTrackId,
+  tahfeezActiveRef,
 }: Props) {
   // ── State ───────────────────────────────────────────
   const [isClient, setIsClient] = useState(false);
@@ -68,6 +79,57 @@ export default function PlayerControls({
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackSpeed, setPlaybackSpeed] = useAtom(playbackSpeedAtom);
   const [playbackMode, setPlaybackMode] = useAtom(playbackModeAtom);
+  const [activeMode, setActiveMode] = useState<'listening' | 'tahfeez'>(
+    'listening'
+  );
+  const selectedReciter = useAtomValue(selectedReciterAtom);
+
+  // ── Tahfeez session (engine lives in the hook) ───────
+  const [tahfeezSettings, setTahfeezSettings] = useState<TahfeezSettings>({
+    fromAyah: 1,
+    toAyah: 5,
+    repeat: 3,
+    delay: 2,
+    strategy: 'whole_range',
+  });
+  // Latest ranges emitted by TahfeezModeControls — used when the play button starts a session
+  const currentRangesRef = useRef<TimeRange[]>([]);
+
+  const session = useTahfeezSession(audioRef, (active) => {
+    tahfeezActiveRef.current = active;
+  });
+  const { audioPlaying } = session;
+
+  // Extract reciter ID and chapter number from current reciter and track
+  const reciterId = selectedReciter?.id
+    ? resolveChapterReciterId(
+        selectedReciter.id,
+        selectedReciter?.moshaf?.id,
+        'quranFoundation'
+      )
+    : undefined;
+  const chapterNumber =
+    currentTrackId !== undefined ? currentTrackId + 1 : undefined; // Track IDs are 0-indexed, chapters are 1-indexed
+
+  // Update tahfeez settings when track changes
+  useEffect(() => {
+    if (chapterNumber) {
+      setTahfeezSettings((previous) => ({
+        ...previous,
+        fromAyah: 1,
+        toAyah: 5,
+      }));
+    }
+  }, [chapterNumber]);
+
+  const isTahfeezSupported =
+    selectedReciter?.source === LinkSource.QURAN_FOUNDATION;
+
+  useEffect(() => {
+    if (!isTahfeezSupported && activeMode === 'tahfeez') {
+      setActiveMode('listening');
+    }
+  }, [isTahfeezSupported, activeMode]);
 
   const moreMenuRef = useRef<HTMLDivElement>(null);
   const desktopSleepMenuRef = useRef<HTMLDivElement>(null);
@@ -76,6 +138,17 @@ export default function PlayerControls({
   // ── Custom Hook ─────────────────────────────────────
   const { remainingTime, setSleepTimer, clearSleepTimer } =
     useSleepTimer(togglePlayPause);
+
+  // ── Handlers with Logging ────────────────────────────
+  const handleNextTrackWithStopSession = () => {
+    session.stop();
+    handleNextTrack();
+  };
+
+  const handlePreviousTrackWithStopSession = () => {
+    session.stop();
+    handlePreviousTrack();
+  };
 
   // ── Effects ──────────────────────────────────────────
   useEffect(() => {
@@ -174,6 +247,11 @@ export default function PlayerControls({
       id: 'player.previousTrack',
       defaultMessage: 'Previous track',
     }),
+    tahfeezModeDisabledProvider: formatMessage({
+      id: 'tahfeez.modeDisabledProvider',
+      defaultMessage:
+        'Tahfeez mode is only available for quran.foundation reciters',
+    }),
     play: formatMessage({ id: 'player.play', defaultMessage: 'Play' }),
     pause: formatMessage({ id: 'player.pause', defaultMessage: 'Pause' }),
     enterFullscreen: formatMessage({
@@ -245,125 +323,247 @@ export default function PlayerControls({
         },
         { minutes }
       ),
+    tahfeezMode: formatMessage({
+      id: 'tahfeez.modeLabel',
+      defaultMessage: 'Tahfeez',
+    }),
+    listeningMode: formatMessage({
+      id: 'tahfeez.listeningLabel',
+      defaultMessage: 'Listening',
+    }),
   };
 
   // ── Render ───────────────────────────────────────────
   if (!isClient) {
     return (
-      <div
-        className="relative flex w-full items-center justify-between gap-2 md:gap-3"
-        dir="rtl"
-      >
-        {Array.from({ length: 9 }).map((_, index) => (
-          <div key={index} className="h-9 w-9" />
-        ))}
+      <div className="flex w-full flex-col">
+        {/* Mode Switcher Skeleton */}
+        <div className="mb-4 flex w-full items-center justify-center gap-3">
+          <div className="h-10 max-w-xs flex-1 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
+          <div className="h-10 max-w-xs flex-1 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
+        </div>
+        {/* Controls Skeleton */}
+        <div
+          className="relative flex w-full items-center justify-between gap-2 md:gap-3"
+          dir="rtl"
+        >
+          {Array.from({ length: 9 }).map((_, index) => (
+            <div key={index} className="h-9 w-9" />
+          ))}
+        </div>
       </div>
     );
   }
 
   if (isFullscreen) {
     return (
-      <div className="flex items-center justify-center gap-4 py-4">
-        {renderImageButton(forwardSVG, messages.nextTrack, handleNextTrack)}
-        {renderImageButton(
-          isPlaying ? pauseSVG : playSVG,
-          isPlaying ? messages.pause : messages.play,
-          togglePlayPause,
-          isPlaying ? 'animate-slideInWithFade' : ''
-        )}
-        {renderImageButton(
-          backwardSVG,
-          messages.previousTrack,
-          handlePreviousTrack
+      <div className="flex w-full flex-col">
+        {/* Mode Switcher */}
+        <div className="mb-4 flex w-full items-center justify-center gap-3">
+          <button
+            onClick={() => {
+              setActiveMode('listening');
+            }}
+            className={`max-w-xs flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
+              activeMode === 'listening'
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+            }`}
+          >
+            {messages.listeningMode}
+          </button>
+          <button
+            onClick={() => {
+              setActiveMode('tahfeez');
+            }}
+            className={`max-w-xs flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
+              activeMode === 'tahfeez'
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+            }`}
+          >
+            {messages.tahfeezMode}
+          </button>
+        </div>
+
+        {/* Mode-specific content */}
+        {activeMode === 'listening' ? (
+          <div className="flex items-center justify-center gap-4 py-4">
+            {renderImageButton(
+              forwardSVG,
+              messages.nextTrack,
+              handleNextTrackWithStopSession
+            )}
+            {renderImageButton(
+              audioPlaying ? pauseSVG : playSVG,
+              audioPlaying ? messages.pause : messages.play,
+              togglePlayPause,
+              audioPlaying ? 'animate-slideInWithFade' : ''
+            )}
+            {renderImageButton(
+              backwardSVG,
+              messages.previousTrack,
+              handlePreviousTrackWithStopSession
+            )}
+          </div>
+        ) : (
+          <TahfeezModeControls
+            tahfeezSettings={tahfeezSettings}
+            setTahfeezSettings={setTahfeezSettings}
+            reciterId={reciterId ?? undefined}
+            chapterNumber={chapterNumber}
+            onRangesReady={(ranges) => {
+              currentRangesRef.current = ranges;
+              if ((audioPlaying || isPlaying) && !session.isActive()) {
+                session.start(
+                  ranges,
+                  tahfeezSettings.repeat,
+                  tahfeezSettings.delay
+                );
+              }
+            }}
+            onCleanup={() => session.stop()}
+          />
         )}
       </div>
     );
   }
 
   return (
-    <div
-      className="relative flex w-full items-center justify-between gap-2 md:gap-3"
-      dir="rtl"
-    >
-      {/* Volume Control */}
-      <div
-        className="relative flex shrink-0 items-center gap-2"
-        ref={volumeRef}
-        style={{ touchAction: 'none' }}
-      >
-        <Tooltip
-          content={volume > 0 ? messages.muteVolume : messages.unmuteVolume}
-        >
-          <button
-            onClick={() => setShowVolumeSlider((previous) => !previous)}
-            className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-            aria-label={
-              volume > 0 ? messages.muteVolume : messages.unmuteVolume
-            }
-          >
-            {volume > 0 ? (
-              <BiVolumeFull size={ICON_SIZE} color="#6b7280" />
-            ) : (
-              <BiVolumeMute size={ICON_SIZE} color="#6b7280" />
-            )}
-          </button>
-        </Tooltip>
-
-        {showVolumeSlider && (
-          <div className="absolute bottom-full left-1/2 mb-2 flex h-20 w-6 -translate-x-1/2 items-center justify-center">
-            <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.01}
-              value={volume}
-              onChange={(event) =>
-                setVolume(Number((event.target as HTMLInputElement).value))
-              }
-              className="h-full w-1 cursor-pointer appearance-none bg-transparent"
-              style={{
-                writingMode: 'vertical-lr',
-                WebkitAppearance: 'slider-vertical',
-                background: `linear-gradient(to top, #3b82f6 0%, #3b82f6 ${volume * 100}%, #cbd5e1 ${volume * 100}%, #cbd5e1 100%)`,
-                borderRadius: '9999px',
-              }}
-              aria-label={messages.volumeControl}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Core Controls */}
-      {renderImageButton(forwardSVG, messages.nextTrack, handleNextTrack)}
-      {renderImageButton(
-        isPlaying ? pauseSVG : playSVG,
-        isPlaying ? messages.pause : messages.play,
-        togglePlayPause,
-        isPlaying ? 'animate-slideInWithFade' : ''
-      )}
-      {renderImageButton(
-        backwardSVG,
-        messages.previousTrack,
-        handlePreviousTrack
-      )}
-
-      {/* Playback Mode */}
-      <Tooltip
-        content={
-          playbackMode === 'off'
-            ? messages.allOff
-            : playbackMode === 'shuffle'
-              ? messages.shuffleEnabled
-              : messages.repeatOne
-        }
-      >
+    <div className="flex w-full flex-col">
+      {/* Mode Switcher */}
+      <div className="mb-4 flex w-full items-center justify-center gap-3">
         <button
-          onClick={togglePlaybackMode}
-          className={cn(
-            'flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700',
-            playbackMode !== 'off' && 'animate-slideInWithFade'
+          onClick={() => {
+            setActiveMode('listening');
+          }}
+          className={`max-w-xs flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
+            activeMode === 'listening'
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+          }`}
+        >
+          {messages.listeningMode}
+        </button>
+        <button
+          onClick={() => {
+            setActiveMode('tahfeez');
+          }}
+          disabled={!isTahfeezSupported}
+          className={`max-w-xs flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
+            activeMode === 'tahfeez'
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+          } disabled:cursor-not-allowed disabled:opacity-50`}
+          title={
+            !isTahfeezSupported
+              ? messages.tahfeezModeDisabledProvider
+              : undefined
+          }
+        >
+          {messages.tahfeezMode}
+        </button>
+      </div>
+      {activeMode === 'tahfeez' ? (
+        <TahfeezModeControls
+          tahfeezSettings={tahfeezSettings}
+          setTahfeezSettings={setTahfeezSettings}
+          reciterId={reciterId ?? undefined}
+          chapterNumber={chapterNumber}
+          onRangesReady={(ranges) => {
+            currentRangesRef.current = ranges;
+            if ((audioPlaying || isPlaying) && !session.isActive()) {
+              session.start(
+                ranges,
+                tahfeezSettings.repeat,
+                tahfeezSettings.delay
+              );
+            }
+          }}
+          onCleanup={() => session.stop()}
+        />
+      ) : null}
+
+      <div
+        className="relative flex w-full items-center justify-between gap-2 md:gap-3"
+        dir="rtl"
+      >
+        {/* Volume Control */}
+        <div
+          className="relative flex shrink-0 items-center gap-2"
+          ref={volumeRef}
+          style={{ touchAction: 'none' }}
+        >
+          <Tooltip
+            content={volume > 0 ? messages.muteVolume : messages.unmuteVolume}
+          >
+            <button
+              onClick={() => setShowVolumeSlider((previous) => !previous)}
+              className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+              aria-label={
+                volume > 0 ? messages.muteVolume : messages.unmuteVolume
+              }
+            >
+              {volume > 0 ? (
+                <BiVolumeFull size={ICON_SIZE} color="#6b7280" />
+              ) : (
+                <BiVolumeMute size={ICON_SIZE} color="#6b7280" />
+              )}
+            </button>
+          </Tooltip>
+
+          {showVolumeSlider && (
+            <div className="absolute bottom-full left-1/2 mb-2 flex h-20 w-6 -translate-x-1/2 items-center justify-center">
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.01}
+                value={volume}
+                onChange={(event) =>
+                  setVolume(Number((event.target as HTMLInputElement).value))
+                }
+                className="h-full w-1 cursor-pointer appearance-none bg-transparent"
+                style={{
+                  writingMode: 'vertical-lr',
+                  WebkitAppearance: 'slider-vertical',
+                  background: `linear-gradient(to top, #3b82f6 0%, #3b82f6 ${volume * 100}%, #cbd5e1 ${volume * 100}%, #cbd5e1 100%)`,
+                  borderRadius: '9999px',
+                }}
+                aria-label={messages.volumeControl}
+              />
+            </div>
           )}
-          aria-label={
+        </div>
+
+        {/* Core Controls */}
+        {renderImageButton(
+          forwardSVG,
+          messages.nextTrack,
+          handleNextTrackWithStopSession
+        )}
+        {renderImageButton(
+          audioPlaying ? pauseSVG : playSVG,
+          audioPlaying ? messages.pause : messages.play,
+          activeMode === 'tahfeez'
+            ? () =>
+                session.handlePlayPause(
+                  currentRangesRef.current,
+                  tahfeezSettings.repeat,
+                  tahfeezSettings.delay
+                )
+            : togglePlayPause,
+          audioPlaying ? 'animate-slideInWithFade' : ''
+        )}
+        {renderImageButton(
+          backwardSVG,
+          messages.previousTrack,
+          handlePreviousTrackWithStopSession
+        )}
+
+        {/* Playback Mode */}
+        <Tooltip
+          content={
             playbackMode === 'off'
               ? messages.allOff
               : playbackMode === 'shuffle'
@@ -371,253 +571,79 @@ export default function PlayerControls({
                 : messages.repeatOne
           }
         >
-          {playbackMode === 'off' ? (
-            <Image
-              src={shuffleDisabledSVG}
-              alt=""
-              width={ICON_SIZE}
-              height={ICON_SIZE}
-            />
-          ) : playbackMode === 'shuffle' ? (
-            <Image
-              src={shuffleSVG}
-              alt=""
-              width={ICON_SIZE}
-              height={ICON_SIZE}
-            />
-          ) : (
-            <MdRepeatOne size={ICON_SIZE} color="#3b82f6" />
-          )}
-        </button>
-      </Tooltip>
-
-      {/* Mobile Sleep Timer */}
-      {remainingTime !== null && remainingTime > 0 && (
-        <div className="flex h-9 w-9 items-center justify-center sm:hidden">
-          <span className="flex items-center text-xs font-bold text-blue-500 dark:text-blue-400">
-            <Image
-              src={sleepSVG}
-              alt=""
-              width={12}
-              height={12}
-              className="me-0.5"
-            />
-            {getCurrentMinute(remainingTime)}
-          </span>
-        </div>
-      )}
-
-      {/* Mobile More Menu */}
-      <div className="relative sm:hidden" ref={moreMenuRef}>
-        <Tooltip content={messages.more}>
           <button
-            onClick={() => setShowMoreMenu((previous) => !previous)}
-            className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-            aria-label={messages.more}
+            onClick={togglePlaybackMode}
+            className={cn(
+              'flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700',
+              playbackMode !== 'off' && 'animate-slideInWithFade'
+            )}
+            aria-label={
+              playbackMode === 'off'
+                ? messages.allOff
+                : playbackMode === 'shuffle'
+                  ? messages.shuffleEnabled
+                  : messages.repeatOne
+            }
           >
-            <span className="text-lg font-bold text-gray-600 dark:text-gray-300">
-              ⋯
-            </span>
+            {playbackMode === 'off' ? (
+              <Image
+                src={shuffleDisabledSVG}
+                alt=""
+                width={ICON_SIZE}
+                height={ICON_SIZE}
+              />
+            ) : playbackMode === 'shuffle' ? (
+              <Image
+                src={shuffleSVG}
+                alt=""
+                width={ICON_SIZE}
+                height={ICON_SIZE}
+              />
+            ) : (
+              <MdRepeatOne size={ICON_SIZE} color="#3b82f6" />
+            )}
           </button>
         </Tooltip>
 
-        {showMoreMenu && (
-          <div className="absolute bottom-10 left-0 z-10 flex w-52 flex-col gap-1 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
-            <div className="px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+        {/* Mobile Sleep Timer */}
+        {remainingTime !== null && remainingTime > 0 && (
+          <div className="flex h-9 w-9 items-center justify-center sm:hidden">
+            <span className="flex items-center text-xs font-bold text-blue-500 dark:text-blue-400">
               <Image
                 src={sleepSVG}
                 alt=""
                 width={12}
                 height={12}
-                className="me-0.5 inline"
+                className="me-0.5"
               />
-              {messages.sleepTimer}
-            </div>
-            <div className="flex flex-wrap gap-1">
-              {SLEEP_MINUTES.map((minutes) => (
-                <button
-                  key={minutes}
-                  onClick={() => {
-                    setSleepTimer(minutes);
-                    setShowMoreMenu(false);
-                  }}
-                  className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-                >
-                  {minutes}m
-                </button>
-              ))}
-              <button
-                onClick={() => {
-                  setSleepTimer('end');
-                  setShowMoreMenu(false);
-                }}
-                className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-              >
-                {messages.untilEnd}
-              </button>
-              {remainingTime && (
-                <button
-                  onClick={() => {
-                    clearSleepTimer();
-                    setShowMoreMenu(false);
-                  }}
-                  className="w-full rounded bg-red-100 px-2 py-1 text-xs text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
-                >
-                  Cancel Timer
-                </button>
-              )}
-            </div>
-
-            <div className="my-1 h-px bg-gray-200 dark:bg-gray-700" />
-
-            <button
-              onClick={() => {
-                toggleFullscreen();
-                setShowMoreMenu(false);
-              }}
-              className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-            >
-              {isFullscreen ? (
-                <BsFullscreenExit size={16} color="#6b7280" />
-              ) : (
-                <BsFullscreen size={16} color="#6b7280" />
-              )}
-              <span>
-                {isFullscreen
-                  ? messages.exitFullscreen
-                  : messages.enterFullscreen}
-              </span>
-            </button>
-
-            <button
-              onClick={() => {
-                setShowVisualizer((previous) => !previous);
-                setShowMoreMenu(false);
-              }}
-              disabled={isPlaying}
-              className={cn(
-                'flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700',
-                isPlaying && 'cursor-not-allowed opacity-50'
-              )}
-            >
-              <Image
-                src={showVisualizer ? spectrumSVG : spectrumDisabledSVG}
-                alt=""
-                width={16}
-                height={16}
-              />
-              <span>
-                {showVisualizer
-                  ? messages.hideVisualizer
-                  : messages.showVisualizer}
-              </span>
-            </button>
-
-            <button
-              onClick={() => {
-                togglePlaybackSpeed();
-                setShowMoreMenu(false);
-              }}
-              className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-            >
-              <MdSpeed size={16} color="#6b7280" />
-              <span>{messages.playbackSpeed}</span>
-            </button>
-
-            <button
-              onClick={() => {
-                togglePlaylistOpen();
-                setShowMoreMenu(false);
-              }}
-              className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-            >
-              <Image src={playlistSVG} alt="" width={16} height={16} />
-              <span>{messages.togglePlaylist}</span>
-            </button>
+              {getCurrentMinute(remainingTime)}
+            </span>
           </div>
         )}
-      </div>
 
-      {/* Desktop Controls */}
-      <div className="hidden items-center gap-2 sm:flex">
-        <Tooltip
-          content={
-            isFullscreen ? messages.exitFullscreen : messages.enterFullscreen
-          }
-        >
-          <button
-            onClick={toggleFullscreen}
-            className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-            aria-label={
-              isFullscreen ? messages.exitFullscreen : messages.enterFullscreen
-            }
-          >
-            {isFullscreen ? (
-              <BsFullscreenExit size={ICON_SIZE} color="#6b7280" />
-            ) : (
-              <BsFullscreen size={ICON_SIZE} color="#6b7280" />
-            )}
-          </button>
-        </Tooltip>
-
-        {renderImageButton(
-          showVisualizer ? spectrumSVG : spectrumDisabledSVG,
-          showVisualizer ? messages.hideVisualizer : messages.showVisualizer,
-          () => setShowVisualizer((previous) => !previous),
-          isPlaying ? 'pointer-events-none cursor-not-allowed opacity-30' : '',
-          isPlaying
-        )}
-
-        <Tooltip content={messages.playbackSpeed}>
-          <button
-            onClick={togglePlaybackSpeed}
-            className="relative flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-            aria-label={messages.playbackSpeed}
-          >
-            <MdSpeed size={ICON_SIZE} color="#6b7280" />
-            {playbackSpeed !== 1 && (
-              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[8px] font-bold text-white">
-                {playbackSpeed}
-              </span>
-            )}
-          </button>
-        </Tooltip>
-
-        <div className="relative" ref={desktopSleepMenuRef}>
-          <Tooltip
-            content={
-              remainingTime
-                ? messages.sleepTimerActive(getCurrentMinute(remainingTime))
-                : messages.sleepTimer
-            }
-          >
+        {/* Mobile More Menu */}
+        <div className="relative sm:hidden" ref={moreMenuRef}>
+          <Tooltip content={messages.more}>
             <button
-              onClick={() => setShowDesktopSleepMenu((previous) => !previous)}
+              onClick={() => setShowMoreMenu((previous) => !previous)}
               className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-              aria-label={
-                remainingTime
-                  ? `Sleep timer active: ${getCurrentMinute(remainingTime)} minutes remaining`
-                  : messages.sleepTimer
-              }
+              aria-label={messages.more}
             >
-              <Image src={sleepSVG} alt="" width={16} height={16} />
-              {remainingTime !== null && remainingTime > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[8px] font-bold text-white">
-                  {getCurrentMinute(remainingTime)}
-                </span>
-              )}
+              <span className="text-lg font-bold text-gray-600 dark:text-gray-300">
+                ⋯
+              </span>
             </button>
           </Tooltip>
 
-          {showDesktopSleepMenu && (
-            <div className="absolute bottom-10 right-0 z-10 w-40 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
-              <div className="mb-1 px-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+          {showMoreMenu && (
+            <div className="absolute bottom-10 left-0 z-10 flex w-52 flex-col gap-1 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
+              <div className="px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400">
                 <Image
                   src={sleepSVG}
                   alt=""
                   width={12}
                   height={12}
-                  className="mr-1 inline"
+                  className="me-0.5 inline"
                 />
                 {messages.sleepTimer}
               </div>
@@ -627,7 +653,7 @@ export default function PlayerControls({
                     key={minutes}
                     onClick={() => {
                       setSleepTimer(minutes);
-                      setShowDesktopSleepMenu(false);
+                      setShowMoreMenu(false);
                     }}
                     className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                   >
@@ -637,7 +663,7 @@ export default function PlayerControls({
                 <button
                   onClick={() => {
                     setSleepTimer('end');
-                    setShowDesktopSleepMenu(false);
+                    setShowMoreMenu(false);
                   }}
                   className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                 >
@@ -647,23 +673,216 @@ export default function PlayerControls({
                   <button
                     onClick={() => {
                       clearSleepTimer();
-                      setShowDesktopSleepMenu(false);
+                      setShowMoreMenu(false);
                     }}
                     className="w-full rounded bg-red-100 px-2 py-1 text-xs text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
                   >
-                    {messages.cancelTimer}
+                    Cancel Timer
                   </button>
                 )}
               </div>
+
+              <div className="my-1 h-px bg-gray-200 dark:bg-gray-700" />
+
+              <button
+                onClick={() => {
+                  toggleFullscreen();
+                  setShowMoreMenu(false);
+                }}
+                className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+              >
+                {isFullscreen ? (
+                  <BsFullscreenExit size={16} color="#6b7280" />
+                ) : (
+                  <BsFullscreen size={16} color="#6b7280" />
+                )}
+                <span>
+                  {isFullscreen
+                    ? messages.exitFullscreen
+                    : messages.enterFullscreen}
+                </span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowVisualizer((previous) => !previous);
+                  setShowMoreMenu(false);
+                }}
+                disabled={isPlaying}
+                className={cn(
+                  'flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700',
+                  isPlaying && 'cursor-not-allowed opacity-50'
+                )}
+              >
+                <Image
+                  src={showVisualizer ? spectrumSVG : spectrumDisabledSVG}
+                  alt=""
+                  width={16}
+                  height={16}
+                />
+                <span>
+                  {showVisualizer
+                    ? messages.hideVisualizer
+                    : messages.showVisualizer}
+                </span>
+              </button>
+
+              <button
+                onClick={() => {
+                  togglePlaybackSpeed();
+                  setShowMoreMenu(false);
+                }}
+                className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+              >
+                <MdSpeed size={16} color="#6b7280" />
+                <span>{messages.playbackSpeed}</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  togglePlaylistOpen();
+                  setShowMoreMenu(false);
+                }}
+                className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+              >
+                <Image src={playlistSVG} alt="" width={16} height={16} />
+                <span>{messages.togglePlaylist}</span>
+              </button>
             </div>
           )}
         </div>
 
-        {renderImageButton(
-          playlistSVG,
-          messages.togglePlaylist,
-          togglePlaylistOpen
-        )}
+        {/* Desktop Controls */}
+        <div className="hidden items-center gap-2 sm:flex">
+          <Tooltip
+            content={
+              isFullscreen ? messages.exitFullscreen : messages.enterFullscreen
+            }
+          >
+            <button
+              onClick={toggleFullscreen}
+              className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+              aria-label={
+                isFullscreen
+                  ? messages.exitFullscreen
+                  : messages.enterFullscreen
+              }
+            >
+              {isFullscreen ? (
+                <BsFullscreenExit size={ICON_SIZE} color="#6b7280" />
+              ) : (
+                <BsFullscreen size={ICON_SIZE} color="#6b7280" />
+              )}
+            </button>
+          </Tooltip>
+
+          {renderImageButton(
+            showVisualizer ? spectrumSVG : spectrumDisabledSVG,
+            showVisualizer ? messages.hideVisualizer : messages.showVisualizer,
+            () => setShowVisualizer((previous) => !previous),
+            isPlaying
+              ? 'pointer-events-none cursor-not-allowed opacity-30'
+              : '',
+            isPlaying
+          )}
+
+          <Tooltip content={messages.playbackSpeed}>
+            <button
+              onClick={togglePlaybackSpeed}
+              className="relative flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+              aria-label={messages.playbackSpeed}
+            >
+              <MdSpeed size={ICON_SIZE} color="#6b7280" />
+              {playbackSpeed !== 1 && (
+                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[8px] font-bold text-white">
+                  {playbackSpeed}
+                </span>
+              )}
+            </button>
+          </Tooltip>
+
+          <div className="relative" ref={desktopSleepMenuRef}>
+            <Tooltip
+              content={
+                remainingTime
+                  ? messages.sleepTimerActive(getCurrentMinute(remainingTime))
+                  : messages.sleepTimer
+              }
+            >
+              <button
+                onClick={() => setShowDesktopSleepMenu((previous) => !previous)}
+                className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                aria-label={
+                  remainingTime
+                    ? `Sleep timer active: ${getCurrentMinute(remainingTime)} minutes remaining`
+                    : messages.sleepTimer
+                }
+              >
+                <Image src={sleepSVG} alt="" width={16} height={16} />
+                {remainingTime !== null && remainingTime > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[8px] font-bold text-white">
+                    {getCurrentMinute(remainingTime)}
+                  </span>
+                )}
+              </button>
+            </Tooltip>
+
+            {showDesktopSleepMenu && (
+              <div className="absolute bottom-10 right-0 z-10 w-40 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
+                <div className="mb-1 px-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+                  <Image
+                    src={sleepSVG}
+                    alt=""
+                    width={12}
+                    height={12}
+                    className="mr-1 inline"
+                  />
+                  {messages.sleepTimer}
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {SLEEP_MINUTES.map((minutes) => (
+                    <button
+                      key={minutes}
+                      onClick={() => {
+                        setSleepTimer(minutes);
+                        setShowDesktopSleepMenu(false);
+                      }}
+                      className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                    >
+                      {minutes}m
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => {
+                      setSleepTimer('end');
+                      setShowDesktopSleepMenu(false);
+                    }}
+                    className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                  >
+                    {messages.untilEnd}
+                  </button>
+                  {remainingTime && (
+                    <button
+                      onClick={() => {
+                        clearSleepTimer();
+                        setShowDesktopSleepMenu(false);
+                      }}
+                      className="w-full rounded bg-red-100 px-2 py-1 text-xs text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
+                    >
+                      {messages.cancelTimer}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {renderImageButton(
+            playlistSVG,
+            messages.togglePlaylist,
+            togglePlaylistOpen
+          )}
+        </div>
       </div>
     </div>
   );

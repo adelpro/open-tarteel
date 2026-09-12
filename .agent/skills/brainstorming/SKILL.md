@@ -67,9 +67,10 @@ allowed-tools: Read, Glob, Grep
 - [Affects: cost/complexity/timeline/scale]
 
 **Options:**
-| Option | Pros | Cons | Best For |
-|--------|------|------|----------|
-| A | [+] | [-] | [Use case] |
+
+| Option | Pros | Cons | Best For   |
+| ------ | ---- | ---- | ---------- |
+| A      | [+]  | [-]  | [Use case] |
 
 **If Not Specified:** [Default + rationale]
 ```
