@@ -30,6 +30,7 @@ import {
   showVisualizerAtom,
   volumeAtom,
 } from '@/jotai/atom';
+import { LinkSource } from '@/types';
 import { cn } from '@/utils';
 import { resolveChapterReciterId } from '@/utils/resolveChapterReciterId';
 
@@ -121,6 +122,15 @@ export default function PlayerControls({
     }
   }, [chapterNumber]);
 
+  const isTahfeezSupported =
+    selectedReciter?.source === LinkSource.QURAN_FOUNDATION;
+
+  useEffect(() => {
+    if (!isTahfeezSupported && activeMode === 'tahfeez') {
+      setActiveMode('listening');
+    }
+  }, [isTahfeezSupported, activeMode]);
+
   const moreMenuRef = useRef<HTMLDivElement>(null);
   const desktopSleepMenuRef = useRef<HTMLDivElement>(null);
   const { formatMessage } = useIntl();
@@ -128,6 +138,17 @@ export default function PlayerControls({
   // ── Custom Hook ─────────────────────────────────────
   const { remainingTime, setSleepTimer, clearSleepTimer } =
     useSleepTimer(togglePlayPause);
+
+  // ── Handlers with Logging ────────────────────────────
+  const handleNextTrackWithStopSession = () => {
+    session.stop();
+    handleNextTrack();
+  };
+
+  const handlePreviousTrackWithStopSession = () => {
+    session.stop();
+    handlePreviousTrack();
+  };
 
   // ── Effects ──────────────────────────────────────────
   useEffect(() => {
@@ -225,6 +246,11 @@ export default function PlayerControls({
     previousTrack: formatMessage({
       id: 'player.previousTrack',
       defaultMessage: 'Previous track',
+    }),
+    tahfeezModeDisabledProvider: formatMessage({
+      id: 'tahfeez.modeDisabledProvider',
+      defaultMessage:
+        'Tahfeez mode is only available for quran.foundation reciters',
     }),
     play: formatMessage({ id: 'player.play', defaultMessage: 'Play' }),
     pause: formatMessage({ id: 'player.pause', defaultMessage: 'Pause' }),
@@ -363,7 +389,11 @@ export default function PlayerControls({
         {/* Mode-specific content */}
         {activeMode === 'listening' ? (
           <div className="flex items-center justify-center gap-4 py-4">
-            {renderImageButton(forwardSVG, messages.nextTrack, handleNextTrack)}
+            {renderImageButton(
+              forwardSVG,
+              messages.nextTrack,
+              handleNextTrackWithStopSession
+            )}
             {renderImageButton(
               audioPlaying ? pauseSVG : playSVG,
               audioPlaying ? messages.pause : messages.play,
@@ -373,7 +403,7 @@ export default function PlayerControls({
             {renderImageButton(
               backwardSVG,
               messages.previousTrack,
-              handlePreviousTrack
+              handlePreviousTrackWithStopSession
             )}
           </div>
         ) : (
@@ -384,6 +414,13 @@ export default function PlayerControls({
             chapterNumber={chapterNumber}
             onRangesReady={(ranges) => {
               currentRangesRef.current = ranges;
+              if ((audioPlaying || isPlaying) && !session.isActive()) {
+                session.start(
+                  ranges,
+                  tahfeezSettings.repeat,
+                  tahfeezSettings.delay
+                );
+              }
             }}
             onCleanup={() => session.stop()}
           />
@@ -412,11 +449,17 @@ export default function PlayerControls({
           onClick={() => {
             setActiveMode('tahfeez');
           }}
+          disabled={!isTahfeezSupported}
           className={`max-w-xs flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
             activeMode === 'tahfeez'
               ? 'bg-blue-600 text-white hover:bg-blue-700'
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-          }`}
+          } disabled:cursor-not-allowed disabled:opacity-50`}
+          title={
+            !isTahfeezSupported
+              ? messages.tahfeezModeDisabledProvider
+              : undefined
+          }
         >
           {messages.tahfeezMode}
         </button>
@@ -429,6 +472,13 @@ export default function PlayerControls({
           chapterNumber={chapterNumber}
           onRangesReady={(ranges) => {
             currentRangesRef.current = ranges;
+            if ((audioPlaying || isPlaying) && !session.isActive()) {
+              session.start(
+                ranges,
+                tahfeezSettings.repeat,
+                tahfeezSettings.delay
+              );
+            }
           }}
           onCleanup={() => session.stop()}
         />
@@ -487,7 +537,11 @@ export default function PlayerControls({
         </div>
 
         {/* Core Controls */}
-        {renderImageButton(forwardSVG, messages.nextTrack, handleNextTrack)}
+        {renderImageButton(
+          forwardSVG,
+          messages.nextTrack,
+          handleNextTrackWithStopSession
+        )}
         {renderImageButton(
           audioPlaying ? pauseSVG : playSVG,
           audioPlaying ? messages.pause : messages.play,
@@ -504,7 +558,7 @@ export default function PlayerControls({
         {renderImageButton(
           backwardSVG,
           messages.previousTrack,
-          handlePreviousTrack
+          handlePreviousTrackWithStopSession
         )}
 
         {/* Playback Mode */}

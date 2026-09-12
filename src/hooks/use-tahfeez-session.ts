@@ -124,6 +124,7 @@ export function useTahfeezSession(
     const scheduleNext = () => {
       audio.pause();
       delayTimerRef.current = setTimeout(() => {
+        delayTimerRef.current = null; // allow timeupdate to fire again
         const nextRange = rangesRef.current.at(indexRef.current);
         if (nextRange) {
           audio.currentTime = nextRange.startTime;
@@ -133,6 +134,8 @@ export function useTahfeezSession(
     };
 
     const handleTimeUpdate = () => {
+      if (delayTimerRef.current !== null) return; // already waiting — ignore
+
       const currentRange = rangesRef.current.at(indexRef.current);
       if (!currentRange) return;
 

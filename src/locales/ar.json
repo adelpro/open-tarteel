@@ -142,6 +142,7 @@
   "settings.cacheDelete": "حذف",
   "settings.cacheStorageUsed": "المساحة المستخدمة: {used} من {quota}",
   "tahfeez.modeLabel": "التحفيظ",
+  "tahfeez.modeDisabledProvider": "التحفيظ متاح فقط للقراء من quran.foundation حالياً",
   "tahfeez.listeningLabel": "الاستماع",
   "tahfeez.fromAyah": "من الآية",
   "tahfeez.toAyah": "إلى الآية",
