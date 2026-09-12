@@ -14,8 +14,7 @@ import Tooltip from '@/components/tooltip';
 import { SURAHS } from '@/constants';
 import type { DownloadProgress } from '@/hooks/use-offline-download';
 import type { Playlist } from '@/types';
-import { cn, formatBytes } from '@/utils';
-import { removeTashkeel } from '@/utils';
+import { cn, formatBytes, getSurahDisplayName } from '@/utils';
 
 /** Rough average MP3 size per surah (~5 MB) for pre-download estimate */
 const ESTIMATED_BYTES_PER_SURAH = 5 * 1024 * 1024;
@@ -98,7 +97,7 @@ export default function DownloadAllButton({
       if (!currentItem) return null;
       const surah = SURAHS.find((s) => s.id.toString() === currentItem.surahId);
       if (!surah) return null;
-      return locale !== 'ar' ? surah.englishName : removeTashkeel(surah.name);
+      return getSurahDisplayName(surah, locale);
     })();
 
     return (
