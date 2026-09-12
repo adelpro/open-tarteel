@@ -4,6 +4,8 @@
 
 /* ─── Design Tokens ─── */
 :root {
+  color-scheme: light;
+
   /* Backgrounds */
   --background: #f4f4f5; /* warm zinc-100 — not harsh white */
   --surface: #ffffff;
@@ -27,6 +29,8 @@
 }
 
 .dark {
+  color-scheme: dark;
+
   /* Backgrounds */
   --background: #0f1117; /* near-black with blue tint */
   --surface: #1a1f2e; /* deep navy card */
@@ -119,10 +123,12 @@ body {
 
 /* ─── Range Slider (player) ─── */
 .square-thumb {
+  appearance: none;
   -webkit-appearance: none;
 }
 
 .square-thumb::-webkit-slider-thumb {
+  appearance: none;
   -webkit-appearance: none;
   width: 32px;
   height: 32px;
