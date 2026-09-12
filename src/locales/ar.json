@@ -151,6 +151,7 @@
   "offline.noDownloadedSurahs": "لا توجد سور محمّلة لهذا القارئ دون إنترنت. يرجى الاتصال بالإنترنت للاستماع أو التحميل.",
   "offline.playbackRestricted": "وضع عدم الاتصال: تشغيل السور المحمّلة فقط",
   "tahfeez.modeLabel": "التحفيظ",
+  "tahfeez.modeDisabledProvider": "التحفيظ متاح فقط للقراء من quran.foundation حالياً",
   "tahfeez.listeningLabel": "الاستماع",
   "tahfeez.fromAyah": "من الآية",
   "tahfeez.toAyah": "إلى الآية",

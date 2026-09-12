@@ -130,17 +130,31 @@ export default function Player({ playlist }: Props) {
     }
   }, [currentTrack, isPlaying, setCurrentTime]);
 
-  // Sync play/pause with audio element
+  // Sync play/pause with audio element (driven by React state)
   useEffect(() => {
     if (!audioRef.current) return;
     isPlaying ? void audioRef.current.play() : audioRef.current.pause();
   }, [isPlaying]);
 
+  // Mirror DOM audio events → React state so that external play/pause
+  // (e.g. tahfeez session, browser media buttons) keeps the icon in sync.
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const onPlay = () => setIsPlaying(true);
+    const onPause = () => setIsPlaying(false);
+    audio.addEventListener('play', onPlay);
+    audio.addEventListener('pause', onPause);
+    return () => {
+      audio.removeEventListener('play', onPlay);
+      audio.removeEventListener('pause', onPause);
+    };
+  }, []);
+
   const togglePlayPause = () => {
     if (!audioRef.current) return;
     if (!isOnline && availableIndices.length === 0) return;
     isPlaying ? audioRef.current.pause() : audioRef.current.play();
-    setIsPlaying(!isPlaying);
   };
 
   const handleTimeUpdate = () => {

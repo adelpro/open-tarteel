@@ -68,7 +68,6 @@ export default function TahfeezModeControls({
       setIsLoadingTimestamps(false);
     }
   }, [reciterId, chapterNumber, formatMessage]);
-
   // Stop player and cancel tahfeez seek on unmount (e.g mode switched to listening)
   useEffect(() => {
     return () => {
@@ -116,6 +115,8 @@ export default function TahfeezModeControls({
     [segments]
   );
 
+  const previousRangesRef = useRef<string>('');
+
   // Emit updated ranges whenever segments or relevant settings change
   useEffect(() => {
     if (!onRangesReady || segments.length === 0) return;
@@ -124,7 +125,13 @@ export default function TahfeezModeControls({
       tahfeezSettings.toAyah,
       tahfeezSettings.strategy
     );
-    if (ranges) onRangesReady(ranges);
+    if (ranges) {
+      const rangesString = JSON.stringify(ranges);
+      if (previousRangesRef.current !== rangesString) {
+        previousRangesRef.current = rangesString;
+        onRangesReady(ranges);
+      }
+    }
   }, [
     segments,
     tahfeezSettings.fromAyah,
@@ -239,6 +246,7 @@ export default function TahfeezModeControls({
                 ...previous,
                 strategy: 'per_ayah',
               }));
+              onCleanup?.();
             }}
             className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
               tahfeezSettings.strategy === 'per_ayah'
@@ -254,6 +262,7 @@ export default function TahfeezModeControls({
                 ...previous,
                 strategy: 'whole_range',
               }));
+              onCleanup?.();
             }}
             className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
               tahfeezSettings.strategy === 'whole_range'
