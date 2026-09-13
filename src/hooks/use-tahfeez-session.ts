@@ -97,8 +97,18 @@ export function useTahfeezSession(
 
   // ── Public API ───────────────────────────────────────
   const stop = () => {
+    // Clean stop - cancel any pending delays and reset audio
+    if (delayTimerRef.current !== null) {
+      clearTimeout(delayTimerRef.current);
+      delayTimerRef.current = null;
+    }
+
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+
     teardown();
-    audioRef.current?.pause();
     onActiveChange(false);
   };
 
@@ -187,7 +197,6 @@ export function useTahfeezSession(
       // Session wired but paused — resume at current position
       void audio.play();
     } else {
-      // No session — start a new one
       start(ranges, repeat, delay);
     }
   };

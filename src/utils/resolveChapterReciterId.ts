@@ -4,7 +4,7 @@ import {
   mergedReciters,
 } from '@/data/merged-reciters';
 
-export type TargetProvider = 'quranFoundation' | 'mp3quran';
+export type TargetProvider = 'quranFoundation' | 'mp3quran' | 'quranAi';
 
 const matchesProviderEntry = (
   entry: MergedReciterProviderEntry,
@@ -65,7 +65,17 @@ export const resolveChapterReciterId = (
   moshafId?: string | null,
   targetProvider: TargetProvider = 'quranFoundation'
 ): number | null => {
-  if (!id || !moshafId || typeof id !== 'string') {
+  if (!id || typeof id !== 'string') {
+    return null;
+  }
+
+  // Handle Quran Foundation reciters directly - extract numeric ID
+  if (id.startsWith('quran.foundation-')) {
+    const numericId = parseInt(id.replace('quran.foundation-', ''), 10);
+    return Number.isNaN(numericId) ? null : numericId;
+  }
+
+  if (!moshafId) {
     return null;
   }
 

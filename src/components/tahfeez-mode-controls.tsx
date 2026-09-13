@@ -81,7 +81,6 @@ export default function TahfeezModeControls({
       void fetchTimestamps();
     }
   }, [reciterId, chapterNumber, fetchTimestamps]);
-
   /**  Compute flat TimeRange array from current segments + settings. Returns null on invalid input. */
   const computeRanges = useCallback(
     (
@@ -162,6 +161,7 @@ export default function TahfeezModeControls({
                 ...previous,
                 fromAyah: value,
               }));
+              onCleanup?.();
             }}
             min={1}
             max={segments.length - 1}
@@ -186,6 +186,7 @@ export default function TahfeezModeControls({
                 ...previous,
                 toAyah: value,
               }));
+              onCleanup?.();
             }}
             min={1}
             max={segments.length}
@@ -209,6 +210,7 @@ export default function TahfeezModeControls({
                 ...previous,
                 repeat: value,
               }));
+              onCleanup?.();
             }}
             min={1}
             max={100}
@@ -229,6 +231,7 @@ export default function TahfeezModeControls({
                 60
               );
               setTahfeezSettings((previous) => ({ ...previous, delay: value }));
+              onCleanup?.();
             }}
             min={0}
             max={60}
