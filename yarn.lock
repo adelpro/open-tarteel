@@ -7496,6 +7496,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"js-yaml@npm:4.3.2":
+  version: 4.3.2
+  resolution: "js-yaml@npm:4.3.2"
+  dependencies:
+    argparse: "npm:^2.0.1"
+  bin:
+    js-yaml: bin/js-yaml.js
+  checksum: 10c0/dedd34c2e8fef1d504687f1bc94ed0ee1311a1f78770fa2800352c6d59c635ccf555009d74e9afe529ae62199da2b1ccef30e53dc84dcd8d2d8187c22574bc97
+  languageName: node
+  linkType: hard
+
 "js-yaml@npm:^4.1.0, js-yaml@npm:^4.3.0":
   version: 4.3.1
   resolution: "js-yaml@npm:4.3.1"
@@ -9019,6 +9030,7 @@ __metadata:
     husky: "npm:^9.1.7"
     jotai: "npm:^2.11.1"
     jotai-devtools: "npm:^0.12.0"
+    js-yaml: "npm:4.3.2"
     jsdom: "npm:^28.0.0"
     lint-staged: "npm:^15.4.1"
     next: "npm:^15.4.2"
