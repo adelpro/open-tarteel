@@ -145,5 +145,9 @@
   "pwa.update_description": "A new version of the app is available. Would you like to update now?",
   "pwa.update_later": "Later",
   "pwa.update_now": "Update",
-  "language.select": "Select language"
+  "language.select": "Select language",
+  "offline.status": "Offline Mode — Showing downloaded content",
+  "offline.noDownloadedReciters": "No downloaded reciters found. Connect to the internet to browse and download reciters.",
+  "offline.noDownloadedSurahs": "No downloaded surahs for this reciter. Connect to the internet to stream or download.",
+  "offline.playbackRestricted": "Offline mode: playing downloaded surahs only"
 }

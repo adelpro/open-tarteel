@@ -21,6 +21,13 @@ const PwaUpdater = () => {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {
+        /* no-op if sw.js is missing */
+      });
+    }
+
     // Serwist exposes the instance as `window.serwist` (not `window.wb`).
     const wb = window.serwist;
     if (!wb) return;

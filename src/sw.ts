@@ -77,23 +77,49 @@ const quranAudioCache = {
   },
 };
 
+const recitersNetworkFirst = new NetworkFirst({
+  cacheName: 'api-reciters',
+  networkTimeoutSeconds: 3,
+  plugins: [
+    new ExpirationPlugin({
+      maxEntries: 50,
+      maxAgeSeconds: 30 * 24 * 60 * 60,
+    }),
+    new CacheableResponsePlugin({
+      statuses: [200],
+    }),
+  ],
+});
+
 // Reciters catalog: serve from cache immediately, revalidate in background.
 // 30-day TTL keeps catalog usable offline for extended periods.
 const apiRecitersCache = {
   matcher: ({ url }: { url: URL }) => url.pathname.startsWith('/api/reciters'),
-  handler: new NetworkFirst({
-    cacheName: 'api-reciters',
-    networkTimeoutSeconds: 3,
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 50,
-        maxAgeSeconds: 30 * 24 * 60 * 60,
-      }),
-      new CacheableResponsePlugin({
-        statuses: [200],
-      }),
-    ],
-  }),
+  handler: {
+    handle: async (options: HandlerCallbackOptions) => {
+      try {
+        const response = await recitersNetworkFirst.handle(options);
+        if (response && response.ok) return response;
+      } catch {
+        // Network failed or timeout, check cache fallbacks
+      }
+      const apiCache = await caches.open('api-reciters');
+      const directMatch = await apiCache.match(options.request);
+      if (directMatch) return directMatch;
+
+      // If specific query params not matched, fallback to any cached reciters list
+      const keys = await apiCache.keys();
+      const recitersKey = keys.find((key) => {
+        const u = new URL(key.url);
+        return u.pathname.startsWith('/api/reciters');
+      });
+      if (recitersKey) {
+        const fallback = await apiCache.match(recitersKey);
+        if (fallback) return fallback;
+      }
+      return Response.error();
+    },
+  },
 };
 
 // Cache the CSS, JavaScript, fonts, and images requested by the app shell.
@@ -120,7 +146,41 @@ const appAssetsCache = {
   }),
 };
 
+const pageNavigationCache = {
+  matcher: ({ request }: { request: Request }) => request.mode === 'navigate',
+  handler: {
+    handle: async (options: HandlerCallbackOptions) => {
+      const request =
+        typeof options.request === 'string'
+          ? new Request(options.request)
+          : options.request;
+      const pagesCache = await caches.open('pages');
+
+      try {
+        const response = await fetch(request);
+        if (response.ok) {
+          await Promise.all([
+            pagesCache.put(request, response.clone()),
+            pagesCache.put(new URL(request.url).pathname, response.clone()),
+          ]);
+          return response;
+        }
+      } catch {
+        // Use the cached document when the network is unavailable.
+      }
+
+      const requestUrl = new URL(request.url);
+      return (
+        (await pagesCache.match(request, { ignoreVary: true })) ??
+        (await pagesCache.match(requestUrl.pathname, { ignoreVary: true })) ??
+        Promise.reject(new Error('No cached document available'))
+      );
+    },
+  },
+};
+
 const runtimeCaching = [
+  pageNavigationCache,
   quranAudioCache,
   apiRecitersCache,
   appAssetsCache,
@@ -173,14 +233,24 @@ self.addEventListener('install', (event) => {
       const pagesCache = await caches.open('pages');
       await Promise.allSettled(
         APP_SHELL_URLS.map(async (url) => {
-          const response = await fetch(url, {
-            credentials: 'same-origin',
-            cache: 'reload',
-          });
-          if (!response.ok) return;
+          try {
+            const response = await fetch(url, {
+              credentials: 'same-origin',
+              cache: 'reload',
+            });
+            if (!response.ok) return;
 
-          if (url === '/offline') await cacheOfflinePageAssets(response);
-          await pagesCache.put(url, response);
+            if (url === '/offline' || url === '/') {
+              await cacheOfflinePageAssets(response);
+            }
+            await pagesCache.put(url, response.clone());
+            await pagesCache.put(
+              new URL(url, self.location.origin).href,
+              response
+            );
+          } catch {
+            // Ignore pre-cache fetch error
+          }
         })
       );
       const apiCache = await caches.open('api-reciters');
@@ -195,6 +265,24 @@ self.addEventListener('install', (event) => {
             ? apiCache.put('/api/reciters?language=eng', response)
             : undefined
         ),
+        fetch('/api/reciters?language=ar&sources=mp3quran%2Citqan').then(
+          (response) =>
+            response.ok
+              ? apiCache.put(
+                  '/api/reciters?language=ar&sources=mp3quran%2Citqan',
+                  response
+                )
+              : undefined
+        ),
+        fetch('/api/reciters?language=eng&sources=mp3quran%2Citqan').then(
+          (response) =>
+            response.ok
+              ? apiCache.put(
+                  '/api/reciters?language=eng&sources=mp3quran%2Citqan',
+                  response
+                )
+              : undefined
+        ),
       ]);
     })()
   );
@@ -208,38 +296,22 @@ const serwist = new Serwist({
   runtimeCaching,
 });
 
-// Navigation must never fall back to the last requested document. When the
-// network fails, always show the cached offline page instead.
-self.addEventListener('fetch', (event) => {
-  if (event.request.mode !== 'navigate') return;
-
-  event.respondWith(
-    (async () => {
-      try {
-        const request = new Request(event.request, { cache: 'no-store' });
-        const response = await fetch(request);
-        if (response.ok) return response;
-      } catch {
-        const requestUrl = new URL(event.request.url);
-        if (requestUrl.pathname !== '/offline') {
-          return Response.redirect(new URL('/offline', requestUrl), 302);
-        }
-      }
-
-      const pagesCache = await caches.open('pages');
-      const fallback = await pagesCache.match('/offline');
-      return fallback ?? Response.error();
-    })()
-  );
-});
-
 serwist.setCatchHandler(async ({ request }) => {
   if (request.destination === 'document') {
     const pagesCache = await caches.open('pages');
-    const fallback = await pagesCache.match('/offline');
+    const matchOptions = { ignoreVary: true, ignoreSearch: true };
+    const fallback =
+      (await pagesCache.match('/', matchOptions)) ??
+      (await pagesCache.match('/offline', matchOptions));
     if (fallback) return fallback;
 
-    console.error('[SW] Fallback failed: /offline not found in pages cache');
+    return new Response(
+      '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Open Tarteel</title><style>body{font-family:system-ui,-apple-system,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#0f172a;color:#f8fafc;text-align:center;padding:1rem}.btn{margin-top:1rem;padding:0.6rem 1.2rem;border-radius:9999px;background:#38bdf8;color:#0f172a;text-decoration:none;font-weight:bold;cursor:pointer;border:none}</style></head><body><h1>Open Tarteel</h1><p>أنت الآن في وضع عدم الاتصال.</p><button class="btn" onclick="location.replace(\'/\')">العودة للرئيسية</button></body></html>',
+      {
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+        status: 200,
+      }
+    );
   }
   return Response.error();
 });

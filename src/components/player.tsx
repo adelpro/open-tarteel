@@ -3,8 +3,11 @@
 import { useAtom, useAtomValue } from 'jotai';
 import dynamic from 'next/dynamic';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 import { useMediaSession } from '@/hooks/use-media-session';
+import { useNetworkStatus } from '@/hooks/use-network-status';
+import { useOfflineDownload } from '@/hooks/use-offline-download';
 import {
   currentTimeAtom,
   fullscreenAtom,
@@ -46,6 +49,32 @@ export default function Player({ playlist }: Props) {
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
+  const isOnline = useNetworkStatus();
+  const { isTrackCached } = useOfflineDownload();
+
+  // In offline mode, determine which track indices are cached/playable
+  const availableIndices = React.useMemo(() => {
+    const indices: number[] = [];
+    for (const [index, item] of playlist.entries()) {
+      if (isOnline || isTrackCached(item.link)) {
+        indices.push(index);
+      }
+    }
+    return indices;
+  }, [playlist, isOnline, isTrackCached]);
+
+  // Ensure currentTrack points to a downloaded track when offline
+  useEffect(() => {
+    if (!isOnline && availableIndices.length > 0) {
+      if (
+        typeof currentTrack !== 'number' ||
+        !availableIndices.includes(currentTrack)
+      ) {
+        setCurrentTrack(availableIndices[0]);
+      }
+    }
+  }, [isOnline, availableIndices, currentTrack]);
+
   const audioRef = useRef<HTMLAudioElement>(null);
   const volumeRef = useRef<HTMLInputElement>(null);
   const volumeValue = useAtomValue(volumeAtom);
@@ -67,16 +96,13 @@ export default function Player({ playlist }: Props) {
 
   // Generate shuffled indices
   const shufflePlaylist = useCallback(() => {
-    const indices = Array.from(
-      { length: playlist.length },
-      (_, index) => index
-    );
-    for (let index = indices.length - 1; index > 0; index--) {
+    const pool = [...availableIndices];
+    for (let index = pool.length - 1; index > 0; index--) {
       const index_ = Math.floor(Math.random() * (index + 1));
-      [indices[index], indices[index_]] = [indices[index_], indices[index]];
+      [pool[index], pool[index_]] = [pool[index_], pool[index]];
     }
-    setShuffledIndices(indices);
-  }, [playlist.length]);
+    setShuffledIndices(pool);
+  }, [availableIndices]);
 
   // Re-shuffle when entering shuffle mode
   useEffect(() => {
@@ -110,6 +136,7 @@ export default function Player({ playlist }: Props) {
 
   const togglePlayPause = () => {
     if (!audioRef.current) return;
+    if (!isOnline && availableIndices.length === 0) return;
     isPlaying ? audioRef.current.pause() : audioRef.current.play();
     setIsPlaying(!isPlaying);
   };
@@ -124,33 +151,56 @@ export default function Player({ playlist }: Props) {
     }
   };
 
-  const getNextTrackIndex = (index: number) => {
-    if (playbackMode === 'shuffle') {
-      return shuffledIndices[
-        (shuffledIndices.indexOf(index) + 1) % playlist.length
-      ];
-    }
-    return (index + 1) % playlist.length;
-  };
+  const getNextTrackIndex = useCallback(
+    (index: number) => {
+      if (availableIndices.length === 0) return index;
 
-  const getPreviousTrackIndex = (index: number) => {
-    if (playbackMode === 'shuffle') {
-      return shuffledIndices[
-        (shuffledIndices.indexOf(index) - 1 + playlist.length) % playlist.length
-      ];
-    }
-    return (index - 1 + playlist.length) % playlist.length;
-  };
+      if (playbackMode === 'shuffle') {
+        const pool =
+          shuffledIndices.length > 0 ? shuffledIndices : availableIndices;
+        const currentPos = pool.indexOf(index);
+        const nextPos = (currentPos + 1) % pool.length;
+        return pool[nextPos];
+      }
 
-  const handleNextTrack = () => {
+      const currentPos = availableIndices.indexOf(index);
+      if (currentPos === -1) return availableIndices[0];
+      const nextPos = (currentPos + 1) % availableIndices.length;
+      return availableIndices[nextPos];
+    },
+    [availableIndices, playbackMode, shuffledIndices]
+  );
+
+  const getPreviousTrackIndex = useCallback(
+    (index: number) => {
+      if (availableIndices.length === 0) return index;
+
+      if (playbackMode === 'shuffle') {
+        const pool =
+          shuffledIndices.length > 0 ? shuffledIndices : availableIndices;
+        const currentPos = pool.indexOf(index);
+        const previousPos = (currentPos - 1 + pool.length) % pool.length;
+        return pool[previousPos];
+      }
+
+      const currentPos = availableIndices.indexOf(index);
+      if (currentPos === -1) return availableIndices[0];
+      const previousPos =
+        (currentPos - 1 + availableIndices.length) % availableIndices.length;
+      return availableIndices[previousPos];
+    },
+    [availableIndices, playbackMode, shuffledIndices]
+  );
+
+  const handleNextTrack = useCallback(() => {
     if (typeof currentTrack !== 'number') return;
     setCurrentTrack(getNextTrackIndex(currentTrack));
-  };
+  }, [currentTrack, getNextTrackIndex]);
 
-  const handlePreviousTrack = () => {
+  const handlePreviousTrack = useCallback(() => {
     if (typeof currentTrack !== 'number') return;
     setCurrentTrack(getPreviousTrackIndex(currentTrack));
-  };
+  }, [currentTrack, getPreviousTrackIndex]);
 
   const handleTrackEnded = () => {
     if (playbackMode === 'repeat-one') {
@@ -178,6 +228,7 @@ export default function Player({ playlist }: Props) {
     currentTrackId: currentTrack ?? 0,
     isPlaying,
     onPlay: () => {
+      if (!isOnline && availableIndices.length === 0) return;
       audioRef.current?.play();
       setIsPlaying(true);
     },
@@ -200,17 +251,26 @@ export default function Player({ playlist }: Props) {
     >
       {typeof currentTrack === 'number' && (
         <div className="flex w-full flex-col items-center justify-center">
-          <audio
-            ref={audioRef}
-            id="audio"
-            className="sr-only"
-            onTimeUpdate={handleTimeUpdate}
-            onDurationChange={handleTimeUpdate}
-            onEnded={handleTrackEnded}
-            src={playlist[currentTrack]?.link}
-            preload="metadata"
-            crossOrigin="anonymous"
-          />
+          {!isOnline && availableIndices.length === 0 ? (
+            <div className="flex flex-col items-center justify-center p-4 text-center text-sm font-medium text-amber-600 dark:text-amber-400">
+              <FormattedMessage
+                id="offline.noDownloadedSurahs"
+                defaultMessage="No downloaded surahs for this reciter. Connect to the internet to stream or download."
+              />
+            </div>
+          ) : (
+            <audio
+              ref={audioRef}
+              id="audio"
+              className="sr-only"
+              onTimeUpdate={handleTimeUpdate}
+              onDurationChange={handleTimeUpdate}
+              onEnded={handleTrackEnded}
+              src={playlist[currentTrack]?.link}
+              preload="metadata"
+              crossOrigin="anonymous"
+            />
+          )}
 
           <AudioBarsVisualizer audioId="audio" isPlaying={isPlaying} />
 

@@ -145,5 +145,9 @@
   "pwa.update_description": "يتوفر إصدار جديد من التطبيق. هل ترغب في التحديث الآن؟",
   "pwa.update_later": "لاحقاً",
   "pwa.update_now": "تحديث",
-  "language.select": "اختر اللغة"
+  "language.select": "اختر اللغة",
+  "offline.status": "وضع عدم الاتصال — عرض المحتوى المحمّل",
+  "offline.noDownloadedReciters": "لا توجد تلاوات محمّلة دون إنترنت. يرجى الاتصال بالإنترنت لتصفح وتحميل القراء.",
+  "offline.noDownloadedSurahs": "لا توجد سور محمّلة لهذا القارئ دون إنترنت. يرجى الاتصال بالإنترنت للاستماع أو التحميل.",
+  "offline.playbackRestricted": "وضع عدم الاتصال: تشغيل السور المحمّلة فقط"
 }
