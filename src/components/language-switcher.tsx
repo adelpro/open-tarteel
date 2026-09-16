@@ -9,14 +9,20 @@ import type { Language } from '@/constants/language';
 import { LANGUAGES } from '@/constants/language';
 import { localeAtom } from '@/jotai/atom';
 
+const COOKIE_NAME = 'locale';
+const MAX_AGE = 60 * 60 * 24 * 365; // 1 year
+
 export default function LanguageSwitcher() {
   const { formatMessage } = useIntl();
-  const [locale, setLocale] = useAtom(localeAtom);
+  const { locale } = useIntl();
+  const [, setLocale] = useAtom(localeAtom);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLanguageChange = (language: Language) => {
-    setLocale(language);
+    const nextLocale = language;
     setIsOpen(false);
+    setLocale(nextLocale);
+    document.cookie = `${COOKIE_NAME}=${nextLocale}; path=/; max-age=${MAX_AGE}; SameSite=Lax`;
   };
 
   return (
