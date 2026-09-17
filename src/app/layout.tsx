@@ -16,7 +16,6 @@ import StoragePersist from '@/components/storage-persist';
 import type { Language } from '@/constants/language';
 import { clientConfig, getDefaultLocale } from '@/utils';
 
-  
 export const metadata: Metadata = {
   metadataBase: new URL(clientConfig.APP_URL),
   title: 'Open Tarteel — Quran Audio Player',
