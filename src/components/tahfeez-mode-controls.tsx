@@ -64,6 +64,8 @@ export default function TahfeezModeControls({
       setSegments(json.segments || []);
     } catch (_error) {
       setError(formatMessage({ id: 'tahfeez.errorTimestamps' }));
+      console.log(_error);
+      console.log('failed on ' + reciterId + '/' + chapterNumber);
     } finally {
       setIsLoadingTimestamps(false);
     }
