@@ -25,6 +25,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     reactCompiler: true,
+    cpus: 4,
   },
   typescript: {
     ignoreBuildErrors: !isProduction,
@@ -32,6 +33,7 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: !isProduction,
   },
+  staticPageGenerationTimeout: 180,
 };
 
 // Wrap your Next.js config with serwist.

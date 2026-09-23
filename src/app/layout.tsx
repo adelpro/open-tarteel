@@ -1,6 +1,6 @@
 import './globals.css';
 
-import { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Tajawal } from 'next/font/google';
 import { cookies, headers } from 'next/headers';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
@@ -15,8 +15,29 @@ import StoragePersist from '@/components/storage-persist';
 import type { Language } from '@/constants/language';
 import { clientConfig, getDefaultLocale } from '@/utils';
 
+export const viewport: Viewport = {
+  themeColor: '#000000',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(clientConfig.APP_URL),
+  applicationName: 'Open Tarteel',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Open Tarteel',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    icon: '/images/192x192.png',
+    apple: '/images/192x192.png',
+  },
   title: 'Open Tarteel — Quran Audio Player',
   description:
     'Listen to the Holy Quran recited by world-renowned reciters. Free, open-source Quran audio player with playlist support.',

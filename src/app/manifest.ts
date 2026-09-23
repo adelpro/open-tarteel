@@ -37,14 +37,22 @@ export default function manifest(): MetadataRoute.Manifest {
 
     icons: [
       {
-        src: 'images/192x192.png',
+        src: '/images/192x192.png',
         sizes: '192x192',
         type: 'image/png',
+        purpose: 'any',
       },
       {
-        src: 'images/512x512.png',
+        src: '/images/512x512.png',
         sizes: '512x512',
         type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: '/images/512x512.png',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'maskable',
       },
     ],
 
@@ -76,7 +84,7 @@ export default function manifest(): MetadataRoute.Manifest {
         description: 'Contact us page',
         icons: [
           {
-            src: 'images/shortcuts/contact.png',
+            src: '/images/shortcuts/contact.png',
             sizes: '96x96',
             type: 'image/png',
           },
@@ -88,7 +96,7 @@ export default function manifest(): MetadataRoute.Manifest {
         description: 'About us page',
         icons: [
           {
-            src: 'images/shortcuts/about.png',
+            src: '/images/shortcuts/about.png',
             sizes: '96x96',
             type: 'image/png',
           },
