@@ -9,7 +9,6 @@ import { EnabledSourcesCookieSync } from '@/components/enabled-sources-cookie-sy
 import FullscreenController from '@/components/fullscreen-controller';
 import HtmlWrapper from '@/components/html-wrapper';
 import IntlProviderWrapper from '@/components/intl-provider-wrapper';
-import NetworkStatusIndicator from '@/components/network-status-indicator';
 import OfflineRedirect from '@/components/offline-redirect';
 import PwaUpdater from '@/components/pwa-updater';
 import StoragePersist from '@/components/storage-persist';
@@ -75,7 +74,6 @@ export default async function RootLayout({
               </div>
               <EnabledSourcesCookieSync />
               <StoragePersist />
-              <NetworkStatusIndicator />
               <OfflineRedirect />
               <PwaUpdater />
               <FullscreenController>{children}</FullscreenController>
