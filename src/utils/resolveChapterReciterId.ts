@@ -14,9 +14,11 @@ const matchesProviderEntry = (
   if (entry.id !== id || !entry.moshaf) {
     return false;
   }
+
   const moshafList = Array.isArray(entry.moshaf)
     ? entry.moshaf
     : [entry.moshaf];
+
   return moshafList.some((m) => m.id === moshafId);
 };
 
@@ -72,6 +74,7 @@ export const resolveChapterReciterId = (
   // Handle Quran Foundation reciters directly - extract numeric ID
   if (id.startsWith('quran.foundation-')) {
     const numericId = parseInt(id.replace('quran.foundation-', ''), 10);
+
     return Number.isNaN(numericId) ? null : numericId;
   }
 

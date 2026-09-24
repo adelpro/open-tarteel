@@ -1,6 +1,6 @@
 import type { TahfeezSegment } from '@/types/tahfeez';
 
-import { qfFetch } from './quran-foundation.auth';
+import { qfFetch } from './quran-foundation.client';
 
 export interface QfChapterReciter {
   id: number;
@@ -14,10 +14,10 @@ export type QfTimestampSegment = [
 ];
 
 export interface QfVerseTimestamp {
-  verse_key: string; // "1:1"
+  verse_key: string;
   timestamp_from: number;
   timestamp_to: number;
-  duration: number; // ⚠️ غير موثوق — استخدم timestamp_to - timestamp_from
+  duration: number;
   segments?: QfTimestampSegment[] | null;
 }
 
