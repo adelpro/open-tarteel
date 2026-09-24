@@ -33,7 +33,7 @@ export default function manifest(): MetadataRoute.Manifest {
         web_app_identity: 'https://tarteel.quran.us.kg/',
       },
     ],
-    scope_extensions: [{ origin: 'tarteel.quran.us.kg' }],
+    scope_extensions: [{ origin: 'https://tarteel.quran.us.kg' }],
 
     icons: [
       {

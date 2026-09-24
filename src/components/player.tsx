@@ -123,6 +123,25 @@ export default function Player({ playlist }: Props) {
     };
   }, []);
 
+  // Mirror DOM audio events → React state so that external play/pause
+  // (e.g. tahfeez session, browser media buttons) keeps the icon in sync.
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const onPlay = () => {
+      setIsPlaying(true);
+    };
+    const onPause = () => {
+      setIsPlaying(false);
+    };
+    audio.addEventListener('play', onPlay);
+    audio.addEventListener('pause', onPause);
+    return () => {
+      audio.removeEventListener('play', onPlay);
+      audio.removeEventListener('pause', onPause);
+    };
+  }, []);
+
   const togglePlayPause = () => {
     if (!audioRef.current) return;
     // isPlaying is now always in sync with DOM, so this is safe

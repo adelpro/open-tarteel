@@ -4,6 +4,29 @@ import { useAtomValue } from 'jotai';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactAudioSpectrum from 'react-audio-spectrum';
 
+if (typeof window !== 'undefined') {
+  const OriginalAudioContext =
+    window.AudioContext || (window as any).webkitAudioContext;
+  if (
+    OriginalAudioContext &&
+    !(OriginalAudioContext.prototype as any).__patched
+  ) {
+    const originalCreate =
+      OriginalAudioContext.prototype.createMediaElementSource;
+    OriginalAudioContext.prototype.createMediaElementSource = function (
+      mediaElement: HTMLMediaElement
+    ) {
+      if ((mediaElement as any).__mediaElementSource) {
+        return (mediaElement as any).__mediaElementSource;
+      }
+      const source = originalCreate.call(this, mediaElement);
+      (mediaElement as any).__mediaElementSource = source;
+      return source;
+    };
+    (OriginalAudioContext.prototype as any).__patched = true;
+  }
+}
+
 import { showVisualizerAtom } from '@/jotai/atom';
 
 type AudioVisualizerProps = {

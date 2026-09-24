@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import * as auth from './quran-foundation.auth';
+import * as auth from './quran-foundation.client';
 import {
   getChapterReciters,
   getSurahTahfeezSegments,
 } from './quran-foundation.provider';
 
-vi.mock('./quran-foundation.auth', () => ({
+vi.mock('./quran-foundation.client', () => ({
   qfFetch: vi.fn(),
 }));
 
