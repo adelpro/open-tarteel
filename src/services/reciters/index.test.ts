@@ -29,7 +29,7 @@ vi.mock('./quranfoundation.adapter', () => ({
   },
 }));
 
-const { getAllRecitersFromAdapters, parseEnabledSources } =
+const { getAllRecitersFromAdapters, parseEnabledSources, resetRecitersCache } =
   await import('./index');
 
 const { Mp3QuranAdapter } = await import('./mp3quran.adapter');
@@ -283,5 +283,43 @@ describe('parseEnabledSources', () => {
       LinkSource.MP3QURAN,
       LinkSource.QURAN_FOUNDATION,
     ]);
+  });
+});
+
+describe('getAllRecitersFromAdapters in-memory caching and deduplication', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubEnv('NODE_ENV', 'production');
+    resetRecitersCache();
+    mp3Mock.mockResolvedValue([mp3Reciter]);
+    itqanMock.mockResolvedValue([]);
+    quranaiMock.mockResolvedValue([]);
+    quranFoundationMock.mockResolvedValue([]);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    resetRecitersCache();
+  });
+
+  it('reuses cached results without calling adapters again', async () => {
+    const firstCall = await getAllRecitersFromAdapters('ar');
+    expect(firstCall).toEqual([mp3Reciter]);
+    expect(mp3Mock).toHaveBeenCalledTimes(1);
+
+    const secondCall = await getAllRecitersFromAdapters('ar');
+    expect(secondCall).toEqual([mp3Reciter]);
+    expect(mp3Mock).toHaveBeenCalledTimes(1);
+  });
+
+  it('deduplicates concurrent in-flight calls', async () => {
+    const [result1, result2] = await Promise.all([
+      getAllRecitersFromAdapters('ar'),
+      getAllRecitersFromAdapters('ar'),
+    ]);
+
+    expect(result1).toEqual([mp3Reciter]);
+    expect(result2).toEqual([mp3Reciter]);
+    expect(mp3Mock).toHaveBeenCalledTimes(1);
   });
 });

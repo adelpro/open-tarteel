@@ -1,5 +1,15 @@
+import { cache } from 'react';
+
 import { Language } from '@/constants/language';
 import type { LinkSource, Reciter } from '@/types';
+
+const getServerReciters = cache(
+  async (locale: Language, sourcesKey: string | null): Promise<Reciter[]> => {
+    const { getAllRecitersFromAdapters } = await import('@/services/reciters');
+    const sources = sourcesKey ? (sourcesKey.split(',') as LinkSource[]) : null;
+    return getAllRecitersFromAdapters(locale, sources);
+  }
+);
 
 export async function getAllReciters(
   locale: Language = 'ar',
@@ -8,8 +18,16 @@ export async function getAllReciters(
   const isServer = typeof window === 'undefined';
 
   if (isServer) {
-    const { getAllRecitersFromAdapters } = await import('@/services/reciters');
-    return getAllRecitersFromAdapters(locale, enabledSources);
+    if (process.env.NODE_ENV === 'test') {
+      const { getAllRecitersFromAdapters } =
+        await import('@/services/reciters');
+      return getAllRecitersFromAdapters(locale, enabledSources);
+    }
+    const sourcesKey =
+      enabledSources && enabledSources.length > 0
+        ? [...enabledSources].sort().join(',')
+        : null;
+    return getServerReciters(locale, sourcesKey);
   }
 
   const language: Language = locale;
@@ -37,8 +55,7 @@ export async function getReciter(
   const isServer = typeof window === 'undefined';
 
   if (isServer) {
-    const { getAllRecitersFromAdapters } = await import('@/services/reciters');
-    const reciters = await getAllRecitersFromAdapters(locale, enabledSources);
+    const reciters = await getAllReciters(locale, enabledSources);
     return reciters.find((r) => r.id === id && r.moshaf.id === moshafId);
   }
 

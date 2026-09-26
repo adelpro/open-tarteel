@@ -141,5 +141,9 @@
   "settings.cacheDeleteConfirm": "Alle Downloads für diesen Rezitator entfernen?",
   "settings.cacheDelete": "Entfernen",
   "settings.cacheStorageUsed": "Verwendeter Speicher: {used} von {quota}",
-  "language.select": "Sprache auswählen"
+  "language.select": "Sprache auswählen",
+  "offline.status": "Offline-Modus — Heruntergeladene Inhalte werden angezeigt",
+  "offline.noDownloadedReciters": "Keine heruntergeladenen Rezitatoren gefunden. Verbinden Sie sich mit dem Internet, um Rezitatoren zu durchsuchen und herunterzuladen.",
+  "offline.noDownloadedSurahs": "Keine heruntergeladenen Suren für diesen Rezitator. Verbinden Sie sich mit dem Internet, um sie zu streamen oder herunterzuladen.",
+  "offline.playbackRestricted": "Offline-Modus: Es werden nur heruntergeladene Suren abgespielt"
 }

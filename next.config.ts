@@ -25,6 +25,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     reactCompiler: true,
+    cpus: 4,
   },
   typescript: {
     ignoreBuildErrors: !isProduction,
@@ -32,6 +33,7 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: !isProduction,
   },
+  staticPageGenerationTimeout: 180,
 };
 
 // Wrap your Next.js config with serwist.
@@ -42,7 +44,7 @@ const configWithPWA = withSerwist(nextConfig);
 * Bundle-analyzer will run only if we pass 'ANALYZER=true' to our command (yarn analyze)
 *
 * next-PWA is disabled in developement ( disable: process.env.NODE_ENV === 'development', )
-* next-PWA will run only with this command ( yarn build)
+* next-PWA runs in production; development keeps HMR and chunk loading network-only.
 *
 * running (yarn dev) will only pass the (config)
 */

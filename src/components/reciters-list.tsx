@@ -20,6 +20,7 @@ import {
 import { useFavorites } from '@/hooks/use-favorites';
 import { useFilterSort } from '@/hooks/use-filter-sort';
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
+import { useNetworkStatus } from '@/hooks/use-network-status';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { useRecentlyPlayed } from '@/hooks/use-recently-played';
 import { useReciters } from '@/hooks/use-reciters';
@@ -40,6 +41,9 @@ export default function RecitersList({ setIsOpen }: Props) {
   const { recentIds, addToRecent } = useRecentlyPlayed();
   const [showRecentOnly, setShowRecentOnly] = useState(false);
   const [showDownloadedOnly, setShowDownloadedOnly] = useState(false);
+
+  const isOnline = useNetworkStatus();
+  const isDownloadedOnlyEffective = showDownloadedOnly || !isOnline;
 
   const { reciters, loading, error } = useReciters();
   const { cachedUrls } = useOfflineDownload();
@@ -96,7 +100,7 @@ export default function RecitersList({ setIsOpen }: Props) {
             recentIds.indexOf(generateFavId(b))
         );
     }
-    if (showDownloadedOnly) {
+    if (isDownloadedOnlyEffective) {
       result = result.filter((r) =>
         r.moshaf.playlist.some((item) => cachedUrls.has(item.link))
       );
@@ -106,7 +110,7 @@ export default function RecitersList({ setIsOpen }: Props) {
     baseFilteredReciters,
     showRecentOnly,
     recentIds,
-    showDownloadedOnly,
+    isDownloadedOnlyEffective,
     cachedUrls,
   ]);
 
@@ -247,21 +251,26 @@ export default function RecitersList({ setIsOpen }: Props) {
             {/* Downloaded-only filter */}
             <button
               aria-label={
-                showDownloadedOnly
+                isDownloadedOnlyEffective
                   ? showAllRecitersLabel
                   : showDownloadedOnlyLabel
               }
               title={
-                showDownloadedOnly
-                  ? showAllRecitersLabel
-                  : showDownloadedOnlyLabel
+                !isOnline
+                  ? showDownloadedOnlyLabel
+                  : showDownloadedOnly
+                    ? showAllRecitersLabel
+                    : showDownloadedOnlyLabel
               }
-              onClick={() => setShowDownloadedOnly((previous) => !previous)}
+              disabled={!isOnline}
+              onClick={() => {
+                if (isOnline) setShowDownloadedOnly((previous) => !previous);
+              }}
               className={`rounded-full p-2.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/50 ${
-                showDownloadedOnly
+                isDownloadedOnlyEffective
                   ? 'bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400'
                   : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
+              } ${!isOnline ? 'cursor-default opacity-85' : ''}`}
             >
               <MdCloudDone className="size-5" />
             </button>
@@ -393,11 +402,23 @@ export default function RecitersList({ setIsOpen }: Props) {
               );
             })
           ) : (
-            !error && (
+            !error &&
+            (!isOnline ? (
+              <div className="col-span-full flex flex-col items-center justify-center gap-3 py-10 text-center text-gray-500 dark:text-gray-400">
+                <MdCloudDone className="size-12 text-gray-400 dark:text-gray-500" />
+                <p className="max-w-md font-medium">
+                  {formatMessage({
+                    id: 'offline.noDownloadedReciters',
+                    defaultMessage:
+                      'No downloaded reciters found. Connect to the internet to browse and download reciters.',
+                  })}
+                </p>
+              </div>
+            ) : (
               <p className="col-span-full text-center text-gray-500 dark:text-gray-400">
                 {noRecitersFound}
               </p>
-            )
+            ))
           )}
         </div>
       </div>

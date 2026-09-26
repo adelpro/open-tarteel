@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import ExitFullscreen from '@/components/exit-fullscreen';
 import Footer from '@/components/footer';
 import LanguageSwitcher from '@/components/language-switcher';
+import NetworkStatusIndicator from '@/components/network-status-indicator';
 import SettingsLink from '@/components/settings-link';
 import ThemeSwitcher from '@/components/theme-switcher';
 import { fullscreenAtom } from '@/jotai/atom';
@@ -45,6 +46,7 @@ export default function FullscreenController({
         className="fixed right-4 top-4 z-50 flex items-center gap-2"
         style={{ direction: 'ltr' }}
       >
+        <NetworkStatusIndicator />
         <LanguageSwitcher />
         <ThemeSwitcher />
       </div>
