@@ -3,7 +3,12 @@
 import { useEffect, useState } from 'react';
 
 export function useNetworkStatus() {
-  const [isOnline, setIsOnline] = useState(() => navigator.onLine);
+  // The first render must be identical on the server and in the browser.
+  // `navigator.onLine` is undefined during SSR, so reading it here would make
+  // the server render the offline banner while an online client renders
+  // nothing, which throws a hydration mismatch. Start optimistic (no banner)
+  // and let the mount effect below correct it from the real browser state.
+  const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
     const checkConnectivity = async () => {
