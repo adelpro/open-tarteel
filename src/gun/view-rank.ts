@@ -22,14 +22,20 @@ export function subscribeToViewCounts(
   callback: (counts: Record<string, number>) => void
 ): () => void {
   const counts: Record<string, number> = {};
+  let timeout: ReturnType<typeof setTimeout>;
 
   viewCountsNode.map().on((count, key) => {
     if (!key || typeof count !== 'number') return;
     counts[key] = count;
-    callback({ ...counts });
+
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      callback({ ...counts });
+    }, 150);
   });
 
   return () => {
+    clearTimeout(timeout);
     viewCountsNode.map().off();
   };
 }

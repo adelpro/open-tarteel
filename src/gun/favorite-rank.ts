@@ -33,16 +33,24 @@ export function subscribeToFavoriteCounts(
   callback: (counts: Record<string, number>) => void
 ): () => void {
   const counts: Record<string, number> = {};
+  let timeout: ReturnType<typeof setTimeout>;
 
   const onUpdate = (count: number, key: string) => {
     if (!key || typeof count !== 'number') return;
     counts[key] = count;
-    callback({ ...counts });
+
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      callback({ ...counts });
+    }, 150);
   };
 
   favoriteCountsNode.map().on(onUpdate);
 
-  return () => favoriteCountsNode.map().off();
+  return () => {
+    clearTimeout(timeout);
+    favoriteCountsNode.map().off();
+  };
 }
 
 /**

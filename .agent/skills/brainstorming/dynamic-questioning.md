@@ -151,10 +151,11 @@ Based on your request for [DOMAIN] [FEATURE]:
 - [Affects: cost / complexity / timeline / scale]
 
 **Options:**
-| Option | Pros | Cons | Best For |
-|--------|------|------|----------|
-| A | [Advantage] | [Disadvantage] | [Use case] |
-| B | [Advantage] | [Disadvantage] | [Use case] |
+
+| Option | Pros        | Cons           | Best For   |
+| ------ | ----------- | -------------- | ---------- |
+| A      | [Advantage] | [Disadvantage] | [Use case] |
+| B      | [Advantage] | [Disadvantage] | [Use case] |
 
 **If Not Specified:** [Default choice + rationale]
 

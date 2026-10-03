@@ -66,6 +66,7 @@
     "gun": "^0.2020.1241",
     "jotai": "^2.11.1",
     "jotai-devtools": "^0.12.0",
+    "js-yaml": "4.3.2",
     "next": "^15.4.2",
     "nodemailer": "^6.10.0",
     "nuqs": "^2.8.8",
@@ -126,6 +127,9 @@
     "tailwindcss-animated": "^1.1.2",
     "typescript": "^5",
     "vitest": "^4.0.18"
+  },
+  "resolutions": {
+    "browserslist": "^4.28.9"
   },
   "packageManager": "yarn@4.13.0+sha512.5c20ba010c99815433e5c8453112165e673f1c7948d8d2b267f4b5e52097538658388ebc9f9580656d9b75c5cc996f990f611f99304a2197d4c56d21eea370e7"
 }

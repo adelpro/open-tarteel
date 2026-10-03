@@ -41,7 +41,8 @@ const riwayaMatchPhrases: Record<RiwayaLocale, RiwayaMatchMap> = {
 
 const findRiwayaKey = (moshafName: string, locale: Locale): RiwayaKey => {
   const matchLocale: RiwayaLocale = locale === 'ar' ? 'ar' : 'latin';
-  const map = riwayaMatchPhrases[matchLocale];
+  const map =
+    matchLocale === 'ar' ? riwayaMatchPhrases.ar : riwayaMatchPhrases.latin;
   for (const [key, phrases] of Object.entries(map)) {
     if (phrases.some((phrase) => moshafName.includes(phrase))) {
       return key as RiwayaKey;

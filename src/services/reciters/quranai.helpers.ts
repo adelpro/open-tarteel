@@ -5,15 +5,10 @@ import type { QuranAiEdition, QuranAiSurahResponse } from './quranai.types';
 
 export const QURANAI_BASE_URL = 'https://api.qurani.ai/gw/qh/v1';
 
-export const buildSurahEndpoint = (
-  surahNumber: number,
-  editionIdentifier: string,
-  options?: { limit?: number; offset?: number }
-): string => {
-  const encodedEditionIdentifier = encodeURIComponent(editionIdentifier);
-  if (encodedEditionIdentifier.includes('..')) {
-    throw new Error('editionIdentifier must not contain ".."');
-  }
+function buildSurahQueryParams(options?: {
+  limit?: number;
+  offset?: number;
+}): string {
   const params = new URLSearchParams();
   if (options?.limit !== undefined) {
     params.set('limit', String(options.limit));
@@ -22,60 +17,66 @@ export const buildSurahEndpoint = (
     params.set('offset', String(options.offset));
   }
   const query = params.toString();
-  return `${QURANAI_BASE_URL}/surah/${surahNumber}/${encodedEditionIdentifier}${
-    query ? `?${query}` : ''
-  }`;
-};
+  return query ? `?${query}` : '';
+}
+
+export function buildSurahEndpoint(
+  surahNumber: number,
+  editionIdentifier: string,
+  options?: { limit?: number; offset?: number }
+): string {
+  const encodedEditionIdentifier = encodeURIComponent(editionIdentifier);
+  if (encodedEditionIdentifier.includes('..')) {
+    throw new Error('editionIdentifier must not contain ".."');
+  }
+  const query = buildSurahQueryParams(options);
+  return `${QURANAI_BASE_URL}/surah/${surahNumber}/${encodedEditionIdentifier}${query}`;
+}
 
 // APPROXIMATION: Quran.ai exposes 'quran-qunbul' as its own narrator identifier,
 // but the repository's Riwaya enum has no Qunbul member. Qunbul is collapsed onto
 // AlBazzi (the two rāwīs of the Ibn Kathir reading). This is not an exact mapping.
-const NARRATOR_RIWAYA_MAP: Record<string, Riwaya> = {
-  'quran-hafs': Riwaya.Hafs,
-  'quran-warsh': Riwaya.Warsh,
-  'quran-qaloon': Riwaya.Qaloon,
-  'quran-albazzi': Riwaya.AlBazzi,
-  'quran-qunbul': Riwaya.AlBazzi,
+const NARRATOR_RIWAYA_MAP = new Map<string, Riwaya>([
+  ['quran-hafs', Riwaya.Hafs],
+  ['quran-warsh', Riwaya.Warsh],
+  ['quran-qaloon', Riwaya.Qaloon],
+  ['quran-albazzi', Riwaya.AlBazzi],
+  ['quran-qunbul', Riwaya.AlBazzi],
   // APPROXIMATION: Quran.ai only reports 'quran-aldouri', which does not disambiguate
   // between Al-Doori 'an Abi 'Amr and Al-Doori 'an Al-Kisai. It is mapped to
   // AlDooriAbuAmr based on the known recordings of the reciter, not on provider data.
-  'quran-aldouri': Riwaya.AlDooriAbuAmr,
-  'quran-alsoosi': Riwaya.AlSoosi,
-  'quran-shoba': Riwaya.Shuaba,
-};
+  ['quran-aldouri', Riwaya.AlDooriAbuAmr],
+  ['quran-alsoosi', Riwaya.AlSoosi],
+  ['quran-shoba', Riwaya.Shuaba],
+]);
 
-export const resolveRiwayaFromNarrator = (
+export function resolveRiwayaFromNarrator(
   narratorIdentifier: string | null
-): Riwaya => {
-  if (
-    narratorIdentifier !== null &&
-    Object.hasOwn(NARRATOR_RIWAYA_MAP, narratorIdentifier)
-  ) {
-    return NARRATOR_RIWAYA_MAP[narratorIdentifier];
+): Riwaya {
+  if (narratorIdentifier === null) {
+    return Riwaya.Hafs;
   }
-  return Riwaya.Hafs;
-};
+  return NARRATOR_RIWAYA_MAP.get(narratorIdentifier) ?? Riwaya.Hafs;
+}
 
-export const resolveReciterName = (
+export function resolveReciterName(
   edition: QuranAiEdition,
   lang: Language
-): string => {
+): string {
   if (lang !== 'ar') {
     return edition.englishName || edition.name;
   }
   return edition.name || edition.englishName;
-};
+}
 
-export const extractSurahAudio = (
+export function extractSurahAudio(
   data: QuranAiSurahResponse['data'] | undefined
-): string | null => {
+): string | null {
   const audio = data?.audio;
   return typeof audio === 'string' && audio.length > 0 ? audio : null;
-};
+}
 
-export const extractSurahAudioBaseUrl = (
-  probeAudioUrl: string
-): string | null => {
+export function extractSurahAudioBaseUrl(probeAudioUrl: string): string | null {
   let url: URL;
   try {
     url = new URL(probeAudioUrl);
@@ -91,9 +92,11 @@ export const extractSurahAudioBaseUrl = (
   }
   const directoryEnd = url.pathname.lastIndexOf('/') + 1;
   return `${url.origin}${url.pathname.slice(0, directoryEnd)}`;
-};
+}
 
-export const buildSurahAudioUrl = (
+export function buildSurahAudioUrl(
   baseUrl: string,
   surahNumber: number
-): string => `${baseUrl}${surahNumber}.mp3`;
+): string {
+  return `${baseUrl}${surahNumber}.mp3`;
+}

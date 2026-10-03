@@ -77,9 +77,11 @@ export default function Player({ playlist }: Props) {
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const volumeRef = useRef<HTMLInputElement>(null);
+  // Shared ref: PlayerControls sets this true while a tahfeez session is running.
+  // handleTrackEnded reads it to avoid auto-advancing mid-session.
+  const tahfeezActiveRef = useRef(false);
   const volumeValue = useAtomValue(volumeAtom);
   const playbackSpeed = useAtomValue(playbackSpeedAtom);
-
   // Sync volume
   useEffect(() => {
     if (audioRef.current) {
@@ -128,17 +130,48 @@ export default function Player({ playlist }: Props) {
     }
   }, [currentTrack, isPlaying, setCurrentTime]);
 
-  // Sync play/pause with audio element
+  // Mirror DOM audio events → React state so that external play/pause
+  // (e.g. tahfeez session, browser media buttons) keeps the icon in sync.
   useEffect(() => {
-    if (!audioRef.current) return;
-    isPlaying ? void audioRef.current.play() : audioRef.current.pause();
-  }, [isPlaying]);
+    const audio = audioRef.current;
+    if (!audio) return;
+    const onPlay = () => {
+      setIsPlaying(true);
+    };
+    const onPause = () => {
+      setIsPlaying(false);
+    };
+    audio.addEventListener('play', onPlay);
+    audio.addEventListener('pause', onPause);
+    return () => {
+      audio.removeEventListener('play', onPlay);
+      audio.removeEventListener('pause', onPause);
+    };
+  }, []);
+
+  // Mirror DOM audio events → React state so that external play/pause
+  // (e.g. tahfeez session, browser media buttons) keeps the icon in sync.
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const onPlay = () => {
+      setIsPlaying(true);
+    };
+    const onPause = () => {
+      setIsPlaying(false);
+    };
+    audio.addEventListener('play', onPlay);
+    audio.addEventListener('pause', onPause);
+    return () => {
+      audio.removeEventListener('play', onPlay);
+      audio.removeEventListener('pause', onPause);
+    };
+  }, []);
 
   const togglePlayPause = () => {
     if (!audioRef.current) return;
     if (!isOnline && availableIndices.length === 0) return;
     isPlaying ? audioRef.current.pause() : audioRef.current.play();
-    setIsPlaying(!isPlaying);
   };
 
   const handleTimeUpdate = () => {
@@ -203,8 +236,10 @@ export default function Player({ playlist }: Props) {
   }, [currentTrack, getPreviousTrackIndex]);
 
   const handleTrackEnded = () => {
+    // Don't auto-advance while a tahfeez session is still repeating
+    if (tahfeezActiveRef.current) return;
+
     if (playbackMode === 'repeat-one') {
-      // Reset UI and audio to start
       setCurrentTime(0);
       if (audioRef.current) {
         audioRef.current.currentTime = 0;
@@ -213,7 +248,6 @@ export default function Player({ playlist }: Props) {
         }
       }
     } else {
-      // Proceed to next track
       handleNextTrack();
     }
   };
@@ -239,7 +273,6 @@ export default function Player({ playlist }: Props) {
     onNext: handleNextTrack,
     onPrev: handlePreviousTrack,
   });
-
   return (
     <div
       className={cn(
@@ -279,10 +312,13 @@ export default function Player({ playlist }: Props) {
               <PlayerControls
                 isPlaying={isPlaying}
                 volumeRef={volumeRef}
+                audioRef={audioRef}
                 togglePlayPause={togglePlayPause}
                 handlePreviousTrack={handlePreviousTrack}
                 handleNextTrack={handleNextTrack}
                 togglePlaylistOpen={togglePlaylistOpen}
+                currentTrackId={currentTrack}
+                tahfeezActiveRef={tahfeezActiveRef}
               />
               <Range
                 currentTime={currentTime}
@@ -301,10 +337,13 @@ export default function Player({ playlist }: Props) {
               <PlayerControls
                 isPlaying={isPlaying}
                 volumeRef={volumeRef}
+                audioRef={audioRef}
                 togglePlayPause={togglePlayPause}
                 handlePreviousTrack={handlePreviousTrack}
                 handleNextTrack={handleNextTrack}
                 togglePlaylistOpen={togglePlaylistOpen}
+                currentTrackId={currentTrack}
+                tahfeezActiveRef={tahfeezActiveRef}
               />
               <Range
                 currentTime={currentTime}

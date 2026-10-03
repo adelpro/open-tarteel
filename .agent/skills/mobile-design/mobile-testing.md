@@ -98,7 +98,7 @@ WHAT ARE YOU TESTING?
                     └───────────────┘
 ```
 
-### Why This Distribution?
+### Why This Distribution
 
 | Level               | Why This %                                |
 | ------------------- | ----------------------------------------- |
@@ -185,7 +185,7 @@ WHAT ARE YOU TESTING?
 
 ## 4. Platform-Specific Testing
 
-### What Differs Between iOS and Android?
+### What Differs Between iOS and Android
 
 | Area                | iOS Behavior         | Android Behavior         | Test Both?      |
 | ------------------- | -------------------- | ------------------------ | --------------- |

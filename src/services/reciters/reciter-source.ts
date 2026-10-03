@@ -3,5 +3,5 @@ import { Reciter } from '@/types';
 
 export type ReciterSource = {
   readonly source: string;
-  getReciters(lang: Language): Promise<Reciter[]>;
+  getReciters(_lang: Language): Promise<Reciter[]>;
 };

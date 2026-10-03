@@ -21,7 +21,7 @@ allowed-tools: Read, Glob, Grep, Bash
 
 ---
 
-## 🔴 MANDATORY: Read Reference Files Before Working!
+## 🔴 MANDATORY: Read Reference Files Before Working
 
 **⛔ DO NOT start development until you read the relevant files:**
 

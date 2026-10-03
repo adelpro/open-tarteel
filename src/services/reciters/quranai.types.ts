@@ -1,4 +1,4 @@
-export type QuranAiEdition = {
+export interface QuranAiEdition {
   identifier: string;
   language: string;
   name: string;
@@ -8,21 +8,21 @@ export type QuranAiEdition = {
   direction: string | null;
   narratorIdentifier: string | null;
   recitationType?: string;
-};
+}
 
-export type QuranAiEditionListResponse = {
+export interface QuranAiEditionListResponse {
   code: number;
   status: string;
   data: QuranAiEdition[];
-};
+}
 
-export type QuranAiAyah = {
+export interface QuranAiAyah {
   number: number;
   numberInSurah: number;
   audio: string;
-};
+}
 
-export type QuranAiSurahResponse = {
+export interface QuranAiSurahResponse {
   code: number;
   status: string;
   data: {
@@ -35,4 +35,4 @@ export type QuranAiSurahResponse = {
       type: string;
     };
   };
-};
+}

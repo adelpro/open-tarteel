@@ -149,5 +149,20 @@
   "offline.status": "وضع عدم الاتصال — عرض المحتوى المحمّل",
   "offline.noDownloadedReciters": "لا توجد تلاوات محمّلة دون إنترنت. يرجى الاتصال بالإنترنت لتصفح وتحميل القراء.",
   "offline.noDownloadedSurahs": "لا توجد سور محمّلة لهذا القارئ دون إنترنت. يرجى الاتصال بالإنترنت للاستماع أو التحميل.",
-  "offline.playbackRestricted": "وضع عدم الاتصال: تشغيل السور المحمّلة فقط"
+  "offline.playbackRestricted": "وضع عدم الاتصال: تشغيل السور المحمّلة فقط",
+  "tahfeez.modeLabel": "التحفيظ",
+  "tahfeez.modeDisabledProvider": "التحفيظ متاح فقط للقراء من quran.foundation حالياً",
+  "tahfeez.listeningLabel": "الاستماع",
+  "tahfeez.fromAyah": "من الآية",
+  "tahfeez.toAyah": "إلى الآية",
+  "tahfeez.repeat": "التكرار",
+  "tahfeez.delay": "السكته (ث)",
+  "tahfeez.perAyah": "آية بآية",
+  "tahfeez.wholeRange": "للمجموعة كلها",
+  "tahfeez.applySettings": "تطبيق إعدادات التحفيظ",
+  "tahfeez.loading": "جارٍ التحميل…",
+  "tahfeez.readyToStart": "جاهز لبدء وضع التحفيظ",
+  "tahfeez.statusSummary": "من الآية {from} إلى {to} • التكرار: {repeat}x • التأخير: {delay}ث",
+  "tahfeez.errorTimestamps": "فشل تحميل الطوابع الزمنية. تحقق من معرف القارئ ورقم السورة.",
+  "tahfeez.errorAyahs": "تعذر العثور على الآيات المحددة في الطوابع الزمنية"
 }

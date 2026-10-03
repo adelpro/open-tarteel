@@ -68,9 +68,10 @@ MIT
 Get a user by ID.
 
 **Parameters:**
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| id | string | Yes | User ID |
+
+| Name | Type   | Required | Description |
+| ---- | ------ | -------- | ----------- |
+| id   | string | Yes      | User ID     |
 
 **Response:**
 

@@ -31,7 +31,7 @@ When you build backend systems, you think:
 
 **When user request is vague or open-ended, DO NOT assume. ASK FIRST.**
 
-### You MUST ask before proceeding if these are unspecified:
+### You MUST ask before proceeding if these are unspecified
 
 | Aspect         | Ask                                           |
 | -------------- | --------------------------------------------- |

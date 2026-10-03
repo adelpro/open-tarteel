@@ -43,7 +43,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 > **STOP! If the user's request is open-ended, DO NOT default to your favorites.**
 
-### When User Prompt is Vague, ASK:
+### When User Prompt is Vague, ASK
 
 **Color not specified?** Ask:
 
@@ -57,7 +57,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 > "Do you have a layout preference? (single column/grid/asymmetric/full-width?)"
 
-### ⛔ DEFAULT TENDENCIES TO AVOID (ANTI-SAFE HARBOR):
+### ⛔ DEFAULT TENDENCIES TO AVOID (ANTI-SAFE HARBOR)
 
 | AI Default Tendency             | Why It's Bad                | Think Instead                                       |
 | ------------------------------- | --------------------------- | --------------------------------------------------- |
