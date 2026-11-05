@@ -57,6 +57,8 @@ jobs:
         run: yarn format:check
       - name: Run linter
         run: yarn lint
+      - name: Check dead code
+        run: yarn knip
       - name: Run tests with coverage
         run: yarn test:coverage
       - name: Upload coverage reports
