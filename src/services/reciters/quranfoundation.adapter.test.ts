@@ -109,10 +109,16 @@ describe('QuranFoundationAdapter', () => {
   });
 
   describe('getReciters', () => {
-    it('throws when client credentials are not configured', async () => {
+    it('uses the public API when credentials are not configured', async () => {
       vi.stubEnv('QURAN_FOUNDATION_CLIENT_ID', '');
-      await expect(QuranFoundationAdapter.getReciters('ar')).rejects.toThrow(
-        'QURAN_FOUNDATION_CLIENT_ID'
+      resetQuranFoundationCache();
+
+      const reciters = await QuranFoundationAdapter.getReciters('ar');
+
+      expect(reciters).toHaveLength(1);
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('api.quran.com/api/v4'),
+        expect.anything()
       );
     });
 

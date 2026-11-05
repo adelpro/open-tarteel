@@ -666,13 +666,13 @@ change, bundle not larger.
 Values verified against official docs and live endpoints on 2026-11-05.
 "Verify" means the field exists but was not confirmed in a live response.
 
-| Provider               | Timing                                                     | AR / EN names                            | Riwayah                                      | Audio                         | Auth                      | CORS                              | Download               | Badge                                  |
-| ---------------------- | ---------------------------------------------------------- | ---------------------------------------- | -------------------------------------------- | ----------------------------- | ------------------------- | --------------------------------- | ---------------------- | -------------------------------------- |
-| **MP3Quran v3**        | Ayah, via separate `/api/v3/ayat_timing` (subset of reads) | AR only                                  | Yes, via moshaf; multiple moshaf per reciter | MP3                           | None                      | `*`                               | Yes                    | `توقيت` only when the read has timings |
-| **MP3Quran v4 (beta)** | Ayah + word + letter + phoneme                             | AR + EN (`locale`, `Accept-Language`)    | Yes: riwayah + qiraah + tariq + wajh + style | MP3 original / 64k / Opus 48k | None                      | `*`                               | Yes (Range, immutable) | `تجريبي` + `توقيت` + `كلمة بكلمة`      |
-| **Itqan**              | Ayah (`ayahs_timings` on tracks)                           | AR + EN (`Accept-Language`)              | Yes: riwayah + qiraah                        | MP3                           | Optional `X-API-Key`      | **No** on `storage.cms.itqan.dev` | **No** (CORS)          | `توقيت` + `لا تحميل`                   |
-| **Qurani.ai**          | Ayah (`includeTimings=true`)                               | AR + EN (`name` / `englishName`)         | Yes (`narratorIdentifier`)                   | MP3 + word-by-word            | Free; key for advanced    | Verify                            | Verify                 | `توقيت` + `كلمة بكلمة`                 |
-| **Quran Foundation**   | Ayah + word `segments`                                     | AR `name` + EN `translated_name` (fixed) | Verify                                       | MP3                           | OAuth2 client credentials | Server-side                       | Verify                 | `توقيت دقيق` + `رسمي`                  |
+| Provider               | Timing                                                     | AR / EN names                                   | Riwayah                                      | Audio                         | Auth                                             | CORS                              | Download               | Badge                                  |
+| ---------------------- | ---------------------------------------------------------- | ----------------------------------------------- | -------------------------------------------- | ----------------------------- | ------------------------------------------------ | --------------------------------- | ---------------------- | -------------------------------------- |
+| **MP3Quran v3**        | Ayah, via separate `/api/v3/ayat_timing` (subset of reads) | AR only                                         | Yes, via moshaf; multiple moshaf per reciter | MP3                           | None                                             | `*`                               | Yes                    | `توقيت` only when the read has timings |
+| **MP3Quran v4 (beta)** | Ayah + word + letter + phoneme                             | AR + EN (`locale`, `Accept-Language`)           | Yes: riwayah + qiraah + tariq + wajh + style | MP3 original / 64k / Opus 48k | None                                             | `*`                               | Yes (Range, immutable) | `تجريبي` + `توقيت` + `كلمة بكلمة`      |
+| **Itqan**              | Ayah (`ayahs_timings` on tracks)                           | AR + EN (`Accept-Language`)                     | Yes: riwayah + qiraah                        | MP3                           | Optional `X-API-Key`                             | **No** on `storage.cms.itqan.dev` | **No** (CORS)          | `توقيت` + `لا تحميل`                   |
+| **Qurani.ai**          | Ayah (`includeTimings=true`)                               | AR + EN (`name` / `englishName`)                | Yes (`narratorIdentifier`)                   | MP3 + word-by-word            | Free; key for advanced                           | Verify                            | Verify                 | `توقيت` + `كلمة بكلمة`                 |
+| **Quran Foundation**   | Ayah + word `segments`                                     | EN on the public fallback; AR `name` with OAuth | Verify                                       | MP3                           | OAuth2 optional; public `api.quran.com` fallback | Server-side                       | Verify                 | `توقيت دقيق` + `رسمي`                  |
 
 ### Suggested badge priority
 
@@ -688,13 +688,13 @@ Values verified against official docs and live endpoints on 2026-11-05.
 Current coverage is all unit-level with a mocked `fetch`. No test calls a real
 provider.
 
-| Provider         | Existing unit tests                | Env required                             | Live test needs         | Remaining gap                     |
-| ---------------- | ---------------------------------- | ---------------------------------------- | ----------------------- | --------------------------------- |
-| MP3Quran v3      | 14 adapter + 18 helpers            | none                                     | none                    | contract test; `de` now covered   |
-| Itqan            | 15                                 | optional `ITQAN_API_KEY`                 | a key for higher limits | contract test; pagination covered |
-| Qurani.ai        | 34 adapter + 22 helpers            | none (public)                            | none                    | contract test; 164 probe requests |
-| Quran Foundation | 23 adapter + 3 client + 4 provider | `QURAN_FOUNDATION_CLIENT_ID` + `_SECRET` | the same credentials    | 429/`Retry-After`, token expiry   |
-| MP3Quran v4      | none yet                           | flag + `MP3QURAN_V4_BASE_URL`            | none                    | fixtures from staging             |
+| Provider         | Existing unit tests                | Env required                                      | Live test needs             | Remaining gap                                    |
+| ---------------- | ---------------------------------- | ------------------------------------------------- | --------------------------- | ------------------------------------------------ |
+| MP3Quran v3      | 14 adapter + 18 helpers            | none                                              | none                        | contract test; `de` now covered                  |
+| Itqan            | 15                                 | optional `ITQAN_API_KEY`                          | a key for higher limits     | contract test; pagination covered                |
+| Qurani.ai        | 34 adapter + 22 helpers            | none (public)                                     | none                        | contract test; 164 probe requests                |
+| Quran Foundation | 23 adapter + 3 client + 4 provider | optional `QURAN_FOUNDATION_CLIENT_ID` + `_SECRET` | credentials for OAuth paths | public fallback; 429/`Retry-After`, token expiry |
+| MP3Quran v4      | none yet                           | flag + `MP3QURAN_V4_BASE_URL`                     | none                        | fixtures from staging                            |
 
 Layers:
 
@@ -702,8 +702,9 @@ Layers:
    localization and env-matrix cases.
 2. **Contract (`LIVE_PROVIDER_TESTS=1`).** Opt-in, skipped by default. Assert
    response shape, field names, non-empty lists, CORS headers and a playable
-   URL. Quran Foundation also requires credentials and must skip, not fail,
-   when they are absent.
+   URL. Quran Foundation uses the public `api.quran.com` endpoints when
+   credentials are absent, and the OAuth paths when they are set. Live tests
+   that check OAuth behaviour must skip, not fail, without credentials.
 3. **Fixtures.** Store sanitized real responses and assert the mapping against
    them, so upstream shape drift fails without a network call.
 4. **API integration.** Cover `/api/reciters` with `sources` filtering,
@@ -728,7 +729,9 @@ the PR job. A provider outage should open an issue, not block a merge.
 - **Qurani.ai**: 208 audio editions / 151 reciters; avoid probing every
   edition, cache probes, request timings only for the selected surah.
 - **Quran Foundation**: cache token and responses; respect `429` +
-  `Retry-After`; request `segments` only when word-level is needed.
+  `Retry-After`; request `segments` only when word-level is needed. Without
+  OAuth credentials, use the public `api.quran.com/api/v4` fallback (14
+  chapter reciters, 114 tracks, no auth) and accept English names.
 
 ---
 

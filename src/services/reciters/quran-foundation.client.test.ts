@@ -31,10 +31,15 @@ describe('quran-foundation.client', () => {
   });
 
   describe('qfFetch', () => {
-    it('should throw if client id is not set', async () => {
+    it('falls back to the public API when credentials are not set', async () => {
       vi.stubEnv('QURAN_FOUNDATION_CLIENT_ID', '');
-      await expect(qfFetch('/api/test')).rejects.toThrow(
-        'QURAN_FOUNDATION_CLIENT_ID is not set'
+      const fetchMock = vi.mocked(fetch);
+
+      await qfFetch('/content/api/v4/resources/chapter_reciters');
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        'https://api.quran.com/api/v4/resources/chapter_reciters',
+        expect.anything()
       );
     });
 
