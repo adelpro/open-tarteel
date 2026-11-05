@@ -36,17 +36,17 @@ and dependency, not by importance.
 
 ### Verified baseline
 
-| Check                        | Result                                                                |
-| ---------------------------- | --------------------------------------------------------------------- |
-| `tsc` / ESLint / Prettier    | pass                                                                  |
-| Tests                        | **342 pass** (20 files)                                               |
-| Production build             | **416 pages**                                                         |
-| Docker image                 | 250 MB, non-root, health `healthy`                                    |
-| `/api/reciters` payload      | **4,487,109 B** (483 reciters: 299 MP3Quran, 20 Itqan, 164 Qurani.ai) |
-| `/api/reciters` cold latency | **118 s** (Qurani.ai probing + Itqan N+1)                             |
-| `/api/reciters` cache        | **silently fails**: 4.85 MB > Next's 2 MB limit                       |
-| `/api/health`                | 19 ms                                                                 |
-| Staging `/api/reciters`      | 4,487,109 B / **27 s** cold (Netlify)                                 |
+| Check                        | Result                                                             |
+| ---------------------------- | ------------------------------------------------------------------ |
+| `tsc` / ESLint / Prettier    | pass                                                               |
+| Tests                        | **342 pass** (20 files)                                            |
+| Production build             | **416 pages**                                                      |
+| Docker image                 | 250 MB, non-root, health `healthy`                                 |
+| `/api/reciters` payload      | **4,460,979 B** (535: 299 MP3Quran, 72 Itqan, 164 Qurani.ai)       |
+| `/api/reciters` cold latency | **14.7 s local / 24 s preview** (Qurani.ai probes; Itqan now lazy) |
+| `/api/reciters` cache        | **silently fails**: 4.46 MB > Next's 2 MB limit                    |
+| `/api/health`                | 19 ms                                                              |
+| Itqan lazy detail            | 13,891 B / 1.6 s cold (preview), 114 tracks, `c=` preserved        |
 
 Known defect in the current hardening: `src/services/reciters/cached.ts` caches
 the combined list, which is above Next's 2 MB `unstable_cache` limit. The cache
