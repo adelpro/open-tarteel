@@ -668,13 +668,13 @@ change, bundle not larger.
 Values verified against official docs and live endpoints on 2026-11-05.
 "Verify" means the field exists but was not confirmed in a live response.
 
-| Provider               | Timing                                                     | AR / EN names                                   | Riwayah                                      | Audio                         | Auth                                             | CORS                              | Download               | Badge                                  |
-| ---------------------- | ---------------------------------------------------------- | ----------------------------------------------- | -------------------------------------------- | ----------------------------- | ------------------------------------------------ | --------------------------------- | ---------------------- | -------------------------------------- |
-| **MP3Quran v3**        | Ayah, via separate `/api/v3/ayat_timing` (subset of reads) | AR only                                         | Yes, via moshaf; multiple moshaf per reciter | MP3                           | None                                             | `*`                               | Yes                    | `توقيت` only when the read has timings |
-| **MP3Quran v4 (beta)** | Ayah + word + letter + phoneme                             | AR + EN (`locale`, `Accept-Language`)           | Yes: riwayah + qiraah + tariq + wajh + style | MP3 original / 64k / Opus 48k | None                                             | `*`                               | Yes (Range, immutable) | `تجريبي` + `توقيت` + `كلمة بكلمة`      |
-| **Itqan**              | Ayah (`ayahs_timings` on tracks)                           | AR + EN (`Accept-Language`)                     | Yes: riwayah + qiraah                        | MP3                           | Optional `X-API-Key`                             | **No** on `storage.cms.itqan.dev` | **No** (CORS)          | `توقيت` + `لا تحميل`                   |
-| **Qurani.ai**          | Ayah (`includeTimings=true`)                               | AR + EN (`name` / `englishName`)                | Yes (`narratorIdentifier`)                   | MP3 + word-by-word            | Free; key for advanced                           | Verify                            | Verify                 | `توقيت` + `كلمة بكلمة`                 |
-| **Quran Foundation**   | Ayah + word `segments`                                     | EN on the public fallback; AR `name` with OAuth | Verify                                       | MP3                           | OAuth2 optional; public `api.quran.com` fallback | Server-side                       | Verify                 | `توقيت دقيق` + `رسمي`                  |
+| Provider               | Timing                                                     | AR / EN names                                        | Riwayah                                      | Audio                         | Auth                                             | CORS                              | Download               | Badge                                  |
+| ---------------------- | ---------------------------------------------------------- | ---------------------------------------------------- | -------------------------------------------- | ----------------------------- | ------------------------------------------------ | --------------------------------- | ---------------------- | -------------------------------------- |
+| **MP3Quran v3**        | Ayah, via separate `/api/v3/ayat_timing` (subset of reads) | AR only                                              | Yes, via moshaf; multiple moshaf per reciter | MP3                           | None                                             | `*`                               | Yes                    | `توقيت` only when the read has timings |
+| **MP3Quran v4 (beta)** | Ayah + word + letter + phoneme                             | AR + EN (`locale`, `Accept-Language`)                | Yes: riwayah + qiraah + tariq + wajh + style | MP3 original / 64k / Opus 48k | None                                             | `*`                               | Yes (Range, immutable) | `تجريبي` + `توقيت` + `كلمة بكلمة`      |
+| **Itqan**              | Ayah (`ayahs_timings` on tracks)                           | AR + EN (`Accept-Language`)                          | Yes: riwayah + qiraah                        | MP3                           | Optional `X-API-Key`                             | **No** on `storage.cms.itqan.dev` | **No** (CORS)          | `توقيت` + `لا تحميل`                   |
+| **Qurani.ai**          | Ayah (`includeTimings=true`)                               | AR + EN (`name` / `englishName`)                     | Yes (`narratorIdentifier`)                   | MP3 + word-by-word            | Free; key for advanced                           | Verify                            | Verify                 | `توقيت` + `كلمة بكلمة`                 |
+| **Quran Foundation**   | Ayah + word `segments`                                     | AR/EN via `translated_name`; public fallback English | Verify                                       | MP3                           | OAuth2 optional; public `api.quran.com` fallback | Server-side                       | Verify                 | `توقيت دقيق` + `رسمي`                  |
 
 ### Suggested badge priority
 
@@ -730,10 +730,12 @@ the PR job. A provider outage should open an issue, not block a merge.
   tracks; send `Accept-Language`.
 - **Qurani.ai**: 208 audio editions / 151 reciters; avoid probing every
   edition, cache probes, request timings only for the selected surah.
-- **Quran Foundation**: cache token and responses; respect `429` +
-  `Retry-After`; request `segments` only when word-level is needed. Without
-  OAuth credentials, use the public `api.quran.com/api/v4` fallback (14
-  chapter reciters, 114 tracks, no auth) and accept English names.
+- **Quran Foundation**: OAuth catalog is one request (**21 reciters**, ~2.4 s)
+  and each playlist is one lazy request (**114 tracks**, ~2.7 s); this avoids
+  the 21 × 1.1 s N+1 that exceeded Netlify function limits. `translated_name`
+  is the localized field (Arabic with `?language=ar`). Without OAuth
+  credentials, the public `api.quran.com/api/v4` fallback returns 14 reciters
+  and English names.
 
 ---
 
