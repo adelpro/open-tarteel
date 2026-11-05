@@ -36,17 +36,17 @@ and dependency, not by importance.
 
 ### Verified baseline
 
-| Check                        | Result                                                      |
-| ---------------------------- | ----------------------------------------------------------- |
-| `tsc` / ESLint / Prettier    | pass                                                        |
-| Tests                        | **350 pass** (21 files)                                     |
-| Production build             | **416 pages**                                               |
-| Docker image                 | 250 MB, non-root, health `healthy`                          |
-| `/api/reciters` payload      | **183,690 B** default (371); **234,294 B** all (556)        |
-| `/api/reciters` cold latency | **3.2 s** default; **16 s** all (Qurani.ai probes dominate) |
-| `/api/reciters` cache        | **works**: 183 KB < 2 MB; warm **13 ms**                    |
-| `/api/health`                | 19 ms                                                       |
-| Lazy detail (each provider)  | 10–14 KB, 114 tracks; 0.4–1.6 s (Qurani 15 s cold)          |
+| Check                        | Result                                               |
+| ---------------------------- | ---------------------------------------------------- |
+| `tsc` / ESLint / Prettier    | pass                                                 |
+| Tests                        | **350 pass** (21 files)                              |
+| Production build             | **416 pages**                                        |
+| Docker image                 | 250 MB, non-root, health `healthy`                   |
+| `/api/reciters` payload      | **183,690 B** default (371); **234,294 B** all (556) |
+| `/api/reciters` cold latency | **3.2 s** default; **3.1 s** all                     |
+| `/api/reciters` cache        | **works**: 183 KB < 2 MB; warm **13 ms**             |
+| `/api/health`                | 19 ms                                                |
+| Lazy detail (each provider)  | 10–14 KB, 114 tracks; 0.4–1.6 s (Qurani 15 s cold)   |
 
 Known defect in the current hardening: `src/services/reciters/cached.ts` caches
 the combined list, which is above Next's 2 MB `unstable_cache` limit. The cache
@@ -416,7 +416,7 @@ Itqan/QF use their ids. The detail route hydrates one playlist through
 `getPlaylist` and caches it for an hour.
 
 Measured locally: default sources **183,690 B / 3.2 s cold / 13 ms warm**;
-all sources **234,294 B / 16 s cold** (Qurani probes). Every detail is 10–14 KB
+all sources **234,294 B / 3.1 s cold**. Every detail is 10–14 KB
 with 114 tracks.
 
 ### Payload + cache fix (blocking for Stage 5)
@@ -701,13 +701,13 @@ Values verified against official docs and live endpoints on 2026-11-05.
 Current coverage is all unit-level with a mocked `fetch`. No test calls a real
 provider.
 
-| Provider         | Existing unit tests                | Env required                                      | Live test needs             | Remaining gap                                    |
-| ---------------- | ---------------------------------- | ------------------------------------------------- | --------------------------- | ------------------------------------------------ |
-| MP3Quran v3      | 14 adapter + 18 helpers            | none                                              | none                        | contract test; `de` now covered                  |
-| Itqan            | 15                                 | optional `ITQAN_API_KEY`                          | a key for higher limits     | contract test; pagination covered                |
-| Qurani.ai        | 34 adapter + 22 helpers            | none (public)                                     | none                        | contract test; 164 probe requests                |
-| Quran Foundation | 23 adapter + 3 client + 4 provider | optional `QURAN_FOUNDATION_CLIENT_ID` + `_SECRET` | credentials for OAuth paths | public fallback; 429/`Retry-After`, token expiry |
-| MP3Quran v4      | none yet                           | flag + `MP3QURAN_V4_BASE_URL`                     | none                        | fixtures from staging                            |
+| Provider         | Existing unit tests                | Env required                                      | Live test needs             | Remaining gap                                                  |
+| ---------------- | ---------------------------------- | ------------------------------------------------- | --------------------------- | -------------------------------------------------------------- |
+| MP3Quran v3      | 14 adapter + 18 helpers            | none                                              | none                        | contract test; `de` now covered                                |
+| Itqan            | 15                                 | optional `ITQAN_API_KEY`                          | a key for higher limits     | contract test; pagination covered                              |
+| Qurani.ai        | 34 adapter + 22 helpers            | none (public)                                     | none                        | contract test; static edition→base map, unknown editions probe |
+| Quran Foundation | 23 adapter + 3 client + 4 provider | optional `QURAN_FOUNDATION_CLIENT_ID` + `_SECRET` | credentials for OAuth paths | public fallback; 429/`Retry-After`, token expiry               |
+| MP3Quran v4      | none yet                           | flag + `MP3QURAN_V4_BASE_URL`                     | none                        | fixtures from staging                                          |
 
 Layers:
 
