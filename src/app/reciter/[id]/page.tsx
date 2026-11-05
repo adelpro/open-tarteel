@@ -1,12 +1,20 @@
-import { notFound } from 'next/navigation';
-
 import ReciterPage from '@/app/reciter/[id]/reciter-page';
 import Hero from '@/components/hero';
+import type { LinkSource } from '@/types';
 import { clientConfig, normalizeAppUrl } from '@/utils';
 import { getAllReciters } from '@/utils/api';
 
 type Props = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ moshafId?: string }>;
+};
+
+/** `itqan.dev-2` → `itqan.dev`; `mp3quran.net-1` → `mp3quran.net`. */
+const sourceFromId = (id: string): LinkSource | null => {
+  const index = id.lastIndexOf('-');
+  if (index <= 0) return null;
+  const candidate = id.slice(0, index);
+  return candidate.includes('.') ? (candidate as LinkSource) : null;
 };
 
 export async function generateStaticParams() {
@@ -23,10 +31,12 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
+  const source = sourceFromId(id);
 
   let RECITERS: Awaited<ReturnType<typeof getAllReciters>> = [];
   try {
-    RECITERS = await getAllReciters('ar', null);
+    // Scope the lookup to this provider instead of fetching every catalog.
+    RECITERS = await getAllReciters('ar', source ? [source] : null);
   } catch {
     return {
       title: clientConfig.APP_NAME,
@@ -81,39 +91,16 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-export default async function Page({ params }: Props) {
+export default async function Page({ params, searchParams }: Props) {
   const { id } = await params;
+  const { moshafId } = await searchParams;
 
-  let RECITERS = [];
-  try {
-    RECITERS = await getAllReciters('ar', null);
-  } catch {
-    return notFound();
-  }
-
-  const reciter = RECITERS.find((r) => r.id === id);
-
-  if (!reciter) {
-    return notFound();
-  }
-
+  // Do not block the page on the catalog. The client loads the reciter and its
+  // playlist by URL, so a slow provider never leaves the page on a skeleton.
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Person',
-            name: reciter.name,
-            url: `${normalizeAppUrl(clientConfig.APP_URL)}/reciter/${reciter.id}`,
-          }),
-        }}
-      />
-      <main className="flex w-full flex-col items-center justify-center bg-background text-foreground">
-        <Hero />
-        <ReciterPage key={id} />
-      </main>
-    </>
+    <main className="flex w-full flex-col items-center justify-center bg-background text-foreground">
+      <Hero />
+      <ReciterPage key={id} id={id} moshafId={moshafId} />
+    </main>
   );
 }

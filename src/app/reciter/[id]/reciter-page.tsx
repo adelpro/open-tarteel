@@ -8,19 +8,18 @@ import { useIntl } from 'react-intl';
 import ReciterSelector from '@/components/reciter-selector';
 import SimpleSkeleton from '@/components/simple-skeleton';
 import { fullscreenAtom, selectedReciterAtom } from '@/jotai/atom';
-import { LinkSource, Reciter } from '@/types';
+import type { Reciter } from '@/types';
 
 const Player = dynamic(() => import('@/components/player'), { ssr: false });
 
-function ReciterContent() {
+function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
   const [selectedReciter, setSelectedReciter] = useAtom(selectedReciterAtom);
   const [isFullscreen, setFullscreen] = useAtom(fullscreenAtom);
   const { formatMessage, locale } = useIntl();
   const [mounted, setMounted] = useState(false);
-  const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
-  const attemptedKey = useRef<string | null>(null);
+  const requestRef = useRef(0);
 
   useEffect(() => {
     setMounted(true);
@@ -35,43 +34,42 @@ function ReciterContent() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [setFullscreen]);
 
-  const currentKey = selectedReciter
-    ? `${selectedReciter.id}:${selectedReciter.moshaf.id}`
-    : null;
+  // Fall back to the selected atom when a link omits `moshafId`.
+  const targetMoshafId =
+    moshafId ??
+    (id && selectedReciter?.id === id ? selectedReciter.moshaf.id : undefined);
 
-  // Itqan omits the 114-track playlist from the catalog. Fetch it on selection,
-  // and also refetch stale persisted entries that only hold one page of tracks.
-  const needsPlaylist = Boolean(
-    selectedReciter &&
-    currentKey !== attemptedKey.current &&
-    (selectedReciter.moshaf.playlist.length === 0 ||
-      (selectedReciter.source === LinkSource.ITQAN &&
-        selectedReciter.moshaf.playlist.length <
-          Number(selectedReciter.moshaf.surah_total)))
+  const playlistReady = Boolean(
+    id &&
+    targetMoshafId &&
+    selectedReciter?.id === id &&
+    selectedReciter.moshaf.id === targetMoshafId &&
+    selectedReciter.moshaf.playlist.length > 0
   );
 
   useEffect(() => {
-    if (!selectedReciter || !currentKey || !needsPlaylist) return;
+    if (!id || !targetMoshafId) return;
+    if (playlistReady) return;
 
-    attemptedKey.current = currentKey;
-    let cancelled = false;
-    setDetailLoading(true);
+    const controller = new AbortController();
+    const requestId = ++requestRef.current;
     setDetailError(false);
 
-    // Scope the catalog lookup to this provider so the detail route does not
-    // re-fetch every adapter just to find one reciter.
-    const params = new URLSearchParams({
-      language: locale,
-      sources: selectedReciter.source,
-    });
+    // Scope the lookup to this provider when possible; otherwise the route
+    // falls back to all enabled sources.
+    const source = selectedReciter?.source ?? id.slice(0, id.lastIndexOf('-'));
+    const query = new URLSearchParams({ language: locale });
+    if (source) query.set('sources', source);
+
     fetch(
-      `/api/reciters/${encodeURIComponent(selectedReciter.id)}/${encodeURIComponent(
-        selectedReciter.moshaf.id
-      )}?${params.toString()}`
+      `/api/reciters/${encodeURIComponent(id)}/${encodeURIComponent(
+        targetMoshafId
+      )}?${query.toString()}`,
+      { signal: controller.signal }
     )
       .then((response) => (response.ok ? response.json() : null))
       .then((data: Reciter | null) => {
-        if (cancelled) return;
+        if (requestId !== requestRef.current) return;
         if (data?.moshaf?.playlist?.length) {
           setSelectedReciter(data);
         } else {
@@ -79,25 +77,24 @@ function ReciterContent() {
         }
       })
       .catch(() => {
-        if (!cancelled) setDetailError(true);
-      })
-      .finally(() => {
-        if (!cancelled) setDetailLoading(false);
+        if (controller.signal.aborted || requestId !== requestRef.current) {
+          return;
+        }
+        setDetailError(true);
       });
 
-    return () => {
-      cancelled = true;
-    };
+    return () => controller.abort();
   }, [
-    currentKey,
     locale,
-    needsPlaylist,
+    playlistReady,
     retryKey,
-    selectedReciter,
+    selectedReciter?.source,
     setSelectedReciter,
+    targetMoshafId,
+    id,
   ]);
 
-  if (!mounted || !selectedReciter) {
+  if (!mounted) {
     return <SimpleSkeleton />;
   }
 
@@ -112,10 +109,7 @@ function ReciterContent() {
         </p>
         <button
           type="button"
-          onClick={() => {
-            attemptedKey.current = null;
-            setRetryKey((key) => key + 1);
-          }}
+          onClick={() => setRetryKey((key) => key + 1)}
           className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
         >
           {formatMessage({ id: 'reciter.retry', defaultMessage: 'Retry' })}
@@ -124,7 +118,12 @@ function ReciterContent() {
     );
   }
 
-  if (detailLoading || selectedReciter.moshaf.playlist.length === 0) {
+  if (
+    !selectedReciter ||
+    selectedReciter.id !== id ||
+    selectedReciter.moshaf.id !== targetMoshafId ||
+    selectedReciter.moshaf.playlist.length === 0
+  ) {
     return <SimpleSkeleton />;
   }
 
@@ -134,24 +133,28 @@ function ReciterContent() {
         {!isFullscreen && <ReciterSelector />}
         {isFullscreen && (
           <p className="mb-5 flex items-center justify-center gap-2 text-4xl font-bold text-gray-500">
-            {selectedReciter?.name}
+            {selectedReciter.name}
           </p>
         )}
-        {selectedReciter?.moshaf && (
-          <Suspense fallback={<SimpleSkeleton />}>
-            <Player playlist={selectedReciter.moshaf.playlist} />
-          </Suspense>
-        )}
+        <Suspense fallback={<SimpleSkeleton />}>
+          <Player playlist={selectedReciter.moshaf.playlist} />
+        </Suspense>
       </div>
     </div>
   );
 }
 
-export default function ReciterPage() {
+export default function ReciterPage({
+  id,
+  moshafId,
+}: {
+  id: string;
+  moshafId?: string;
+}) {
   return (
     <Suspense fallback={<SimpleSkeleton />}>
       <div className="flex w-full max-w-lg items-center justify-center p-1 md:p-4">
-        <ReciterContent />
+        <ReciterContent id={id} moshafId={moshafId} />
       </div>
     </Suspense>
   );
