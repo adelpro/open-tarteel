@@ -36,31 +36,43 @@ and dependency, not by importance.
 
 ### Verified baseline
 
-| Check                         | Result                                                 |
-| ----------------------------- | ------------------------------------------------------ |
-| `tsc` / ESLint / Prettier     | pass                                                   |
-| Tests                         | **342 pass** (20 files)                                |
-| Production build              | **416 pages**                                          |
-| Docker image                  | 250 MB, non-root, health `healthy`                     |
-| `/api/reciters` payload       | **4,487,109 B** (483 reciters: 299 MP3Quran, 20 Itqan, 164 Qurani.ai) |
-| `/api/reciters` cold latency  | **118 s** (Qurani.ai probing + Itqan N+1)              |
-| `/api/reciters` cache         | **silently fails**: 4.85 MB > Next's 2 MB limit        |
-| `/api/health`                 | 19 ms                                                  |
+| Check                        | Result                                                                |
+| ---------------------------- | --------------------------------------------------------------------- |
+| `tsc` / ESLint / Prettier    | pass                                                                  |
+| Tests                        | **342 pass** (20 files)                                               |
+| Production build             | **416 pages**                                                         |
+| Docker image                 | 250 MB, non-root, health `healthy`                                    |
+| `/api/reciters` payload      | **4,487,109 B** (483 reciters: 299 MP3Quran, 20 Itqan, 164 Qurani.ai) |
+| `/api/reciters` cold latency | **118 s** (Qurani.ai probing + Itqan N+1)                             |
+| `/api/reciters` cache        | **silently fails**: 4.85 MB > Next's 2 MB limit                       |
+| `/api/health`                | 19 ms                                                                 |
 
 Known defect in the current hardening: `src/services/reciters/cached.ts` caches
 the combined list, which is above Next's 2 MB `unstable_cache` limit. The cache
 never persists. Fix in 5c/5d; do not rely on the current cache layer.
 
-### Temporary live staging
+### Netlify staging (ready)
 
-- URL: **https://bright-sheep-28.loca.lt** (localtunnel → `next start :3001`,
-  built with that origin).
-- Verified: `/`, `/reciter/mp3quran.net-1`, `/api/health`, `/sw.js`,
-  `/manifest.webmanifest`, `/sitemap.xml` (origin correct).
-- This is a temporary tunnel, not Netlify. It dies with the tunnel process and
-  the URL changes on restart, which requires a rebuild because
-  `NEXT_PUBLIC_APP_URL` is inlined at build time. Use it only for quick device
-  testing until Stage 8 lands.
+- URL: **https://staging--open-tarteel.netlify.app** (branch `staging`,
+  fast-forwarded to the hardening branch).
+- Site: `open-tarteel` (`523478b8-4d28-4a59-9415-53f739567f92`). Production is
+  `tarteel.quran.us.kg` and was not touched.
+- Verified: `/`, `/api/health`, `/manifest.webmanifest`, `/sw.js`, `/offline`,
+  `/reciter/mp3quran.net-1` all 200; `/sw.js` has
+  `Cache-Control: no-cache,no-store,must-revalidate`.
+- Preview origin: Netlify's site env sets `NEXT_PUBLIC_APP_URL` to the
+  production origin, so preview metadata/sitemap currently point at
+  production. Fixed in `next.config.ts` by preferring `DEPLOY_PRIME_URL` when
+  `CONTEXT` is `deploy-preview` or `branch-deploy`.
+- Local `netlify deploy` fails at the blob upload step
+  (`403 Request has expired`, a 30 s signed URL). Use Git branch deploys or a
+  PR deploy preview instead; do not retry the local upload.
+
+### Temporary tunnel (optional)
+
+- URL: **https://bright-sheep-28.loca.lt** (localtunnel → `next start :3001`).
+- Useful only for quick device tests; it dies with the tunnel process and the
+  URL changes on restart.
 
 ### Rebase status (done)
 

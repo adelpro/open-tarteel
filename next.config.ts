@@ -4,7 +4,14 @@ import withSerwistInit from '@serwist/next';
 import type { NextConfig } from 'next';
 
 const isProduction = process.env.NODE_ENV === 'production';
+// Netlify sets CONTEXT to "production", "deploy-preview" or "branch-deploy".
+// Preview/branch deploys must use their own origin, even when the site has a
+// canonical NEXT_PUBLIC_APP_URL configured for production.
+const isNetlifyPreview =
+  process.env.CONTEXT === 'deploy-preview' ||
+  process.env.CONTEXT === 'branch-deploy';
 const buildAppUrl =
+  (isNetlifyPreview ? process.env.DEPLOY_PRIME_URL : undefined) ||
   process.env.NEXT_PUBLIC_APP_URL ||
   process.env.NEXT_PUBLIC_TARTEEL_APP_URL ||
   // Netlify sets these at build time. DEPLOY_PRIME_URL is the primary URL for
