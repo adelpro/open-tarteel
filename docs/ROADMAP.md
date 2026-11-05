@@ -46,6 +46,7 @@ and dependency, not by importance.
 | `/api/reciters` cold latency | **118 s** (Qurani.ai probing + Itqan N+1)                             |
 | `/api/reciters` cache        | **silently fails**: 4.85 MB > Next's 2 MB limit                       |
 | `/api/health`                | 19 ms                                                                 |
+| Staging `/api/reciters`      | 4,487,109 B / **27 s** cold (Netlify)                                 |
 
 Known defect in the current hardening: `src/services/reciters/cached.ts` caches
 the combined list, which is above Next's 2 MB `unstable_cache` limit. The cache
@@ -60,6 +61,8 @@ never persists. Fix in 5c/5d; do not rely on the current cache layer.
 - Verified: `/`, `/api/health`, `/manifest.webmanifest`, `/sw.js`, `/offline`,
   `/reciter/mp3quran.net-1` all 200; `/sw.js` has
   `Cache-Control: no-cache,no-store,must-revalidate`.
+- `/api/reciters` on staging: **4,487,109 B / 27 s cold**, 483 reciters. This
+  confirms the payload/cache work (5c/5d) is the top priority.
 - Preview origin: Netlify's site env sets `NEXT_PUBLIC_APP_URL` to the
   production origin, so preview metadata/sitemap currently point at
   production. Fixed in `next.config.ts` by preferring `DEPLOY_PRIME_URL` when
