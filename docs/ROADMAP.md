@@ -184,6 +184,84 @@ audio starts once, tested with MP3Quran + Itqan + Quran Foundation.
 
 ---
 
+## Stage 2b — Spectrum visualizer port from `adelpro/open-tilawa`
+
+Goal: replace `react-audio-spectrum` with the dependency-free canvas
+visualizer from `adelpro/open-tilawa`: three models (`bars`, `peaks`,
+`ribbon`), 28 bars, a 56-point four-layer ribbon, DPR-aware rendering,
+`ResizeObserver`, theme-aware tints, reduced-motion support, and a 30 Hz data
+read. It is smaller, smoother, and drops a runtime dependency.
+
+### Source files (open-tilawa, `main`)
+
+| File                                      | Lines | Purpose                                                                          |
+| ----------------------------------------- | ----- | -------------------------------------------------------------------------------- |
+| `apps/web/src/components/visualiser.tsx`  | 282   | canvas component and three draw models                                           |
+| `apps/web/src/utils/audio-analyser.ts`    | 116   | singleton `AudioContext`/`AnalyserNode`, same-origin gate, output gain           |
+| `apps/web/src/utils/visualiser-models.ts` | 121   | `downsample`, `follow`, `logBands`, `mixHex`, `waveTints`, `normaliseVisualiser` |
+| `apps/web/test/visualiser-models.test.ts` | 115   | unit tests for the models                                                        |
+
+License note: `open-tilawa` currently has no root `LICENSE` file (GitHub
+license API returns 404). It is the same owner, but confirm the license and add
+an attribution note before copying if other contributors are involved.
+
+### Adaptation for open-tarteel
+
+1. **Paths**: `src/components/visualizer.tsx`,
+   `src/utils/audio-analyser.ts`, `src/utils/visualiser-models.ts`.
+2. **Theme**: open-tarteel toggles `.dark` on `<html>`, not `data-theme`.
+   Replace the `data-theme` `MutationObserver` with a class observer or the
+   existing `themeAtom`; read the current blue (`#0191e2`) or Tailwind tokens
+   instead of `--wave-front` / `--wave-back`.
+3. **State**: replace `playing`/`model` props with `isPlaying` and a new
+   `visualizerModelAtom` (persisted). Keep `showVisualizerAtom`.
+4. **Audio safety (critical)**: `createMediaElementSource()` on a cross-origin
+   element without CORS can mute playback. open-tarteel already sets
+   `crossOrigin="anonymous"`; MP3Quran CDN sends `Access-Control-Allow-Origin:
+*`, but Itqan (`storage.cms.itqan.dev`) does not. Gate the analyser on an
+   explicit `canAnalyse(src)` check (same-origin or known CORS hosts) and never
+   connect the graph otherwise. Render a flat shelf for unsupported providers
+   and keep audio untouched.
+5. **Volume**: the WebAudio graph bypasses `audio.volume`. Route `volumeAtom`
+   through `setOutputGain`, and keep the iOS read-only-volume probe
+   (`canSetElementVolume`).
+6. **Layout**: keep the canvas mounted with a fixed height and fade opacity
+   when paused/hidden, so the controls never jump. This also fixes the
+   visualizer contribution to the Stage 2 flash.
+7. **Performance**: stop `requestAnimationFrame` when paused or the tab is
+   hidden; cap DPR at 2; keep the 30 Hz data read.
+8. **Dependency removal**: remove `react-audio-spectrum` after parity.
+
+### PRs
+
+| PR   | Title                                                     | Scope                                              |
+| ---- | --------------------------------------------------------- | -------------------------------------------------- |
+| 2b-1 | `feat(player): port visualizer models and tests`          | pure utils + unit tests, no UI                     |
+| 2b-2 | `feat(player): port canvas visualizer with three models`  | component, theme, reduced motion, fixed height     |
+| 2b-3 | `fix(player): gate analyser on CORS and wire volume gain` | same-origin/CORS check, `setOutputGain`, iOS probe |
+| 2b-4 | `chore(deps): remove react-audio-spectrum`                | dependency + bundle check + screenshot             |
+
+Acceptance:
+
+- Bars, peaks and ribbon switch without a reload or a new request.
+- No layout shift; the canvas keeps its height when paused.
+- MP3Quran audio stays audible and animates; Itqan audio stays audible with a
+  flat shelf (no analyser data).
+- Volume still works on desktop and iOS.
+- `prefers-reduced-motion` stops the animation but keeps the layout.
+- `react-audio-spectrum` removed; bundle does not grow.
+- Model tests cover `downsample`, `follow`, `logBands`, `normaliseVisualiser`,
+  `mixHex`, `waveTints`.
+
+Risks:
+
+- Routing cross-origin audio through WebAudio can silence it; the CORS gate is
+  non-negotiable.
+- iOS requires the `AudioContext` to be created on a user gesture (first play).
+- Theme tokens differ between the two apps; verify light and dark screenshots.
+
+---
+
 ## Stage 3 — Provider capability registry & badges
 
 Goal: one source of truth for what each provider can do, used by UI and by
@@ -597,8 +675,24 @@ Values verified against official docs and live endpoints on 2026-11-05.
 
 ## Issue list for GitHub
 
-`gh` is not installed/authenticated here. Create these with the titles above,
-or run a bulk script once `gh` is available.
+`gh` (2.103.3) is installed and authenticated as `adelpro`. Use it for all
+GitHub operations instead of raw API calls:
+
+```bash
+gh pr view 91 --repo adelpro/open-tarteel
+gh pr checks 91 --repo adelpro/open-tarteel
+gh pr diff 91 --repo adelpro/open-tarteel
+gh pr merge 91 --repo adelpro/open-tarteel --squash --delete-branch
+```
+
+Create the issues above one by one, or bulk-create from a title/label list:
+
+```bash
+gh issue create --repo adelpro/open-tarteel \
+  --title "perf(reciters): slim list DTO and detail endpoint" \
+  --body "See docs/ROADMAP.md stage 5c." \
+  --label "area:provider,type:perf,stage:5"
+```
 
 Labels: `area:build`, `area:provider`, `area:player`, `area:offline`,
 `area:ui`, `area:a11y`, `area:seo`, `type:bug`, `type:feature`, `type:perf`,
@@ -609,7 +703,7 @@ Dependency order:
 ```
 0a–0e → merge develop
       → 1a, 1b
-      → 2a–2c
+      → 2a–2c, 2b-1…2b-4
       → 3a, 3b
       → 4a–4d
       → 5a, 5c, 5d, 5b, 5e, 5f, 5g
