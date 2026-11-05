@@ -25,11 +25,12 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(clientConfig.APP_URL),
-  applicationName: 'Open Tarteel',
+  applicationName: clientConfig.APP_NAME,
+  manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Open Tarteel',
+    title: clientConfig.APP_NAME,
   },
   formatDetection: {
     telephone: false,
@@ -56,6 +57,15 @@ export const metadata: Metadata = {
       'Listen to the Holy Quran recited by world-renowned reciters. Free and open-source.',
     images: ['/images/logo-og.png'],
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+  ],
 };
 
 const tajawal = Tajawal({

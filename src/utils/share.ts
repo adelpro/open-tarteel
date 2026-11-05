@@ -2,12 +2,14 @@ import { useIntl } from 'react-intl';
 
 import { Reciter } from '@/types';
 
+import { clientConfig } from './config';
+import { normalizeAppUrl } from './normalize-app-url';
+
 export function useShareReciter() {
   const { formatMessage } = useIntl();
 
   async function shareReciter(reciter: Reciter): Promise<void> {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_TARTEEL_APP_URL || 'https://tarteel.quran.us.kg';
+    const baseUrl = normalizeAppUrl(clientConfig.APP_URL) ?? '';
     const url = `${baseUrl}/reciter/${reciter.id}?moshafId=${reciter.moshaf.id}`;
     const message = formatMessage({
       id: 'share.message',

@@ -31,6 +31,8 @@ Open Tarteel is an open-source Quran application designed to provide an optimal 
 
 ## Installation
 
+**Requirements:** Node.js >= 20.9 and Yarn 4 (via Corepack).
+
 1. **Clone the Repository**:
 
    ```bash
@@ -38,17 +40,90 @@ Open Tarteel is an open-source Quran application designed to provide an optimal 
    cd open-tarteel
    ```
 
-2. **Install Dependencies**:
+2. **Enable Corepack and install dependencies**:
 
    ```bash
-   npm install
+   corepack enable
+   yarn install --immutable
    ```
 
-3. **Run the App**:
+3. **Configure the environment**:
 
    ```bash
-   npm run dev
+   cp .env.example .env.local
    ```
+
+   At minimum set `NEXT_PUBLIC_APP_URL`. The feedback form is optional and is
+   disabled when the `FEED_BACK_*` variables are empty.
+
+4. **Run the App**:
+
+   ```bash
+   yarn dev
+   ```
+
+## Production deployment
+
+### Environment variables
+
+| Variable                            | Required | Description                                                                                                                   |
+| ----------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_APP_URL`               | Yes      | Canonical public URL, e.g. `https://tarteel.quran.us.kg` (no trailing slash). Used for metadata, sitemap, robots and sharing. |
+| `NEXT_PUBLIC_APP_NAME`              | No       | Application name shown in metadata and emails.                                                                                |
+| `NEXT_PUBLIC_APP_VERSION`           | No       | Version shown in the UI/health endpoint.                                                                                      |
+| `NEXT_PUBLIC_DEBUG`                 | No       | `"true"` to show verbose errors. Keep `"false"` in production.                                                                |
+| `PORT`                              | No       | Port for the standalone server (default `3000`).                                                                              |
+| `FEED_BACK_EMAIL`                   | No       | Mailbox that receives feedback.                                                                                               |
+| `FEED_BACK_PASSWORD`                | No       | Mailbox/app password.                                                                                                         |
+| `FEED_BACK_SERVICE`                 | No       | Nodemailer service name (e.g. `gmail`).                                                                                       |
+| `FEED_BACK_HOST` / `FEED_BACK_PORT` | No       | Alternative SMTP host/port when not using a service.                                                                          |
+
+> `NEXT_PUBLIC_*` values are inlined at **build time**. Rebuild the app after
+> changing them; setting them only at runtime has no effect on the client
+> bundle.
+
+### Build and run
+
+```bash
+yarn build
+yarn start
+```
+
+The build produces a self-contained server in `.next/standalone` (`output:
+"standalone"`). The CI workflow runs the same production build, so a broken
+build cannot be merged.
+
+### Docker
+
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_APP_URL=https://tarteel.quran.us.kg \
+  --build-arg NEXT_PUBLIC_APP_VERSION="$(git describe --tags --always)" \
+  -t open-tarteel .
+
+docker run --rm -p 3000:3000 \
+  -e FEED_BACK_EMAIL=... \
+  -e FEED_BACK_PASSWORD=... \
+  -e FEED_BACK_SERVICE=gmail \
+  open-tarteel
+```
+
+The image runs as a non-root user and exposes `GET /api/health` for liveness
+and readiness checks.
+
+### Production notes
+
+- The sitemap and reciter pages are generated at build time from the upstream
+  reciter APIs. A build machine needs outbound network access; the sitemap
+  falls back gracefully if an upstream API is unavailable.
+- Feedback rate limiting is in-memory and per instance. If you run multiple
+  replicas, put a shared limiter (Redis/Upstash or your edge provider) in
+  front of `/api/send-feedback`.
+- View/favorite counters are stored in the public GunDB relay and are
+  client-reported. Treat them as approximate, not authoritative.
+- Security headers (HSTS, `X-Content-Type-Options`, `X-Frame-Options`,
+  `Referrer-Policy`, `Permissions-Policy`) are configured in `next.config.ts`.
+  Add a Content-Security-Policy once your CDN/analytics requirements are known.
 
 ## Contributing
 

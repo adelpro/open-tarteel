@@ -1,22 +1,42 @@
-import nodmailer from 'nodemailer';
+import nodemailer, { type Transporter } from 'nodemailer';
 
 import { serverConfig } from './config';
 
 const email = serverConfig.FEED_BACK_EMAIL;
-const pass = serverConfig.FEED_BACK_PASSWORD;
+const password = serverConfig.FEED_BACK_PASSWORD;
 const service = serverConfig.FEED_BACK_SERVICE;
 const host = serverConfig.FEED_BACK_HOST;
-const port = serverConfig.FEED_BACK_PORT;
+const port = serverConfig.FEED_BACK_PORT
+  ? Number(serverConfig.FEED_BACK_PORT)
+  : undefined;
 
-export const transporter = nodmailer.createTransport({
-  service,
-  host,
-  port,
-  auth: {
-    user: email,
-    pass,
-  },
-});
+/**
+ * The feedback form is optional. When the mail credentials are missing we
+ * return a clear 503 instead of failing with a confusing transport error.
+ */
+export const isMailConfigured = Boolean(email && password && (service || host));
+
+let transporter: Transporter | null = null;
+
+export const getTransporter = (): Transporter => {
+  if (!isMailConfigured) {
+    throw new Error('Feedback mail transport is not configured');
+  }
+
+  transporter ??= nodemailer.createTransport({
+    service: service || undefined,
+    host: host || undefined,
+    port,
+    secure: port === 465,
+    auth: {
+      user: email,
+      pass: password,
+    },
+  });
+
+  return transporter;
+};
+
 export const mailOptions = {
   from: email,
   to: email,

@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import type { Language } from '@/constants/language';
 import { LANGUAGES } from '@/constants/language';
-import {
-  getAllRecitersFromAdapters,
-  parseEnabledSources,
-} from '@/services/reciters';
+import { parseEnabledSources } from '@/services/reciters';
+import { getAllRecitersCached } from '@/services/reciters/cached';
 
 export async function GET(
   request: NextRequest,
@@ -26,7 +24,7 @@ export async function GET(
   const enabledSources = parseEnabledSources(sourcesParameter ?? cookie);
 
   try {
-    const reciters = await getAllRecitersFromAdapters(language, enabledSources);
+    const reciters = await getAllRecitersCached(language, enabledSources);
 
     const reciter = reciters.find(
       (r) => r.id === id && r.moshaf.id === moshafId

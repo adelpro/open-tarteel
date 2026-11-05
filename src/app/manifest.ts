@@ -1,6 +1,17 @@
 import { MetadataRoute } from 'next';
 
+import { clientConfig, normalizeAppUrl } from '@/utils';
+
 export default function manifest(): MetadataRoute.Manifest {
+  const appUrl = normalizeAppUrl(clientConfig.APP_URL) ?? '';
+
+  let appOrigin = appUrl;
+  try {
+    appOrigin = new URL(appUrl).origin;
+  } catch {
+    // Fall back to the normalized value; `scope_extensions` is best-effort.
+  }
+
   return {
     id: '9a008c3173fcca3c4def71adedd5bd3f',
     theme_color: '#000000',
@@ -20,7 +31,7 @@ export default function manifest(): MetadataRoute.Manifest {
     },
     handle_links: [
       {
-        url: 'https://tarteel.quran.us.kg',
+        url: appUrl,
         action: 'navigate',
       },
     ],
@@ -30,10 +41,10 @@ export default function manifest(): MetadataRoute.Manifest {
 
     web_apps: [
       {
-        web_app_identity: 'https://tarteel.quran.us.kg/',
+        web_app_identity: `${appUrl}/`,
       },
     ],
-    scope_extensions: [{ origin: 'https://tarteel.quran.us.kg' }],
+    scope_extensions: [{ origin: appOrigin }],
 
     icons: [
       {

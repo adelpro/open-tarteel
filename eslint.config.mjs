@@ -31,6 +31,8 @@ const config = [
         ...globals.es2021,
         React: 'readonly',
         NodeJS: 'readonly',
+        ExtendableEvent: 'readonly',
+        FetchEvent: 'readonly',
       },
     },
     plugins: {
