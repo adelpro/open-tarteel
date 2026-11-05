@@ -129,13 +129,13 @@ describe('getAllReciters', () => {
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/reciters?language=ar'),
         expect.objectContaining({
-          next: { revalidate: 3600 },
+          cache: 'no-store',
         })
       );
       expect(result).toEqual([reciterA]);
     });
 
-    it('calls the /api/reciters route with language=eng for "en"', async () => {
+    it('calls the /api/reciters route with language=en for "en"', async () => {
       vi.stubGlobal('fetch', makeJsonFetch([reciterA]));
 
       await getAllReciters('en');
@@ -143,7 +143,7 @@ describe('getAllReciters', () => {
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('language=en'),
         expect.objectContaining({
-          next: { revalidate: 3600 },
+          cache: 'no-store',
         })
       );
     });
@@ -155,7 +155,7 @@ describe('getAllReciters', () => {
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('language=de'),
         expect.objectContaining({
-          next: { revalidate: 3600 },
+          cache: 'no-store',
         })
       );
     });
@@ -229,7 +229,7 @@ describe('getReciter', () => {
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/reciters/'),
         expect.objectContaining({
-          next: { revalidate: 3600 },
+          cache: 'no-store',
         })
       );
       expect(result).toEqual(reciterA);
@@ -243,12 +243,12 @@ describe('getReciter', () => {
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining(encodeURIComponent('mp3quran.net-1')),
         expect.objectContaining({
-          next: { revalidate: 3600 },
+          cache: 'no-store',
         })
       );
     });
 
-    it('passes language=eng for "en" locale', async () => {
+    it('passes language=en for "en" locale', async () => {
       vi.stubGlobal('fetch', makeJsonFetch(reciterA));
 
       await getReciter('mp3quran.net-1', '42', 'en');
@@ -256,7 +256,7 @@ describe('getReciter', () => {
       expect(fetch).toHaveBeenCalledWith(
         expect.stringContaining('language=en'),
         expect.objectContaining({
-          next: { revalidate: 3600 },
+          cache: 'no-store',
         })
       );
     });

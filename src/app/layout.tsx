@@ -97,7 +97,7 @@ export default async function RootLayout({
               <EnabledSourcesCookieSync />
               <StoragePersist />
               <OfflineRedirect />
-              <PwaUpdater />
+              {process.env.NEXT_PUBLIC_IS_PREVIEW !== 'true' && <PwaUpdater />}
               <FullscreenController>{children}</FullscreenController>
             </main>
           </body>

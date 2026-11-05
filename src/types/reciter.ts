@@ -8,6 +8,8 @@ export type Moshaf = {
   riwaya: Riwaya;
   server: string;
   surah_total: string;
+  /** Compact source list for lazy playlist generation (e.g. MP3Quran). */
+  surahIds?: string;
   playlist: Playlist;
 };
 

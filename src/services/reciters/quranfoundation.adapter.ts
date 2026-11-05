@@ -1,5 +1,5 @@
 import { Language } from '@/constants/language';
-import type { Playlist, Reciter } from '@/types';
+import type { Moshaf, Playlist, Reciter } from '@/types';
 import { LinkSource, Riwaya } from '@/types';
 
 import {
@@ -53,32 +53,22 @@ const riwayaKeyFromQirat = (qirat?: string | null): keyof typeof Riwaya =>
     (key) => key.toLowerCase() === (qirat ?? '').toLowerCase()
   ) ?? 'Hafs';
 
-const fetchSingleReciter = async (
-  reciter: QuranFoundationChapterRecitersResponse['reciters'][number]
-): Promise<Reciter> => {
-  const audioResponse = await qfFetch(`${CHAPTER_AUDIO_PATH}/${reciter.id}`);
-  const audioData: QuranFoundationChapterAudioResponse =
-    await audioResponse.json();
+/**
+ * `translated_name` is the localized value for the requested `?language=`
+ * (Arabic when `language=ar`); `name` is the Latin fallback. The API returns
+ * them the other way round from what the field names suggest.
+ */
+export const resolveReciterName = (
+  reciter: QuranFoundationChapterRecitersResponse['reciters'][number],
+  _lang?: Language
+): string => reciter.translated_name?.name || reciter.name || '';
 
-  if (!Array.isArray(audioData.audio_files)) {
-    throw new Error(`Unexpected audio response for reciter ${reciter.id}`);
-  }
-
-  const name = reciter.translated_name?.name ?? reciter.name;
-  if (!name) {
-    throw new Error(
-      `Skipping quran.foundation reciter ${reciter.id}: missing name`
-    );
-  }
-
-  const playlist: Playlist = [...audioData.audio_files]
-    .sort((a, b) => a.chapter_id - b.chapter_id)
-    .map((audioFile) => ({
-      surahId: String(audioFile.chapter_id),
-      link: audioFile.audio_url,
-    }));
-
-  const riwayaKey = riwayaKeyFromQirat(reciter.qirat?.name);
+const mapReciter = (
+  reciter: QuranFoundationChapterRecitersResponse['reciters'][number],
+  lang: Language
+): Reciter | null => {
+  const name = resolveReciterName(reciter, lang);
+  if (!name) return null;
 
   return {
     id: `${LinkSource.QURAN_FOUNDATION}-${reciter.id}`,
@@ -87,10 +77,13 @@ const fetchSingleReciter = async (
     moshaf: {
       id: String(reciter.id),
       name,
-      riwaya: resolveRiwayaEnum(riwayaKey),
+      riwaya: resolveRiwayaEnum(riwayaKeyFromQirat(reciter.qirat?.name)),
       server: '',
-      surah_total: String(playlist.length),
-      playlist,
+      // Most chapter recitations have all 114; the lazy detail replaces this
+      // with the real track count.
+      surah_total: '114',
+      // The 114 audio files are loaded on selection, not in the catalog.
+      playlist: [],
     },
   };
 };
@@ -98,7 +91,7 @@ const fetchSingleReciter = async (
 // Serialize concurrent calls so pacing stays under the free-tier limit.
 let queue: Promise<unknown> = Promise.resolve();
 
-export const QuranFoundationAdapter: ReciterSource = {
+export const QuranFoundationAdapter = {
   source: LinkSource.QURAN_FOUNDATION,
 
   getReciters(lang: Language): Promise<Reciter[]> {
@@ -119,18 +112,10 @@ export const QuranFoundationAdapter: ReciterSource = {
         throw new Error('Unexpected quran.foundation reciters response');
       }
 
-      const reciters: Reciter[] = [];
-      for (const reciter of listData.reciters) {
-        try {
-          const item = await fetchSingleReciter(reciter);
-          reciters.push(item);
-        } catch (error) {
-          console.warn(
-            `Skipping quran.foundation reciter ${reciter.id}:`,
-            error
-          );
-        }
-      }
+      const reciters = listData.reciters
+        .map((reciter) => mapReciter(reciter, lang))
+        .filter((reciter): reciter is Reciter => reciter !== null);
+
       resultsCache.set(lang, {
         reciters,
         expiresAt: Date.now() + RESULTS_CACHE_TTL_MS,
@@ -144,4 +129,20 @@ export const QuranFoundationAdapter: ReciterSource = {
     });
     return result;
   },
-};
+
+  async getPlaylist(moshaf: Moshaf): Promise<Playlist> {
+    const response = await qfFetch(`${CHAPTER_AUDIO_PATH}/${moshaf.id}`);
+    const data: QuranFoundationChapterAudioResponse = await response.json();
+
+    if (!Array.isArray(data.audio_files)) {
+      throw new Error(`Unexpected audio response for reciter ${moshaf.id}`);
+    }
+
+    return [...data.audio_files]
+      .sort((a, b) => a.chapter_id - b.chapter_id)
+      .map((audioFile) => ({
+        surahId: String(audioFile.chapter_id),
+        link: audioFile.audio_url,
+      }));
+  },
+} satisfies ReciterSource;

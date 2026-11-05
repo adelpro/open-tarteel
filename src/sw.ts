@@ -87,8 +87,12 @@ const quranAudioCache = {
 };
 
 const recitersNetworkFirst = new NetworkFirst({
-  cacheName: 'api-reciters',
-  networkTimeoutSeconds: 3,
+  // v2 invalidates the poisoned cache that served one language/source for
+  // every request.
+  cacheName: 'api-reciters-v3',
+  // The catalog can take >20 s on a cold server; a 3 s timeout guarantees a
+  // stale fallback.
+  networkTimeoutSeconds: 30,
   plugins: [
     new ExpirationPlugin({
       maxEntries: 50,
@@ -112,20 +116,11 @@ const apiRecitersCache = {
       } catch {
         // Network failed or timeout, check cache fallbacks
       }
-      const apiCache = await caches.open('api-reciters');
+      const apiCache = await caches.open('api-reciters-v3');
+      // Exact URL only. Falling back to any cached /api/reciters entry served
+      // the wrong language, sources, and even the list for a detail request.
       const directMatch = await apiCache.match(options.request);
       if (directMatch) return directMatch;
-
-      // If specific query params not matched, fallback to any cached reciters list
-      const keys = await apiCache.keys();
-      const recitersKey = keys.find((key) => {
-        const u = new URL(key.url);
-        return u.pathname.startsWith('/api/reciters');
-      });
-      if (recitersKey) {
-        const fallback = await apiCache.match(recitersKey);
-        if (fallback) return fallback;
-      }
       return Response.error();
     },
   },
@@ -262,37 +257,6 @@ self.addEventListener('install', (event) => {
           }
         })
       );
-      const apiCache = await caches.open('api-reciters');
-      await Promise.allSettled([
-        fetch('/api/reciters?language=ar').then((response) =>
-          response.ok
-            ? apiCache.put('/api/reciters?language=ar', response)
-            : undefined
-        ),
-        fetch('/api/reciters?language=eng').then((response) =>
-          response.ok
-            ? apiCache.put('/api/reciters?language=eng', response)
-            : undefined
-        ),
-        fetch('/api/reciters?language=ar&sources=mp3quran%2Citqan').then(
-          (response) =>
-            response.ok
-              ? apiCache.put(
-                  '/api/reciters?language=ar&sources=mp3quran%2Citqan',
-                  response
-                )
-              : undefined
-        ),
-        fetch('/api/reciters?language=eng&sources=mp3quran%2Citqan').then(
-          (response) =>
-            response.ok
-              ? apiCache.put(
-                  '/api/reciters?language=eng&sources=mp3quran%2Citqan',
-                  response
-                )
-              : undefined
-        ),
-      ]);
     })()
   );
 });
@@ -301,7 +265,9 @@ const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
   // Wait for the user to accept the update (see PwaUpdater). This avoids
   // swapping the caches while audio is playing or a download is in progress.
-  skipWaiting: false,
+  // Deploy previews/branch deploys auto-activate so testers see the latest
+  // cache logic immediately. Production keeps the waiting-update prompt.
+  skipWaiting: process.env.NEXT_PUBLIC_IS_PREVIEW === 'true',
   clientsClaim: true,
   navigationPreload: false,
   runtimeCaching,
@@ -325,6 +291,16 @@ serwist.setCatchHandler(async ({ request }) => {
     );
   }
   return Response.error();
+});
+
+// Drop the old, incorrectly keyed catalog caches on activation.
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    Promise.all([
+      caches.delete('api-reciters'),
+      caches.delete('api-reciters-v2'),
+    ])
+  );
 });
 
 // PwaUpdater posts this message after the user accepts the update.

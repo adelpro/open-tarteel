@@ -1,5 +1,5 @@
 import { Language } from '@/constants/language';
-import type { Reciter } from '@/types';
+import type { Moshaf, Playlist, Reciter } from '@/types';
 import { LinkSource } from '@/types';
 
 import { ItqanAdapter } from './itqan.adapter';
@@ -124,6 +124,20 @@ export async function getAllRecitersFromAdapters(
 
   inFlightPromises.set(cacheKey, promise);
   return promise;
+}
+
+/**
+ * Loads a lazy playlist for providers that do not embed tracks in the catalog.
+ * Returns null when the source has no lazy loader.
+ */
+export async function getReciterPlaylist(
+  source: LinkSource,
+  moshaf: Moshaf,
+  lang: Language
+): Promise<Playlist | null> {
+  const adapter = adapters.find((candidate) => candidate.source === source);
+  if (!adapter?.getPlaylist) return null;
+  return adapter.getPlaylist(moshaf, lang);
 }
 
 export { ItqanAdapter } from './itqan.adapter';

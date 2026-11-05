@@ -1,100 +1,90 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { Moshaf } from '@/types';
 import { LinkSource, Riwaya } from '@/types';
 
 import { ItqanAdapter } from './itqan.adapter';
-import type {
-  ItqanRecitationDetailResponse,
-  ItqanRecitationResponse,
-} from './itqan.types';
+import type { ItqanRecitationResponse, ItqanSurah } from './itqan.types';
 
-// ─────────────────────────────────────────────────────
-// Fixtures
-// ─────────────────────────────────────────────────────
-
-const makeRecitationsResponse = (): ItqanRecitationResponse => ({
-  results: [
-    {
-      id: 5,
-      name: 'Hafs An Asim',
-      description: '',
-      publisher: { id: 1, name: 'Itqan' },
-      reciter: { id: 10, name: 'Abdul Basit' },
-      riwayah: { id: 1, name: 'حفص عن عاصم' },
-      surahs_count: 3,
-    },
-  ],
+const makeRecitation = (
+  id: number,
+  reciterId: number,
+  name: string
+): ItqanRecitationResponse['results'][number] => ({
+  id,
+  name: `مصحف ${name}`,
+  description: '',
+  publisher: { id: 1, name: 'Itqan' },
+  reciter: { id: reciterId, name },
+  riwayah: { id: 1, name: 'حفص عن عاصم' },
+  surahs_count: 114,
 });
 
-const makeDetailResponse = (): ItqanRecitationDetailResponse => ({
-  count: 3,
-  results: [
-    {
-      surah_number: 1,
-      surah_name: 'الفاتحة',
-      surah_name_en: 'Al-Fatihah',
-      audio_url: 'https://cdn.itqan.dev/1.mp3',
-      duration_ms: 60_000,
-      size_bytes: 500_000,
-      revelation_order: 5,
-      revelation_place: 'makkah',
-      ayahs_count: 7,
-      ayahs_timings: [],
-    },
-    {
-      surah_number: 2,
-      surah_name: 'البقرة',
-      surah_name_en: 'Al-Baqarah',
-      audio_url: 'https://cdn.itqan.dev/2.mp3',
-      duration_ms: 9000,
-      size_bytes: 8_000_000,
-      revelation_order: 87,
-      revelation_place: 'madinah',
-      ayahs_count: 286,
-      ayahs_timings: [],
-    },
-    {
-      surah_number: 3,
-      surah_name: 'آل عمران',
-      surah_name_en: 'Aal Imran',
-      audio_url: 'https://cdn.itqan.dev/3.mp3',
-      duration_ms: 7000,
-      size_bytes: 6_000_000,
-      revelation_order: 89,
-      revelation_place: 'madinah',
-      ayahs_count: 200,
-      ayahs_timings: [],
-    },
-  ],
+const makeTrack = (surahNumber: number): ItqanSurah => ({
+  surah_number: surahNumber,
+  surah_name: 'سورة',
+  surah_name_en: 'Surah',
+  audio_url: `https://storage.cms.itqan.dev/media/uploads/assets/11/recitations/${String(
+    surahNumber
+  ).padStart(3, '0')}.mp3?c=open-tarteel-d0a6`,
+  duration_ms: 60_000,
+  size_bytes: 500_000,
+  revelation_order: surahNumber,
+  revelation_place: 'Makkah',
+  ayahs_count: 7,
+  ayahs_timings: [],
 });
 
-const makeFetchResponse = (data: unknown, ok = true) =>
+const jsonResponse = (data: unknown, ok = true, status = 200) =>
   Promise.resolve({
     ok,
+    status,
     json: () => Promise.resolve(data),
   } as Response);
 
-// ─────────────────────────────────────────────────────
-// Tests
-// ─────────────────────────────────────────────────────
+const pageOf = (url: string): number => {
+  try {
+    return Number(new URL(url).searchParams.get('page') ?? 1);
+  } catch {
+    return 1;
+  }
+};
 
 describe('ItqanAdapter', () => {
+  let fetchMock: ReturnType<typeof vi.fn>;
+
   beforeEach(() => {
-    // Default: list endpoint → recitations, detail endpoint → surahs
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockImplementation((url: string) => {
-        if (url.endsWith('/recitations/')) {
-          return makeFetchResponse(makeRecitationsResponse());
-        }
-        // detail endpoint: /recitations/:id
-        return makeFetchResponse(makeDetailResponse());
-      })
-    );
+    vi.stubEnv('ITQAN_API_KEY', 'test-key');
+    vi.stubEnv('NEXT_PUBLIC_APP_VERSION', '1.2.3');
+
+    fetchMock = vi.fn((input: string) => {
+      const url = String(input);
+      const page = pageOf(url);
+
+      // Track list: 3 tracks across 2 pages.
+      if (/\/recitations\/\d+/.test(url)) {
+        const tracks =
+          page === 1 ? [makeTrack(2), makeTrack(1)] : [makeTrack(3)];
+        return jsonResponse({ count: 3, results: tracks });
+      }
+
+      // Catalog: 3 recitations across 2 pages.
+      const recitations =
+        page === 1
+          ? [
+              makeRecitation(11, 2, 'بدر التركي'),
+              makeRecitation(12, 3, 'ماجد الزامل'),
+            ]
+          : [makeRecitation(13, 4, 'حسن الدغريري')];
+      return jsonResponse({ count: 3, results: recitations });
+    });
+
+    vi.stubGlobal('fetch', fetchMock);
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllEnvs();
   });
 
   describe('source', () => {
@@ -104,164 +94,145 @@ describe('ItqanAdapter', () => {
   });
 
   describe('getReciters', () => {
-    it('fetches the recitations list first', async () => {
+    it('sends the API key and client headers', async () => {
       await ItqanAdapter.getReciters('ar');
-      expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/recitations/')
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('/recitations/'),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'Accept-Language': 'ar',
+            'X-API-Key': 'test-key',
+            'X-Client-Name': 'open-tarteel',
+            'X-Client-Version': '1.2.3',
+          }),
+        })
       );
     });
 
-    it('fetches a detail endpoint for each recitation', async () => {
+    it('omits the API key when it is not configured', async () => {
+      vi.stubEnv('ITQAN_API_KEY', '');
       await ItqanAdapter.getReciters('ar');
-      expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/recitations/5')
+
+      const headers = fetchMock.mock.calls[0]?.[1]?.headers as Record<
+        string,
+        string
+      >;
+      expect(headers['X-API-Key']).toBeUndefined();
+    });
+
+    it('adds the language query param so the gateway cannot reuse another language cache entry', async () => {
+      await ItqanAdapter.getReciters('ar');
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('language=ar'),
+        expect.anything()
       );
+    });
+
+    it('sends Accept-Language: en for "en"', async () => {
+      await ItqanAdapter.getReciters('en');
+      const headers = fetchMock.mock.calls[0]?.[1]?.headers as Record<
+        string,
+        string
+      >;
+      expect(headers['Accept-Language']).toBe('en');
+    });
+
+    it('falls back to en for locales Itqan does not support', async () => {
+      await ItqanAdapter.getReciters('de');
+      const headers = fetchMock.mock.calls[0]?.[1]?.headers as Record<
+        string,
+        string
+      >;
+      expect(headers['Accept-Language']).toBe('en');
+    });
+
+    it('paginates the catalog instead of returning only the first page', async () => {
+      const reciters = await ItqanAdapter.getReciters('ar');
+      expect(reciters).toHaveLength(3);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
     });
 
     it('returns one Reciter per recitation', async () => {
       const reciters = await ItqanAdapter.getReciters('ar');
-      expect(reciters).toHaveLength(1);
+      expect(reciters[0]).toMatchObject({
+        id: `${LinkSource.ITQAN}-2`,
+        name: 'بدر التركي',
+        source: LinkSource.ITQAN,
+        moshaf: {
+          id: '11',
+          name: 'مصحف بدر التركي',
+          riwaya: Riwaya.Hafs,
+          surah_total: '114',
+        },
+      });
     });
 
-    it('builds a source-prefixed string ID from reciter.id', async () => {
-      const [reciter] = await ItqanAdapter.getReciters('ar');
-      expect(reciter.id).toBe(`${LinkSource.ITQAN}-10`);
-    });
-
-    it('sets source to LinkSource.ITQAN', async () => {
-      const [reciter] = await ItqanAdapter.getReciters('ar');
-      expect(reciter.source).toBe(LinkSource.ITQAN);
-    });
-
-    it('maps the reciter name', async () => {
-      const [reciter] = await ItqanAdapter.getReciters('ar');
-      expect(reciter.name).toBe('Abdul Basit');
-    });
-
-    it('maps moshaf id to the recitation id string', async () => {
-      const [reciter] = await ItqanAdapter.getReciters('ar');
-      expect(reciter.moshaf.id).toBe('5');
-    });
-
-    it('resolves riwaya from the riwayah name', async () => {
-      const [reciter] = await ItqanAdapter.getReciters('ar');
-      expect(reciter.moshaf.riwaya).toBe(Riwaya.Hafs);
-    });
-
-    it('builds a playlist from the detail response', async () => {
-      const [reciter] = await ItqanAdapter.getReciters('ar');
-      expect(reciter.moshaf.playlist).toEqual([
-        { surahId: '1', link: 'https://cdn.itqan.dev/1.mp3' },
-        { surahId: '2', link: 'https://cdn.itqan.dev/2.mp3' },
-        { surahId: '3', link: 'https://cdn.itqan.dev/3.mp3' },
-      ]);
-    });
-
-    it('sets surah_total to the playlist length as a string', async () => {
-      const [reciter] = await ItqanAdapter.getReciters('ar');
-      expect(reciter.moshaf.surah_total).toBe('3');
-    });
-
-    it('sets server to an empty string', async () => {
-      const [reciter] = await ItqanAdapter.getReciters('ar');
-      expect(reciter.moshaf.server).toBe('');
-    });
-
-    it('throws when the recitations list endpoint returns a non-ok response', async () => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: false,
-          json: vi.fn(),
-        } as unknown as Response)
+    it('does not fetch the 114-track detail for every recitation', async () => {
+      await ItqanAdapter.getReciters('ar');
+      const detailCalls = fetchMock.mock.calls.filter(([url]) =>
+        /\/recitations\/\d+/.test(String(url))
       );
+      expect(detailCalls).toHaveLength(0);
+    });
+
+    it('returns an empty playlist so tracks load lazily', async () => {
+      const reciters = await ItqanAdapter.getReciters('ar');
+      expect(reciters[0]?.moshaf.playlist).toEqual([]);
+    });
+
+    it('throws when the catalog endpoint fails', async () => {
+      fetchMock.mockImplementation(() => jsonResponse({}, false, 500));
       await expect(ItqanAdapter.getReciters('ar')).rejects.toThrow(
-        'Failed to fetch Itqan recitations'
+        'Failed to fetch Itqan'
+      );
+    });
+  });
+
+  describe('getPlaylist', () => {
+    it('fetches all track pages for the selected recitation', async () => {
+      const playlist = await ItqanAdapter.getPlaylist(
+        { id: '11' } as Moshaf,
+        'ar'
+      );
+      expect(playlist).toHaveLength(3);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('/recitations/11?page=1&page_size=200'),
+        expect.anything()
       );
     });
 
-    it('skips a recitation when its detail endpoint returns non-ok', async () => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockImplementation((url: string) => {
-          if (url.endsWith('/recitations/')) {
-            return makeFetchResponse(makeRecitationsResponse());
-          }
-          // detail endpoint fails
-          return Promise.resolve({
-            ok: false,
-            json: vi.fn(),
-          } as unknown as Response);
-        })
+    it('sorts by surah number', async () => {
+      const playlist = await ItqanAdapter.getPlaylist(
+        { id: '11' } as Moshaf,
+        'ar'
       );
-
-      const reciters = await ItqanAdapter.getReciters('ar');
-      expect(reciters).toHaveLength(0);
+      expect(playlist.map((item) => item.surahId)).toEqual(['1', '2', '3']);
     });
 
-    it('skips a recitation when its detail fetch throws', async () => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockImplementation((url: string) => {
-          if (url.endsWith('/recitations/')) {
-            return makeFetchResponse(makeRecitationsResponse());
-          }
-          return Promise.reject(new Error('Network error'));
-        })
+    it('preserves the Itqan c= attribution parameter', async () => {
+      const playlist = await ItqanAdapter.getPlaylist(
+        { id: '11' } as Moshaf,
+        'ar'
       );
-
-      const reciters = await ItqanAdapter.getReciters('ar');
-      expect(reciters).toHaveLength(0);
+      expect(playlist[0]?.link).toContain('c=open-tarteel-d0a6');
     });
 
-    it('returns results from successful recitations even when some fail', async () => {
-      const twoRecitations: ItqanRecitationResponse = {
-        results: [
-          ...makeRecitationsResponse().results,
-          {
-            id: 6,
-            name: 'Warsh An Nafi',
-            description: '',
-            publisher: { id: 1, name: 'Itqan' },
-            reciter: { id: 20, name: 'Nafi Reciter' },
-            riwayah: { id: 2, name: 'ورش عن نافع' },
-            surahs_count: 3,
-          },
-        ],
-      };
-
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockImplementation((url: string) => {
-          if (url.endsWith('/recitations/')) {
-            return makeFetchResponse(twoRecitations);
-          }
-          if (url.endsWith('/recitations/5')) {
-            return makeFetchResponse(makeDetailResponse());
-          }
-          // recitation 6 detail fails
-          return Promise.resolve({
-            ok: false,
-            json: vi.fn(),
-          } as unknown as Response);
-        })
-      );
-
-      const reciters = await ItqanAdapter.getReciters('ar');
-      expect(reciters).toHaveLength(1);
-      expect(reciters[0].id).toBe(`${LinkSource.ITQAN}-10`);
+    it('sends the localized header', async () => {
+      await ItqanAdapter.getPlaylist({ id: '11' } as Moshaf, 'en');
+      const headers = fetchMock.mock.calls[0]?.[1]?.headers as Record<
+        string,
+        string
+      >;
+      expect(headers['Accept-Language']).toBe('en');
     });
 
-    it('returns an empty array when recitations list is empty', async () => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: () => Promise.resolve({ results: [] }),
-        } as Response)
-      );
-      const reciters = await ItqanAdapter.getReciters('ar');
-      expect(reciters).toEqual([]);
+    it('throws when the track endpoint fails', async () => {
+      fetchMock.mockImplementation(() => jsonResponse({}, false, 404));
+      await expect(
+        ItqanAdapter.getPlaylist({ id: '11' } as Moshaf, 'ar')
+      ).rejects.toThrow('Failed to fetch Itqan');
     });
   });
 });

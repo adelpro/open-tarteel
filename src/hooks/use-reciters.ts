@@ -30,9 +30,35 @@ export function useReciters() {
         setReciters(data);
 
         if (selectedReciter) {
-          const matched = data.find((r) => r.id === selectedReciter.id);
+          // A reciter can have several moshaf/riwayah entries. Keep the one
+          // that is currently selected instead of falling back to the first.
+          const matched =
+            data.find(
+              (r) =>
+                r.id === selectedReciter.id &&
+                r.moshaf.id === selectedReciter.moshaf.id
+            ) ?? data.find((r) => r.id === selectedReciter.id);
           if (matched) {
-            setSelectedReciter(matched);
+            // Do not throw away a lazily loaded playlist (or a persisted one)
+            // when the catalog refreshes with an empty playlist.
+            setSelectedReciter((previous) => {
+              if (!previous) return matched;
+              if (
+                previous.moshaf.id === matched.moshaf.id &&
+                matched.moshaf.playlist.length === 0 &&
+                previous.moshaf.playlist.length > 0
+              ) {
+                return {
+                  ...matched,
+                  moshaf: {
+                    ...matched.moshaf,
+                    playlist: previous.moshaf.playlist,
+                    surah_total: previous.moshaf.surah_total,
+                  },
+                };
+              }
+              return matched;
+            });
           } else {
             setSelectedReciter(null);
           }
@@ -42,20 +68,22 @@ export function useReciters() {
 
         if (typeof window !== 'undefined' && 'caches' in window) {
           try {
-            const cache = await caches.open('api-reciters');
-            const keys = await cache.keys();
-            const reciterKey = keys.find((request) =>
-              request.url.includes('/api/reciters')
-            );
-            if (reciterKey) {
-              const match = await cache.match(reciterKey);
-              if (match && match.ok) {
-                const cachedData = (await match.json()) as Reciter[];
-                if (Array.isArray(cachedData) && cachedData.length > 0) {
-                  setReciters(cachedData);
-                  setError(null);
-                  return;
-                }
+            const cache = await caches.open('api-reciters-v3');
+            const params = new URLSearchParams({ language: locale });
+            if (enabledSources.length > 0) {
+              params.set('sources', enabledSources.join(','));
+            }
+            const reciterUrl = new URL(
+              `/api/reciters?${params.toString()}`,
+              window.location.origin
+            ).href;
+            const match = await cache.match(reciterUrl);
+            if (match && match.ok) {
+              const cachedData = (await match.json()) as Reciter[];
+              if (Array.isArray(cachedData) && cachedData.length > 0) {
+                setReciters(cachedData);
+                setError(null);
+                return;
               }
             }
           } catch {

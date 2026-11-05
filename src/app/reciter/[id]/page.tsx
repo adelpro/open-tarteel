@@ -1,59 +1,35 @@
-import { notFound } from 'next/navigation';
-
 import ReciterPage from '@/app/reciter/[id]/reciter-page';
 import Hero from '@/components/hero';
 import { clientConfig, normalizeAppUrl } from '@/utils';
-import { getAllReciters } from '@/utils/api';
+
+// The page is client-driven and loads the reciter by URL. Rendering it on
+// demand avoids a pre-rendered shell that Netlify can serve hidden while the
+// client hydrates.
+export const dynamic = 'force-dynamic';
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
-export async function generateStaticParams() {
-  try {
-    const RECITERS = await getAllReciters('ar', null);
-    // A reciter can expose multiple moshaf entries; Next only needs one path.
-    return [...new Set(RECITERS.map((reciter) => reciter.id))].map((id) => ({
-      id,
-    }));
-  } catch {
-    return [];
-  }
-}
-
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
-
-  let RECITERS: Awaited<ReturnType<typeof getAllReciters>> = [];
-  try {
-    RECITERS = await getAllReciters('ar', null);
-  } catch {
-    return {
-      title: clientConfig.APP_NAME,
-    };
-  }
-
-  const reciter = RECITERS.find((r) => r.id === id);
-
-  if (!reciter) {
-    return {
-      title: clientConfig.APP_NAME,
-    };
-  }
-
   const appUrl = normalizeAppUrl(clientConfig.APP_URL) ?? '';
+  const title = `Reciter | ${clientConfig.APP_NAME}`;
+  const description = `استمع إلى تلاوات القرآن الكريم | ${clientConfig.APP_NAME}`;
 
   return {
     metadataBase: new URL(clientConfig.APP_URL),
-    title: `${reciter.name} | ${clientConfig.APP_NAME}`,
-    description: `استمع إلى تلاوات ${reciter.name}`,
+    title,
+    description,
     alternates: {
-      canonical: `${appUrl}/reciter/${reciter.id}`,
+      canonical: `${appUrl}/reciter/${id}`,
     },
     openGraph: {
-      title: `${reciter.name} | ${clientConfig.APP_NAME}`,
-      description: `استمع إلى تلاوات ${reciter.name}`,
-      url: `${appUrl}/reciter/${reciter.id}`,
+      title,
+      description,
+      url: `${appUrl}/reciter/${id}`,
+      type: 'website',
+      siteName: clientConfig.APP_NAME,
       images: [
         {
           url: '/images/logo-og.png',
@@ -62,20 +38,12 @@ export async function generateMetadata({ params }: Props) {
           alt: clientConfig.APP_NAME,
         },
       ],
-      siteName: clientConfig.APP_NAME,
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${reciter.name} | ${clientConfig.APP_NAME}`,
-      description: `استمع إلى تلاوات ${reciter.name}`,
-      images: [
-        {
-          url: '/images/logo-og.png',
-          width: 1024,
-          height: 1024,
-          alt: 'Quran - القرآن',
-        },
-      ],
+      title,
+      description,
+      images: ['/images/logo-og.png'],
       site: clientConfig.APP_NAME,
     },
   };
@@ -84,36 +52,10 @@ export async function generateMetadata({ params }: Props) {
 export default async function Page({ params }: Props) {
   const { id } = await params;
 
-  let RECITERS = [];
-  try {
-    RECITERS = await getAllReciters('ar', null);
-  } catch {
-    return notFound();
-  }
-
-  const reciter = RECITERS.find((r) => r.id === id);
-
-  if (!reciter) {
-    return notFound();
-  }
-
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Person',
-            name: reciter.name,
-            url: `${normalizeAppUrl(clientConfig.APP_URL)}/reciter/${reciter.id}`,
-          }),
-        }}
-      />
-      <main className="flex w-full flex-col items-center justify-center bg-background text-foreground">
-        <Hero />
-        <ReciterPage key={id} />
-      </main>
-    </>
+    <main className="flex w-full flex-col items-center justify-center bg-background text-foreground">
+      <Hero />
+      <ReciterPage key={id} id={id} />
+    </main>
   );
 }

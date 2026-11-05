@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import type { Moshaf } from '@/types';
 import { LinkSource, Riwaya } from '@/types';
 
 import { Mp3QuranAdapter } from './mp3quran.adapter';
@@ -79,6 +80,14 @@ describe('Mp3QuranAdapter', () => {
       );
     });
 
+    it('calls the API with language=de for the "de" locale', async () => {
+      retryFetchMock.mockResolvedValue(makeJsonResponse(makeApiResponse()));
+      await Mp3QuranAdapter.getReciters('de');
+      expect(retryFetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('language=de')
+      );
+    });
+
     it('returns one Reciter per moshaf', async () => {
       retryFetchMock.mockResolvedValue(makeJsonResponse(makeApiResponse()));
       const reciters = await Mp3QuranAdapter.getReciters('ar');
@@ -154,14 +163,11 @@ describe('Mp3QuranAdapter', () => {
       expect(reciter.moshaf.riwaya).toBe(Riwaya.Hafs);
     });
 
-    it('builds a playlist with correct links', async () => {
+    it('defers the playlist and stores compact surah ids', async () => {
       retryFetchMock.mockResolvedValue(makeJsonResponse(makeApiResponse()));
       const [reciter] = await Mp3QuranAdapter.getReciters('ar');
-      expect(reciter.moshaf.playlist).toEqual([
-        { surahId: '1', link: 'https://cdn.example.com/hafs/001.mp3' },
-        { surahId: '2', link: 'https://cdn.example.com/hafs/002.mp3' },
-        { surahId: '3', link: 'https://cdn.example.com/hafs/003.mp3' },
-      ]);
+      expect(reciter.moshaf.playlist).toEqual([]);
+      expect(reciter.moshaf.surahIds).toBe('1,2,3');
     });
 
     it('returns an empty array when the API returns no reciters', async () => {
@@ -175,6 +181,30 @@ describe('Mp3QuranAdapter', () => {
       await expect(Mp3QuranAdapter.getReciters('ar')).rejects.toThrow(
         'Network failure'
       );
+    });
+  });
+
+  describe('getPlaylist', () => {
+    it('builds links from the stored server and surah ids', async () => {
+      const playlist = await Mp3QuranAdapter.getPlaylist({
+        id: '10',
+        server: 'https://cdn.example.com/hafs/',
+        surahIds: '1,2,3',
+      } as Moshaf);
+
+      expect(playlist).toEqual([
+        { surahId: '1', link: 'https://cdn.example.com/hafs/001.mp3' },
+        { surahId: '2', link: 'https://cdn.example.com/hafs/002.mp3' },
+        { surahId: '3', link: 'https://cdn.example.com/hafs/003.mp3' },
+      ]);
+    });
+
+    it('returns an empty playlist when no surah ids are stored', async () => {
+      const playlist = await Mp3QuranAdapter.getPlaylist({
+        id: '10',
+        server: 'https://cdn.example.com/hafs/',
+      } as Moshaf);
+      expect(playlist).toEqual([]);
     });
   });
 });

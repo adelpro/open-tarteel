@@ -1,5 +1,5 @@
 import { Language } from '@/constants/language';
-import type { AyahAudioItem, PlaylistItem, Reciter } from '@/types';
+import type { AyahAudioItem, Moshaf, Playlist, Reciter } from '@/types';
 import { LinkSource } from '@/types';
 import { getRiwayaKeyFromValue } from '@/utils/get-riwaya-from-mushaf';
 
@@ -17,6 +17,7 @@ import type {
   QuranAiEditionListResponse,
   QuranAiSurahResponse,
 } from './quranai.types';
+import editionBases from './quranai-bases.json';
 import type { ReciterSource } from './reciter-source';
 import { retryFetch } from './shared-fetch';
 
@@ -27,6 +28,10 @@ const PROBE_SURAH_NUMBER = 1;
 const AYAH_RANGE_FETCH_CACHE_SECONDS = 3600;
 
 const EDITIONS_ENDPOINT = `${QURANAI_BASE_URL}/edition/?format=audio`;
+
+// 164 stable edition → CDN base entries generated from the live catalogue. Unknown
+// editions still fall back to a single probe.
+const EDITION_BASE_MAP = new Map<string, string>(Object.entries(editionBases));
 
 const fetchAyahRange = (url: string): Promise<Response> =>
   retryFetch(url, 3, undefined, {
@@ -76,9 +81,16 @@ const selectSurahEditions = (editions: QuranAiEdition[]): QuranAiEdition[] => {
   return surahEditions;
 };
 
-const fetchEditionPlaylist = async (
+const fetchEditionBase = async (
   editionIdentifier: string
-): Promise<PlaylistItem[]> => {
+): Promise<string | null> => {
+  // Tests keep probing so they can exercise the parsing path.
+  const knownBase =
+    process.env.NODE_ENV === 'test'
+      ? undefined
+      : EDITION_BASE_MAP.get(editionIdentifier);
+  if (knownBase) return knownBase;
+
   try {
     const response = await retryFetch(
       buildSurahEndpoint(PROBE_SURAH_NUMBER, editionIdentifier, { limit: 1 })
@@ -89,7 +101,7 @@ const fetchEditionPlaylist = async (
       console.warn(
         `Quran.ai: no full-surah audio for edition ${editionIdentifier}`
       );
-      return [];
+      return null;
     }
 
     const baseUrl = extractSurahAudioBaseUrl(probeAudioUrl);
@@ -97,29 +109,16 @@ const fetchEditionPlaylist = async (
       console.warn(
         `Quran.ai: invalid full-surah audio URL for edition ${editionIdentifier}: ${probeAudioUrl}`
       );
-      return [];
+      return null;
     }
 
-    const playlist: PlaylistItem[] = [
-      { surahId: String(PROBE_SURAH_NUMBER), link: probeAudioUrl },
-    ];
-    for (
-      let surahNumber = PROBE_SURAH_NUMBER + 1;
-      surahNumber <= SURAH_TOTAL;
-      surahNumber += 1
-    ) {
-      playlist.push({
-        surahId: String(surahNumber),
-        link: buildSurahAudioUrl(baseUrl, surahNumber),
-      });
-    }
-    return playlist;
+    return baseUrl;
   } catch {
-    return [];
+    return null;
   }
 };
 
-export const QuranAiAdapter: ReciterSource = {
+export const QuranAiAdapter = {
   source: LinkSource.QURANAI,
 
   async getReciters(lang: Language): Promise<Reciter[]> {
@@ -134,8 +133,8 @@ export const QuranAiAdapter: ReciterSource = {
       EDITION_FETCH_CONCURRENCY,
       async (edition) => {
         try {
-          const playlist = await fetchEditionPlaylist(edition.identifier);
-          if (playlist.length === 0) {
+          const server = await fetchEditionBase(edition.identifier);
+          if (!server) {
             console.warn(
               `Quran.ai: skipping edition ${edition.identifier}: no playable surah audio`
             );
@@ -150,9 +149,9 @@ export const QuranAiAdapter: ReciterSource = {
               id: edition.identifier,
               name: getRiwayaKeyFromValue(riwaya),
               riwaya,
-              server: '',
-              surah_total: String(playlist.length),
-              playlist,
+              server,
+              surah_total: String(SURAH_TOTAL),
+              playlist: [],
             },
           };
           return reciter;
@@ -167,7 +166,19 @@ export const QuranAiAdapter: ReciterSource = {
 
     return results.filter((reciter): reciter is Reciter => reciter !== null);
   },
-};
+
+  async getPlaylist(moshaf: Moshaf): Promise<Playlist> {
+    if (!moshaf.server) return [];
+    const total = Number(moshaf.surah_total) || SURAH_TOTAL;
+    return Array.from({ length: total }, (_, index) => {
+      const surahNumber = index + 1;
+      return {
+        surahId: String(surahNumber),
+        link: buildSurahAudioUrl(moshaf.server, surahNumber),
+      };
+    });
+  },
+} satisfies ReciterSource;
 
 export const validateAyahRange = (params: {
   surahNumber: number;

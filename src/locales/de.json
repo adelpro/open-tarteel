@@ -18,6 +18,8 @@
   "settings.source.quranfoundation": "Quran Foundation",
   "settings.enableSource": "Aktiviere mindestens eine Quelle in den Einstellungen.",
   "reciter.select": "Rezitator auswählen",
+  "reciter.loadError": "Dieser Rezitator konnte nicht geladen werden. Bitte erneut versuchen.",
+  "reciter.retry": "Erneut versuchen",
   "favorites": "Favoriten",
   "views": "Aufrufe",
   "searchPlaceHolder": "Rezitator suchen",

@@ -17,6 +17,7 @@ import {
 } from '@/jotai/atom';
 import { Playlist } from '@/types';
 import { cn } from '@/utils';
+import { canUseAudioAnalyser } from '@/utils/audio-cors';
 
 import AudioBarsVisualizer from './audio-bars-visualizer';
 import PlayerControls from './player-controls';
@@ -256,6 +257,12 @@ export default function Player({ playlist }: Props) {
     setIsOpen(!isOpen);
   };
 
+  const currentLink =
+    typeof currentTrack === 'number' ? playlist[currentTrack]?.link : undefined;
+  // Itqan's audio host has no CORS headers. Adding `crossOrigin` there blocks
+  // playback, so only enable it (and the analyser) for CORS-capable hosts.
+  const canAnalyse = canUseAudioAnalyser(currentLink);
+
   useMediaSession({
     audioRef,
     playlist,
@@ -301,11 +308,15 @@ export default function Player({ playlist }: Props) {
               onEnded={handleTrackEnded}
               src={playlist[currentTrack]?.link}
               preload="metadata"
-              crossOrigin="anonymous"
+              crossOrigin={canAnalyse ? 'anonymous' : undefined}
             />
           )}
 
-          <AudioBarsVisualizer audioId="audio" isPlaying={isPlaying} />
+          <AudioBarsVisualizer
+            audioId="audio"
+            isPlaying={isPlaying}
+            enabled={canAnalyse}
+          />
 
           {isFullscreen ? (
             <>

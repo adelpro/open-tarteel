@@ -1,75 +1,128 @@
-import type { Playlist, Reciter } from '@/types';
+import type { Language } from '@/constants/language';
+import type { Moshaf, Playlist, Reciter } from '@/types';
 import { LinkSource, Riwaya } from '@/types';
 import { getRiwayaKeyFromMoshafName } from '@/utils/get-riwaya-from-mushaf';
 
 import type {
   ItqanRecitationDetailResponse,
   ItqanRecitationResponse,
+  ItqanSurah,
 } from './itqan.types';
 import type { ReciterSource } from './reciter-source';
 
 const BASE_URL = 'https://api.cms.itqan.dev';
+const LIST_PAGE_SIZE = 100;
+const TRACK_PAGE_SIZE = 200;
 
-export const ItqanAdapter: ReciterSource = {
-  source: LinkSource.ITQAN,
+const buildHeaders = (lang: Language): Record<string, string> => {
+  // Itqan localizes via `Accept-Language` (ar|en). German falls back to English
+  // until the provider adds it.
+  const headers: Record<string, string> = {
+    'Accept-Language': lang === 'ar' ? 'ar' : 'en',
+    'X-Client-Name': 'open-tarteel',
+  };
 
-  async getReciters(): Promise<Reciter[]> {
-    const recitationsResponse = await fetch(`${BASE_URL}/recitations/`);
-    if (!recitationsResponse.ok) {
-      throw new Error('Failed to fetch Itqan recitations');
+  // Optional server-only key: public endpoints work without it, but the key
+  // raises limits and identifies the app in `X-Itqan-App`.
+  const apiKey = process.env.ITQAN_API_KEY;
+  if (apiKey) headers['X-API-Key'] = apiKey;
+
+  const version = process.env.NEXT_PUBLIC_APP_VERSION;
+  if (version && version !== 'N/A') headers['X-Client-Version'] = version;
+
+  return headers;
+};
+
+interface ItqanPage<T> {
+  count: number;
+  results: T[];
+}
+
+const fetchAllPages = async <T>(
+  path: string,
+  lang: Language,
+  pageSize: number
+): Promise<T[]> => {
+  const headers = buildHeaders(lang);
+  const apiLang = lang === 'ar' ? 'ar' : 'en';
+  const items: T[] = [];
+  let page = 1;
+
+  for (;;) {
+    // The `language` query param is required as well as the header: Itqan's
+    // gateway caches by URL and otherwise reuses the first language response.
+    const response = await fetch(
+      `${BASE_URL}${path}?page=${page}&page_size=${pageSize}&language=${apiLang}`,
+      { headers }
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Itqan ${path} (${response.status})`);
     }
 
-    const recitationsData: ItqanRecitationResponse =
-      await recitationsResponse.json();
+    const data = (await response.json()) as ItqanPage<T>;
+    if (!Array.isArray(data.results)) {
+      throw new Error(`Unexpected Itqan response for ${path}`);
+    }
 
-    const results: Array<Reciter | null> = await Promise.all(
-      recitationsData.results.map(async (recitation) => {
-        try {
-          const detailResponse = await fetch(
-            `${BASE_URL}/recitations/${recitation.id}`
-          );
-          if (!detailResponse.ok) {
-            throw new Error(
-              `Failed to fetch recitation detail for ${recitation.name}`
-            );
-          }
+    items.push(...data.results);
+    if (items.length >= data.count || data.results.length === 0) break;
+    page += 1;
+  }
 
-          const detailData: ItqanRecitationDetailResponse =
-            await detailResponse.json();
+  return items;
+};
 
-          const playlist: Playlist = detailData.results.map((surah) => ({
-            surahId: String(surah.surah_number),
-            link: surah.audio_url,
-          }));
+export const ItqanAdapter = {
+  source: LinkSource.ITQAN,
 
-          const riwayaKey = getRiwayaKeyFromMoshafName(
-            recitation.riwayah?.name ?? 'Hafs',
-            'ar'
-          );
+  async getReciters(lang: Language): Promise<Reciter[]> {
+    // The list is paginated (20 per page by default). Fetch all pages so no
+    // recitation is silently dropped.
+    const recitations = await fetchAllPages<
+      ItqanRecitationResponse['results'][number]
+    >('/recitations/', lang, LIST_PAGE_SIZE);
 
-          return {
-            id: `${LinkSource.ITQAN}-${recitation.reciter.id}`,
-            name: recitation.reciter.name,
-            source: LinkSource.ITQAN,
-            moshaf: {
-              id: String(recitation.id),
-              name: recitation.name,
-              riwaya: Riwaya[riwayaKey],
-              server: '',
-              surah_total: String(playlist.length),
-              playlist,
-            },
-          } satisfies Reciter;
-        } catch (error) {
-          console.warn(
-            `Skipping Itqan reciter ${recitation.reciter.name}:`,
-            error
-          );
-          return null;
-        }
-      })
+    return recitations.map((recitation) => {
+      const riwayaKey = getRiwayaKeyFromMoshafName(
+        recitation.riwayah?.name ?? 'Hafs',
+        lang
+      );
+
+      return {
+        id: `${LinkSource.ITQAN}-${recitation.reciter.id}`,
+        name: recitation.reciter.name,
+        source: LinkSource.ITQAN,
+        moshaf: {
+          id: String(recitation.id),
+          name: recitation.name,
+          riwaya: Riwaya[riwayaKey],
+          server: '',
+          surah_total: String(recitation.surahs_count),
+          // The track list (114 items, ~555 KB) is loaded on demand by
+          // `getPlaylist` so the catalog stays small.
+          playlist: [],
+        },
+      } satisfies Reciter;
+    });
+  },
+
+  async getPlaylist(moshaf: Moshaf, lang: Language): Promise<Playlist> {
+    const tracks = await fetchAllPages<ItqanSurah>(
+      `/recitations/${moshaf.id}`,
+      lang,
+      TRACK_PAGE_SIZE
     );
 
-    return results.filter((r): r is Reciter => r !== null);
+    return tracks
+      .sort((a, b) => a.surah_number - b.surah_number)
+      .map((track) => ({
+        surahId: String(track.surah_number),
+        // Keep the `c=<app-slug>` query parameter: Itqan uses it for usage
+        // accounting, and the URL is otherwise already absolute.
+        link: track.audio_url,
+      }));
   },
-};
+} satisfies ReciterSource;
+
+// Re-export for type-only consumers and tests.
+export type { ItqanRecitationDetailResponse };
