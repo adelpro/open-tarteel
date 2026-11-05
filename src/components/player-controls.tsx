@@ -31,7 +31,7 @@ import {
   showVisualizerAtom,
   volumeAtom,
 } from '@/jotai/atom';
-import { LinkSource } from '@/types';
+import { canUseRangeMode } from '@/services/reciters/capabilities';
 import { cn } from '@/utils';
 import { resolveChapterReciterId } from '@/utils/resolveChapterReciterId';
 
@@ -184,8 +184,7 @@ export default function PlayerControls({
     }
   }, [chapterNumber]);
 
-  const isTahfeezSupported =
-    selectedReciter?.source === LinkSource.QURAN_FOUNDATION;
+  const isTahfeezSupported = canUseRangeMode(selectedReciter?.source);
 
   useEffect(() => {
     if (!isTahfeezSupported && activeMode === 'tahfeez') {

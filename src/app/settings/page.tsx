@@ -4,6 +4,7 @@ import { useAtom } from 'jotai';
 import { FormattedMessage } from 'react-intl';
 
 import CacheManagement from '@/components/cache-management';
+import ProviderBadges from '@/components/provider-badge';
 import useDirection from '@/hooks/use-direction';
 import { enabledSourcesAtom } from '@/jotai/atom';
 import { LinkSource } from '@/types';
@@ -75,22 +76,25 @@ export default function SettingsPage() {
             {AVAILABLE_SOURCES.map(({ source, id }) => {
               const isChecked = enabledSources.includes(source);
               return (
-                <li key={source} className="flex items-center gap-3">
+                <li key={source} className="flex items-start gap-3">
                   <input
                     id={`source-${source}`}
                     type="checkbox"
                     checked={isChecked}
                     onChange={() => toggleSource(source)}
-                    className="h-4 w-4 rounded border-gray-300 text-brand-CTA-blue-600 focus:ring-brand-CTA-blue-500 dark:border-gray-500 dark:bg-gray-700 dark:checked:border-brand-CTA-blue-500 dark:checked:bg-brand-CTA-blue-600"
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-brand-CTA-blue-600 focus:ring-brand-CTA-blue-500 dark:border-gray-500 dark:bg-gray-700 dark:checked:border-brand-CTA-blue-500 dark:checked:bg-brand-CTA-blue-600"
                     aria-describedby={`source-desc-${source}`}
                   />
-                  <label
-                    htmlFor={`source-${source}`}
-                    className="cursor-pointer text-gray-900 dark:text-gray-100"
-                    id={`source-desc-${source}`}
-                  >
-                    <FormattedMessage id={id} defaultMessage={source} />
-                  </label>
+                  <div className="flex flex-col gap-1">
+                    <label
+                      htmlFor={`source-${source}`}
+                      className="cursor-pointer text-gray-900 dark:text-gray-100"
+                      id={`source-desc-${source}`}
+                    >
+                      <FormattedMessage id={id} defaultMessage={source} />
+                    </label>
+                    <ProviderBadges source={source} />
+                  </div>
                 </li>
               );
             })}

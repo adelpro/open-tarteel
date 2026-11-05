@@ -166,5 +166,10 @@
   "tahfeez.errorTimestamps": "Failed to load timestamps. Check reciter ID and chapter number.",
   "tahfeez.errorAyahs": "Could not find specified ayahs in timestamps",
   "language.select": "Select language",
-  "player.modeSwitcher": "Playback mode"
+  "player.modeSwitcher": "Playback mode",
+  "provider.badge.beta": "Beta",
+  "provider.badge.timing": "Timing",
+  "provider.badge.word": "Word-by-word",
+  "provider.badge.noDownload": "No download",
+  "provider.badge.more": "+{count}"
 }
