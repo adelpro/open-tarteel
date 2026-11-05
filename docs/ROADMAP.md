@@ -262,6 +262,49 @@ Risks:
 
 ---
 
+## Stage 2c — Reported player & UI fixes
+
+Reported after the provider/catalog work. Keep each change minimal and
+independently revertible.
+
+### 1. Spectrum is gone
+
+The bars no longer render reliably after the player/detail changes.
+
+- Check `showVisualizerAtom`, the `enabled` prop from
+  `canUseAudioAnalyser`, `everPlayed`, and Player remounts.
+- Itqan has no CORS and is intentionally disabled; every CORS-capable provider
+  must still animate while playing.
+- For non-CORS providers, render a lightweight CSS fallback instead of an empty
+  space, so the card does not look broken.
+- Add a browser regression check: play a track, assert the visualizer canvas or
+  bars are visible.
+
+### 2. PWA icons have a black background
+
+- Replace `public/images/192x192.png` and `512x512.png` with transparent or
+  theme-adaptive artwork; no baked black square.
+- Add dedicated `maskable` icons with the required safe zone, and declare
+  `purpose: 'any'` / `'maskable'` in `manifest.ts`.
+- Verify install surfaces on Android/Chrome and iOS home screen; keep the
+  splash background `#000` only where the platform requires it.
+
+### 3. Update the استماع UI/UX
+
+- Review the Listening/Tahfeez switcher and the player card: hierarchy,
+  spacing, active state, Arabic labels, and mobile density.
+- Keep the current tokens and components; no redesign.
+- Ensure the primary action (play) is visually dominant, the mode switch is not
+  mistaken for tabs, and the visualizer/download area does not jump.
+
+| PR   | Title                                                           | Scope                                            |
+| ---- | --------------------------------------------------------------- | ------------------------------------------------ |
+| 2c-1 | `fix(player): restore the spectrum and add a non-CORS fallback` | analyser gating, fallback bars, regression check |
+| 2c-2 | `fix(pwa): transparent and maskable icons`                      | icons, manifest purposes, install check          |
+| 2c-3 | `style(player): استماع mode switch and card hierarchy`          | minimal spacing/labels/active state              |
+
+---
+
 ## Stage 3 — Provider capability registry & badges
 
 Goal: one source of truth for what each provider can do, used by UI and by
@@ -780,7 +823,7 @@ Dependency order:
 ```
 0a–0e → merge develop
       → 1a, 1b
-      → 2a–2c, 2b-1…2b-4
+      → 2a–2c, 2b-1…2b-4, 2c-1…2c-3
       → 3a, 3b
       → 4a–4d
       → 5a, 5c, 5d, 5b, 5e, 5f, 5g, 5h

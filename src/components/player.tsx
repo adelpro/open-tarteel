@@ -123,6 +123,8 @@ export default function Player({ playlist }: Props) {
     if (previousTrack === currentTrack) return;
 
     setCurrentTime(0);
+    // Never show the previous track's duration while the new source loads.
+    setDuration(0);
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
       if (isPlaying) {
@@ -305,6 +307,7 @@ export default function Player({ playlist }: Props) {
               className="sr-only"
               onTimeUpdate={handleTimeUpdate}
               onDurationChange={handleTimeUpdate}
+              onLoadedMetadata={handleTimeUpdate}
               onEnded={handleTrackEnded}
               src={playlist[currentTrack]?.link}
               preload="metadata"

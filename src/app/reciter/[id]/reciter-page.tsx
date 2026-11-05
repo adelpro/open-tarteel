@@ -194,7 +194,10 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
           </p>
         )}
         <Suspense fallback={<SimpleSkeleton />}>
-          <Player playlist={selectedReciter.moshaf.playlist} />
+          <Player
+            key={`${selectedReciter.id}:${selectedReciter.moshaf.id}`}
+            playlist={selectedReciter.moshaf.playlist}
+          />
         </Suspense>
       </div>
     </div>

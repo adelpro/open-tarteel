@@ -47,7 +47,7 @@ export default function TrackInfo({
     <div className="mt-3 flex flex-col items-center justify-center gap-1">
       <div className="flex items-center gap-2 font-bold text-gray-500">
         <span>{`${surahId} - ${surahName()}`}</span>
-        <span>{`(${formatTime(currentTime)} ${formatTime(duration)})`}</span>
+        <span>{`(${formatTime(currentTime)} ${duration > 0 ? formatTime(duration) : '--:--'})`}</span>
       </div>
 
       {/* Fixed-height download status area to prevent player card height changes */}
