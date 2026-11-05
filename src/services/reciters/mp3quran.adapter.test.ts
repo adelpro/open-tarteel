@@ -79,6 +79,14 @@ describe('Mp3QuranAdapter', () => {
       );
     });
 
+    it('calls the API with language=de for the "de" locale', async () => {
+      retryFetchMock.mockResolvedValue(makeJsonResponse(makeApiResponse()));
+      await Mp3QuranAdapter.getReciters('de');
+      expect(retryFetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('language=de')
+      );
+    });
+
     it('returns one Reciter per moshaf', async () => {
       retryFetchMock.mockResolvedValue(makeJsonResponse(makeApiResponse()));
       const reciters = await Mp3QuranAdapter.getReciters('ar');

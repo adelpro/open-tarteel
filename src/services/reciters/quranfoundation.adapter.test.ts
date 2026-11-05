@@ -5,6 +5,7 @@ import { LinkSource, Riwaya } from '@/types';
 import {
   QuranFoundationAdapter,
   resetQuranFoundationCache,
+  resolveReciterName,
 } from './quranfoundation.adapter';
 import type {
   QuranFoundationChapterAudioResponse,
@@ -383,6 +384,33 @@ describe('QuranFoundationAdapter', () => {
       expect(results[1]).toHaveLength(1);
       // First run (ar): token + list + audio; second run (en) reuses the cached token.
       expect(fetch).toHaveBeenCalledTimes(5);
+    });
+  });
+
+  describe('resolveReciterName', () => {
+    const reciter = {
+      id: 1,
+      name: 'مشاري راشد العفاسي',
+      translated_name: {
+        name: 'Mishari Rashid al-Afasy',
+        language_name: 'english',
+      },
+    };
+
+    it('keeps the localized name for ar', () => {
+      expect(resolveReciterName(reciter, 'ar')).toBe('مشاري راشد العفاسي');
+    });
+
+    it('uses translated_name for en', () => {
+      expect(resolveReciterName(reciter, 'en')).toBe('Mishari Rashid al-Afasy');
+    });
+
+    it('uses translated_name for unsupported locales', () => {
+      expect(resolveReciterName(reciter, 'de')).toBe('Mishari Rashid al-Afasy');
+    });
+
+    it('falls back to name when translated_name is missing', () => {
+      expect(resolveReciterName({ id: 2, name: 'مشاري' }, 'en')).toBe('مشاري');
     });
   });
 });

@@ -24,7 +24,6 @@ export const Mp3QuranAdapter: ReciterSource = {
 
   async getReciters(lang: Language): Promise<Reciter[]> {
     const apiLang = getMp3QuranApiLanguage(lang);
-    console.log('MP3Quran language:', lang, 'API language:', apiLang);
     const response = await retryFetch(
       `https://www.mp3quran.net/api/v3/reciters?language=${apiLang}`
     );

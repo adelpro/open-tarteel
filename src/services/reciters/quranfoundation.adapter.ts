@@ -53,8 +53,22 @@ const riwayaKeyFromQirat = (qirat?: string | null): keyof typeof Riwaya =>
     (key) => key.toLowerCase() === (qirat ?? '').toLowerCase()
   ) ?? 'Hafs';
 
+/**
+ * The list request is scoped with `?language=`, so `name` is localized.
+ * `translated_name` is the English translation and must not override an
+ * Arabic name.
+ */
+export const resolveReciterName = (
+  reciter: QuranFoundationChapterRecitersResponse['reciters'][number],
+  lang: Language
+): string =>
+  lang === 'ar'
+    ? reciter.name || reciter.translated_name?.name || ''
+    : (reciter.translated_name?.name ?? reciter.name ?? '');
+
 const fetchSingleReciter = async (
-  reciter: QuranFoundationChapterRecitersResponse['reciters'][number]
+  reciter: QuranFoundationChapterRecitersResponse['reciters'][number],
+  lang: Language
 ): Promise<Reciter> => {
   const audioResponse = await qfFetch(`${CHAPTER_AUDIO_PATH}/${reciter.id}`);
   const audioData: QuranFoundationChapterAudioResponse =
@@ -64,7 +78,7 @@ const fetchSingleReciter = async (
     throw new Error(`Unexpected audio response for reciter ${reciter.id}`);
   }
 
-  const name = reciter.translated_name?.name ?? reciter.name;
+  const name = resolveReciterName(reciter, lang);
   if (!name) {
     throw new Error(
       `Skipping quran.foundation reciter ${reciter.id}: missing name`
@@ -122,7 +136,7 @@ export const QuranFoundationAdapter: ReciterSource = {
       const reciters: Reciter[] = [];
       for (const reciter of listData.reciters) {
         try {
-          const item = await fetchSingleReciter(reciter);
+          const item = await fetchSingleReciter(reciter, lang);
           reciters.push(item);
         } catch (error) {
           console.warn(

@@ -435,15 +435,16 @@ Fix:
   recitation-tracks list with `page_size` up to 1000 and only needed fields
   (`id`, `surah`, `audio_url`, `ayahs_timings`). Send `Accept-Language`.
 
-| PR  | Title                                                 | Scope                                      |
-| --- | ----------------------------------------------------- | ------------------------------------------ |
-| 5a  | `feat(timings): timing provider interface + registry` | interface, resolution, cache, tests        |
-| 5b  | `feat(timings): mp3quran v4 ayah/word timings`        | adapter + cache + basmalah handling        |
-| 5c  | `perf(reciters): slim list DTO and detail endpoint`   | split DTO, `getReciter`, per-adapter cache |
-| 5d  | `perf(itqan): remove N+1 detail fetches`              | lazy/embedded tracks, payload budget       |
-| 5e  | `feat(timings): mp3quran v3 timing api`               | reads map + per-surah timings              |
-| 5f  | `feat(timings): qurani.ai timings`                    | `includeTimings`, narrator mapping         |
-| 5g  | `fix(timings): harden quran foundation route`         | validation, cache, 429, auth               |
+| PR  | Title                                                          | Scope                                             |
+| --- | -------------------------------------------------------------- | ------------------------------------------------- |
+| 5a  | `feat(timings): timing provider interface + registry`          | interface, resolution, cache, tests               |
+| 5b  | `feat(timings): mp3quran v4 ayah/word timings`                 | adapter + cache + basmalah handling               |
+| 5c  | `perf(reciters): slim list DTO and detail endpoint`            | split DTO, `getReciter`, per-adapter cache        |
+| 5d  | `perf(itqan): remove N+1 detail fetches`                       | lazy/embedded tracks, payload budget              |
+| 5e  | `feat(timings): mp3quran v3 timing api`                        | reads map + per-surah timings                     |
+| 5f  | `feat(timings): qurani.ai timings`                             | `includeTimings`, narrator mapping                |
+| 5g  | `fix(timings): harden quran foundation route`                  | validation, cache, 429, auth                      |
+| 5h  | `test(providers): localization, env matrix and live contracts` | unit gaps, opt-in contract suite, weekly workflow |
 
 Acceptance: tahfeez/range mode is enabled by capability, not by a hard-coded
 source check; unsupported reciters show a disabled state with a reason;
@@ -640,13 +641,13 @@ change, bundle not larger.
 Values verified against official docs and live endpoints on 2026-11-05.
 "Verify" means the field exists but was not confirmed in a live response.
 
-| Provider               | Timing                                                     | AR / EN names                         | Riwayah                                      | Audio                         | Auth                      | CORS                              | Download               | Badge                                  |
-| ---------------------- | ---------------------------------------------------------- | ------------------------------------- | -------------------------------------------- | ----------------------------- | ------------------------- | --------------------------------- | ---------------------- | -------------------------------------- |
-| **MP3Quran v3**        | Ayah, via separate `/api/v3/ayat_timing` (subset of reads) | AR only                               | Yes, via moshaf; multiple moshaf per reciter | MP3                           | None                      | `*`                               | Yes                    | `توقيت` only when the read has timings |
-| **MP3Quran v4 (beta)** | Ayah + word + letter + phoneme                             | AR + EN (`locale`, `Accept-Language`) | Yes: riwayah + qiraah + tariq + wajh + style | MP3 original / 64k / Opus 48k | None                      | `*`                               | Yes (Range, immutable) | `تجريبي` + `توقيت` + `كلمة بكلمة`      |
-| **Itqan**              | Ayah (`ayahs_timings` on tracks)                           | AR + EN (`Accept-Language`)           | Yes: riwayah + qiraah                        | MP3                           | None                      | **No** on `storage.cms.itqan.dev` | **No** (CORS)          | `توقيت` + `لا تحميل`                   |
-| **Qurani.ai**          | Ayah (`includeTimings=true`)                               | AR + EN (`name` / `englishName`)      | Yes (`narratorIdentifier`)                   | MP3 + word-by-word            | Free; key for advanced    | Verify                            | Verify                 | `توقيت` + `كلمة بكلمة`                 |
-| **Quran Foundation**   | Ayah + word `segments`                                     | Verify (`name` / Arabic name)         | Verify                                       | MP3                           | OAuth2 client credentials | Server-side                       | Verify                 | `توقيت دقيق` + `رسمي`                  |
+| Provider               | Timing                                                     | AR / EN names                                                                     | Riwayah                                      | Audio                         | Auth                      | CORS                              | Download               | Badge                                  |
+| ---------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------- | ----------------------------- | ------------------------- | --------------------------------- | ---------------------- | -------------------------------------- |
+| **MP3Quran v3**        | Ayah, via separate `/api/v3/ayat_timing` (subset of reads) | AR only                                                                           | Yes, via moshaf; multiple moshaf per reciter | MP3                           | None                      | `*`                               | Yes                    | `توقيت` only when the read has timings |
+| **MP3Quran v4 (beta)** | Ayah + word + letter + phoneme                             | AR + EN (`locale`, `Accept-Language`)                                             | Yes: riwayah + qiraah + tariq + wajh + style | MP3 original / 64k / Opus 48k | None                      | `*`                               | Yes (Range, immutable) | `تجريبي` + `توقيت` + `كلمة بكلمة`      |
+| **Itqan**              | Ayah (`ayahs_timings` on tracks)                           | Latin/English; `Accept-Language` is sent, but the API returns Latin reciter names | Yes: riwayah + qiraah                        | MP3                           | None                      | **No** on `storage.cms.itqan.dev` | **No** (CORS)          | `توقيت` + `لا تحميل`                   |
+| **Qurani.ai**          | Ayah (`includeTimings=true`)                               | AR + EN (`name` / `englishName`)                                                  | Yes (`narratorIdentifier`)                   | MP3 + word-by-word            | Free; key for advanced    | Verify                            | Verify                 | `توقيت` + `كلمة بكلمة`                 |
+| **Quran Foundation**   | Ayah + word `segments`                                     | AR `name` + EN `translated_name` (fixed)                                          | Verify                                       | MP3                           | OAuth2 client credentials | Server-side                       | Verify                 | `توقيت دقيق` + `رسمي`                  |
 
 ### Suggested badge priority
 
@@ -656,6 +657,39 @@ Values verified against official docs and live endpoints on 2026-11-05.
 4. `No download` — Itqan until a proxy exists.
 5. `Riwayah` — show the riwayah name as secondary text, not a badge, when the
    provider has one; use a badge only when multiple riwayah are available.
+
+### Provider test strategy & env
+
+Current coverage is all unit-level with a mocked `fetch`. No test calls a real
+provider.
+
+| Provider         | Existing unit tests                | Env required                             | Live test needs      | Remaining gap                          |
+| ---------------- | ---------------------------------- | ---------------------------------------- | -------------------- | -------------------------------------- |
+| MP3Quran v3      | 14 adapter + 18 helpers            | none                                     | none                 | contract test; `de` now covered        |
+| Itqan            | 17                                 | none                                     | none                 | contract test; reciter names are Latin |
+| Qurani.ai        | 34 adapter + 22 helpers            | none (public)                            | none                 | contract test; 164 probe requests      |
+| Quran Foundation | 23 adapter + 3 client + 4 provider | `QURAN_FOUNDATION_CLIENT_ID` + `_SECRET` | the same credentials | 429/`Retry-After`, token expiry        |
+| MP3Quran v4      | none yet                           | flag + `MP3QURAN_V4_BASE_URL`            | none                 | fixtures from staging                  |
+
+Layers:
+
+1. **Unit (every PR, no env).** Keep the mocked tests. Add the missing
+   localization and env-matrix cases.
+2. **Contract (`LIVE_PROVIDER_TESTS=1`).** Opt-in, skipped by default. Assert
+   response shape, field names, non-empty lists, CORS headers and a playable
+   URL. Quran Foundation also requires credentials and must skip, not fail,
+   when they are absent.
+3. **Fixtures.** Store sanitized real responses and assert the mapping against
+   them, so upstream shape drift fails without a network call.
+4. **API integration.** Cover `/api/reciters` with `sources` filtering,
+   per-language names, and the >2 MB cache bypass.
+
+Run contract tests in a weekly scheduled workflow with repo secrets, never in
+the PR job. A provider outage should open an issue, not block a merge.
+
+| PR  | Title                                                          | Scope                                             |
+| --- | -------------------------------------------------------------- | ------------------------------------------------- |
+| 5h  | `test(providers): localization, env matrix and live contracts` | unit gaps, opt-in contract suite, weekly workflow |
 
 ### Provider optimization backlog
 
@@ -706,7 +740,7 @@ Dependency order:
       → 2a–2c, 2b-1…2b-4
       → 3a, 3b
       → 4a–4d
-      → 5a, 5c, 5d, 5b, 5e, 5f, 5g
+      → 5a, 5c, 5d, 5b, 5e, 5f, 5g, 5h
       → 6a–6e
       → 7a–7d
       → 8a, 8b

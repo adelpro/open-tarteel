@@ -114,6 +114,7 @@ const config = [
   {
     ignores: [
       '.next/**',
+      '.netlify/**',
       'node_modules/**',
       'coverage/**',
       '.husky/**',

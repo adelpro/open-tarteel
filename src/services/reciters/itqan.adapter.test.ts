@@ -107,14 +107,32 @@ describe('ItqanAdapter', () => {
     it('fetches the recitations list first', async () => {
       await ItqanAdapter.getReciters('ar');
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/recitations/')
+        expect.stringContaining('/recitations/'),
+        { headers: { 'Accept-Language': 'ar' } }
+      );
+    });
+
+    it('sends Accept-Language: en for the "en" locale', async () => {
+      await ItqanAdapter.getReciters('en');
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/recitations/'),
+        { headers: { 'Accept-Language': 'en' } }
+      );
+    });
+
+    it('falls back to en for locales Itqan does not support', async () => {
+      await ItqanAdapter.getReciters('de');
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/recitations/'),
+        { headers: { 'Accept-Language': 'en' } }
       );
     });
 
     it('fetches a detail endpoint for each recitation', async () => {
       await ItqanAdapter.getReciters('ar');
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/recitations/5')
+        expect.stringContaining('/recitations/5'),
+        { headers: { 'Accept-Language': 'ar' } }
       );
     });
 

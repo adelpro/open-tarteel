@@ -1,3 +1,4 @@
+import type { Language } from '@/constants/language';
 import type { Playlist, Reciter } from '@/types';
 import { LinkSource, Riwaya } from '@/types';
 import { getRiwayaKeyFromMoshafName } from '@/utils/get-riwaya-from-mushaf';
@@ -13,8 +14,15 @@ const BASE_URL = 'https://api.cms.itqan.dev';
 export const ItqanAdapter: ReciterSource = {
   source: LinkSource.ITQAN,
 
-  async getReciters(): Promise<Reciter[]> {
-    const recitationsResponse = await fetch(`${BASE_URL}/recitations/`);
+  async getReciters(lang: Language): Promise<Reciter[]> {
+    // Itqan localizes via `Accept-Language` (ar|en). German falls back to
+    // English until the provider adds it.
+    const apiLang = lang === 'ar' ? 'ar' : 'en';
+    const headers = { 'Accept-Language': apiLang };
+
+    const recitationsResponse = await fetch(`${BASE_URL}/recitations/`, {
+      headers,
+    });
     if (!recitationsResponse.ok) {
       throw new Error('Failed to fetch Itqan recitations');
     }
@@ -26,7 +34,8 @@ export const ItqanAdapter: ReciterSource = {
       recitationsData.results.map(async (recitation) => {
         try {
           const detailResponse = await fetch(
-            `${BASE_URL}/recitations/${recitation.id}`
+            `${BASE_URL}/recitations/${recitation.id}`,
+            { headers }
           );
           if (!detailResponse.ok) {
             throw new Error(
