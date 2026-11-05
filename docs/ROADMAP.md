@@ -289,19 +289,25 @@ The bars no longer render reliably after the player/detail changes.
 - Verify install surfaces on Android/Chrome and iOS home screen; keep the
   splash background `#000` only where the platform requires it.
 
-### 3. Update the استماع UI/UX
+### 3. Move استماع/تحفيظ into the More menu
 
-- Review the Listening/Tahfeez switcher and the player card: hierarchy,
-  spacing, active state, Arabic labels, and mobile density.
-- Keep the current tokens and components; no redesign.
-- Ensure the primary action (play) is visually dominant, the mode switch is not
-  mistaken for tabs, and the visualizer/download area does not jump.
+- Remove the in-card segmented switcher. The card keeps only the transport
+  controls, range, and track info, so it becomes shorter.
+- Add a **Mode** group to the existing `(...)` more menu:
+  - `Listening` and `Tahfeez` as flat `menuitemradio` rows, using the same
+    height, typography, hover, and active styles as the other menu items.
+  - `aria-checked`, a check or dot on the active row, RTL-safe.
+  - Tahfeez disabled with the provider reason when unsupported.
+- Show a small dot on the `(...)` button while Tahfeez is active, so the mode
+  is visible with the menu closed.
+- Remove the duplicate mobile/desktop switcher markup; one menu for both.
+- Keep the current tokens; no redesign.
 
 | PR   | Title                                                           | Scope                                            |
 | ---- | --------------------------------------------------------------- | ------------------------------------------------ |
 | 2c-1 | `fix(player): restore the spectrum and add a non-CORS fallback` | analyser gating, fallback bars, regression check |
 | 2c-2 | `fix(pwa): transparent and maskable icons`                      | icons, manifest purposes, install check          |
-| 2c-3 | `style(player): استماع mode switch and card hierarchy`          | minimal spacing/labels/active state              |
+| 2c-3 | `style(player): move modes into the More menu`                  | flat menu rows, active dot, remove card switcher |
 
 ---
 
