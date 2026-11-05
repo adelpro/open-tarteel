@@ -45,7 +45,7 @@ export async function GET(
       try {
         const playlist = await getReciterPlaylistCached(
           reciter.source,
-          moshafId,
+          reciter.moshaf,
           language
         );
         if (playlist && playlist.length > 0) {

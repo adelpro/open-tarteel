@@ -57,7 +57,12 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
 
     // Scope the lookup to this provider when possible; otherwise the route
     // falls back to all enabled sources.
-    const source = selectedReciter?.source ?? id.slice(0, id.lastIndexOf('-'));
+    // Derive the provider from the URL id. A persisted atom may still point at
+    // a different reciter/provider, which would query the wrong catalog.
+    const source =
+      selectedReciter?.id === id
+        ? selectedReciter.source
+        : id.slice(0, id.lastIndexOf('-'));
     const query = new URLSearchParams({ language: locale });
     if (source) query.set('sources', source);
 
@@ -88,6 +93,7 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
     locale,
     playlistReady,
     retryKey,
+    selectedReciter?.id,
     selectedReciter?.source,
     setSelectedReciter,
     targetMoshafId,

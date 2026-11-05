@@ -36,17 +36,17 @@ and dependency, not by importance.
 
 ### Verified baseline
 
-| Check                        | Result                                                             |
-| ---------------------------- | ------------------------------------------------------------------ |
-| `tsc` / ESLint / Prettier    | pass                                                               |
-| Tests                        | **342 pass** (20 files)                                            |
-| Production build             | **416 pages**                                                      |
-| Docker image                 | 250 MB, non-root, health `healthy`                                 |
-| `/api/reciters` payload      | **4,460,979 B** (535: 299 MP3Quran, 72 Itqan, 164 Qurani.ai)       |
-| `/api/reciters` cold latency | **14.7 s local / 24 s preview** (Qurani.ai probes; Itqan now lazy) |
-| `/api/reciters` cache        | **silently fails**: 4.46 MB > Next's 2 MB limit                    |
-| `/api/health`                | 19 ms                                                              |
-| Itqan lazy detail            | 13,891 B / 1.6 s cold (preview), 114 tracks, `c=` preserved        |
+| Check                        | Result                                                      |
+| ---------------------------- | ----------------------------------------------------------- |
+| `tsc` / ESLint / Prettier    | pass                                                        |
+| Tests                        | **350 pass** (21 files)                                     |
+| Production build             | **416 pages**                                               |
+| Docker image                 | 250 MB, non-root, health `healthy`                          |
+| `/api/reciters` payload      | **183,690 B** default (371); **234,294 B** all (556)        |
+| `/api/reciters` cold latency | **3.2 s** default; **16 s** all (Qurani.ai probes dominate) |
+| `/api/reciters` cache        | **works**: 183 KB < 2 MB; warm **13 ms**                    |
+| `/api/health`                | 19 ms                                                       |
+| Lazy detail (each provider)  | 10–14 KB, 114 tracks; 0.4–1.6 s (Qurani 15 s cold)          |
 
 Known defect in the current hardening: `src/services/reciters/cached.ts` caches
 the combined list, which is above Next's 2 MB `unstable_cache` limit. The cache
@@ -407,6 +407,17 @@ export type TimingProvider = {
 - **Quran Foundation** (last): harden the existing route. Validate
   `1..114` and positive ids, add `unstable_cache`, handle `429` +
   `Retry-After`, and reuse `segments` for word-level ranges.
+
+### Payload + cache fix (implemented)
+
+The catalog now returns `playlist: []` for every provider. MP3Quran stores
+`server` + compact `surahIds`, Qurani.ai stores the probe base in `server`, and
+Itqan/QF use their ids. The detail route hydrates one playlist through
+`getPlaylist` and caches it for an hour.
+
+Measured locally: default sources **183,690 B / 3.2 s cold / 13 ms warm**;
+all sources **234,294 B / 16 s cold** (Qurani probes). Every detail is 10–14 KB
+with 114 tracks.
 
 ### Payload + cache fix (blocking for Stage 5)
 

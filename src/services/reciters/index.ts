@@ -1,5 +1,5 @@
 import { Language } from '@/constants/language';
-import type { Playlist, Reciter } from '@/types';
+import type { Moshaf, Playlist, Reciter } from '@/types';
 import { LinkSource } from '@/types';
 
 import { ItqanAdapter } from './itqan.adapter';
@@ -132,12 +132,12 @@ export async function getAllRecitersFromAdapters(
  */
 export async function getReciterPlaylist(
   source: LinkSource,
-  moshafId: string,
+  moshaf: Moshaf,
   lang: Language
 ): Promise<Playlist | null> {
   const adapter = adapters.find((candidate) => candidate.source === source);
   if (!adapter?.getPlaylist) return null;
-  return adapter.getPlaylist(moshafId, lang);
+  return adapter.getPlaylist(moshaf, lang);
 }
 
 export { ItqanAdapter } from './itqan.adapter';

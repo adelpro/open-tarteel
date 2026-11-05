@@ -1,8 +1,8 @@
 import { Language } from '@/constants/language';
-import type { Reciter } from '@/types';
+import type { Moshaf, Playlist, Reciter } from '@/types';
 import { LinkSource } from '@/types';
 
-import { generatePlaylist, resolveRiwaya } from './mp3quran.helpers';
+import { resolveRiwaya } from './mp3quran.helpers';
 import type { Mp3QuranApiResponse } from './mp3quran.types';
 import type { ReciterSource } from './reciter-source';
 import { retryFetch } from './shared-fetch';
@@ -19,7 +19,7 @@ const getMp3QuranApiLanguage = (lang: Language): string => {
   }
 };
 
-export const Mp3QuranAdapter: ReciterSource = {
+export const Mp3QuranAdapter = {
   source: LinkSource.MP3QURAN,
 
   async getReciters(lang: Language): Promise<Reciter[]> {
@@ -43,7 +43,8 @@ export const Mp3QuranAdapter: ReciterSource = {
             riwaya: resolveRiwaya(apiMoshaf.name, lang),
             server: apiMoshaf.server,
             surah_total: String(apiMoshaf.surah_total),
-            playlist: generatePlaylist(apiMoshaf),
+            surahIds: apiMoshaf.surah_list,
+            playlist: [],
           },
         });
       }
@@ -51,4 +52,13 @@ export const Mp3QuranAdapter: ReciterSource = {
 
     return reciters;
   },
-};
+
+  async getPlaylist(moshaf: Moshaf): Promise<Playlist> {
+    if (!moshaf.server) return [];
+    const ids = moshaf.surahIds?.split(',').filter(Boolean) ?? [];
+    return ids.map((id) => ({
+      surahId: id,
+      link: `${moshaf.server}${id.padStart(3, '0')}.mp3`,
+    }));
+  },
+} satisfies ReciterSource;

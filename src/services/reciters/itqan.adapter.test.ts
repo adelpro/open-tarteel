@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { Moshaf } from '@/types';
 import { LinkSource, Riwaya } from '@/types';
 
 import { ItqanAdapter } from './itqan.adapter';
@@ -190,7 +191,10 @@ describe('ItqanAdapter', () => {
 
   describe('getPlaylist', () => {
     it('fetches all track pages for the selected recitation', async () => {
-      const playlist = await ItqanAdapter.getPlaylist('11', 'ar');
+      const playlist = await ItqanAdapter.getPlaylist(
+        { id: '11' } as Moshaf,
+        'ar'
+      );
       expect(playlist).toHaveLength(3);
       expect(fetchMock).toHaveBeenCalledTimes(2);
       expect(fetchMock).toHaveBeenCalledWith(
@@ -200,17 +204,23 @@ describe('ItqanAdapter', () => {
     });
 
     it('sorts by surah number', async () => {
-      const playlist = await ItqanAdapter.getPlaylist('11', 'ar');
+      const playlist = await ItqanAdapter.getPlaylist(
+        { id: '11' } as Moshaf,
+        'ar'
+      );
       expect(playlist.map((item) => item.surahId)).toEqual(['1', '2', '3']);
     });
 
     it('preserves the Itqan c= attribution parameter', async () => {
-      const playlist = await ItqanAdapter.getPlaylist('11', 'ar');
+      const playlist = await ItqanAdapter.getPlaylist(
+        { id: '11' } as Moshaf,
+        'ar'
+      );
       expect(playlist[0]?.link).toContain('c=open-tarteel-d0a6');
     });
 
     it('sends the localized header', async () => {
-      await ItqanAdapter.getPlaylist('11', 'en');
+      await ItqanAdapter.getPlaylist({ id: '11' } as Moshaf, 'en');
       const headers = fetchMock.mock.calls[0]?.[1]?.headers as Record<
         string,
         string
@@ -220,9 +230,9 @@ describe('ItqanAdapter', () => {
 
     it('throws when the track endpoint fails', async () => {
       fetchMock.mockImplementation(() => jsonResponse({}, false, 404));
-      await expect(ItqanAdapter.getPlaylist('11', 'ar')).rejects.toThrow(
-        'Failed to fetch Itqan'
-      );
+      await expect(
+        ItqanAdapter.getPlaylist({ id: '11' } as Moshaf, 'ar')
+      ).rejects.toThrow('Failed to fetch Itqan');
     });
   });
 });

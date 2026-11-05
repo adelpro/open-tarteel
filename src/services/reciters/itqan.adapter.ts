@@ -1,5 +1,5 @@
 import type { Language } from '@/constants/language';
-import type { Playlist, Reciter } from '@/types';
+import type { Moshaf, Playlist, Reciter } from '@/types';
 import { LinkSource, Riwaya } from '@/types';
 import { getRiwayaKeyFromMoshafName } from '@/utils/get-riwaya-from-mushaf';
 
@@ -106,9 +106,9 @@ export const ItqanAdapter = {
     });
   },
 
-  async getPlaylist(moshafId: string, lang: Language): Promise<Playlist> {
+  async getPlaylist(moshaf: Moshaf, lang: Language): Promise<Playlist> {
     const tracks = await fetchAllPages<ItqanSurah>(
-      `/recitations/${moshafId}`,
+      `/recitations/${moshaf.id}`,
       lang,
       TRACK_PAGE_SIZE
     );

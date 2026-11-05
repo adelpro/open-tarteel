@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { Moshaf } from '@/types';
 import { LinkSource, Riwaya } from '@/types';
 
 import {
@@ -9,7 +10,6 @@ import {
 } from './quranai.adapter';
 import {
   createDefaultFetchMock,
-  makeEdition,
   makeEditionsResponse,
   makeFetchResponse,
   makeSurahResponse,
@@ -92,78 +92,17 @@ describe('QuranAiAdapter', () => {
       expect(reciter.moshaf.name).toBe('Hafs');
     });
 
-    it('builds a playlist of 114 items derived from the probe directory', async () => {
+    it('defers the playlist and stores the probe base in server', async () => {
       const [reciter] = await QuranAiAdapter.getReciters('ar');
-      const { playlist } = reciter.moshaf;
-      expect(playlist).toHaveLength(114);
-      expect(playlist.map((item) => item.surahId)).toEqual(
-        Array.from({ length: 114 }, (_, index) => String(index + 1))
+      expect(reciter.moshaf.playlist).toEqual([]);
+      expect(reciter.moshaf.server).toBe(
+        'https://quranhub.b-cdn.net/quran/audio/surah/48/ar.ibrahimakhdar.hafs/'
       );
     });
 
-    it('preserves the exact probe URL for surah 1', async () => {
-      const [reciter] = await QuranAiAdapter.getReciters('ar');
-      expect(reciter.moshaf.playlist[0]).toEqual({
-        surahId: '1',
-        link: PROBE_IBRAHIM_URL,
-      });
-    });
-
-    it('generates the surah 2 URL from the same directory as the probe', async () => {
-      const [reciter] = await QuranAiAdapter.getReciters('ar');
-      expect(reciter.moshaf.playlist[1]).toEqual({
-        surahId: '2',
-        link: 'https://quranhub.b-cdn.net/quran/audio/surah/48/ar.ibrahimakhdar.hafs/2.mp3',
-      });
-    });
-
-    it('generates the surah 114 URL correctly', async () => {
-      const [reciter] = await QuranAiAdapter.getReciters('ar');
-      expect(reciter.moshaf.playlist[113]).toEqual({
-        surahId: '114',
-        link: 'https://quranhub.b-cdn.net/quran/audio/surah/48/ar.ibrahimakhdar.hafs/114.mp3',
-      });
-    });
-
-    it('does not hardcode the CDN hostname or bitrate', async () => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockImplementation((url: string) => {
-          if (url.includes('/edition/')) {
-            return makeFetchResponse({
-              code: 200,
-              status: 'OK',
-              data: [makeEdition({})],
-            });
-          }
-          return makeFetchResponse(
-            makeSurahResponse(
-              'https://cdn.other.example.net/quran/audio/surah/7/ar.ibrahimakhdar.hafs/1.mp3'
-            )
-          );
-        })
-      );
-
-      const [reciter] = await QuranAiAdapter.getReciters('ar');
-      expect(reciter.moshaf.playlist[0].link).toBe(
-        'https://cdn.other.example.net/quran/audio/surah/7/ar.ibrahimakhdar.hafs/1.mp3'
-      );
-      expect(reciter.moshaf.playlist[1].link).toBe(
-        'https://cdn.other.example.net/quran/audio/surah/7/ar.ibrahimakhdar.hafs/2.mp3'
-      );
-      expect(reciter.moshaf.playlist[113].link).toBe(
-        'https://cdn.other.example.net/quran/audio/surah/7/ar.ibrahimakhdar.hafs/114.mp3'
-      );
-    });
-
-    it('sets surah_total to the playlist length as a string', async () => {
+    it('sets surah_total to 114', async () => {
       const [reciter] = await QuranAiAdapter.getReciters('ar');
       expect(reciter.moshaf.surah_total).toBe('114');
-    });
-
-    it('sets server to an empty string', async () => {
-      const [reciter] = await QuranAiAdapter.getReciters('ar');
-      expect(reciter.moshaf.server).toBe('');
     });
 
     it('deduplicates editions with the same identifier', async () => {
@@ -288,6 +227,51 @@ describe('QuranAiAdapter', () => {
       const assertion = expect(promise).rejects.toThrow('HTTP 500');
       await vi.advanceTimersByTimeAsync(10_000);
       await assertion;
+    });
+  });
+
+  describe('getPlaylist', () => {
+    const baseMoshaf = {
+      id: 'ar.ibrahimakhdar.hafs',
+      server:
+        'https://quranhub.b-cdn.net/quran/audio/surah/48/ar.ibrahimakhdar.hafs/',
+      surah_total: '114',
+    } as Moshaf;
+
+    it('builds 114 links from the probe base', async () => {
+      const playlist = await QuranAiAdapter.getPlaylist(baseMoshaf);
+      expect(playlist).toHaveLength(114);
+      expect(playlist[0]).toEqual({ surahId: '1', link: PROBE_IBRAHIM_URL });
+      expect(playlist[1]).toEqual({
+        surahId: '2',
+        link: 'https://quranhub.b-cdn.net/quran/audio/surah/48/ar.ibrahimakhdar.hafs/2.mp3',
+      });
+      expect(playlist[113]).toEqual({
+        surahId: '114',
+        link: 'https://quranhub.b-cdn.net/quran/audio/surah/48/ar.ibrahimakhdar.hafs/114.mp3',
+      });
+    });
+
+    it('does not hardcode the CDN hostname or bitrate', async () => {
+      const playlist = await QuranAiAdapter.getPlaylist({
+        ...baseMoshaf,
+        server:
+          'https://cdn.other.example.net/quran/audio/surah/7/ar.ibrahimakhdar.hafs/',
+      } as Moshaf);
+      expect(playlist[0]?.link).toBe(
+        'https://cdn.other.example.net/quran/audio/surah/7/ar.ibrahimakhdar.hafs/1.mp3'
+      );
+      expect(playlist[113]?.link).toBe(
+        'https://cdn.other.example.net/quran/audio/surah/7/ar.ibrahimakhdar.hafs/114.mp3'
+      );
+    });
+
+    it('returns an empty playlist when the server is missing', async () => {
+      const playlist = await QuranAiAdapter.getPlaylist({
+        ...baseMoshaf,
+        server: '',
+      } as Moshaf);
+      expect(playlist).toEqual([]);
     });
   });
 

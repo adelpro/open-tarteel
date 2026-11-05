@@ -1,5 +1,5 @@
 import { Language } from '@/constants/language';
-import type { Playlist, Reciter } from '@/types';
+import type { Moshaf, Playlist, Reciter } from '@/types';
 import { LinkSource, Riwaya } from '@/types';
 
 import {
@@ -130,12 +130,12 @@ export const QuranFoundationAdapter = {
     return result;
   },
 
-  async getPlaylist(moshafId: string): Promise<Playlist> {
-    const response = await qfFetch(`${CHAPTER_AUDIO_PATH}/${moshafId}`);
+  async getPlaylist(moshaf: Moshaf): Promise<Playlist> {
+    const response = await qfFetch(`${CHAPTER_AUDIO_PATH}/${moshaf.id}`);
     const data: QuranFoundationChapterAudioResponse = await response.json();
 
     if (!Array.isArray(data.audio_files)) {
-      throw new Error(`Unexpected audio response for reciter ${moshafId}`);
+      throw new Error(`Unexpected audio response for reciter ${moshaf.id}`);
     }
 
     return [...data.audio_files]

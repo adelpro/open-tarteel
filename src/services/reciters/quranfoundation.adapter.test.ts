@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { Moshaf } from '@/types';
 import { LinkSource, Riwaya } from '@/types';
 
 import {
@@ -321,7 +322,9 @@ describe('QuranFoundationAdapter', () => {
 
   describe('getPlaylist', () => {
     it('fetches, sorts and maps all audio files', async () => {
-      const playlist = await QuranFoundationAdapter.getPlaylist('7');
+      const playlist = await QuranFoundationAdapter.getPlaylist({
+        id: '7',
+      } as Moshaf);
 
       expect(playlist.map((item) => item.surahId)).toEqual(['1', '2', '3']);
       expect(playlist[0]?.link).toContain('/1.mp3');
@@ -342,9 +345,9 @@ describe('QuranFoundationAdapter', () => {
         })
       );
 
-      await expect(QuranFoundationAdapter.getPlaylist('7')).rejects.toThrow(
-        'Unexpected audio response'
-      );
+      await expect(
+        QuranFoundationAdapter.getPlaylist({ id: '7' } as Moshaf)
+      ).rejects.toThrow('Unexpected audio response');
     });
   });
 

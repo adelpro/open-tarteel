@@ -1,7 +1,7 @@
 import { unstable_cache } from 'next/cache';
 
 import type { Language } from '@/constants/language';
-import type { LinkSource, Playlist, Reciter } from '@/types';
+import type { LinkSource, Moshaf, Playlist, Reciter } from '@/types';
 
 import { getAllRecitersFromAdapters, getReciterPlaylist } from './index';
 
@@ -18,7 +18,7 @@ import { getAllRecitersFromAdapters, getReciterPlaylist } from './index';
  */
 // Bump when the adapter shape, language handling, or pagination changes so a
 // deploy never serves data cached by the previous code.
-const CACHE_VERSION = 'v3-qf-oauth-and-localized-names';
+const CACHE_VERSION = 'v4-catalog-dto';
 
 const getCachedReciters = unstable_cache(
   (language: Language, sources: LinkSource[] | null) =>
@@ -37,15 +37,15 @@ export const getAllRecitersCached = (
  * recitation is selected, so this stays below the 2 MB data-cache limit.
  */
 const getCachedReciterPlaylist = unstable_cache(
-  (source: LinkSource, moshafId: string, language: Language) =>
-    getReciterPlaylist(source, moshafId, language),
+  (source: LinkSource, moshaf: Moshaf, language: Language) =>
+    getReciterPlaylist(source, moshaf, language),
   ['reciter-playlist', CACHE_VERSION],
   { revalidate: 3600 }
 );
 
 export const getReciterPlaylistCached = (
   source: LinkSource,
-  moshafId: string,
+  moshaf: Moshaf,
   language: Language
 ): Promise<Playlist | null> =>
-  getCachedReciterPlaylist(source, moshafId, language);
+  getCachedReciterPlaylist(source, moshaf, language);
