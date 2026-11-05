@@ -18,11 +18,15 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
   const { formatMessage, locale } = useIntl();
   const [mounted, setMounted] = useState(false);
   const [detailError, setDetailError] = useState(false);
+  const [queryMoshafId, setQueryMoshafId] = useState<string>();
   const [retryKey, setRetryKey] = useState(0);
   const requestRef = useRef(0);
 
   useEffect(() => {
     setMounted(true);
+    setQueryMoshafId(
+      new URLSearchParams(window.location.search).get('moshafId') ?? undefined
+    );
   }, []);
 
   useEffect(() => {
@@ -37,6 +41,7 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
   // Fall back to the selected atom when a link omits `moshafId`.
   const targetMoshafId =
     moshafId ??
+    queryMoshafId ??
     (id && selectedReciter?.id === id ? selectedReciter.moshaf.id : undefined);
 
   const playlistReady = Boolean(

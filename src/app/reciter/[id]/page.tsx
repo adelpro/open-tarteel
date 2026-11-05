@@ -6,7 +6,6 @@ import { getAllReciters } from '@/utils/api';
 
 type Props = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ moshafId?: string }>;
 };
 
 /** `itqan.dev-2` → `itqan.dev`; `mp3quran.net-1` → `mp3quran.net`. */
@@ -91,16 +90,15 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-export default async function Page({ params, searchParams }: Props) {
+export default async function Page({ params }: Props) {
   const { id } = await params;
-  const { moshafId } = await searchParams;
 
   // Do not block the page on the catalog. The client loads the reciter and its
   // playlist by URL, so a slow provider never leaves the page on a skeleton.
   return (
     <main className="flex w-full flex-col items-center justify-center bg-background text-foreground">
       <Hero />
-      <ReciterPage key={id} id={id} moshafId={moshafId} />
+      <ReciterPage key={id} id={id} />
     </main>
   );
 }
