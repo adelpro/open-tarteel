@@ -8,7 +8,40 @@ import { useIntl } from 'react-intl';
 import ReciterSelector from '@/components/reciter-selector';
 import SimpleSkeleton from '@/components/simple-skeleton';
 import { fullscreenAtom, selectedReciterAtom } from '@/jotai/atom';
-import type { Reciter } from '@/types';
+import type { Playlist, Reciter } from '@/types';
+import { LinkSource } from '@/types';
+
+/** Build MP3Quran/Qurani.ai playlists from the compact catalog hints. */
+const buildLocalPlaylist = (reciter: Reciter): Playlist | null => {
+  const { moshaf } = reciter;
+
+  if (
+    reciter.source === LinkSource.MP3QURAN &&
+    moshaf.server &&
+    moshaf.surahIds
+  ) {
+    return moshaf.surahIds
+      .split(',')
+      .filter(Boolean)
+      .map((surahId) => ({
+        surahId,
+        link: `${moshaf.server}${surahId.padStart(3, '0')}.mp3`,
+      }));
+  }
+
+  if (reciter.source === LinkSource.QURANAI && moshaf.server) {
+    const total = Number(moshaf.surah_total) || 114;
+    return Array.from({ length: total }, (_, index) => {
+      const surahNumber = index + 1;
+      return {
+        surahId: String(surahNumber),
+        link: `${moshaf.server}${surahNumber}.mp3`,
+      };
+    });
+  }
+
+  return null;
+};
 
 const Player = dynamic(() => import('@/components/player'), { ssr: false });
 
@@ -56,6 +89,20 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
     if (!id || !targetMoshafId) return;
     if (playlistReady) return;
 
+    if (
+      selectedReciter?.id === id &&
+      selectedReciter.moshaf.id === targetMoshafId
+    ) {
+      const local = buildLocalPlaylist(selectedReciter);
+      if (local && local.length > 0) {
+        setSelectedReciter({
+          ...selectedReciter,
+          moshaf: { ...selectedReciter.moshaf, playlist: local },
+        });
+        return;
+      }
+    }
+
     const controller = new AbortController();
     const requestId = ++requestRef.current;
     setDetailError(false);
@@ -98,8 +145,7 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
     locale,
     playlistReady,
     retryKey,
-    selectedReciter?.id,
-    selectedReciter?.source,
+    selectedReciter,
     setSelectedReciter,
     targetMoshafId,
     id,
