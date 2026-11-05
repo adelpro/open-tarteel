@@ -452,7 +452,9 @@ The official API is paginated at 20 rows per page for both the catalog and the
 track list, and the catalog is 72 recitations, not 20. The adapter now:
 
 - sends `X-API-Key` when `ITQAN_API_KEY` is set, plus `X-Client-Name`,
-  `X-Client-Version`, and `Accept-Language: ar|en|de→en`;
+  `X-Client-Version`, and `Accept-Language: ar|en|de→en`; also sends the
+  `language` query parameter because the gateway caches by URL and otherwise
+  reuses the first language response;
 - paginates `/recitations/` (`page_size=100`, 72 rows) and `/recitations/{id}`
   (`page_size=200`, 114 tracks);
 - returns an empty playlist from `getReciters` and loads the 114 tracks lazily
@@ -547,6 +549,11 @@ Goal: make downloaded audio actually work offline.
   and `OPTIONS` returns 403, so CORS downloads fail. Streaming still works.
 - MP3Quran CDN supports `206`, `Accept-Ranges`, exposes
   `Content-Length`/`Content-Range`, and sends `Cache-Control: immutable`.
+- Catalog caching was keyed incorrectly: a 3 s NetworkFirst timeout fell back
+  to **any** `/api/reciters` entry, so one language/source was served for every
+  request, and detail requests received the list. Fixed with an exact-URL
+  `api-reciters-v2` cache, a 30 s timeout, cache deletion on activation, and
+  `private, no-store` route responses.
 
 ### Work
 

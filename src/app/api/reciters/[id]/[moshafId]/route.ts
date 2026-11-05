@@ -66,7 +66,8 @@ export async function GET(
 
     return NextResponse.json(resolved, {
       headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
+        'Cache-Control': 'private, no-store, max-age=0',
+        Vary: 'Cookie',
       },
     });
   } catch {

@@ -16,10 +16,14 @@ import { getAllRecitersFromAdapters, getReciterPlaylist } from './index';
  * than that, so this layer is a no-op until the list/detail split lands
  * (see docs/ROADMAP.md, stage 5c).
  */
+// Bump when the adapter shape, language handling, or pagination changes so a
+// deploy never serves data cached by the previous code.
+const CACHE_VERSION = 'v2-itqan-api-v1';
+
 const getCachedReciters = unstable_cache(
   (language: Language, sources: LinkSource[] | null) =>
     getAllRecitersFromAdapters(language, sources),
-  ['reciters'],
+  ['reciters', CACHE_VERSION],
   { revalidate: 3600 }
 );
 
@@ -35,7 +39,7 @@ export const getAllRecitersCached = (
 const getCachedReciterPlaylist = unstable_cache(
   (source: LinkSource, moshafId: string, language: Language) =>
     getReciterPlaylist(source, moshafId, language),
-  ['reciter-playlist'],
+  ['reciter-playlist', CACHE_VERSION],
   { revalidate: 3600 }
 );
 

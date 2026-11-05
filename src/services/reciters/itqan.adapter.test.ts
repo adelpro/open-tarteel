@@ -120,6 +120,14 @@ describe('ItqanAdapter', () => {
       expect(headers['X-API-Key']).toBeUndefined();
     });
 
+    it('adds the language query param so the gateway cannot reuse another language cache entry', async () => {
+      await ItqanAdapter.getReciters('ar');
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.stringContaining('language=ar'),
+        expect.anything()
+      );
+    });
+
     it('sends Accept-Language: en for "en"', async () => {
       await ItqanAdapter.getReciters('en');
       const headers = fetchMock.mock.calls[0]?.[1]?.headers as Record<

@@ -44,12 +44,15 @@ const fetchAllPages = async <T>(
   pageSize: number
 ): Promise<T[]> => {
   const headers = buildHeaders(lang);
+  const apiLang = lang === 'ar' ? 'ar' : 'en';
   const items: T[] = [];
   let page = 1;
 
   for (;;) {
+    // The `language` query param is required as well as the header: Itqan's
+    // gateway caches by URL and otherwise reuses the first language response.
     const response = await fetch(
-      `${BASE_URL}${path}?page=${page}&page_size=${pageSize}`,
+      `${BASE_URL}${path}?page=${page}&page_size=${pageSize}&language=${apiLang}`,
       { headers }
     );
     if (!response.ok) {

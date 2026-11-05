@@ -61,20 +61,22 @@ export function useReciters() {
 
         if (typeof window !== 'undefined' && 'caches' in window) {
           try {
-            const cache = await caches.open('api-reciters');
-            const keys = await cache.keys();
-            const reciterKey = keys.find((request) =>
-              request.url.includes('/api/reciters')
-            );
-            if (reciterKey) {
-              const match = await cache.match(reciterKey);
-              if (match && match.ok) {
-                const cachedData = (await match.json()) as Reciter[];
-                if (Array.isArray(cachedData) && cachedData.length > 0) {
-                  setReciters(cachedData);
-                  setError(null);
-                  return;
-                }
+            const cache = await caches.open('api-reciters-v2');
+            const params = new URLSearchParams({ language: locale });
+            if (enabledSources.length > 0) {
+              params.set('sources', enabledSources.join(','));
+            }
+            const reciterUrl = new URL(
+              `/api/reciters?${params.toString()}`,
+              window.location.origin
+            ).href;
+            const match = await cache.match(reciterUrl);
+            if (match && match.ok) {
+              const cachedData = (await match.json()) as Reciter[];
+              if (Array.isArray(cachedData) && cachedData.length > 0) {
+                setReciters(cachedData);
+                setError(null);
+                return;
               }
             }
           } catch {

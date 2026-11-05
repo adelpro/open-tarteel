@@ -35,8 +35,10 @@ export async function getAllReciters(
   if (enabledSources && enabledSources.length > 0) {
     params.set('sources', enabledSources.join(','));
   }
+  // Always ask the route for the current language/sources combination. The
+  // service worker keeps the offline copy keyed by this exact URL.
   const response = await fetch(`/api/reciters?${params}`, {
-    next: { revalidate: 3600 },
+    cache: 'no-store',
   });
 
   if (!response.ok) {
@@ -65,9 +67,7 @@ export async function getReciter(
   }
   const response = await fetch(
     `/api/reciters/${encodeURIComponent(id)}/${encodeURIComponent(moshafId)}?${params}`,
-    {
-      next: { revalidate: 3600 }, // Cache for 1 hour
-    }
+    { cache: 'no-store' }
   );
 
   if (!response.ok) return undefined;

@@ -5,8 +5,9 @@ import { LANGUAGES } from '@/constants/language';
 import { parseEnabledSources } from '@/services/reciters';
 import { getAllRecitersCached } from '@/services/reciters/cached';
 
-// Enable Next.js caching with 1 hour revalidation
-export const revalidate = 3600;
+// The response depends on the user's enabled sources (query or cookie), so it
+// must never be cached at the CDN or shared between users.
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -24,10 +25,10 @@ export async function GET(request: NextRequest) {
   try {
     const reciters = await getAllRecitersCached(language, enabledSources);
 
-    // Add cache headers for client-side caching
     return NextResponse.json(reciters, {
       headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
+        'Cache-Control': 'private, no-store, max-age=0',
+        Vary: 'Cookie',
       },
     });
   } catch {
