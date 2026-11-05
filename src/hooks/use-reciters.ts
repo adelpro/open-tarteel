@@ -30,7 +30,14 @@ export function useReciters() {
         setReciters(data);
 
         if (selectedReciter) {
-          const matched = data.find((r) => r.id === selectedReciter.id);
+          // A reciter can have several moshaf/riwayah entries. Keep the one
+          // that is currently selected instead of falling back to the first.
+          const matched =
+            data.find(
+              (r) =>
+                r.id === selectedReciter.id &&
+                r.moshaf.id === selectedReciter.moshaf.id
+            ) ?? data.find((r) => r.id === selectedReciter.id);
           if (matched) {
             // Do not throw away a lazily loaded playlist (or a persisted one)
             // when the catalog refreshes with an empty playlist.

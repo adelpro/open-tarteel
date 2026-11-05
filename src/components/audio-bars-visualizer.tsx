@@ -32,11 +32,14 @@ import { showVisualizerAtom } from '@/jotai/atom';
 type AudioVisualizerProps = {
   audioId: string;
   isPlaying: boolean;
+  /** False for cross-origin audio without CORS (e.g. Itqan). */
+  enabled?: boolean;
 };
 
 export default function AudioBarsVisualizer({
   audioId,
   isPlaying,
+  enabled = true,
 }: AudioVisualizerProps) {
   const showVisualizer = useAtomValue(showVisualizerAtom);
   const [visualizerWidth, setVisualizerWidth] = useState(400);
@@ -70,7 +73,18 @@ export default function AudioBarsVisualizer({
     };
   }, []);
 
-  const visible = showVisualizer && isPlaying;
+  const visible = showVisualizer && isPlaying && enabled;
+
+  // Keep the height but never create an AudioContext for a source the browser
+  // refuses to share samples from.
+  if (!enabled) {
+    return (
+      <div
+        className="mb-2 flex h-[90px] w-full max-w-md justify-center"
+        style={{ visibility: 'hidden' }}
+      />
+    );
+  }
 
   // Before first play: render placeholder (no AudioContext created yet)
   if (!everPlayed) {

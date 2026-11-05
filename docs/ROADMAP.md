@@ -546,7 +546,9 @@ Goal: make downloaded audio actually work offline.
 - No `RangeRequestsPlugin`, so offline seeking fails.
 - `useOfflineDownload` keeps per-instance state; navigating away loses progress.
 - Itqan audio (`storage.cms.itqan.dev`) has **no `Access-Control-Allow-Origin`**
-  and `OPTIONS` returns 403, so CORS downloads fail. Streaming still works.
+  and `OPTIONS` returns 403, so CORS downloads fail. Streaming works only if
+  the `<audio>` element omits `crossOrigin`; setting it blocks playback. The
+  player now does this per URL and disables the analyser for Itqan.
 - MP3Quran CDN supports `206`, `Accept-Ranges`, exposes
   `Content-Length`/`Content-Range`, and sends `Cache-Control: immutable`.
 - Catalog caching was keyed incorrectly: a 3 s NetworkFirst timeout fell back
