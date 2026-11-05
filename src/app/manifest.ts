@@ -14,8 +14,8 @@ export default function manifest(): MetadataRoute.Manifest {
 
   return {
     id: '9a008c3173fcca3c4def71adedd5bd3f',
-    theme_color: '#000000',
-    background_color: '#000000',
+    theme_color: '#0191e2',
+    background_color: '#ffffff',
     display: 'standalone',
     scope: '/',
     start_url: '/',
@@ -48,19 +48,19 @@ export default function manifest(): MetadataRoute.Manifest {
 
     icons: [
       {
-        src: '/images/192x192.png',
+        src: '/images/icon-192.png',
         sizes: '192x192',
         type: 'image/png',
         purpose: 'any',
       },
       {
-        src: '/images/512x512.png',
+        src: '/images/icon-512.png',
         sizes: '512x512',
         type: 'image/png',
         purpose: 'any',
       },
       {
-        src: '/images/512x512.png',
+        src: '/images/icon-maskable-512.png',
         sizes: '512x512',
         type: 'image/png',
         purpose: 'maskable',
