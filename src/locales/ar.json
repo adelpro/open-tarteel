@@ -18,6 +18,8 @@
   "settings.source.quranfoundation": "مؤسسة القرآن",
   "settings.enableSource": "قم بتفعيل مصدر واحد على الأقل من الإعدادات.",
   "reciter.select": "اختر القارئ",
+  "reciter.loadError": "تعذر تحميل هذا القارئ. حاول مرة أخرى.",
+  "reciter.retry": "إعادة المحاولة",
   "favorites": "المفضلة",
   "views": "المشاهدات",
   "sort": "تغيير الترتيب",

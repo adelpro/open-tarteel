@@ -1,9 +1,9 @@
 import { unstable_cache } from 'next/cache';
 
 import type { Language } from '@/constants/language';
-import type { LinkSource, Reciter } from '@/types';
+import type { LinkSource, Playlist, Reciter } from '@/types';
 
-import { getAllRecitersFromAdapters } from './index';
+import { getAllRecitersFromAdapters, getReciterPlaylist } from './index';
 
 /**
  * Server-side cache for the upstream reciter APIs.
@@ -27,3 +27,21 @@ export const getAllRecitersCached = (
   language: Language,
   sources?: LinkSource[] | null
 ): Promise<Reciter[]> => getCachedReciters(language, sources ?? null);
+
+/**
+ * Lazy playlist cache. Itqan returns all 114 tracks (~555 KB) only when a
+ * recitation is selected, so this stays below the 2 MB data-cache limit.
+ */
+const getCachedReciterPlaylist = unstable_cache(
+  (source: LinkSource, moshafId: string, language: Language) =>
+    getReciterPlaylist(source, moshafId, language),
+  ['reciter-playlist'],
+  { revalidate: 3600 }
+);
+
+export const getReciterPlaylistCached = (
+  source: LinkSource,
+  moshafId: string,
+  language: Language
+): Promise<Playlist | null> =>
+  getCachedReciterPlaylist(source, moshafId, language);

@@ -3,7 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import type { Language } from '@/constants/language';
 import { LANGUAGES } from '@/constants/language';
 import { parseEnabledSources } from '@/services/reciters';
-import { getAllRecitersCached } from '@/services/reciters/cached';
+import {
+  getAllRecitersCached,
+  getReciterPlaylistCached,
+} from '@/services/reciters/cached';
 
 export async function GET(
   request: NextRequest,
@@ -34,7 +37,38 @@ export async function GET(
       return NextResponse.json({ error: 'Reciter not found' }, { status: 404 });
     }
 
-    return NextResponse.json(reciter);
+    // Some providers (Itqan) omit the 114-track playlist from the catalog and
+    // expose it lazily. Hydrate it here so the player only downloads it when a
+    // reciter is actually selected.
+    let resolved = reciter;
+    if (reciter.moshaf.playlist.length === 0) {
+      try {
+        const playlist = await getReciterPlaylistCached(
+          reciter.source,
+          moshafId,
+          language
+        );
+        if (playlist && playlist.length > 0) {
+          resolved = {
+            ...reciter,
+            moshaf: {
+              ...reciter.moshaf,
+              playlist,
+              surah_total: String(playlist.length),
+            },
+          };
+        }
+      } catch {
+        // Keep the catalog entry with an empty playlist; the UI shows a
+        // loading/error state instead of failing the whole request.
+      }
+    }
+
+    return NextResponse.json(resolved, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
+      },
+    });
   } catch {
     return NextResponse.json(
       { error: 'Internal server error' },

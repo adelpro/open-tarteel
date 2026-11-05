@@ -18,6 +18,8 @@
   "settings.source.quranfoundation": "Quran Foundation",
   "settings.enableSource": "Enable at least one source in Settings.",
   "reciter.select": "Select A Reciter",
+  "reciter.loadError": "Could not load this reciter. Please try again.",
+  "reciter.retry": "Retry",
   "favorites": "favorites",
   "views": "views",
   "searchPlaceHolder": "Search A Reciter",

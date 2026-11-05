@@ -32,7 +32,26 @@ export function useReciters() {
         if (selectedReciter) {
           const matched = data.find((r) => r.id === selectedReciter.id);
           if (matched) {
-            setSelectedReciter(matched);
+            // Do not throw away a lazily loaded playlist (or a persisted one)
+            // when the catalog refreshes with an empty playlist.
+            setSelectedReciter((previous) => {
+              if (!previous) return matched;
+              if (
+                previous.moshaf.id === matched.moshaf.id &&
+                matched.moshaf.playlist.length === 0 &&
+                previous.moshaf.playlist.length > 0
+              ) {
+                return {
+                  ...matched,
+                  moshaf: {
+                    ...matched.moshaf,
+                    playlist: previous.moshaf.playlist,
+                    surah_total: previous.moshaf.surah_total,
+                  },
+                };
+              }
+              return matched;
+            });
           } else {
             setSelectedReciter(null);
           }
