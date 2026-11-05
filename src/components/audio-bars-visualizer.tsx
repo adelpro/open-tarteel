@@ -29,6 +29,43 @@ if (typeof window !== 'undefined') {
 
 import { showVisualizerAtom } from '@/jotai/atom';
 
+const FALLBACK_LEVELS = [
+  0.35, 0.55, 0.42, 0.7, 0.48, 0.82, 0.58, 0.38, 0.64, 0.9, 0.52, 0.76, 0.44,
+  0.68, 0.36, 0.8, 0.56, 0.72, 0.46, 0.88, 0.6, 0.4, 0.74, 0.5, 0.66, 0.34,
+  0.78, 0.54,
+];
+
+function SpectrumFallback({
+  active,
+  visible,
+}: {
+  active: boolean;
+  visible: boolean;
+}) {
+  return (
+    <div
+      aria-hidden="true"
+      className="mb-2 flex h-[90px] w-full max-w-md items-end justify-center gap-[3px] px-4"
+      style={{ visibility: visible ? 'visible' : 'hidden' }}
+    >
+      {FALLBACK_LEVELS.map((level, index) => (
+        <span
+          key={index}
+          className="spectrum-bar w-1.5 rounded-full bg-blue-500/80 dark:bg-blue-400/70"
+          style={{
+            height: `${Math.round(level * 100)}%`,
+            transformOrigin: 'bottom',
+            animation: active
+              ? `spectrum-bar 1.1s ease-in-out ${index * 0.035}s infinite`
+              : undefined,
+            opacity: active ? 1 : 0.55,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 type AudioVisualizerProps = {
   audioId: string;
   isPlaying: boolean;
@@ -77,23 +114,14 @@ export default function AudioBarsVisualizer({
 
   // Keep the height but never create an AudioContext for a source the browser
   // refuses to share samples from.
+  // Itqan has no CORS, so use a CSS-only spectrum instead of silence.
   if (!enabled) {
-    return (
-      <div
-        className="mb-2 flex h-[90px] w-full max-w-md justify-center"
-        style={{ visibility: 'hidden' }}
-      />
-    );
+    return <SpectrumFallback active={isPlaying} visible={showVisualizer} />;
   }
 
-  // Before first play: render placeholder (no AudioContext created yet)
+  // Before first play: show a static baseline (no AudioContext created yet).
   if (!everPlayed) {
-    return (
-      <div
-        className="mb-2 flex h-[90px] w-full max-w-md justify-center"
-        style={{ visibility: 'hidden' }}
-      />
-    );
+    return <SpectrumFallback active={false} visible={showVisualizer} />;
   }
 
   // After first play: keep ReactAudioSpectrum permanently mounted,
