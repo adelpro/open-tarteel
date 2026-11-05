@@ -157,12 +157,14 @@ describe('QuranFoundationAdapter', () => {
       );
     });
 
-    it('fetches chapter audio for each reciter', async () => {
+    it('does not fetch audio files in the catalog', async () => {
       await QuranFoundationAdapter.getReciters('ar');
-      expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('chapter_recitations/7'),
-        expect.anything()
-      );
+      const audioCalls = vi
+        .mocked(fetch)
+        .mock.calls.filter(([url]) =>
+          String(url).includes('chapter_recitations')
+        );
+      expect(audioCalls).toHaveLength(0);
     });
 
     it('returns one Reciter per chapter reciter', async () => {
@@ -223,27 +225,14 @@ describe('QuranFoundationAdapter', () => {
       expect(reciter.moshaf.riwaya).toBe(Riwaya.Hafs);
     });
 
-    it('sorts and builds a playlist from audio_files', async () => {
+    it('returns an empty playlist for lazy loading', async () => {
       const [reciter] = await QuranFoundationAdapter.getReciters('ar');
-      expect(reciter.moshaf.playlist).toEqual([
-        {
-          surahId: '1',
-          link: 'https://download.quranicaudio.com/qdc/mishari_rashid_alafasy/murattal/1.mp3',
-        },
-        {
-          surahId: '2',
-          link: 'https://download.quranicaudio.com/qdc/mishari_rashid_alafasy/murattal/2.mp3',
-        },
-        {
-          surahId: '3',
-          link: 'https://download.quranicaudio.com/qdc/mishari_rashid_alafasy/murattal/3.mp3',
-        },
-      ]);
+      expect(reciter.moshaf.playlist).toEqual([]);
     });
 
-    it('sets surah_total to the playlist length as a string', async () => {
+    it('sets a default surah_total that the lazy detail replaces', async () => {
       const [reciter] = await QuranFoundationAdapter.getReciters('ar');
-      expect(reciter.moshaf.surah_total).toBe('3');
+      expect(reciter.moshaf.surah_total).toBe('114');
     });
 
     it('sets server to an empty string', async () => {
@@ -282,69 +271,6 @@ describe('QuranFoundationAdapter', () => {
       await expect(QuranFoundationAdapter.getReciters('ar')).rejects.toThrow(
         'HTTP 500'
       );
-    });
-
-    it('skips a reciter when its chapter audio fetch fails', async () => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockImplementation((url: string) => {
-          if (url.includes('/oauth2/token')) {
-            return makeFetchResponse({ access_token: 't', expires_in: 3600 });
-          }
-          if (url.includes('chapter_reciters')) {
-            return makeFetchResponse(makeChapterRecitersResponse());
-          }
-          return Promise.resolve({
-            ok: false,
-            status: 500,
-            json: vi.fn(),
-          } as unknown as Response);
-        })
-      );
-
-      const reciters = await QuranFoundationAdapter.getReciters('ar');
-      expect(reciters).toHaveLength(0);
-    });
-
-    it('returns results from successful reciters even when some fail', async () => {
-      const twoReciters: QuranFoundationChapterRecitersResponse = {
-        reciters: [
-          ...makeChapterRecitersResponse().reciters,
-          {
-            id: 9,
-            name: 'Warsh Reciter',
-            qirat: { name: 'Warsh', language_name: 'english' },
-            translated_name: {
-              name: 'Warsh Reciter',
-              language_name: 'english',
-            },
-          },
-        ],
-      };
-
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockImplementation((url: string) => {
-          if (url.includes('/oauth2/token')) {
-            return makeFetchResponse({ access_token: 't', expires_in: 3600 });
-          }
-          if (url.includes('chapter_reciters')) {
-            return makeFetchResponse(twoReciters);
-          }
-          if (url.includes('chapter_recitations/7')) {
-            return makeFetchResponse(makeChapterAudioResponse());
-          }
-          return Promise.resolve({
-            ok: false,
-            status: 500,
-            json: vi.fn(),
-          } as unknown as Response);
-        })
-      );
-
-      const reciters = await QuranFoundationAdapter.getReciters('ar');
-      expect(reciters).toHaveLength(1);
-      expect(reciters[0].id).toBe(`${LinkSource.QURAN_FOUNDATION}-7`);
     });
 
     it('returns an empty array when the reciters list is empty', async () => {
@@ -388,8 +314,37 @@ describe('QuranFoundationAdapter', () => {
       ]);
       expect(results[0]).toHaveLength(1);
       expect(results[1]).toHaveLength(1);
-      // First run (ar): token + list + audio; second run (en) reuses the cached token.
-      expect(fetch).toHaveBeenCalledTimes(5);
+      // First run (ar): token + list; second run (en) reuses the cached token.
+      expect(fetch).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe('getPlaylist', () => {
+    it('fetches, sorts and maps all audio files', async () => {
+      const playlist = await QuranFoundationAdapter.getPlaylist('7');
+
+      expect(playlist.map((item) => item.surahId)).toEqual(['1', '2', '3']);
+      expect(playlist[0]?.link).toContain('/1.mp3');
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('chapter_recitations/7'),
+        expect.anything()
+      );
+    });
+
+    it('throws when the audio response is invalid', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockImplementation((url: string) => {
+          if (url.includes('/oauth2/token')) {
+            return makeFetchResponse({ access_token: 't', expires_in: 3600 });
+          }
+          return makeFetchResponse({});
+        })
+      );
+
+      await expect(QuranFoundationAdapter.getPlaylist('7')).rejects.toThrow(
+        'Unexpected audio response'
+      );
     });
   });
 
