@@ -15,6 +15,7 @@ import Image from 'next/image';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { BiVolumeFull, BiVolumeMute } from 'react-icons/bi';
 import { BsFullscreen, BsFullscreenExit } from 'react-icons/bs';
+import { FiHeadphones, FiRepeat } from 'react-icons/fi';
 import { MdRepeatOne, MdSpeed } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
@@ -36,6 +37,67 @@ import { resolveChapterReciterId } from '@/utils/resolveChapterReciterId';
 
 import TahfeezModeControls, { TahfeezSettings } from './tahfeez-mode-controls';
 // ─── Helpers ─────────────────────────────────────────
+type ModeSwitcherProps = {
+  activeMode: 'listening' | 'tahfeez';
+  onChange: (_mode: 'listening' | 'tahfeez') => void;
+  labels: { aria: string; listening: string; tahfeez: string };
+  disabled?: boolean;
+  disabledTitle?: string;
+};
+
+function ModeSwitcher({
+  activeMode,
+  onChange,
+  labels,
+  disabled = false,
+  disabledTitle,
+}: ModeSwitcherProps) {
+  const base =
+    'flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors';
+
+  return (
+    <div
+      role="tablist"
+      aria-label={labels.aria}
+      className="mb-3 flex w-full max-w-sm self-center rounded-full bg-gray-100 p-1 dark:bg-gray-800"
+    >
+      <button
+        type="button"
+        role="tab"
+        aria-selected={activeMode === 'listening'}
+        onClick={() => onChange('listening')}
+        className={cn(
+          base,
+          activeMode === 'listening'
+            ? 'bg-white text-blue-600 shadow-sm dark:bg-gray-700 dark:text-blue-400'
+            : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200'
+        )}
+      >
+        <FiHeadphones size={16} aria-hidden="true" />
+        {labels.listening}
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={activeMode === 'tahfeez'}
+        disabled={disabled}
+        title={disabled ? disabledTitle : undefined}
+        onClick={() => onChange('tahfeez')}
+        className={cn(
+          base,
+          'disabled:cursor-not-allowed disabled:opacity-50',
+          activeMode === 'tahfeez'
+            ? 'bg-white text-blue-600 shadow-sm dark:bg-gray-700 dark:text-blue-400'
+            : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200'
+        )}
+      >
+        <FiRepeat size={16} aria-hidden="true" />
+        {labels.tahfeez}
+      </button>
+    </div>
+  );
+}
+
 const getCurrentMinute = (seconds: number): number => Math.ceil(seconds / 60);
 
 const toggleFullscreen = () => {
@@ -331,6 +393,10 @@ export default function PlayerControls({
       id: 'tahfeez.listeningLabel',
       defaultMessage: 'Listening',
     }),
+    modeSwitcher: formatMessage({
+      id: 'player.modeSwitcher',
+      defaultMessage: 'Playback mode',
+    }),
   };
 
   // ── Render ───────────────────────────────────────────
@@ -358,33 +424,15 @@ export default function PlayerControls({
   if (isFullscreen) {
     return (
       <div className="flex w-full flex-col">
-        {/* Mode Switcher */}
-        <div className="mb-4 flex w-full items-center justify-center gap-3">
-          <button
-            onClick={() => {
-              setActiveMode('listening');
-            }}
-            className={`max-w-xs flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
-              activeMode === 'listening'
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-            }`}
-          >
-            {messages.listeningMode}
-          </button>
-          <button
-            onClick={() => {
-              setActiveMode('tahfeez');
-            }}
-            className={`max-w-xs flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
-              activeMode === 'tahfeez'
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-            }`}
-          >
-            {messages.tahfeezMode}
-          </button>
-        </div>
+        <ModeSwitcher
+          activeMode={activeMode}
+          onChange={setActiveMode}
+          labels={{
+            aria: messages.modeSwitcher,
+            listening: messages.listeningMode,
+            tahfeez: messages.tahfeezMode,
+          }}
+        />
 
         {/* Mode-specific content */}
         {activeMode === 'listening' ? (
@@ -431,39 +479,17 @@ export default function PlayerControls({
 
   return (
     <div className="flex w-full flex-col">
-      {/* Mode Switcher */}
-      <div className="mb-4 flex w-full items-center justify-center gap-3">
-        <button
-          onClick={() => {
-            setActiveMode('listening');
-          }}
-          className={`max-w-xs flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
-            activeMode === 'listening'
-              ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-          }`}
-        >
-          {messages.listeningMode}
-        </button>
-        <button
-          onClick={() => {
-            setActiveMode('tahfeez');
-          }}
-          disabled={!isTahfeezSupported}
-          className={`max-w-xs flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
-            activeMode === 'tahfeez'
-              ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-          } disabled:cursor-not-allowed disabled:opacity-50`}
-          title={
-            !isTahfeezSupported
-              ? messages.tahfeezModeDisabledProvider
-              : undefined
-          }
-        >
-          {messages.tahfeezMode}
-        </button>
-      </div>
+      <ModeSwitcher
+        activeMode={activeMode}
+        onChange={setActiveMode}
+        labels={{
+          aria: messages.modeSwitcher,
+          listening: messages.listeningMode,
+          tahfeez: messages.tahfeezMode,
+        }}
+        disabled={!isTahfeezSupported}
+        disabledTitle={messages.tahfeezModeDisabledProvider}
+      />
       {activeMode === 'tahfeez' ? (
         <TahfeezModeControls
           tahfeezSettings={tahfeezSettings}

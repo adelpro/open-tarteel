@@ -165,5 +165,6 @@
   "tahfeez.statusSummary": "Ayah {from} to {to} • Repeat: {repeat}x • Delay: {delay}s",
   "tahfeez.errorTimestamps": "Failed to load timestamps. Check reciter ID and chapter number.",
   "tahfeez.errorAyahs": "Could not find specified ayahs in timestamps",
-  "language.select": "Select language"
+  "language.select": "Select language",
+  "player.modeSwitcher": "Playback mode"
 }
