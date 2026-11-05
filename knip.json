@@ -1,0 +1,18 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "src/app/**/{page,layout,route,not-found,error,global-error,loading,manifest,robots,sitemap,icon,opengraph-image,twitter-image}.{ts,tsx}",
+    "src/sw.ts"
+  ],
+  "project": ["src/**/*.{ts,tsx}", "*.{ts,mjs,js}"],
+  "ignoreDependencies": ["js-yaml", "commitizen"],
+  "rules": {
+    "files": "error",
+    "dependencies": "error",
+    "unlisted": "error",
+    "unresolved": "error",
+    "exports": "off",
+    "types": "off",
+    "duplicates": "off"
+  }
+}
