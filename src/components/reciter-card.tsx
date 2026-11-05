@@ -11,6 +11,8 @@ import { LinkSource, Reciter, Riwaya } from '@/types';
 import { cn, generateFavId } from '@/utils';
 import { useShareReciter } from '@/utils/share';
 
+import ProviderBadges from './provider-badge';
+
 const SOURCE_LABEL_IDS: Partial<Record<LinkSource, string>> = {
   [LinkSource.MP3QURAN]: 'settings.source.mp3quran',
   [LinkSource.ITQAN]: 'settings.source.itqan',
@@ -112,6 +114,9 @@ export default function ReciterCard({
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {reciter.moshaf.name}
             </p>
+            <div className="mt-1 flex flex-wrap items-center justify-end gap-1">
+              <ProviderBadges source={reciter.source} />
+            </div>
           </div>
         </div>
 

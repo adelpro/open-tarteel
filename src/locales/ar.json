@@ -167,5 +167,10 @@
   "tahfeez.statusSummary": "من الآية {from} إلى {to} • التكرار: {repeat}x • التأخير: {delay}ث",
   "tahfeez.errorTimestamps": "فشل تحميل الطوابع الزمنية. تحقق من معرف القارئ ورقم السورة.",
   "tahfeez.errorAyahs": "تعذر العثور على الآيات المحددة في الطوابع الزمنية",
-  "player.modeSwitcher": "وضع التشغيل"
+  "player.modeSwitcher": "وضع التشغيل",
+  "provider.badge.beta": "تجريبي",
+  "provider.badge.timing": "توقيت",
+  "provider.badge.word": "كلمة بكلمة",
+  "provider.badge.noDownload": "لا تحميل",
+  "provider.badge.more": "+{count}"
 }

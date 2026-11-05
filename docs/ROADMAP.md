@@ -323,14 +323,17 @@ export type ProviderCapabilities = {
   beta: boolean;
   timing: TimingLevel;
   timingCoverage: 'all' | 'partial' | 'none';
+  timingIntegration: 'implemented' | 'planned';
   names: 'ar' | 'ar+en';
   riwayah: { multiple: boolean; qiraah: boolean };
   audioTiers: Array<'original' | 'mp3_64' | 'opus_48'>;
-  auth: 'none' | 'oauth2';
+  wordAudio: boolean;
+  auth: 'none' | 'optional-key' | 'oauth2';
   cors: 'open' | 'restricted';
   download: boolean;
-  rateLimit?: string;
+  rateLimit?: 'paced' | 'normal';
   docsUrl: string;
+  verifiedAt: string;
 };
 ```
 
@@ -344,17 +347,29 @@ Show at most 2 badges on a card, then `+N` with a tooltip.
 | Word        | `timing` is `word` or deeper | كلمة بكلمة |
 | Beta        | `beta`                       | تجريبي     |
 | No download | `download === false`         | لا تحميل   |
-| Riwayah     | multiple riwayah available   | رواية      |
 
 Do not use color alone; pair icon + text. Badges must be RTL-safe and truncate
 before the reciter name.
 
-| PR  | Title                                  | Scope                                      |
-| --- | -------------------------------------- | ------------------------------------------ |
-| 3a  | `feat(providers): capability registry` | types, data, `getCapabilities`, unit tests |
-| 3b  | `feat(ui): provider badges`            | card badges + tooltip + i18n               |
+| PR  | Title                                              | Scope                                      |
+| --- | -------------------------------------------------- | ------------------------------------------ |
+| 3a  | `feat(providers): capability registry`             | types, data, `getCapabilities`, unit tests |
+| 3b  | `feat(ui): provider badges`                        | card badges + tooltip + i18n               |
+| 3c  | `feat(settings): source capability summary`        | badges under each source toggle            |
+| 3d  | `refactor: gate timing and download by capability` | `canUseRangeMode`, `canDownload`           |
 
 Acceptance: matrix unit-tested; badge overflow works in ar/en; no layout shift.
+
+### Implementation (verified 2026-11-05)
+
+- Registry: `src/services/reciters/capabilities.ts`; `canUseRangeMode` keeps
+  range mode on Quran Foundation only until Stage 5 wires the other timing
+  APIs; `canDownload` hides the download action for Itqan.
+- Badges: Timing uses an equalizer icon (not the clock used by Recent),
+  vertically centered, max 2 + `+N`, full list in the tooltip.
+- Verified docs: MP3Quran timing OpenAPI 3.0.2 (115 reads) and `language`;
+  Itqan ayah timings + `Accept-Language` + optional key; Qurani
+  `includeTimings` per ayah; QF word timestamps.
 
 ---
 
@@ -722,13 +737,13 @@ change, bundle not larger.
 Values verified against official docs and live endpoints on 2026-11-05.
 "Verify" means the field exists but was not confirmed in a live response.
 
-| Provider               | Timing                                                     | AR / EN names                                        | Riwayah                                      | Audio                         | Auth                                             | CORS                              | Download               | Badge                                  |
-| ---------------------- | ---------------------------------------------------------- | ---------------------------------------------------- | -------------------------------------------- | ----------------------------- | ------------------------------------------------ | --------------------------------- | ---------------------- | -------------------------------------- |
-| **MP3Quran v3**        | Ayah, via separate `/api/v3/ayat_timing` (subset of reads) | AR only                                              | Yes, via moshaf; multiple moshaf per reciter | MP3                           | None                                             | `*`                               | Yes                    | `توقيت` only when the read has timings |
-| **MP3Quran v4 (beta)** | Ayah + word + letter + phoneme                             | AR + EN (`locale`, `Accept-Language`)                | Yes: riwayah + qiraah + tariq + wajh + style | MP3 original / 64k / Opus 48k | None                                             | `*`                               | Yes (Range, immutable) | `تجريبي` + `توقيت` + `كلمة بكلمة`      |
-| **Itqan**              | Ayah (`ayahs_timings` on tracks)                           | AR + EN (`Accept-Language`)                          | Yes: riwayah + qiraah                        | MP3                           | Optional `X-API-Key`                             | **No** on `storage.cms.itqan.dev` | **No** (CORS)          | `توقيت` + `لا تحميل`                   |
-| **Qurani.ai**          | Ayah (`includeTimings=true`)                               | AR + EN (`name` / `englishName`)                     | Yes (`narratorIdentifier`)                   | MP3 + word-by-word            | Free; key for advanced                           | Verify                            | Verify                 | `توقيت` + `كلمة بكلمة`                 |
-| **Quran Foundation**   | Ayah + word `segments`                                     | AR/EN via `translated_name`; public fallback English | Verify                                       | MP3                           | OAuth2 optional; public `api.quran.com` fallback | Server-side                       | Verify                 | `توقيت دقيق` + `رسمي`                  |
+| Provider               | Timing                                                      | AR / EN names                                        | Riwayah                                      | Audio                         | Auth                                             | CORS                              | Download               | Badge                                  |
+| ---------------------- | ----------------------------------------------------------- | ---------------------------------------------------- | -------------------------------------------- | ----------------------------- | ------------------------------------------------ | --------------------------------- | ---------------------- | -------------------------------------- |
+| **MP3Quran v3**        | Ayah, via separate `/api/v3/ayat_timing` (115 timing reads) | AR + EN (`language`)                                 | Yes, via moshaf; multiple moshaf per reciter | MP3                           | None                                             | `*`                               | Yes                    | `توقيت` only when the read has timings |
+| **MP3Quran v4 (beta)** | Ayah + word + letter + phoneme                              | AR + EN (`locale`, `Accept-Language`)                | Yes: riwayah + qiraah + tariq + wajh + style | MP3 original / 64k / Opus 48k | None                                             | `*`                               | Yes (Range, immutable) | `تجريبي` + `توقيت` + `كلمة بكلمة`      |
+| **Itqan**              | Ayah (`ayahs_timings` on tracks)                            | AR + EN (`Accept-Language`)                          | Yes: riwayah + qiraah                        | MP3                           | Optional `X-API-Key`                             | **No** on `storage.cms.itqan.dev` | **No** (CORS)          | `توقيت` + `لا تحميل`                   |
+| **Qurani.ai**          | Ayah (`includeTimings=true`)                                | AR + EN (`name` / `englishName`)                     | Yes (`narratorIdentifier`)                   | MP3 + word-by-word            | Free; key for advanced                           | Verify                            | Verify                 | `توقيت` + `كلمة بكلمة`                 |
+| **Quran Foundation**   | Ayah + word `segments`                                      | AR/EN via `translated_name`; public fallback English | Verify                                       | MP3                           | OAuth2 optional; public `api.quran.com` fallback | Server-side                       | Verify                 | `توقيت` + `كلمة بكلمة`                 |
 
 ### Suggested badge priority
 

@@ -8,6 +8,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { SURAHS } from '@/constants';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { selectedReciterAtom } from '@/jotai/atom';
+import { canDownload } from '@/services/reciters/capabilities';
 import { formatBytes, formatTime, getSurahDisplayName } from '@/utils';
 
 type Props = {
@@ -42,6 +43,7 @@ export default function TrackInfo({
 
   const allCached = isAllCached(playlist);
   const isDownloading = progress !== null;
+  const downloadsEnabled = canDownload(selectedReciter?.source);
 
   return (
     <div className="mt-3 flex flex-col items-center justify-center gap-1">
@@ -52,7 +54,7 @@ export default function TrackInfo({
 
       {/* Fixed-height download status area to prevent player card height changes */}
       <div className="min-h-[52px] w-full max-w-xs">
-        {isDownloading ? (
+        {!downloadsEnabled ? null : isDownloading ? (
           <div className="flex w-full flex-col gap-1.5 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 dark:border-blue-900 dark:bg-blue-950/40">
             <div className="flex items-center justify-between gap-2">
               <span className="text-xs font-medium text-blue-700 dark:text-blue-300">
