@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import type { Language } from '@/constants/language';
 import { LANGUAGES } from '@/constants/language';
-import {
-  getAllRecitersFromAdapters,
-  parseEnabledSources,
-} from '@/services/reciters';
+import { parseEnabledSources } from '@/services/reciters';
+import { getAllRecitersCached } from '@/services/reciters/cached';
 
 // Enable Next.js caching with 1 hour revalidation
 export const revalidate = 3600;
@@ -24,7 +22,7 @@ export async function GET(request: NextRequest) {
   const enabledSources = parseEnabledSources(sourcesParameter ?? cookie);
 
   try {
-    const reciters = await getAllRecitersFromAdapters(language, enabledSources);
+    const reciters = await getAllRecitersCached(language, enabledSources);
 
     // Add cache headers for client-side caching
     return NextResponse.json(reciters, {

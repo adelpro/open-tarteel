@@ -25,11 +25,12 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(clientConfig.APP_URL),
-  applicationName: 'Open Tarteel',
+  applicationName: clientConfig.APP_NAME,
+  manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Open Tarteel',
+    title: clientConfig.APP_NAME,
   },
   formatDetection: {
     telephone: false,

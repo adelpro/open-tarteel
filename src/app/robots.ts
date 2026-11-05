@@ -1,14 +1,17 @@
 import { MetadataRoute } from 'next';
 
-import { clientConfig } from '@/utils';
+import { clientConfig, normalizeAppUrl } from '@/utils';
 
 export default function robots(): MetadataRoute.Robots {
+  const appUrl = normalizeAppUrl(clientConfig.APP_URL) ?? '';
+
   return {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: '/private/',
+      disallow: ['/api/', '/private/'],
     },
-    sitemap: `${clientConfig.APP_URL}/sitemap.xml`,
+    sitemap: `${appUrl}/sitemap.xml`,
+    host: appUrl,
   };
 }

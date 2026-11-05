@@ -12,8 +12,9 @@ type Props = {
 export async function generateStaticParams() {
   try {
     const RECITERS = await getAllReciters('ar', null);
-    return RECITERS.map((reciter) => ({
-      id: reciter.id,
+    // A reciter can expose multiple moshaf entries; Next only needs one path.
+    return [...new Set(RECITERS.map((reciter) => reciter.id))].map((id) => ({
+      id,
     }));
   } catch {
     return [];
@@ -22,7 +23,16 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
-  const RECITERS = await getAllReciters('ar', null);
+
+  let RECITERS: Awaited<ReturnType<typeof getAllReciters>> = [];
+  try {
+    RECITERS = await getAllReciters('ar', null);
+  } catch {
+    return {
+      title: clientConfig.APP_NAME,
+    };
+  }
+
   const reciter = RECITERS.find((r) => r.id === id);
 
   if (!reciter) {
@@ -31,17 +41,22 @@ export async function generateMetadata({ params }: Props) {
     };
   }
 
+  const appUrl = normalizeAppUrl(clientConfig.APP_URL) ?? '';
+
   return {
     metadataBase: new URL(clientConfig.APP_URL),
     title: `${reciter.name} | ${clientConfig.APP_NAME}`,
     description: `استمع إلى تلاوات ${reciter.name}`,
+    alternates: {
+      canonical: `${appUrl}/reciter/${reciter.id}`,
+    },
     openGraph: {
       title: `${reciter.name} | ${clientConfig.APP_NAME}`,
       description: `استمع إلى تلاوات ${reciter.name}`,
-      url: `${normalizeAppUrl(clientConfig.APP_URL)}/reciter/${reciter.id}`,
+      url: `${appUrl}/reciter/${reciter.id}`,
       images: [
         {
-          url: `/logo-og.png`,
+          url: '/images/logo-og.png',
           width: 1024,
           height: 1024,
           alt: clientConfig.APP_NAME,
@@ -55,7 +70,7 @@ export async function generateMetadata({ params }: Props) {
       description: `استمع إلى تلاوات ${reciter.name}`,
       images: [
         {
-          url: `/logo-og.png`,
+          url: '/images/logo-og.png',
           width: 1024,
           height: 1024,
           alt: 'Quran - القرآن',

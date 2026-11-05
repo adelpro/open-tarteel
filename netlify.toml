@@ -1,0 +1,22 @@
+[build]
+  command = "corepack yarn build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NEXT_TELEMETRY_DISABLED = "1"
+  # Keeps client requests pinned to the deploy that served the page.
+  NETLIFY_NEXT_SKEW_PROTECTION = "true"
+
+# The service worker must never be served from the HTTP cache.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+# The health endpoint is used by deploy smoke tests.
+[[headers]]
+  for = "/api/health"
+  [headers.values]
+    Cache-Control = "no-store"

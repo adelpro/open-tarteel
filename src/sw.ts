@@ -28,6 +28,15 @@ function isQuranAudioUrl(url: URL): boolean {
   ) {
     return true;
   }
+  // MP3Quran v3 now serves most recitations from cdn.mp3quran.net, not
+  // server15.mp3quran.net. v4 also exposes .opus files from the same CDN.
+  if (
+    url.hostname === 'cdn.mp3quran.net' &&
+    url.pathname.startsWith('/audio/') &&
+    /\.(mp3|opus)$/i.test(url.pathname)
+  ) {
+    return true;
+  }
   if (url.hostname === 'itqan.dev' || url.hostname.endsWith('.itqan.dev')) {
     return true;
   }
@@ -290,7 +299,9 @@ self.addEventListener('install', (event) => {
 
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
-  skipWaiting: true,
+  // Wait for the user to accept the update (see PwaUpdater). This avoids
+  // swapping the caches while audio is playing or a download is in progress.
+  skipWaiting: false,
   clientsClaim: true,
   navigationPreload: false,
   runtimeCaching,
@@ -314,6 +325,13 @@ serwist.setCatchHandler(async ({ request }) => {
     );
   }
   return Response.error();
+});
+
+// PwaUpdater posts this message after the user accepts the update.
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    void self.skipWaiting();
+  }
 });
 
 serwist.addEventListeners();

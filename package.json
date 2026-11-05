@@ -36,6 +36,7 @@
     "dev:react-doctor": "npx react-doctor@latest .",
     "dev:inspect": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
+    "analyze": "ANALYZE=true next build",
     "start": "next start",
     "lint": "eslint . --cache --concurrency=auto --max-warnings=0",
     "lint:fix": "eslint . --fix --cache --concurrency=auto",
@@ -44,8 +45,9 @@
     "format:check": "prettier --check .",
     "prepare": "husky || true",
     "test": "vitest",
+    "test:run": "vitest --run",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
+    "test:coverage": "vitest --run --coverage",
     "clean": "rimraf .next node_modules"
   },
   "lint-staged": {
@@ -56,16 +58,11 @@
     "*.{json,md,css}": "prettier --write"
   },
   "dependencies": {
-    "@next/bundle-analyzer": "^15.1.5",
     "@serwist/next": "^9.0.12",
     "clsx": "^2.1.1",
-    "commitizen": "^4.3.1",
-    "cross-env": "^7.0.3",
-    "cz-conventional-changelog": "^3.3.0",
     "fuse.js": "^7.1.0",
     "gun": "^0.2020.1241",
     "jotai": "^2.11.1",
-    "jotai-devtools": "^0.12.0",
     "js-yaml": "4.3.2",
     "next": "^15.4.2",
     "nodemailer": "^6.10.0",
@@ -76,8 +73,7 @@
     "react-icons": "^5.5.0",
     "react-intl": "^7.1.11",
     "sanitize-html": "^2.17.0",
-    "tailwind-merge": "^3.3.1",
-    "wavesurfer.js": "^7.10.1"
+    "tailwind-merge": "^3.3.1"
   },
   "config": {
     "commitizen": {
@@ -89,29 +85,29 @@
     "@commitlint/config-conventional": "^19.6.0",
     "@eslint/compat": "^1.2.5",
     "@eslint/js": "^9.18.0",
-    "@svgr/webpack": "^8.1.0",
+    "@next/bundle-analyzer": "^15.1.5",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
+    "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
-    "@types/escape-html": "^1.0.4",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@types/sanitize-html": "^2.16.0",
-    "@types/webtorrent": "^0.110.0",
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
     "@vitejs/plugin-react": "^5.1.3",
     "@vitest/coverage-v8": "^4.0.18",
     "babel-plugin-react-compiler": "^1.0.0",
+    "commitizen": "^4.3.1",
+    "cross-env": "^7.0.3",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9.18.0",
     "eslint-config-next": "^15.2.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-markdown": "^5.1.0",
-    "eslint-plugin-playwright": "^2.1.0",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-simple-import-sort": "^12.1.1",
@@ -130,6 +126,9 @@
   },
   "resolutions": {
     "browserslist": "^4.28.9"
+  },
+  "engines": {
+    "node": ">=20.9.0"
   },
   "packageManager": "yarn@4.13.0+sha512.5c20ba010c99815433e5c8453112165e673f1c7948d8d2b267f4b5e52097538658388ebc9f9580656d9b75c5cc996f990f611f99304a2197d4c56d21eea370e7"
 }

@@ -54,3 +54,6 @@ public/offline.html
 .github\copilot-instructions.md
 testsprite_tests/tmp/
 testsprite_tests/tmp/config.json
+
+# Local Netlify folder
+.netlify
