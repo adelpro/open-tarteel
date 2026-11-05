@@ -4,6 +4,8 @@ import type { LinkSource } from '@/types';
 import { clientConfig, normalizeAppUrl } from '@/utils';
 import { getAllReciters } from '@/utils/api';
 
+export const dynamic = 'force-dynamic';
+
 type Props = {
   params: Promise<{ id: string }>;
 };
@@ -15,18 +17,6 @@ const sourceFromId = (id: string): LinkSource | null => {
   const candidate = id.slice(0, index);
   return candidate.includes('.') ? (candidate as LinkSource) : null;
 };
-
-export async function generateStaticParams() {
-  try {
-    const RECITERS = await getAllReciters('ar', null);
-    // A reciter can expose multiple moshaf entries; Next only needs one path.
-    return [...new Set(RECITERS.map((reciter) => reciter.id))].map((id) => ({
-      id,
-    }));
-  } catch {
-    return [];
-  }
-}
 
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
