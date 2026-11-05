@@ -4,7 +4,6 @@ import { useAtom, useAtomValue } from 'jotai';
 import dynamic from 'next/dynamic';
 import React, { Suspense, useEffect, useState } from 'react';
 
-import PwaUpdater from '@/components/pwa-updater';
 import ReciterSelector from '@/components/reciter-selector';
 import SimpleSkeleton from '@/components/simple-skeleton';
 import { fullscreenAtom, selectedReciterAtom } from '@/jotai/atom';
@@ -46,7 +45,6 @@ function ReciterContent() {
             <Player playlist={selectedReciter.moshaf.playlist} />
           </Suspense>
         )}
-        <PwaUpdater />
       </div>
     </div>
   );

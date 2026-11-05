@@ -4,65 +4,65 @@ name: open-tarteel-design-system
 description: Open Tarteel is a free, open-source Quran recitation player built with Next.js and Tailwind CSS. The atmosphere is quiet and devotional, a warm zinc canvas lit by a soft sky-blue glow, and at night a blue-black surface under a brighter cyan accent. Roles live in CSS custom properties that the dark class swaps whole, corners are soft, and motion stays short and functional.
 
 colors:
-  primary: "#0190dd"
-  primary-dark: "#0190dd"
-  primary-foreground: "#ffffff"
-  background: "#f4f4f5"
-  background-dark: "#0f1117"
-  surface: "#ffffff"
-  surface-dark: "#1a1f2e"
-  card: "#ffffff"
-  card-dark: "#1a1f2e"
-  foreground: "#18181b"
-  foreground-dark: "#f1f5f9"
-  muted: "#71717a"
-  muted-dark: "#64748b"
-  border: "#e4e4e7"
-  border-dark: "#1e293b"
-  accent: "#0ea5e9"
-  accent-dark: "#38bdf8"
-  accent-hover: "#0284c7"
-  accent-hover-dark: "#7dd3fc"
-  brand-cta-blue-500: "#0190dd"
-  brand-cta-blue-600: "#07507f"
-  brand-cta-green-500: "#10B981"
-  brand-cta-green-600: "#059669"
-  brand-cta-red-500: "#FF4B4B"
-  brand-cta-red-600: "#DB2727"
-  brand-dark-100: "#f5f6f7"
-  brand-cta-dark-200: "#e5e7eb"
-  brand-cta-dark-500: "#6B7280"
-  brand-cta-dark-600: "#222222"
-  brand-success: "#4BB543"
-  brand-info: "#4D71F9"
-  brand-warning: "#FFA800"
-  brand-danger: "#FF4B4B"
-  spectrum-meter: "#0191e2"
+  primary: '#0190dd'
+  primary-dark: '#0190dd'
+  primary-foreground: '#ffffff'
+  background: '#f4f4f5'
+  background-dark: '#0f1117'
+  surface: '#ffffff'
+  surface-dark: '#1a1f2e'
+  card: '#ffffff'
+  card-dark: '#1a1f2e'
+  foreground: '#18181b'
+  foreground-dark: '#f1f5f9'
+  muted: '#71717a'
+  muted-dark: '#64748b'
+  border: '#e4e4e7'
+  border-dark: '#1e293b'
+  accent: '#0ea5e9'
+  accent-dark: '#38bdf8'
+  accent-hover: '#0284c7'
+  accent-hover-dark: '#7dd3fc'
+  brand-cta-blue-500: '#0190dd'
+  brand-cta-blue-600: '#07507f'
+  brand-cta-green-500: '#10B981'
+  brand-cta-green-600: '#059669'
+  brand-cta-red-500: '#FF4B4B'
+  brand-cta-red-600: '#DB2727'
+  brand-dark-100: '#f5f6f7'
+  brand-cta-dark-200: '#e5e7eb'
+  brand-cta-dark-500: '#6B7280'
+  brand-cta-dark-600: '#222222'
+  brand-success: '#4BB543'
+  brand-info: '#4D71F9'
+  brand-warning: '#FFA800'
+  brand-danger: '#FF4B4B'
+  spectrum-meter: '#0191e2'
 
 typography:
   display:
-    fontFamily: "Tajawal, ui-sans-serif, sans-serif"
-    fontSize: "60px"
+    fontFamily: 'Tajawal, ui-sans-serif, sans-serif'
+    fontSize: '60px'
     fontWeight: 900
     lineHeight: 1
   title:
-    fontFamily: "Tajawal, ui-sans-serif, sans-serif"
-    fontSize: "30px"
+    fontFamily: 'Tajawal, ui-sans-serif, sans-serif'
+    fontSize: '30px'
     fontWeight: 700
     lineHeight: 1.2
   body:
-    fontFamily: "Tajawal, ui-sans-serif, sans-serif"
-    fontSize: "16px"
+    fontFamily: 'Tajawal, ui-sans-serif, sans-serif'
+    fontSize: '16px'
     fontWeight: 400
     lineHeight: 1.5
   label:
-    fontFamily: "Tajawal, ui-sans-serif, sans-serif"
-    fontSize: "14px"
+    fontFamily: 'Tajawal, ui-sans-serif, sans-serif'
+    fontSize: '14px'
     fontWeight: 600
     lineHeight: 1.43
   caption:
-    fontFamily: "Tajawal, ui-sans-serif, sans-serif"
-    fontSize: "12px"
+    fontFamily: 'Tajawal, ui-sans-serif, sans-serif'
+    fontSize: '12px'
     fontWeight: 700
     lineHeight: 1.33
 ---

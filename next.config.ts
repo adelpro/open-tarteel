@@ -5,7 +5,12 @@ import type { NextConfig } from 'next';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const buildAppUrl =
-  process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_TARTEEL_APP_URL;
+  process.env.NEXT_PUBLIC_APP_URL ||
+  process.env.NEXT_PUBLIC_TARTEEL_APP_URL ||
+  // Netlify sets these at build time. DEPLOY_PRIME_URL is the primary URL for
+  // the current deploy (branch deploy or deploy preview).
+  process.env.DEPLOY_PRIME_URL ||
+  process.env.URL;
 
 if (
   isProduction &&
@@ -58,6 +63,9 @@ const nextConfig: NextConfig = {
   // default output.
   ...(process.env.NETLIFY ? {} : { output: 'standalone' as const }),
   reactStrictMode: !isProduction,
+  // Inline the resolved origin so client code (share links, metadata) never
+  // falls back to localhost on deploy previews.
+  env: buildAppUrl ? { NEXT_PUBLIC_APP_URL: buildAppUrl } : {},
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
   allowedDevOrigins: ['localhost'],

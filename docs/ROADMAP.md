@@ -39,12 +39,12 @@ and dependency, not by importance.
 | Check                         | Result                                                 |
 | ----------------------------- | ------------------------------------------------------ |
 | `tsc` / ESLint / Prettier     | pass                                                   |
-| Tests                         | 201 pass                                               |
-| Production build              | 268 pages                                              |
+| Tests                         | **342 pass** (20 files)                                |
+| Production build              | **416 pages**                                          |
 | Docker image                  | 250 MB, non-root, health `healthy`                     |
-| `/api/reciters` payload       | **2,494,310 B** (319 reciters: 299 MP3Quran, 20 Itqan) |
-| `/api/reciters` local latency | 2.2 s cold, **0.56 s warm**                            |
-| `/api/reciters` cache         | **silently fails**: 2.73 MB > Next's 2 MB limit        |
+| `/api/reciters` payload       | **4,487,109 B** (483 reciters: 299 MP3Quran, 20 Itqan, 164 Qurani.ai) |
+| `/api/reciters` cold latency  | **118 s** (Qurani.ai probing + Itqan N+1)              |
+| `/api/reciters` cache         | **silently fails**: 4.85 MB > Next's 2 MB limit        |
 | `/api/health`                 | 19 ms                                                  |
 
 Known defect in the current hardening: `src/services/reciters/cached.ts` caches
@@ -62,17 +62,28 @@ never persists. Fix in 5c/5d; do not rely on the current cache layer.
   `NEXT_PUBLIC_APP_URL` is inlined at build time. Use it only for quick device
   testing until Stage 8 lands.
 
-### Critical sequencing note
+### Rebase status (done)
 
-`origin/develop` is far ahead of `main` (tahfeez/repeat-range, Quran
-Foundation, QuranAI, `merged-reciters.ts`, `offline-redirect`,
-`use-network-status`, `storage-persist`, `DESIGN.md`). The hardening branch is
-based on `main`.
+The hardening work is rebased onto `origin/develop` on branch
+`chore/production-hardening` (commit `02dd03f`). Conflicts resolved in
+`.env.example`, `next.config.ts`, `package.json`, both reciter routes,
+`layout.tsx`, `manifest.ts`, `html-wrapper.tsx`, `pwa-updater.tsx`, `sw.ts`,
+`yarn.lock`, and the deleted `pwa-updater` type.
 
-**Do this first:** rebase or merge the hardening work onto `origin/develop`.
-Expect conflicts in `player-controls.tsx`, `player.tsx`, `reciters-list.tsx`,
-`services/reciters/index.ts`, `link-source.ts`. Do not implement provider work
-on a `main` base.
+Resolution decisions:
+
+- Kept develop's SW (offline cache, Qurani.ai/QF hosts, navigation fallback) and
+  added `cdn.mp3quran.net` matching, `skipWaiting: false`, and the
+  `SKIP_WAITING` message handler.
+- Kept develop's three-language `Language` type in the reciter routes and
+  routed both through the server cache.
+- Kept develop's theme bootstrap in `html-wrapper.tsx`.
+- Removed the duplicate `PwaUpdater` from the reciter page (layout owns it).
+- Added `@testing-library/dom`, which develop's tests need but the rebased
+  dependency tree was missing.
+
+Verification: `tsc`, ESLint, Prettier, 342 tests, and the production build all
+pass. `/api/reciters` is still the top risk (4.49 MB, 118 s cold).
 
 ---
 

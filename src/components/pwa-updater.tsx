@@ -100,10 +100,7 @@ const PwaUpdater = () => {
       ariaLabelledBy="pwa-update-title"
     >
       <div className="flex flex-col gap-4 p-4">
-        <h2
-          id="pwa-update-title"
-          className="text-lg font-bold text-foreground"
-        >
+        <h2 id="pwa-update-title" className="text-lg font-bold text-foreground">
           {formatMessage({ id: 'pwa.update_title' })}
         </h2>
         <p className="text-sm text-gray-600 dark:text-gray-400">
