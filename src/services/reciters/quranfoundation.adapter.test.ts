@@ -394,29 +394,30 @@ describe('QuranFoundationAdapter', () => {
   });
 
   describe('resolveReciterName', () => {
+    // Mirrors the live API with `?language=ar`: `name` is Latin and
+    // `translated_name` is the Arabic localization.
     const reciter = {
       id: 1,
-      name: 'مشاري راشد العفاسي',
+      name: 'Mishari Rashid al-Afasy',
       translated_name: {
-        name: 'Mishari Rashid al-Afasy',
-        language_name: 'english',
+        name: 'مشاري راشد العفاسي',
+        language_name: 'arabic',
       },
     };
 
-    it('keeps the localized name for ar', () => {
+    it('uses translated_name, which is the localized value', () => {
       expect(resolveReciterName(reciter, 'ar')).toBe('مشاري راشد العفاسي');
     });
 
-    it('uses translated_name for en', () => {
-      expect(resolveReciterName(reciter, 'en')).toBe('Mishari Rashid al-Afasy');
-    });
-
-    it('uses translated_name for unsupported locales', () => {
-      expect(resolveReciterName(reciter, 'de')).toBe('Mishari Rashid al-Afasy');
+    it('uses the same localized field for en and de', () => {
+      expect(resolveReciterName(reciter, 'en')).toBe('مشاري راشد العفاسي');
+      expect(resolveReciterName(reciter, 'de')).toBe('مشاري راشد العفاسي');
     });
 
     it('falls back to name when translated_name is missing', () => {
-      expect(resolveReciterName({ id: 2, name: 'مشاري' }, 'en')).toBe('مشاري');
+      expect(resolveReciterName({ id: 2, name: 'Mishari' }, 'ar')).toBe(
+        'Mishari'
+      );
     });
   });
 });

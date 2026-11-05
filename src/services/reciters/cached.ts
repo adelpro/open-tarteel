@@ -18,7 +18,7 @@ import { getAllRecitersFromAdapters, getReciterPlaylist } from './index';
  */
 // Bump when the adapter shape, language handling, or pagination changes so a
 // deploy never serves data cached by the previous code.
-const CACHE_VERSION = 'v2-itqan-api-v1';
+const CACHE_VERSION = 'v3-qf-oauth-and-localized-names';
 
 const getCachedReciters = unstable_cache(
   (language: Language, sources: LinkSource[] | null) =>

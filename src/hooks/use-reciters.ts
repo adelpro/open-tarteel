@@ -68,7 +68,7 @@ export function useReciters() {
 
         if (typeof window !== 'undefined' && 'caches' in window) {
           try {
-            const cache = await caches.open('api-reciters-v2');
+            const cache = await caches.open('api-reciters-v3');
             const params = new URLSearchParams({ language: locale });
             if (enabledSources.length > 0) {
               params.set('sources', enabledSources.join(','));

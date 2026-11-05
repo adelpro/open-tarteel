@@ -72,7 +72,12 @@ const nextConfig: NextConfig = {
   reactStrictMode: !isProduction,
   // Inline the resolved origin so client code (share links, metadata) never
   // falls back to localhost on deploy previews.
-  env: buildAppUrl ? { NEXT_PUBLIC_APP_URL: buildAppUrl } : {},
+  env: {
+    ...(buildAppUrl ? { NEXT_PUBLIC_APP_URL: buildAppUrl } : {}),
+    // Let deploy previews auto-activate the new worker so testers never get
+    // stuck on a stale API cache. Production still waits for the user.
+    NEXT_PUBLIC_IS_PREVIEW: isNetlifyPreview ? 'true' : 'false',
+  },
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
   allowedDevOrigins: ['localhost'],
