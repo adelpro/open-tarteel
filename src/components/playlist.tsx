@@ -3,7 +3,7 @@
 import { useAtomValue } from 'jotai';
 import React, { useEffect, useState } from 'react';
 import { BsBook } from 'react-icons/bs';
-import { MdCloudDone, MdCloudDownload } from 'react-icons/md';
+import { MdCloudDone, MdCloudDownload, MdCloudOff } from 'react-icons/md';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { SURAHS } from '@/constants';
@@ -11,6 +11,7 @@ import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
 import { useNetworkStatus } from '@/hooks/use-network-status';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { selectedReciterAtom } from '@/jotai/atom';
+import { canDownload } from '@/services/reciters/capabilities';
 import { removeTashkeel } from '@/utils';
 
 import DownloadAllButton from './download-all-button';
@@ -43,6 +44,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
   } = useOfflineDownload();
 
   const rawPlaylist = selectedReciter?.moshaf?.playlist;
+  const downloadsEnabled = canDownload(selectedReciter?.source);
 
   const displayPlaylist = React.useMemo(() => {
     if (!rawPlaylist) return [];
@@ -100,20 +102,47 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
         </span>
       </div>
 
-      {/* Download-all banner - only when online */}
+      {/* Download-all banner - only when online and supported by the provider */}
       {isOnline && (
         <div className="mb-4 px-2">
-          <DownloadAllButton
-            playlist={playlist}
-            cachedCount={cachedCount}
-            isAllCached={allCached}
-            progress={progress}
-            onDownloadAll={downloadAllTracks}
-            onRemoveAll={removeAllTracks}
-            onCancel={cancelDownload}
-            checkStorageAvailable={checkStorageAvailable}
-            estimateStorage={estimateStorage}
-          />
+          {downloadsEnabled ? (
+            <DownloadAllButton
+              playlist={playlist}
+              cachedCount={cachedCount}
+              isAllCached={allCached}
+              progress={progress}
+              onDownloadAll={downloadAllTracks}
+              onRemoveAll={removeAllTracks}
+              onCancel={cancelDownload}
+              checkStorageAvailable={checkStorageAvailable}
+              estimateStorage={estimateStorage}
+            />
+          ) : (
+            <div
+              role="note"
+              className="flex items-start gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-xs text-gray-600 dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-300"
+            >
+              <MdCloudOff
+                size={18}
+                className="mt-0.5 shrink-0 text-gray-400 dark:text-gray-500"
+                aria-hidden="true"
+              />
+              <div className="space-y-0.5">
+                <p className="font-semibold text-gray-700 dark:text-gray-200">
+                  <FormattedMessage
+                    id="download.unavailableTitle"
+                    defaultMessage="Download unavailable for this provider"
+                  />
+                </p>
+                <p>
+                  <FormattedMessage
+                    id="download.unavailableBody"
+                    defaultMessage="This provider blocks browser downloads. You can still stream this reciter."
+                  />
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

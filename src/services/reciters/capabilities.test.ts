@@ -62,5 +62,8 @@ describe('provider capabilities', () => {
     expect(hasTiming(LinkSource.MP3QURAN)).toBe(true);
     expect(canDownload(LinkSource.ITQAN)).toBe(false);
     expect(canDownload(LinkSource.MP3QURAN)).toBe(true);
+    expect(canDownload(LinkSource.MP3QURAN_V4)).toBe(true);
+    expect(canDownload(LinkSource.QURANAI)).toBe(true);
+    expect(canDownload(LinkSource.QURAN_FOUNDATION)).toBe(true);
   });
 });
