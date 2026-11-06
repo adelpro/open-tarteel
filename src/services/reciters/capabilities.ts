@@ -131,8 +131,8 @@ export const canUseRangeMode = (
 ): boolean =>
   Boolean(
     source &&
-      moshaf?.hasTimings !== false &&
-      getCapabilities(source).timingIntegration === 'implemented'
+    moshaf?.hasTimings !== false &&
+    getCapabilities(source).timingIntegration === 'implemented'
   );
 
 export const canDownload = (source?: LinkSource | null): boolean =>
