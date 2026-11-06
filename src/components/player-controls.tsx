@@ -21,6 +21,7 @@ import { useIntl } from 'react-intl';
 
 import Tooltip from '@/components/tooltip';
 import { ICON_SIZE, SLEEP_MINUTES } from '@/constants';
+import useDirection from '@/hooks/use-direction';
 import { useSleepTimer } from '@/hooks/use-sleep-timer';
 import { TimeRange, useTahfeezSession } from '@/hooks/use-tahfeez-session';
 import {
@@ -153,6 +154,7 @@ export default function PlayerControls({
 
   const moreMenuRef = useRef<HTMLDivElement>(null);
   const { formatMessage } = useIntl();
+  const { isRTL } = useDirection();
 
   // ── Custom Hook ─────────────────────────────────────
   const { remainingTime, setSleepTimer, clearSleepTimer } =
@@ -353,7 +355,7 @@ export default function PlayerControls({
         {/* Controls Skeleton */}
         <div
           className="relative flex w-full items-center justify-between gap-2 md:gap-3"
-          dir="rtl"
+          dir={isRTL ? 'rtl' : 'ltr'}
         >
           {Array.from({ length: 7 }).map((_, index) => (
             <div key={index} className="h-9 w-9" />
@@ -393,7 +395,7 @@ export default function PlayerControls({
 
       <div
         className="relative flex w-full items-center justify-between gap-2 md:gap-3"
-        dir="rtl"
+        dir={isRTL ? 'rtl' : 'ltr'}
       >
         {/* Volume Control */}
         <div
@@ -528,6 +530,37 @@ export default function PlayerControls({
           </div>
         )}
 
+        {/* Desktop quick actions (everything else lives in the More menu). */}
+        <div className="hidden items-center gap-2 md:flex">
+          <Tooltip
+            content={
+              isFullscreen ? messages.exitFullscreen : messages.enterFullscreen
+            }
+          >
+            <button
+              onClick={toggleFullscreen}
+              className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+              aria-label={
+                isFullscreen
+                  ? messages.exitFullscreen
+                  : messages.enterFullscreen
+              }
+            >
+              {isFullscreen ? (
+                <BsFullscreenExit size={ICON_SIZE} color="#6b7280" />
+              ) : (
+                <BsFullscreen size={ICON_SIZE} color="#6b7280" />
+              )}
+            </button>
+          </Tooltip>
+
+          {renderImageButton(
+            playlistSVG,
+            messages.togglePlaylist,
+            togglePlaylistOpen
+          )}
+        </div>
+
         {/* More Menu */}
         <div className="relative" ref={moreMenuRef}>
           <Tooltip content={messages.more}>
@@ -549,7 +582,7 @@ export default function PlayerControls({
           </Tooltip>
 
           {showMoreMenu && (
-            <div className="absolute bottom-10 left-0 z-10 flex w-52 flex-col gap-1 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
+            <div className="absolute bottom-10 end-0 z-10 flex w-52 flex-col gap-1 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
               <div className="px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400">
                 {messages.modeSwitcher}
               </div>
@@ -723,37 +756,6 @@ export default function PlayerControls({
                 <span>{messages.togglePlaylist}</span>
               </button>
             </div>
-          )}
-        </div>
-
-        {/* Desktop quick actions (everything else lives in the More menu). */}
-        <div className="hidden items-center gap-2 md:flex">
-          <Tooltip
-            content={
-              isFullscreen ? messages.exitFullscreen : messages.enterFullscreen
-            }
-          >
-            <button
-              onClick={toggleFullscreen}
-              className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-              aria-label={
-                isFullscreen
-                  ? messages.exitFullscreen
-                  : messages.enterFullscreen
-              }
-            >
-              {isFullscreen ? (
-                <BsFullscreenExit size={ICON_SIZE} color="#6b7280" />
-              ) : (
-                <BsFullscreen size={ICON_SIZE} color="#6b7280" />
-              )}
-            </button>
-          </Tooltip>
-
-          {renderImageButton(
-            playlistSVG,
-            messages.togglePlaylist,
-            togglePlaylistOpen
           )}
         </div>
       </div>
