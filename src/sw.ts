@@ -6,6 +6,7 @@ import {
   ExpirationPlugin,
   type HandlerCallbackOptions,
   NetworkFirst,
+  RangeRequestsPlugin,
   Serwist,
 } from 'serwist';
 
@@ -18,7 +19,8 @@ declare global {
 declare const self: ServiceWorkerGlobalScope;
 
 const OFFLINE_CACHE = 'quran-offline-downloads';
-const AUDIO_RUNTIME_CACHE = 'quran-audio';
+const AUDIO_RUNTIME_CACHE = 'quran-audio-v2';
+const LEGACY_AUDIO_RUNTIME_CACHE = 'quran-audio';
 
 function isQuranAudioUrl(url: URL): boolean {
   if (
@@ -45,9 +47,22 @@ function isQuranAudioUrl(url: URL): boolean {
 
 // Unified audio handler: check explicit downloads cache first,
 // then fall through to CacheFirst runtime strategy.
+// RangeRequestsPlugin serves 206 slices from a full cached response so
+// offline seeking works once a surah has been downloaded.
+const offlineAudioCacheFirst = new CacheFirst({
+  cacheName: OFFLINE_CACHE,
+  plugins: [
+    new RangeRequestsPlugin(),
+    new CacheableResponsePlugin({
+      statuses: [200],
+    }),
+  ],
+});
+
 const audioCacheFirst = new CacheFirst({
   cacheName: AUDIO_RUNTIME_CACHE,
   plugins: [
+    new RangeRequestsPlugin(),
     new ExpirationPlugin({
       maxEntries: 300,
       maxAgeSeconds: 90 * 24 * 60 * 60, // 90 days
@@ -79,7 +94,7 @@ const quranAudioCache = {
     handle: async (options: HandlerCallbackOptions) => {
       const offlineCache = await caches.open(OFFLINE_CACHE);
       const offlineHit = await offlineCache.match(options.request);
-      if (offlineHit) return offlineHit;
+      if (offlineHit) return offlineAudioCacheFirst.handle(options);
 
       return audioCacheFirst.handle(options);
     },
@@ -299,6 +314,7 @@ self.addEventListener('activate', (event) => {
     Promise.all([
       caches.delete('api-reciters'),
       caches.delete('api-reciters-v2'),
+      caches.delete(LEGACY_AUDIO_RUNTIME_CACHE),
     ])
   );
 });
