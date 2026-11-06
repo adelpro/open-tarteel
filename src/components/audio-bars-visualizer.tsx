@@ -82,19 +82,17 @@ export default function AudioBarsVisualizer({
   const [visualizerWidth, setVisualizerWidth] = useState(400);
 
   // Track whether the user has ever started playback.
-  // We only mount ReactAudioSpectrum AFTER the first play so the AudioContext
-  // is created in response to user interaction (running state, not suspended).
-  // Once mounted we never unmount it — the Web Audio API only allows one
-  // MediaElementSourceNode per HTMLMediaElement.
-  const everPlayedRef = useRef(false);
+  // Mount ReactAudioSpectrum on the first play render (not the next one) so the
+  // AudioContext is created in response to user interaction and the library can
+  // start animating immediately. Once mounted we never unmount it — the Web
+  // Audio API only allows one MediaElementSourceNode per HTMLMediaElement.
   const [everPlayed, setEverPlayed] = useState(false);
 
   useEffect(() => {
-    if (isPlaying && !everPlayedRef.current) {
-      everPlayedRef.current = true;
+    if (isPlaying && !everPlayed) {
       setEverPlayed(true);
     }
-  }, [isPlaying]);
+  }, [isPlaying, everPlayed]);
 
   useEffect(() => {
     const calculateWidth = () => {
@@ -102,15 +100,14 @@ export default function AudioBarsVisualizer({
     };
 
     calculateWidth();
-
     window.addEventListener('resize', calculateWidth);
-
     return () => {
       window.removeEventListener('resize', calculateWidth);
     };
   }, []);
 
   const visible = showVisualizer && isPlaying && enabled;
+  const mountSpectrum = everPlayed || isPlaying;
 
   // Keep the height but never create an AudioContext for a source the browser
   // refuses to share samples from.
@@ -120,7 +117,7 @@ export default function AudioBarsVisualizer({
   }
 
   // Before first play: show a static baseline (no AudioContext created yet).
-  if (!everPlayed) {
+  if (!mountSpectrum) {
     return <SpectrumFallback active={false} visible={showVisualizer} />;
   }
 
@@ -137,7 +134,9 @@ export default function AudioBarsVisualizer({
         height={90}
         width={visualizerWidth}
         capColor="#0191e2"
+        capHeight={2}
         meterWidth={10}
+        meterCount={28}
         meterColor="#0191e2"
         gap={4}
         silent={!isPlaying}
