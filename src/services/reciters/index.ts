@@ -2,14 +2,17 @@ import { Language } from '@/constants/language';
 import type { Moshaf, Playlist, Reciter } from '@/types';
 import { LinkSource } from '@/types';
 
+import { isMp3QuranV4Enabled } from './flags';
 import { ItqanAdapter } from './itqan.adapter';
 import { Mp3QuranAdapter } from './mp3quran.adapter';
+import { Mp3QuranV4Adapter } from './mp3quran-v4.adapter';
 import { QuranAiAdapter } from './quranai.adapter';
 import { QuranFoundationAdapter } from './quranfoundation.adapter';
 import type { ReciterSource } from './reciter-source';
 
 const adapters: ReciterSource[] = [
   Mp3QuranAdapter,
+  ...(isMp3QuranV4Enabled() ? [Mp3QuranV4Adapter] : []),
   ItqanAdapter,
   QuranAiAdapter,
   QuranFoundationAdapter,
@@ -142,6 +145,7 @@ export async function getReciterPlaylist(
 
 export { ItqanAdapter } from './itqan.adapter';
 export { Mp3QuranAdapter } from './mp3quran.adapter';
+export { Mp3QuranV4Adapter } from './mp3quran-v4.adapter';
 export { getAyahAudioRange } from './quranai.adapter';
 export { QuranAiAdapter } from './quranai.adapter';
 export { QuranFoundationAdapter } from './quranfoundation.adapter';

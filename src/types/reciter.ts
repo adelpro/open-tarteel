@@ -10,6 +10,10 @@ export type Moshaf = {
   surah_total: string;
   /** Compact source list for lazy playlist generation (e.g. MP3Quran). */
   surahIds?: string;
+  /** Stable recitation code for timing endpoints (MP3Quran v4). */
+  recitationCode?: string;
+  /** Whether this specific moshaf has timing data. */
+  hasTimings?: boolean;
   playlist: Playlist;
 };
 

@@ -1,3 +1,4 @@
+import type { Moshaf } from '@/types';
 import { LinkSource } from '@/types';
 
 export type TimingLevel = 'none' | 'ayah' | 'word' | 'letter' | 'phoneme';
@@ -32,7 +33,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     // https://www.mp3quran.net/eng/timing-api — 115 timing reads for 299 moshafs.
     timing: 'ayah',
     timingCoverage: 'partial',
-    timingIntegration: 'planned',
+    timingIntegration: 'implemented',
     names: 'ar+en',
     riwayah: { multiple: true, qiraah: false },
     audioTiers: ['original'],
@@ -50,7 +51,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     // https://docs.cms.itqan.dev/docs/guides/recitations-ayah-timings/
     timing: 'ayah',
     timingCoverage: 'all',
-    timingIntegration: 'planned',
+    timingIntegration: 'implemented',
     names: 'ar+en',
     riwayah: { multiple: true, qiraah: true },
     audioTiers: ['original'],
@@ -68,7 +69,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     // `includeTimings=true` returns per-ayah start/end/duration on each ayah.
     timing: 'ayah',
     timingCoverage: 'all',
-    timingIntegration: 'planned',
+    timingIntegration: 'implemented',
     names: 'ar+en',
     riwayah: { multiple: true, qiraah: false },
     audioTiers: ['original'],
@@ -98,6 +99,23 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     docsUrl: 'https://api-docs.quran.foundation/',
     verifiedAt: VERIFIED_AT,
   },
+  [LinkSource.MP3QURAN_V4]: {
+    id: LinkSource.MP3QURAN_V4,
+    label: { ar: 'MP3 Quran v4', en: 'MP3 Quran v4' },
+    beta: true,
+    timing: 'word',
+    timingCoverage: 'partial',
+    timingIntegration: 'implemented',
+    names: 'ar+en',
+    riwayah: { multiple: true, qiraah: true },
+    audioTiers: ['original', 'mp3_64', 'opus_48'],
+    wordAudio: true,
+    auth: 'none',
+    cors: 'open',
+    download: true,
+    docsUrl: 'https://docs-staging.mp3quran.net',
+    verifiedAt: '2026-11-06',
+  },
 };
 
 export const getCapabilities = (source: LinkSource): ProviderCapabilities =>
@@ -107,9 +125,14 @@ export const hasTiming = (source: LinkSource): boolean =>
   getCapabilities(source).timing !== 'none';
 
 /** Range/tahfeez is only safe where the app has implemented the timing call. */
-export const canUseRangeMode = (source?: LinkSource | null): boolean =>
+export const canUseRangeMode = (
+  source?: LinkSource | null,
+  moshaf?: Moshaf | null
+): boolean =>
   Boolean(
-    source && getCapabilities(source).timingIntegration === 'implemented'
+    source &&
+      moshaf?.hasTimings !== false &&
+      getCapabilities(source).timingIntegration === 'implemented'
   );
 
 export const canDownload = (source?: LinkSource | null): boolean =>

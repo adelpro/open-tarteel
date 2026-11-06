@@ -171,5 +171,7 @@
   "provider.badge.timing": "Timing",
   "provider.badge.word": "Word-by-word",
   "provider.badge.noDownload": "No download",
-  "provider.badge.more": "+{count}"
+  "provider.badge.more": "+{count}",
+  "tahfeez.noTimings": "No ayah timings for this surah.",
+  "settings.source.mp3quranv4": "MP3 Quran v4 (beta)"
 }

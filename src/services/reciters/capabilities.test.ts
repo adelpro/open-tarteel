@@ -46,10 +46,16 @@ describe('provider capabilities', () => {
     expect(caps.timingIntegration).toBe('implemented');
   });
 
-  it('only enables range mode where the timing call is implemented', () => {
+  it('enables range mode for every wired timing provider', () => {
     expect(canUseRangeMode(LinkSource.QURAN_FOUNDATION)).toBe(true);
-    expect(canUseRangeMode(LinkSource.ITQAN)).toBe(false);
+    expect(canUseRangeMode(LinkSource.ITQAN)).toBe(true);
+    expect(canUseRangeMode(LinkSource.MP3QURAN)).toBe(true);
+    expect(canUseRangeMode(LinkSource.QURANAI)).toBe(true);
+    expect(canUseRangeMode(LinkSource.MP3QURAN_V4)).toBe(true);
     expect(canUseRangeMode(undefined)).toBe(false);
+    expect(
+      canUseRangeMode(LinkSource.ITQAN, { hasTimings: false } as never)
+    ).toBe(false);
   });
 
   it('exposes timing and download helpers', () => {

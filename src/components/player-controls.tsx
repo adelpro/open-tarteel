@@ -33,7 +33,6 @@ import {
 } from '@/jotai/atom';
 import { canUseRangeMode } from '@/services/reciters/capabilities';
 import { cn } from '@/utils';
-import { resolveChapterReciterId } from '@/utils/resolveChapterReciterId';
 
 import TahfeezModeControls, { TahfeezSettings } from './tahfeez-mode-controls';
 // ─── Helpers ─────────────────────────────────────────
@@ -162,14 +161,6 @@ export default function PlayerControls({
   });
   const { audioPlaying } = session;
 
-  // Extract reciter ID and chapter number from current reciter and track
-  const reciterId = selectedReciter?.id
-    ? resolveChapterReciterId(
-        selectedReciter.id,
-        selectedReciter?.moshaf?.id,
-        'quranFoundation'
-      )
-    : undefined;
   const chapterNumber =
     currentTrackId !== undefined ? currentTrackId + 1 : undefined; // Track IDs are 0-indexed, chapters are 1-indexed
 
@@ -184,7 +175,10 @@ export default function PlayerControls({
     }
   }, [chapterNumber]);
 
-  const isTahfeezSupported = canUseRangeMode(selectedReciter?.source);
+  const isTahfeezSupported = canUseRangeMode(
+    selectedReciter?.source,
+    selectedReciter?.moshaf
+  );
 
   useEffect(() => {
     if (!isTahfeezSupported && activeMode === 'tahfeez') {
@@ -457,7 +451,8 @@ export default function PlayerControls({
           <TahfeezModeControls
             tahfeezSettings={tahfeezSettings}
             setTahfeezSettings={setTahfeezSettings}
-            reciterId={reciterId ?? undefined}
+            source={selectedReciter?.source}
+            moshafId={selectedReciter?.moshaf.id}
             chapterNumber={chapterNumber}
             onRangesReady={(ranges) => {
               currentRangesRef.current = ranges;
@@ -493,7 +488,8 @@ export default function PlayerControls({
         <TahfeezModeControls
           tahfeezSettings={tahfeezSettings}
           setTahfeezSettings={setTahfeezSettings}
-          reciterId={reciterId ?? undefined}
+          source={selectedReciter?.source}
+          moshafId={selectedReciter?.moshaf.id}
           chapterNumber={chapterNumber}
           onRangesReady={(ranges) => {
             currentRangesRef.current = ranges;
