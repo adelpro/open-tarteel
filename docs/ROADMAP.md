@@ -618,6 +618,21 @@ Reviewed `origin/develop`: `tahfeez-mode-controls.tsx`,
 | 6d  | `fix(tahfeez): live settings updates and a11y`                 | P1.7, P1.12             |
 | 6e  | `perf(tahfeez): cache timestamps and harden route`             | P1.11                   |
 
+### Implemented
+
+- Leaving Tahfeez stops the session and pauses audio.
+- Range start/end are filtered by `ayah`, clamped to the surah length, and an
+  invalid range shows an alert instead of failing silently.
+- Stale timing responses are cancelled with `AbortController`.
+- The session engine uses `requestAnimationFrame` and pins audio to `endTime`,
+  removing the ~250 ms bleed into the next ayah.
+- Range, repeat, and delay changes update a running session live; playback no
+  longer stops on every settings change.
+- Inputs use `<label htmlFor>`, strategy is a `radiogroup`, and loading/errors
+  are announced with `aria-live`/`role="alert"`.
+- Timing route returns `Retry-After` on upstream failure.
+- Hook tests cover boundary advance, live range updates, and stop/reset.
+
 Acceptance: no bleed on 3 surahs, settings change does not pause, switching to
 listening stops audio, invalid ranges explain themselves, keyboard + screen
 reader usable.

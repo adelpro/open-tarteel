@@ -161,6 +161,30 @@ export default function PlayerControls({
   });
   const { audioPlaying } = session;
 
+  const sessionRef = useRef(session);
+  useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
+
+  // Leaving tahfeez must stop the loop; the engine keeps playing otherwise.
+  const previousModeRef = useRef(activeMode);
+  useEffect(() => {
+    if (previousModeRef.current === 'tahfeez' && activeMode === 'listening') {
+      sessionRef.current.stop();
+    }
+    previousModeRef.current = activeMode;
+  }, [activeMode]);
+
+  // Apply repeat/delay changes to a running session without restarting it.
+  useEffect(() => {
+    if (sessionRef.current.isActive()) {
+      sessionRef.current.updateSettings(
+        tahfeezSettings.repeat,
+        tahfeezSettings.delay
+      );
+    }
+  }, [tahfeezSettings.repeat, tahfeezSettings.delay]);
+
   const chapterNumber =
     currentTrackId !== undefined ? currentTrackId + 1 : undefined; // Track IDs are 0-indexed, chapters are 1-indexed
 
@@ -456,7 +480,12 @@ export default function PlayerControls({
             chapterNumber={chapterNumber}
             onRangesReady={(ranges) => {
               currentRangesRef.current = ranges;
-              if ((audioPlaying || isPlaying) && !session.isActive()) {
+              if (session.isActive()) {
+                session.updateRanges(ranges);
+              } else if (
+                (audioPlaying || isPlaying) &&
+                activeMode === 'tahfeez'
+              ) {
                 session.start(
                   ranges,
                   tahfeezSettings.repeat,
@@ -493,7 +522,12 @@ export default function PlayerControls({
           chapterNumber={chapterNumber}
           onRangesReady={(ranges) => {
             currentRangesRef.current = ranges;
-            if ((audioPlaying || isPlaying) && !session.isActive()) {
+            if (session.isActive()) {
+              session.updateRanges(ranges);
+            } else if (
+              (audioPlaying || isPlaying) &&
+              activeMode === 'tahfeez'
+            ) {
               session.start(
                 ranges,
                 tahfeezSettings.repeat,
