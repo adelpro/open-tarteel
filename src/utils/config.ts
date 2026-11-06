@@ -1,3 +1,5 @@
+import packageJson from '../../package.json';
+
 const normalizeUrl = (url?: string) => url?.replace(/\/+$/, '');
 
 const toValidUrl = (url?: string) => {
@@ -26,7 +28,7 @@ const appUrl =
 export const clientConfig = {
   APP_NAME: process.env.NEXT_PUBLIC_APP_NAME || 'Open Tarteel',
   APP_URL: appUrl,
-  APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION || 'N/A',
+  APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION || packageJson.version,
   DEBUG: process.env.NEXT_PUBLIC_DEBUG === 'true',
 } as const;
 
