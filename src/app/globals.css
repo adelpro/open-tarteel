@@ -155,19 +155,4 @@ body {
   border-radius: 4px;
 }
 
-/* ─── CSS spectrum fallback (non-CORS providers) ─── */
-@keyframes spectrum-bar {
-  0%,
-  100% {
-    transform: scaleY(0.35);
-  }
-  50% {
-    transform: scaleY(1);
-  }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .spectrum-bar {
-    animation: none !important;
-  }
-}

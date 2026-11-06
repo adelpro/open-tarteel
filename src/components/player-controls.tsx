@@ -16,7 +16,7 @@ import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { BiVolumeFull, BiVolumeMute } from 'react-icons/bi';
 import { BsFullscreen, BsFullscreenExit } from 'react-icons/bs';
 import { FiHeadphones, FiRepeat } from 'react-icons/fi';
-import { MdRepeatOne, MdSpeed } from 'react-icons/md';
+import { MdCheck, MdRepeatOne, MdSpeed } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import Tooltip from '@/components/tooltip';
@@ -36,67 +36,6 @@ import { cn } from '@/utils';
 
 import TahfeezModeControls, { TahfeezSettings } from './tahfeez-mode-controls';
 // ─── Helpers ─────────────────────────────────────────
-type ModeSwitcherProps = {
-  activeMode: 'listening' | 'tahfeez';
-  onChange: (_mode: 'listening' | 'tahfeez') => void;
-  labels: { aria: string; listening: string; tahfeez: string };
-  disabled?: boolean;
-  disabledTitle?: string;
-};
-
-function ModeSwitcher({
-  activeMode,
-  onChange,
-  labels,
-  disabled = false,
-  disabledTitle,
-}: ModeSwitcherProps) {
-  const base =
-    'flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors';
-
-  return (
-    <div
-      role="tablist"
-      aria-label={labels.aria}
-      className="mb-3 flex w-full max-w-sm self-center rounded-full bg-gray-100 p-1 dark:bg-gray-800"
-    >
-      <button
-        type="button"
-        role="tab"
-        aria-selected={activeMode === 'listening'}
-        onClick={() => onChange('listening')}
-        className={cn(
-          base,
-          activeMode === 'listening'
-            ? 'bg-white text-blue-600 shadow-sm dark:bg-gray-700 dark:text-blue-400'
-            : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200'
-        )}
-      >
-        <FiHeadphones size={16} aria-hidden="true" />
-        {labels.listening}
-      </button>
-      <button
-        type="button"
-        role="tab"
-        aria-selected={activeMode === 'tahfeez'}
-        disabled={disabled}
-        title={disabled ? disabledTitle : undefined}
-        onClick={() => onChange('tahfeez')}
-        className={cn(
-          base,
-          'disabled:cursor-not-allowed disabled:opacity-50',
-          activeMode === 'tahfeez'
-            ? 'bg-white text-blue-600 shadow-sm dark:bg-gray-700 dark:text-blue-400'
-            : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200'
-        )}
-      >
-        <FiRepeat size={16} aria-hidden="true" />
-        {labels.tahfeez}
-      </button>
-    </div>
-  );
-}
-
 const getCurrentMinute = (seconds: number): number => Math.ceil(seconds / 60);
 
 const toggleFullscreen = () => {
@@ -117,6 +56,8 @@ type Props = {
   audioRef: RefObject<HTMLAudioElement | null>;
   currentTrackId: number | undefined;
   tahfeezActiveRef: React.RefObject<boolean>;
+  /** False when the current source has no CORS/WebAudio spectrum data. */
+  spectrumSupported?: boolean;
 };
 
 export default function PlayerControls({
@@ -129,6 +70,7 @@ export default function PlayerControls({
   audioRef,
   currentTrackId,
   tahfeezActiveRef,
+  spectrumSupported = true,
 }: Props) {
   // ── State ───────────────────────────────────────────
   const [isClient, setIsClient] = useState(false);
@@ -366,6 +308,10 @@ export default function PlayerControls({
       id: 'player.showVisualizer',
       defaultMessage: 'Show visualizer',
     }),
+    spectrumUnavailable: formatMessage({
+      id: 'player.spectrumUnavailable',
+      defaultMessage: 'Spectrum is not available for this reciter',
+    }),
     togglePlaylist: formatMessage({
       id: 'player.togglePlaylist',
       defaultMessage: 'Toggle playlist',
@@ -420,17 +366,12 @@ export default function PlayerControls({
   if (!isClient) {
     return (
       <div className="flex w-full flex-col">
-        {/* Mode Switcher Skeleton */}
-        <div className="mb-4 flex w-full items-center justify-center gap-3">
-          <div className="h-10 max-w-xs flex-1 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
-          <div className="h-10 max-w-xs flex-1 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
-        </div>
         {/* Controls Skeleton */}
         <div
           className="relative flex w-full items-center justify-between gap-2 md:gap-3"
           dir="rtl"
         >
-          {Array.from({ length: 9 }).map((_, index) => (
+          {Array.from({ length: 7 }).map((_, index) => (
             <div key={index} className="h-9 w-9" />
           ))}
         </div>
@@ -438,81 +379,8 @@ export default function PlayerControls({
     );
   }
 
-  if (isFullscreen) {
-    return (
-      <div className="flex w-full flex-col">
-        <ModeSwitcher
-          activeMode={activeMode}
-          onChange={setActiveMode}
-          labels={{
-            aria: messages.modeSwitcher,
-            listening: messages.listeningMode,
-            tahfeez: messages.tahfeezMode,
-          }}
-        />
-
-        {/* Mode-specific content */}
-        {activeMode === 'listening' ? (
-          <div className="flex items-center justify-center gap-4 py-4">
-            {renderImageButton(
-              forwardSVG,
-              messages.nextTrack,
-              handleNextTrackWithStopSession
-            )}
-            {renderImageButton(
-              audioPlaying ? pauseSVG : playSVG,
-              audioPlaying ? messages.pause : messages.play,
-              togglePlayPause,
-              audioPlaying ? 'animate-slideInWithFade' : ''
-            )}
-            {renderImageButton(
-              backwardSVG,
-              messages.previousTrack,
-              handlePreviousTrackWithStopSession
-            )}
-          </div>
-        ) : (
-          <TahfeezModeControls
-            tahfeezSettings={tahfeezSettings}
-            setTahfeezSettings={setTahfeezSettings}
-            source={selectedReciter?.source}
-            moshafId={selectedReciter?.moshaf.id}
-            chapterNumber={chapterNumber}
-            onRangesReady={(ranges) => {
-              currentRangesRef.current = ranges;
-              if (session.isActive()) {
-                session.updateRanges(ranges);
-              } else if (
-                (audioPlaying || isPlaying) &&
-                activeMode === 'tahfeez'
-              ) {
-                session.start(
-                  ranges,
-                  tahfeezSettings.repeat,
-                  tahfeezSettings.delay
-                );
-              }
-            }}
-            onCleanup={() => session.stop()}
-          />
-        )}
-      </div>
-    );
-  }
-
   return (
     <div className="flex w-full flex-col">
-      <ModeSwitcher
-        activeMode={activeMode}
-        onChange={setActiveMode}
-        labels={{
-          aria: messages.modeSwitcher,
-          listening: messages.listeningMode,
-          tahfeez: messages.tahfeezMode,
-        }}
-        disabled={!isTahfeezSupported}
-        disabledTitle={messages.tahfeezModeDisabledProvider}
-      />
       {activeMode === 'tahfeez' ? (
         <TahfeezModeControls
           tahfeezSettings={tahfeezSettings}
@@ -676,22 +544,78 @@ export default function PlayerControls({
           </div>
         )}
 
-        {/* Mobile More Menu */}
-        <div className="relative sm:hidden" ref={moreMenuRef}>
+        {/* More Menu */}
+        <div className="relative" ref={moreMenuRef}>
           <Tooltip content={messages.more}>
             <button
               onClick={() => setShowMoreMenu((previous) => !previous)}
-              className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+              className="relative flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
               aria-label={messages.more}
             >
               <span className="text-lg font-bold text-gray-600 dark:text-gray-300">
                 ⋯
               </span>
+              {activeMode === 'tahfeez' && (
+                <span
+                  aria-hidden="true"
+                  className="absolute end-1 top-1 size-1.5 rounded-full bg-brand-CTA-blue-500"
+                />
+              )}
             </button>
           </Tooltip>
 
           {showMoreMenu && (
             <div className="absolute bottom-10 left-0 z-10 flex w-52 flex-col gap-1 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
+              <div className="px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+                {messages.modeSwitcher}
+              </div>
+              <button
+                type="button"
+                aria-pressed={activeMode === 'listening'}
+                onClick={() => {
+                  setActiveMode('listening');
+                  setShowMoreMenu(false);
+                }}
+                className={cn(
+                  'flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700',
+                  activeMode === 'listening' &&
+                    'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                )}
+              >
+                <FiHeadphones size={16} aria-hidden="true" />
+                <span>{messages.listeningMode}</span>
+                {activeMode === 'listening' && (
+                  <MdCheck size={16} className="ms-auto" aria-hidden="true" />
+                )}
+              </button>
+              <button
+                type="button"
+                aria-pressed={activeMode === 'tahfeez'}
+                disabled={!isTahfeezSupported}
+                title={
+                  isTahfeezSupported
+                    ? undefined
+                    : messages.tahfeezModeDisabledProvider
+                }
+                onClick={() => {
+                  setActiveMode('tahfeez');
+                  setShowMoreMenu(false);
+                }}
+                className={cn(
+                  'flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-200 dark:hover:bg-gray-700',
+                  activeMode === 'tahfeez' &&
+                    'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                )}
+              >
+                <FiRepeat size={16} aria-hidden="true" />
+                <span>{messages.tahfeezMode}</span>
+                {activeMode === 'tahfeez' && (
+                  <MdCheck size={16} className="ms-auto" aria-hidden="true" />
+                )}
+              </button>
+
+              <div className="my-1 h-px bg-gray-200 dark:bg-gray-700" />
+
               <div className="px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400">
                 <Image
                   src={sleepSVG}
@@ -759,14 +683,25 @@ export default function PlayerControls({
               </button>
 
               <button
+                aria-label={
+                  !spectrumSupported
+                    ? messages.spectrumUnavailable
+                    : showVisualizer
+                      ? messages.hideVisualizer
+                      : messages.showVisualizer
+                }
+                title={
+                  !spectrumSupported ? messages.spectrumUnavailable : undefined
+                }
                 onClick={() => {
                   setShowVisualizer((previous) => !previous);
                   setShowMoreMenu(false);
                 }}
-                disabled={isPlaying}
+                disabled={isPlaying || !spectrumSupported}
                 className={cn(
                   'flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700',
-                  isPlaying && 'cursor-not-allowed opacity-50'
+                  (isPlaying || !spectrumSupported) &&
+                    'cursor-not-allowed opacity-50'
                 )}
               >
                 <Image
@@ -833,12 +768,16 @@ export default function PlayerControls({
 
           {renderImageButton(
             showVisualizer ? spectrumSVG : spectrumDisabledSVG,
-            showVisualizer ? messages.hideVisualizer : messages.showVisualizer,
+            !spectrumSupported
+              ? messages.spectrumUnavailable
+              : showVisualizer
+                ? messages.hideVisualizer
+                : messages.showVisualizer,
             () => setShowVisualizer((previous) => !previous),
-            isPlaying
+            isPlaying || !spectrumSupported
               ? 'pointer-events-none cursor-not-allowed opacity-30'
               : '',
-            isPlaying
+            isPlaying || !spectrumSupported
           )}
 
           <Tooltip content={messages.playbackSpeed}>
