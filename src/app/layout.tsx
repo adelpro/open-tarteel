@@ -36,7 +36,10 @@ export const metadata: Metadata = {
     telephone: false,
   },
   icons: {
-    icon: '/images/icon-192.png',
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/images/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
     apple: '/images/apple-touch-icon.png',
   },
   title: 'Open Tarteel — Quran Audio Player',
