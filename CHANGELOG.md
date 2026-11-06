@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0]
+
+### Features
+
+- provider capability registry and badges
+- MP3Quran v4 beta provider behind `NEXT_PUBLIC_ENABLE_MP3QURAN_V4`
+- lazy catalog playlists with per-reciter detail hydration
+- ayah timings for MP3Quran v3/v4, Itqan, Qurani.ai and Quran Foundation
+- Tahfeez/range engine with live range, repeat and delay updates
+- multi-select provider filter tags on the reciter list
+- Listening/Tahfeez modes in the player `(...)` menu
+- locale-aware player controls (RTL/LTR)
+- permanent staging at `staging-tarteel.quran.us.kg`
+
+### Fixes
+
+- remove the fake spectrum for providers without CORS audio
+- start the spectrum on the first play
+- keep player controls inside the card
+- white-background PWA install icons; transparent browser favicon
+- health check reports the package version
+- CI formatting and dependency fixes
+
 ## [0.3.0-athar]
 
 ### Features
