@@ -52,27 +52,33 @@ Known defect in the current hardening: `src/services/reciters/cached.ts` caches
 the combined list, which is above Next's 2 MB `unstable_cache` limit. The cache
 never persists. Fix in 5c/5d; do not rely on the current cache layer.
 
-### Netlify staging (ready)
+### Netlify staging
 
-- URL: **https://staging--open-tarteel.netlify.app** (branch `staging`,
-  fast-forwarded to the hardening branch).
-- Permanent hostname (planned): **https://staging-tarteel.quran.us.kg**,
-  CNAME to the `staging` branch deploy. `next-tarteel.quran.us.kg` is the
-  fallback name if the preferred hostname is unavailable.
-- Site: `open-tarteel` (`523478b8-4d28-4a59-9415-53f739567f92`). Production is
-  `tarteel.quran.us.kg` and was not touched.
-- Verified: `/`, `/api/health`, `/manifest.webmanifest`, `/sw.js`, `/offline`,
-  `/reciter/mp3quran.net-1` all 200; `/sw.js` has
-  `Cache-Control: no-cache,no-store,must-revalidate`.
-- `/api/reciters` on staging: **4,487,109 B / 27 s cold**, 483 reciters. This
-  confirms the payload/cache work (5c/5d) is the top priority.
-- Preview origin: Netlify's site env sets `NEXT_PUBLIC_APP_URL` to the
-  production origin, so preview metadata/sitemap currently point at
-  production. Fixed in `next.config.ts` by preferring `DEPLOY_PRIME_URL` when
-  `CONTEXT` is `deploy-preview` or `branch-deploy`.
-- Local `netlify deploy` fails at the blob upload step
-  (`403 Request has expired`, a 30 s signed URL). Use Git branch deploys or a
-  PR deploy preview instead; do not retry the local upload.
+- Production Netlify site: `open-tarteel` (`523478b8-4d28-4a59-9415-53f739567f92`,
+  `tarteel.quran.us.kg`, branch `main`). Branch deploys include
+  `staging--open-tarteel.netlify.app`.
+- Permanent staging site (separate): **`open-tarteel-staging`**
+  (`b996c706-0085-4e41-82a4-12f5f50a694f`, `open-tarteel-staging.netlify.app`),
+  production branch `staging`, repo `adelpro/open-tarteel`, build
+  `corepack yarn build`, publish `.next`, `@netlify/plugin-nextjs` v5.
+  `quran.us.kg` uses Cloudflare DNS (not Netlify DNS), so a branch-deploy
+  custom domain on the original site is not possible; staging uses its own site.
+- Custom domain (configured on Netlify, DNS pending):
+  **`staging-tarteel.quran.us.kg`**.
+  Cloudflare CNAME required (DNS-only first): `staging-tarteel` →
+  `open-tarteel-staging.netlify.app`. Enable proxy only after Netlify issues a
+  certificate and Cloudflare SSL/TLS is **Full (strict)**. Fallback hostname:
+  `next-tarteel.quran.us.kg`. Production `tarteel.quran.us.kg` stays untouched.
+- Staging env: provider secrets copied, `NEXT_PUBLIC_APP_URL=https://staging-tarteel.quran.us.kg`,
+  `NEXT_PUBLIC_ENABLE_MP3QURAN_V4=true`. Build hook `6aed9bb06ddd4a8f48a6eab6`.
+- Verify (after CNAME/TLS): `/api/health`, sitemap origin, `/sw.js`
+  `Cache-Control: no-cache,no-store,must-revalidate`, manifest/OG URLs on the
+  staging hostname; pushes to `staging` update the hostname, PR previews keep
+  their own origins.
+- Preview origin: fixed in `next.config.ts` by preferring `DEPLOY_PRIME_URL`
+  when `CONTEXT` is `deploy-preview` or `branch-deploy`.
+- Local `netlify deploy` can fail at blob upload (`403 Request has expired`);
+  prefer Git/build-hook deploys.
 
 ### Temporary tunnel (optional)
 
@@ -717,46 +723,45 @@ Goal: replace the temporary tunnel with deploy previews.
 
 ### Permanent staging hostname
 
-Give staging a stable, memorable origin instead of the generated Netlify
-subdomain. Preferred name: **`staging-tarteel.quran.us.kg`**. Fallback:
-**`next-tarteel.quran.us.kg`** if the preferred name cannot be assigned.
+Staging uses a **separate Netlify site** (`open-tarteel-staging`,
+`b996c706-0085-4e41-82a4-12f5f50a694f`) because `quran.us.kg` uses Cloudflare
+DNS — Netlify branch-deploy custom domains on a custom primary domain require
+Netlify DNS. Preferred hostname: **`staging-tarteel.quran.us.kg`**. Fallback:
+**`next-tarteel.quran.us.kg`**.
 
-1. **Cloudflare DNS.** In the `quran.us.kg` zone add a `CNAME`:
-   - `staging-tarteel` → `staging--open-tarteel.netlify.app`
-   - proxy: **DNS only** first (grey cloud). After Netlify issues the
-     certificate, enable the proxy only if SSL/TLS mode is **Full (strict)**.
-   - keep the existing production record `tarteel.quran.us.kg` untouched.
-2. **Netlify staging channel.** Add `staging-tarteel.quran.us.kg` as a domain
-   alias/custom domain on the **`staging` branch deploy** context (not the
-   production context). Confirm the branch context is `staging`, and keep
-   `staging--open-tarteel.netlify.app` as a fallback alias.
-3. **App origin.** Set `NEXT_PUBLIC_APP_URL=https://staging-tarteel.quran.us.kg`
-   for the **branch-deploy** scope only. Deploy previews keep using
-   `DEPLOY_PRIME_URL` so PR metadata stays on the preview origin.
-4. **Cloudflare channel rules.** If the zone uses a redirect/cache rule for
-   staging, scope it to `staging-tarteel.quran.us.kg` and bypass cache for
-   `/sw.js`, `/api/*`, and `/.netlify/*`.
-5. **Verify.**
+1. **Cloudflare DNS** (manual, no API creds in env). In the `quran.us.kg` zone:
+   - `CNAME staging-tarteel` → `open-tarteel-staging.netlify.app`
+   - proxy **DNS only** (grey cloud) first. After Netlify issues the
+     certificate, proxy only if SSL/TLS mode is **Full (strict)**.
+   - keep `tarteel.quran.us.kg` (production) untouched.
+2. **Netlify** (done): `staging-tarteel.quran.us.kg` added to
+   `open-tarteel-staging`; repo linked to branch `staging`,
+   `@netlify/plugin-nextjs` v5 installed.
+3. **App origin** (done): `NEXT_PUBLIC_APP_URL=https://staging-tarteel.quran.us.kg`
+   on the staging site. Deploy previews on the production site keep
+   `DEPLOY_PRIME_URL`.
+4. **Cloudflare rules** (if any): scope to `staging-tarteel.quran.us.kg`; bypass
+   cache for `/sw.js`, `/api/*`, `/.netlify/*`.
+5. **Verify** (after CNAME/TLS):
+   - `curl -fsS https://open-tarteel-staging.netlify.app/api/health`
    - `curl -fsS https://staging-tarteel.quran.us.kg/api/health`
-   - `curl -fsS https://staging-tarteel.quran.us.kg/sitemap.xml | head`
    - `curl -fsSI https://staging-tarteel.quran.us.kg/sw.js`
-   - manifest `start_url` and OG URLs use the staging hostname.
-   - a push to `staging` updates the hostname; a PR preview still uses
-     `deploy-preview-<n>--open-tarteel.netlify.app`.
+   - sitemap/manifest/OG URLs use the staging hostname.
 
-| PR  | Title                                        | Scope                                                                 |
-| --- | -------------------------------------------- | --------------------------------------------------------------------- |
-| 8a  | `chore(deploy): netlify config and env docs` | `netlify.toml`, `docs/DEPLOY.md`, conditional standalone              |
-| 8b  | `ci(deploy): preview smoke test`             | curl `/api/health`, sitemap origin, SW headers                        |
-| 8c  | `chore(deploy): permanent staging hostname`  | Cloudflare CNAME, Netlify staging domain, branch env, smoke checklist |
+| PR  | Title                                        | Scope                                                                  |
+| --- | -------------------------------------------- | ---------------------------------------------------------------------- |
+| 8a  | `chore(deploy): netlify config and env docs` | `netlify.toml`, `docs/DEPLOY.md`, conditional standalone               |
+| 8b  | `ci(deploy): preview smoke test`             | curl `/api/health`, sitemap origin, SW headers                         |
+| 8c  | `chore(deploy): permanent staging hostname`  | separate staging site + docs; **Cloudflare CNAME pending** (dashboard) |
 
 Acceptance: preview URL green, health 200, sitemap origin = preview origin, SW
 registers, no localhost in the bundle. Permanent staging hostname resolves with
 a valid certificate, serves the `staging` branch, and keeps PR previews on
 their own origins.
 
-Blocked: Netlify CLI/token not available in this environment. Config can be
-written now; the first deploy needs the repo connected in Netlify or a token.
+Blocked (partial): Cloudflare CNAME for `staging-tarteel.quran.us.kg` requires
+dashboard/API access (no Cloudflare creds in env). Netlify TLS stays pending
+until the CNAME exists. Staging site is configured and deploys via build hook.
 
 ---
 
