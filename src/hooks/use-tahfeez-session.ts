@@ -10,6 +10,10 @@ export interface TahfeezSessionControls {
   start: (_ranges: TimeRange[], _repeat: number, _delay: number) => void;
   /** Stop the session and pause audio. */
   stop: () => void;
+  /** Replace the ranges of a running session without interrupting playback. */
+  updateRanges: (_ranges: TimeRange[]) => void;
+  /** Update repeat/delay without restarting the session. */
+  updateSettings: (_repeat: number, _delay: number) => void;
   /** Smart play/pause: start if idle, resume if paused, pause if playing. */
   handlePlayPause: (
     _ranges: TimeRange[],
@@ -22,11 +26,35 @@ export interface TahfeezSessionControls {
   isActive: () => boolean;
 }
 
+const findRangeIndex = (ranges: TimeRange[], time: number): number => {
+  const exact = ranges.findIndex(
+    (range) => time >= range.startTime && time <= range.endTime
+  );
+  if (exact !== -1) return exact;
+
+  // Outside every range: pick the nearest one so a settings change resumes
+  // from a sensible place instead of jumping to the first ayah.
+  let nearest = 0;
+  let smallestDistance = Number.POSITIVE_INFINITY;
+  for (const [index, range] of ranges.entries()) {
+    const distance = Math.min(
+      Math.abs(time - range.startTime),
+      Math.abs(time - range.endTime)
+    );
+    if (distance < smallestDistance) {
+      smallestDistance = distance;
+      nearest = index;
+    }
+  }
+  return nearest;
+};
+
 /**
  * Manages a tahfeez (memorisation) audio session.
  *
  * Owns all session refs and engine logic. The consumer (PlayerControls) only
- * needs to call `start` / `handlePlayPause` / `stop` and read `audioPlaying`.
+ * needs to call `start` / `handlePlayPause` / `updateRanges` / `stop` and read
+ * `audioPlaying`.
  *
  * @param audioRef        - Ref to the shared HTMLAudioElement.
  * @param onActiveChange  - Called with `true` when a session starts and `false`
@@ -41,7 +69,10 @@ export function useTahfeezSession(
   const rangesRef = useRef<TimeRange[]>([]);
   const indexRef = useRef(0);
   const repeatCountRef = useRef(0);
+  const repeatRef = useRef(1);
+  const delayRef = useRef(0);
   const delayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const frameRef = useRef<number | null>(null);
 
   // ── Live DOM audio state ─────────────────────────────
   const [audioPlaying, setAudioPlaying] = useState(false);
@@ -88,7 +119,23 @@ export function useTahfeezSession(
   // ── Helpers ──────────────────────────────────────────
   const isActive = () => cleanupRef.current !== null;
 
+  const clearDelay = () => {
+    if (delayTimerRef.current !== null) {
+      clearTimeout(delayTimerRef.current);
+      delayTimerRef.current = null;
+    }
+  };
+
+  const cancelFrame = () => {
+    if (frameRef.current !== null) {
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
+  };
+
   const teardown = () => {
+    clearDelay();
+    cancelFrame();
     if (cleanupRef.current) {
       cleanupRef.current();
       cleanupRef.current = null;
@@ -98,17 +145,13 @@ export function useTahfeezSession(
   // ── Public API ───────────────────────────────────────
   const stop = () => {
     // Clean stop - cancel any pending delays and reset audio
-    if (delayTimerRef.current !== null) {
-      clearTimeout(delayTimerRef.current);
-      delayTimerRef.current = null;
-    }
+    teardown();
 
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
 
-    teardown();
     onActiveChange(false);
   };
 
@@ -121,6 +164,8 @@ export function useTahfeezSession(
     rangesRef.current = ranges;
     indexRef.current = 0;
     repeatCountRef.current = 0;
+    repeatRef.current = repeat;
+    delayRef.current = delay;
     onActiveChange(true);
 
     const seekToCurrentRange = () => {
@@ -133,54 +178,97 @@ export function useTahfeezSession(
 
     const scheduleNext = () => {
       audio.pause();
+      clearDelay();
       delayTimerRef.current = setTimeout(() => {
-        delayTimerRef.current = null; // allow timeupdate to fire again
-        const nextRange = rangesRef.current.at(indexRef.current);
-        if (nextRange) {
-          audio.currentTime = nextRange.startTime;
-          void audio.play();
-        }
-      }, delay * 1000);
+        delayTimerRef.current = null; // allow the frame loop to run again
+        seekToCurrentRange();
+      }, delayRef.current * 1000);
     };
 
-    const handleTimeUpdate = () => {
-      if (delayTimerRef.current !== null) return; // already waiting — ignore
+    const finish = () => {
+      audio.pause();
+      teardown();
+      onActiveChange(false);
+    };
+
+    const advance = () => {
+      const currentRange = rangesRef.current.at(indexRef.current);
+      if (currentRange) {
+        // Pin to the boundary so the next range never inherits overshoot.
+        audio.currentTime = currentRange.endTime;
+      }
+      audio.pause();
+
+      repeatCountRef.current += 1;
+      if (repeatCountRef.current < repeatRef.current) {
+        scheduleNext();
+        return;
+      }
+
+      repeatCountRef.current = 0;
+      indexRef.current += 1;
+      if (indexRef.current < rangesRef.current.length) {
+        scheduleNext();
+      } else {
+        finish();
+      }
+    };
+
+    // requestAnimationFrame checks the boundary every frame instead of every
+    // ~250 ms, so playback no longer bleeds into the following ayah.
+    const tick = () => {
+      if (delayTimerRef.current !== null) {
+        frameRef.current = requestAnimationFrame(tick);
+        return;
+      }
 
       const currentRange = rangesRef.current.at(indexRef.current);
-      if (!currentRange) return;
+      if (!currentRange) {
+        finish();
+        return;
+      }
 
       if (audio.currentTime >= currentRange.endTime) {
-        repeatCountRef.current += 1;
+        advance();
+      }
 
-        if (repeatCountRef.current < repeat) {
-          scheduleNext();
-        } else {
-          repeatCountRef.current = 0;
-          indexRef.current += 1;
-
-          if (indexRef.current < rangesRef.current.length) {
-            scheduleNext();
-          } else {
-            // All ranges exhausted — stop cleanly
-            audio.pause();
-            teardown();
-            onActiveChange(false);
-          }
-        }
+      if (cleanupRef.current) {
+        frameRef.current = requestAnimationFrame(tick);
       }
     };
-
-    audio.addEventListener('timeupdate', handleTimeUpdate);
 
     cleanupRef.current = () => {
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      if (delayTimerRef.current !== null) {
-        clearTimeout(delayTimerRef.current);
-        delayTimerRef.current = null;
-      }
+      // Marker only; teardown cancels the frame and delay timers.
     };
 
+    frameRef.current = requestAnimationFrame(tick);
     seekToCurrentRange();
+  };
+
+  const updateRanges = (ranges: TimeRange[]) => {
+    if (ranges.length === 0) return;
+
+    rangesRef.current = ranges;
+    const audio = audioRef.current;
+    const time = audio?.currentTime ?? ranges[0]?.startTime ?? 0;
+    const nextIndex = findRangeIndex(ranges, time);
+    const nextRange = ranges[nextIndex];
+
+    indexRef.current = nextIndex;
+    repeatCountRef.current = 0;
+
+    if (
+      audio &&
+      nextRange &&
+      (time < nextRange.startTime || time > nextRange.endTime)
+    ) {
+      audio.currentTime = nextRange.startTime;
+    }
+  };
+
+  const updateSettings = (repeat: number, delay: number) => {
+    repeatRef.current = repeat;
+    delayRef.current = delay;
   };
 
   const handlePlayPause = (
@@ -201,5 +289,13 @@ export function useTahfeezSession(
     }
   };
 
-  return { start, stop, handlePlayPause, audioPlaying, isActive };
+  return {
+    start,
+    stop,
+    updateRanges,
+    updateSettings,
+    handlePlayPause,
+    audioPlaying,
+    isActive,
+  };
 }

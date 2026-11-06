@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import { TimeRange } from '@/hooks/use-tahfeez-session';
@@ -30,6 +30,10 @@ interface Segment {
   endMs: number;
 }
 
+const INPUT_CLASS =
+  'w-20 rounded-lg border border-gray-300 bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100';
+const LABEL_CLASS = 'text-xs text-gray-500 dark:text-gray-400';
+
 // Tahfeez Mode Controls Component
 export default function TahfeezModeControls({
   tahfeezSettings,
@@ -45,6 +49,7 @@ export default function TahfeezModeControls({
   const [error, setError] = useState<string | null>(null);
   const { formatMessage } = useIntl();
   const onCleanupRef = useRef(onCleanup);
+  const ids = useId();
 
   useEffect(() => {
     onCleanupRef.current = onCleanup;
@@ -120,14 +125,16 @@ export default function TahfeezModeControls({
       return { ...previous, fromAyah, toAyah };
     });
   }, [segments, setTahfeezSettings]);
-  /**  Compute flat TimeRange array from current segments + settings. Returns null on invalid input. */
+
+  /** Compute flat TimeRange array from current segments + settings. Returns null on invalid input. */
   const computeRanges = useCallback(
     (
       fromAyah: number,
       toAyah: number,
       strategy: 'per_ayah' | 'whole_range'
     ): TimeRange[] | null => {
-      if (!fromAyah || !toAyah || segments.length === 0) return null;
+      if (!fromAyah || !toAyah || fromAyah > toAyah || segments.length === 0)
+        return null;
 
       const selectedSegments = segments
         .filter((segment) => segment.ayah >= fromAyah && segment.ayah <= toAyah)
@@ -182,16 +189,22 @@ export default function TahfeezModeControls({
   ]);
 
   const lastAyah = segments.at(-1)?.ayah ?? 114;
+  const invalidRange = tahfeezSettings.fromAyah > tahfeezSettings.toAyah;
+  const fromId = `${ids}-from`;
+  const toId = `${ids}-to`;
+  const repeatId = `${ids}-repeat`;
+  const delayId = `${ids}-delay`;
 
   return (
     <div className="flex w-full flex-col">
       {/* Settings inputs */}
       <div className="mb-4 flex w-full flex-wrap items-center justify-center gap-3 px-2">
         <div className="flex flex-col items-center gap-1">
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+          <label htmlFor={fromId} className={LABEL_CLASS}>
             {formatMessage({ id: 'tahfeez.fromAyah' })}
-          </span>
+          </label>
           <input
+            id={fromId}
             type="number"
             value={tahfeezSettings.fromAyah}
             onChange={(e) => {
@@ -203,19 +216,19 @@ export default function TahfeezModeControls({
                 ...previous,
                 fromAyah: value,
               }));
-              onCleanup?.();
             }}
             min={1}
             max={lastAyah}
-            className="w-20 rounded-lg border border-gray-300 bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+            className={INPUT_CLASS}
           />
         </div>
 
         <div className="flex flex-col items-center gap-1">
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+          <label htmlFor={toId} className={LABEL_CLASS}>
             {formatMessage({ id: 'tahfeez.toAyah' })}
-          </span>
+          </label>
           <input
+            id={toId}
             type="number"
             value={tahfeezSettings.toAyah}
             onChange={(e) => {
@@ -227,19 +240,19 @@ export default function TahfeezModeControls({
                 ...previous,
                 toAyah: value,
               }));
-              onCleanup?.();
             }}
             min={1}
             max={lastAyah}
-            className="w-20 rounded-lg border border-gray-300 bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+            className={INPUT_CLASS}
           />
         </div>
 
         <div className="flex flex-col items-center gap-1">
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+          <label htmlFor={repeatId} className={LABEL_CLASS}>
             {formatMessage({ id: 'tahfeez.repeat' })}
-          </span>
+          </label>
           <input
+            id={repeatId}
             type="number"
             value={tahfeezSettings.repeat}
             onChange={(e) => {
@@ -251,19 +264,19 @@ export default function TahfeezModeControls({
                 ...previous,
                 repeat: value,
               }));
-              onCleanup?.();
             }}
             min={1}
             max={100}
-            className="w-20 rounded-lg border border-gray-300 bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+            className={INPUT_CLASS}
           />
         </div>
 
         <div className="flex flex-col items-center gap-1">
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+          <label htmlFor={delayId} className={LABEL_CLASS}>
             {formatMessage({ id: 'tahfeez.delay' })}
-          </span>
+          </label>
           <input
+            id={delayId}
             type="number"
             value={tahfeezSettings.delay}
             onChange={(e) => {
@@ -271,26 +284,34 @@ export default function TahfeezModeControls({
                 Math.max(parseInt(e.target.value) || 0, 0),
                 60
               );
-              setTahfeezSettings((previous) => ({ ...previous, delay: value }));
-              onCleanup?.();
+              setTahfeezSettings((previous) => ({
+                ...previous,
+                delay: value,
+              }));
             }}
             min={0}
             max={60}
-            className="w-20 rounded-lg border border-gray-300 bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+            className={INPUT_CLASS}
           />
         </div>
       </div>
 
       {/* Strategy selector */}
       <div className="mb-4 flex w-full justify-center">
-        <div className="flex rounded-lg bg-gray-200 p-1 dark:bg-gray-800">
+        <div
+          role="radiogroup"
+          aria-label={formatMessage({ id: 'tahfeez.strategy' })}
+          className="flex rounded-lg bg-gray-200 p-1 dark:bg-gray-800"
+        >
           <button
+            type="button"
+            role="radio"
+            aria-checked={tahfeezSettings.strategy === 'per_ayah'}
             onClick={() => {
               setTahfeezSettings((previous) => ({
                 ...previous,
                 strategy: 'per_ayah',
               }));
-              onCleanup?.();
             }}
             className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
               tahfeezSettings.strategy === 'per_ayah'
@@ -301,12 +322,14 @@ export default function TahfeezModeControls({
             {formatMessage({ id: 'tahfeez.perAyah' })}
           </button>
           <button
+            type="button"
+            role="radio"
+            aria-checked={tahfeezSettings.strategy === 'whole_range'}
             onClick={() => {
               setTahfeezSettings((previous) => ({
                 ...previous,
                 strategy: 'whole_range',
               }));
-              onCleanup?.();
             }}
             className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
               tahfeezSettings.strategy === 'whole_range'
@@ -320,13 +343,26 @@ export default function TahfeezModeControls({
       </div>
 
       {/* Loading / error feedback */}
-      {isLoadingTimestamps && (
-        <div className="mb-4 text-center text-sm text-gray-500 dark:text-gray-400">
-          {formatMessage({ id: 'tahfeez.loading' })}
+      <div aria-live="polite">
+        {isLoadingTimestamps && (
+          <div className="mb-4 text-center text-sm text-gray-500 dark:text-gray-400">
+            {formatMessage({ id: 'tahfeez.loading' })}
+          </div>
+        )}
+      </div>
+      {invalidRange && (
+        <div
+          role="alert"
+          className="mb-4 text-center text-sm text-red-600 dark:text-red-400"
+        >
+          {formatMessage({ id: 'tahfeez.invalidRange' })}
         </div>
       )}
-      {error && (
-        <div className="mb-4 text-center text-sm text-red-600 dark:text-red-400">
+      {error && !isLoadingTimestamps && (
+        <div
+          role="alert"
+          className="mb-4 text-center text-sm text-red-600 dark:text-red-400"
+        >
           {error}
         </div>
       )}
@@ -339,24 +375,26 @@ export default function TahfeezModeControls({
       )}
 
       {/* Status summary */}
-      <div className="mt-3 flex flex-col items-center justify-center gap-1">
-        <div className="text-sm font-medium text-green-600 dark:text-green-400">
-          {formatMessage({ id: 'tahfeez.readyToStart' })}
+      {segments.length > 0 && !error && !invalidRange && (
+        <div className="mt-3 flex flex-col items-center justify-center gap-1">
+          <div className="text-sm font-medium text-green-600 dark:text-green-400">
+            {formatMessage({ id: 'tahfeez.readyToStart' })}
+          </div>
+          <div className="flex items-center gap-2 font-bold text-gray-500">
+            <span aria-live="polite">
+              {formatMessage(
+                { id: 'tahfeez.statusSummary' },
+                {
+                  from: tahfeezSettings.fromAyah,
+                  to: tahfeezSettings.toAyah,
+                  repeat: tahfeezSettings.repeat,
+                  delay: tahfeezSettings.delay,
+                }
+              )}
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 font-bold text-gray-500">
-          <span>
-            {formatMessage(
-              { id: 'tahfeez.statusSummary' },
-              {
-                from: tahfeezSettings.fromAyah,
-                to: tahfeezSettings.toAyah,
-                repeat: tahfeezSettings.repeat,
-                delay: tahfeezSettings.delay,
-              }
-            )}
-          </span>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

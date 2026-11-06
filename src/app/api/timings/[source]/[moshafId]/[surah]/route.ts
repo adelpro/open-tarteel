@@ -63,7 +63,14 @@ export async function GET(
   } catch {
     return NextResponse.json(
       { error: 'Timing provider failed' },
-      { status: 502 }
+      {
+        status: 502,
+        headers: {
+          'Cache-Control': 'private, no-store, max-age=0',
+          'Retry-After': '5',
+          Vary: 'Cookie',
+        },
+      }
     );
   }
 }

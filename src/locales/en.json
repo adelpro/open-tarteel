@@ -173,5 +173,7 @@
   "provider.badge.noDownload": "No download",
   "provider.badge.more": "+{count}",
   "tahfeez.noTimings": "No ayah timings for this surah.",
-  "settings.source.mp3quranv4": "MP3 Quran v4 (beta)"
+  "settings.source.mp3quranv4": "MP3 Quran v4 (beta)",
+  "tahfeez.invalidRange": "The start ayah must be before the end ayah.",
+  "tahfeez.strategy": "Range strategy"
 }

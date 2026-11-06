@@ -155,5 +155,7 @@
   "provider.badge.noDownload": "Kein Download",
   "provider.badge.more": "+{count}",
   "tahfeez.noTimings": "Für diese Sure sind keine Zeitangaben verfügbar.",
-  "settings.source.mp3quranv4": "MP3 Quran v4 (Beta)"
+  "settings.source.mp3quranv4": "MP3 Quran v4 (Beta)",
+  "tahfeez.invalidRange": "Die Start-Aya muss vor der End-Aya liegen.",
+  "tahfeez.strategy": "Wiederholungsmodus"
 }
