@@ -7,6 +7,7 @@ import CacheManagement from '@/components/cache-management';
 import ProviderBadges from '@/components/provider-badge';
 import useDirection from '@/hooks/use-direction';
 import { enabledSourcesAtom } from '@/jotai/atom';
+import { isMp3QuranV4Enabled } from '@/services/reciters/flags';
 import { LinkSource } from '@/types';
 
 const AVAILABLE_SOURCES: { source: LinkSource; id: string }[] = [
@@ -17,6 +18,14 @@ const AVAILABLE_SOURCES: { source: LinkSource; id: string }[] = [
     source: LinkSource.QURAN_FOUNDATION,
     id: 'settings.source.quranfoundation',
   },
+  ...(isMp3QuranV4Enabled()
+    ? [
+        {
+          source: LinkSource.MP3QURAN_V4,
+          id: 'settings.source.mp3quranv4',
+        },
+      ]
+    : []),
 ];
 
 export default function SettingsPage() {

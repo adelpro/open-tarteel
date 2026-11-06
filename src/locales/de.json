@@ -153,5 +153,7 @@
   "provider.badge.timing": "Zeitangaben",
   "provider.badge.word": "Wort für Wort",
   "provider.badge.noDownload": "Kein Download",
-  "provider.badge.more": "+{count}"
+  "provider.badge.more": "+{count}",
+  "tahfeez.noTimings": "Für diese Sure sind keine Zeitangaben verfügbar.",
+  "settings.source.mp3quranv4": "MP3 Quran v4 (Beta)"
 }

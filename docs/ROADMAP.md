@@ -384,6 +384,13 @@ Acceptance: matrix unit-tested; badge overflow works in ar/en; no layout shift.
 Goal: add v4 as a separate, selectable provider with a visible beta label. Keep
 v3 untouched.
 
+### Implemented (beta)
+
+- `mp3quran-v4.adapter.ts` with cursor pagination, `locale`, `audio.base`,
+  `surahIds`, `recitationCode`, `hasTimings`, and lazy playlists.
+- Flag `NEXT_PUBLIC_ENABLE_MP3QURAN_V4`, base `MP3QURAN_V4_BASE_URL`.
+- 297 recitations; beta badge; source appears in Settings only when enabled.
+
 ### API facts (verified 2026-11-05)
 
 - Base: `https://api-staging.mp3quran.net/v4` (staging).
@@ -438,6 +445,15 @@ pin the contract tests so breakage is obvious.
 
 Goal: enable repeat-range for every provider that has timings, in this order:
 MP3Quran v4 → MP3Quran v3 → Itqan → Qurani.ai → Quran Foundation.
+
+### Implemented
+
+- `src/services/timings/*` for v4, v3, Itqan, Qurani.ai and Quran Foundation.
+- `GET /api/timings/[source]/[moshafId]/[surah]` with source/surah validation
+  and a 24 h upstream cache.
+- Tahfeez now receives `source` + `moshafId`; ranges are filtered by `ayah`
+  and clamped to the surah's ayah count.
+- Remaining: 5h opt-in live contract suite.
 
 ### Interface
 

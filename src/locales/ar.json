@@ -172,5 +172,7 @@
   "provider.badge.timing": "توقيت",
   "provider.badge.word": "كلمة بكلمة",
   "provider.badge.noDownload": "لا تحميل",
-  "provider.badge.more": "+{count}"
+  "provider.badge.more": "+{count}",
+  "tahfeez.noTimings": "لا تتوفر توقيتات الآيات لهذه السورة.",
+  "settings.source.mp3quranv4": "MP3 القرآن v4 (تجريبي)"
 }

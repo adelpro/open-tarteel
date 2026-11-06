@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import { TimeRange } from '@/hooks/use-tahfeez-session';
+import type { LinkSource } from '@/types';
 
 export interface TahfeezSettings {
   fromAyah: number;
@@ -14,7 +15,8 @@ export interface TahfeezSettings {
 interface TahfeezModeControlsProps {
   tahfeezSettings: TahfeezSettings;
   setTahfeezSettings: React.Dispatch<React.SetStateAction<TahfeezSettings>>;
-  reciterId?: number;
+  source?: LinkSource;
+  moshafId?: string;
   chapterNumber?: number;
   /** Called whenever the computed ranges change (segments loaded, settings changed). */
   onRangesReady?: (_ranges: TimeRange[]) => void;
@@ -23,10 +25,7 @@ interface TahfeezModeControlsProps {
 }
 
 interface Segment {
-  surah: string;
   ayah: number;
-  audioSource: string;
-  duration: number;
   startMs: number;
   endMs: number;
 }
@@ -35,7 +34,8 @@ interface Segment {
 export default function TahfeezModeControls({
   tahfeezSettings,
   setTahfeezSettings,
-  reciterId,
+  source,
+  moshafId,
   chapterNumber,
   onRangesReady,
   onCleanup,
@@ -50,26 +50,48 @@ export default function TahfeezModeControls({
     onCleanupRef.current = onCleanup;
   }, [onCleanup]);
 
-  const fetchTimestamps = useCallback(async () => {
-    if (!reciterId || !chapterNumber) return;
-    setIsLoadingTimestamps(true);
-    setError(null);
-    try {
-      const response = await fetch(
-        `/api/tahfeez/quran-foundation/${reciterId}/${chapterNumber}`
-      );
-      if (!response.ok)
-        throw new Error(`Failed to fetch timestamps: ${response.status}`);
-      const json = await response.json();
-      setSegments(json.segments || []);
-    } catch (_error) {
-      setError(formatMessage({ id: 'tahfeez.errorTimestamps' }));
-      console.log(_error);
-      console.log('failed on ' + reciterId + '/' + chapterNumber);
-    } finally {
-      setIsLoadingTimestamps(false);
-    }
-  }, [reciterId, chapterNumber, formatMessage]);
+  const fetchTimestamps = useCallback(
+    async (signal?: AbortSignal) => {
+      if (!source || !moshafId || !chapterNumber) return;
+      setIsLoadingTimestamps(true);
+      setError(null);
+      try {
+        const response = await fetch(
+          `/api/timings/${encodeURIComponent(source)}/${encodeURIComponent(
+            moshafId
+          )}/${chapterNumber}`,
+          { signal }
+        );
+        if (!response.ok)
+          throw new Error(`Failed to fetch timings: ${response.status}`);
+
+        const json: {
+          timings?: Array<{ ayah: number; startMs: number; endMs: number }>;
+        } = await response.json();
+        const next = (json.timings ?? [])
+          .map((timing) => ({
+            ayah: timing.ayah,
+            startMs: timing.startMs,
+            endMs: timing.endMs,
+          }))
+          .sort((a, b) => a.ayah - b.ayah);
+
+        previousRangesRef.current = '';
+        setSegments(next);
+        if (next.length === 0) {
+          setError(formatMessage({ id: 'tahfeez.noTimings' }));
+        }
+      } catch (error) {
+        if (signal?.aborted) return;
+        setError(formatMessage({ id: 'tahfeez.errorTimestamps' }));
+        console.warn('Failed to load tahfeez timings', error);
+      } finally {
+        if (!signal?.aborted) setIsLoadingTimestamps(false);
+      }
+    },
+    [source, moshafId, chapterNumber, formatMessage]
+  );
+
   // Stop player and cancel tahfeez seek on unmount (e.g mode switched to listening)
   useEffect(() => {
     return () => {
@@ -77,12 +99,27 @@ export default function TahfeezModeControls({
     };
   }, []);
 
-  // Fetch timestamps when reciter or chapter changes
+  // Fetch timings when the provider, moshaf, or chapter changes.
   useEffect(() => {
-    if (reciterId && chapterNumber) {
-      void fetchTimestamps();
-    }
-  }, [reciterId, chapterNumber, fetchTimestamps]);
+    if (!source || !moshafId || !chapterNumber) return;
+    const controller = new AbortController();
+    void fetchTimestamps(controller.signal);
+    return () => controller.abort();
+  }, [source, moshafId, chapterNumber, fetchTimestamps]);
+
+  // Clamp the range to the actual ayah count of this surah.
+  useEffect(() => {
+    if (segments.length === 0) return;
+    const lastAyah = segments.at(-1)?.ayah ?? 1;
+    setTahfeezSettings((previous) => {
+      const fromAyah = Math.min(Math.max(previous.fromAyah, 1), lastAyah);
+      const toAyah = Math.min(Math.max(previous.toAyah, 1), lastAyah);
+      if (fromAyah === previous.fromAyah && toAyah === previous.toAyah) {
+        return previous;
+      }
+      return { ...previous, fromAyah, toAyah };
+    });
+  }, [segments, setTahfeezSettings]);
   /**  Compute flat TimeRange array from current segments + settings. Returns null on invalid input. */
   const computeRanges = useCallback(
     (
@@ -92,7 +129,9 @@ export default function TahfeezModeControls({
     ): TimeRange[] | null => {
       if (!fromAyah || !toAyah || segments.length === 0) return null;
 
-      const selectedSegments = segments.slice(fromAyah - 1, toAyah);
+      const selectedSegments = segments
+        .filter((segment) => segment.ayah >= fromAyah && segment.ayah <= toAyah)
+        .sort((a, b) => a.ayah - b.ayah);
       if (selectedSegments.length === 0) return null;
 
       if (strategy === 'per_ayah') {
@@ -142,6 +181,8 @@ export default function TahfeezModeControls({
     onRangesReady,
   ]);
 
+  const lastAyah = segments.at(-1)?.ayah ?? 114;
+
   return (
     <div className="flex w-full flex-col">
       {/* Settings inputs */}
@@ -154,10 +195,9 @@ export default function TahfeezModeControls({
             type="number"
             value={tahfeezSettings.fromAyah}
             onChange={(e) => {
-              const max = segments.length > 0 ? segments.length - 1 : Infinity;
               const value = Math.min(
                 Math.max(parseInt(e.target.value) || 1, 1),
-                max
+                lastAyah
               );
               setTahfeezSettings((previous) => ({
                 ...previous,
@@ -166,7 +206,7 @@ export default function TahfeezModeControls({
               onCleanup?.();
             }}
             min={1}
-            max={segments.length - 1}
+            max={lastAyah}
             className="w-20 rounded-lg border border-gray-300 bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
           />
         </div>
@@ -179,10 +219,9 @@ export default function TahfeezModeControls({
             type="number"
             value={tahfeezSettings.toAyah}
             onChange={(e) => {
-              const max = segments.length > 0 ? segments.length : Infinity;
               const value = Math.min(
                 Math.max(parseInt(e.target.value) || 1, 1),
-                max
+                lastAyah
               );
               setTahfeezSettings((previous) => ({
                 ...previous,
@@ -191,7 +230,7 @@ export default function TahfeezModeControls({
               onCleanup?.();
             }}
             min={1}
-            max={segments.length}
+            max={lastAyah}
             className="w-20 rounded-lg border border-gray-300 bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
           />
         </div>

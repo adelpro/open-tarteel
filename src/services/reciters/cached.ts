@@ -1,6 +1,7 @@
 import { unstable_cache } from 'next/cache';
 
 import type { Language } from '@/constants/language';
+import { type AyahTiming, getSurahTimings } from '@/services/timings';
 import type { LinkSource, Moshaf, Playlist, Reciter } from '@/types';
 
 import { getAllRecitersFromAdapters, getReciterPlaylist } from './index';
@@ -18,7 +19,7 @@ import { getAllRecitersFromAdapters, getReciterPlaylist } from './index';
  */
 // Bump when the adapter shape, language handling, or pagination changes so a
 // deploy never serves data cached by the previous code.
-const CACHE_VERSION = 'v4-catalog-dto';
+const CACHE_VERSION = 'v5-timings';
 
 const getCachedReciters = unstable_cache(
   (language: Language, sources: LinkSource[] | null) =>
@@ -49,3 +50,17 @@ export const getReciterPlaylistCached = (
   language: Language
 ): Promise<Playlist | null> =>
   getCachedReciterPlaylist(source, moshaf, language);
+
+/** Ayah timings are stable per recording, so keep them for a day. */
+const getCachedSurahTimings = unstable_cache(
+  (source: LinkSource, moshaf: Moshaf, surah: number) =>
+    getSurahTimings(source, moshaf, surah),
+  ['surah-timings', CACHE_VERSION],
+  { revalidate: 86400 }
+);
+
+export const getSurahTimingsCached = (
+  source: LinkSource,
+  moshaf: Moshaf,
+  surah: number
+): Promise<AyahTiming[]> => getCachedSurahTimings(source, moshaf, surah);
