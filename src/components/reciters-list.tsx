@@ -25,7 +25,7 @@ import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { useRecentlyPlayed } from '@/hooks/use-recently-played';
 import { useReciters } from '@/hooks/use-reciters';
 import { enabledSourcesAtom, selectedReciterAtom } from '@/jotai/atom';
-import { Reciter, Riwaya } from '@/types';
+import { LinkSource, Reciter, Riwaya } from '@/types';
 import { generateFavId } from '@/utils';
 
 import ReciterCard from './reciter-card';
@@ -77,10 +77,13 @@ export default function RecitersList({ setIsOpen }: Props) {
     setSearchTerm,
     selectedRiwaya,
     setSelectedRiwaya,
+    selectedSources,
+    setSelectedSources,
     sortMode,
     setSortMode,
     filteredReciters: baseFilteredReciters,
     availableRiwiyat,
+    availableSources,
   } = useFilterSort({
     reciters: recitersBySource,
     favoriteCounts,
@@ -114,6 +117,16 @@ export default function RecitersList({ setIsOpen }: Props) {
     cachedUrls,
   ]);
   const { formatMessage } = useIntl();
+
+  // Drop provider filters that are no longer enabled in settings.
+  useEffect(() => {
+    if (loading || recitersBySource.length === 0) return;
+    const available = new Set(recitersBySource.map((r) => r.source));
+    const next = selectedSources.filter((source) => available.has(source));
+    if (next.length !== selectedSources.length) {
+      setSelectedSources(next);
+    }
+  }, [loading, recitersBySource, selectedSources, setSelectedSources]);
 
   const searchPlaceHolder = formatMessage({
     id: 'searchPlaceHolder',
@@ -175,8 +188,25 @@ export default function RecitersList({ setIsOpen }: Props) {
     defaultMessage: 'All Reciters',
   });
 
+  const filterBySource = formatMessage({
+    id: 'filter.bySource',
+    defaultMessage: 'Filter by source',
+  });
+
   const { focusedIndex, setFocusedIndex, reciterRefs, searchInputRef } =
     useKeyboardNavigation(filteredReciters.length);
+
+  const toggleSource = useCallback(
+    (source: LinkSource) => {
+      setSelectedSources(
+        selectedSources.includes(source)
+          ? selectedSources.filter((value) => value !== source)
+          : [...selectedSources, source]
+      );
+      setFocusedIndex(null);
+    },
+    [selectedSources, setSelectedSources, setFocusedIndex]
+  );
 
   const favoriteRecitersList = useMemo(
     () =>
@@ -319,6 +349,33 @@ export default function RecitersList({ setIsOpen }: Props) {
             )}
           </div>
         </div>
+
+        {availableSources.length > 1 && (
+          <div
+            role="group"
+            aria-label={filterBySource}
+            className="flex w-full flex-wrap items-center justify-center gap-2"
+          >
+            {availableSources.map(({ value, label }) => {
+              const isSelected = selectedSources.includes(value);
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  aria-pressed={isSelected}
+                  onClick={() => toggleSource(value)}
+                  className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-CTA-blue-500/50 ${
+                    isSelected
+                      ? 'border-transparent bg-brand-CTA-blue-600 text-white shadow-sm'
+                      : 'hover:border-brand-CTA-blue-300 border-border bg-surface text-gray-500 hover:text-foreground dark:text-gray-400'
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         <div className="flex w-full flex-wrap items-center justify-center gap-2">
           <button

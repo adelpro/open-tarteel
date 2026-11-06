@@ -1,24 +1,40 @@
 'use client';
 
 import { useAtom } from 'jotai';
-import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import {
+  parseAsArrayOf,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
+import { SOURCE_LABEL_IDS } from '@/constants';
 import { recitersSortAtom } from '@/jotai/atom';
-import { Reciter, Riwaya } from '@/types';
+import { LinkSource, Reciter, Riwaya } from '@/types';
 import { fuzzySearch, generateFavId } from '@/utils';
 
 // Define parsers for URL state management
-// Using descriptive keys (query, riwaya) for clarity
+// Using descriptive keys (query, riwaya, source) for clarity
 // Define all possible Riwaya values plus 'all'
 const riwayaValues = ['all', ...Object.values(Riwaya)] as const;
+const sourceValues = [
+  LinkSource.MP3QURAN,
+  LinkSource.MP3QURAN_V4,
+  LinkSource.ITQAN,
+  LinkSource.QURANAI,
+  LinkSource.QURAN_FOUNDATION,
+] as const;
 
 const filterSearchParsers = {
   searchQuery: parseAsString.withDefault(''),
   selectedRiwaya: parseAsStringLiteral(riwayaValues).withDefault(
     'all' as const
   ),
+  selectedSources: parseAsArrayOf(
+    parseAsStringLiteral(sourceValues)
+  ).withDefault([]),
 };
 
 type UseFilterSortParams = {
@@ -37,15 +53,18 @@ export function useFilterSort({
   viewCounts = {},
 }: UseFilterSortParams) {
   // Use nuqs for URL state management with descriptive keys
-  const [{ searchQuery: searchTerm, selectedRiwaya }, setFilters] =
-    useQueryStates(filterSearchParsers, {
-      urlKeys: {
-        searchQuery: 'query',
-        selectedRiwaya: 'riwaya',
-      },
-      history: 'push',
-      shallow: false, // Allow server to track state changes
-    });
+  const [
+    { searchQuery: searchTerm, selectedRiwaya, selectedSources },
+    setFilters,
+  ] = useQueryStates(filterSearchParsers, {
+    urlKeys: {
+      searchQuery: 'query',
+      selectedRiwaya: 'riwaya',
+      selectedSources: 'source',
+    },
+    history: 'push',
+    shallow: false, // Allow server to track state changes
+  });
 
   // Keep sortMode in Jotai for non-URL state
   const [sortMode, setSortMode] = useAtom(recitersSortAtom);
@@ -62,12 +81,26 @@ export function useFilterSort({
       );
   }, [reciters, formatMessage, locale]);
 
+  const availableSources = useMemo(() => {
+    const present = new Set(reciters.map((r) => r.source));
+    return [...present]
+      .map((value) => ({
+        value,
+        label: formatMessage({ id: SOURCE_LABEL_IDS[value] }),
+      }))
+      .sort((a, b) =>
+        a.label.localeCompare(b.label, locale, { sensitivity: 'base' })
+      );
+  }, [reciters, formatMessage, locale]);
+
   const filteredReciters = useMemo(() => {
-    // Apply favorite and riwaya filters first
+    // Apply favorite, riwaya and source filters first
     let filtered = reciters.filter((r) => {
       const id = generateFavId(r);
       if (showOnlyFavorites && !favoriteReciters.includes(id)) return false;
       if (selectedRiwaya !== 'all' && r.moshaf.riwaya !== selectedRiwaya)
+        return false;
+      if (selectedSources.length > 0 && !selectedSources.includes(r.source))
         return false;
       return true;
     });
@@ -108,6 +141,7 @@ export function useFilterSort({
     favoriteReciters,
     showOnlyFavorites,
     selectedRiwaya,
+    selectedSources,
     searchTerm,
     sortMode,
     favoriteCounts,
@@ -120,9 +154,13 @@ export function useFilterSort({
     selectedRiwaya,
     setSelectedRiwaya: (value: Riwaya | 'all') =>
       setFilters({ selectedRiwaya: value }),
+    selectedSources,
+    setSelectedSources: (value: LinkSource[]) =>
+      setFilters({ selectedSources: value }),
     sortMode,
     setSortMode,
     filteredReciters,
     availableRiwiyat,
+    availableSources,
   };
 }

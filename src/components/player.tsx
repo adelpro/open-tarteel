@@ -333,6 +333,7 @@ export default function Player({ playlist }: Props) {
                 togglePlaylistOpen={togglePlaylistOpen}
                 currentTrackId={currentTrack}
                 tahfeezActiveRef={tahfeezActiveRef}
+                spectrumSupported={canAnalyse}
               />
               <Range
                 currentTime={currentTime}
@@ -358,6 +359,7 @@ export default function Player({ playlist }: Props) {
                 togglePlaylistOpen={togglePlaylistOpen}
                 currentTrackId={currentTrack}
                 tahfeezActiveRef={tahfeezActiveRef}
+                spectrumSupported={canAnalyse}
               />
               <Range
                 currentTime={currentTime}

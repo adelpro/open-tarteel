@@ -1,6 +1,6 @@
 # Open Tarteel — Production Hardening & Provider Roadmap
 
-Last updated: 2026-11-05
+Last updated: 2026-11-06
 Owner: maintainers
 Status: active
 
@@ -79,6 +79,26 @@ never persists. Fix in 5c/5d; do not rely on the current cache layer.
   when `CONTEXT` is `deploy-preview` or `branch-deploy`.
 - Local `netlify deploy` can fail at blob upload (`403 Request has expired`);
   prefer Git/build-hook deploys.
+
+### CI / GitHub Actions (checked 2026-11-06)
+
+- **Active branches green:** `develop` and `staging` latest CI runs pass.
+- **No active failures:** `gh run list --status failure` shows only
+  superseded PR-branch runs (e.g. #101 had an early lint failure, fixed and
+  merged; `phase4-5` pre-merge runs) and historical failures (Oct/Sep). Treat
+  those as stale unless they reproduce on `develop`/`staging`/`main`.
+- **Known non-blocking:** Codacy PR check can be `action_required` (needs
+  Codacy login). Monitor `main` if it receives new pushes (currently old).
+- Recheck: `gh run list --repo adelpro/open-tarteel --branch develop -L 5` and
+  `gh run list --repo adelpro/open-tarteel --status failure -L 8`.
+
+### Open requests (2026-11-06)
+
+| Request                                                          | Plan item        | Notes                                                                                                             |
+| ---------------------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Remove fake spectrum for providers without real spectrum support | **2c-4**         | Done in #102: CSS fallback removed; fixed height/no shift; toggle disabled with a11y copy for non-CORS providers. |
+| Reciters filter tags by provider (multi-select)                  | **10f**          | Done in #102: provider chips, multi-select, URL-backed (`source`), RTL/i18n, reset when a source is disabled.     |
+| Check failing GitHub Actions                                     | CI section above | No active branch failures found; stale superseded failures only.                                                  |
 
 ### Temporary tunnel (optional)
 
@@ -276,7 +296,7 @@ Risks:
 Reported after the provider/catalog work. Keep each change minimal and
 independently revertible.
 
-### 1. Spectrum is gone
+### 1. Spectrum
 
 The bars no longer render reliably after the player/detail changes.
 
@@ -284,10 +304,13 @@ The bars no longer render reliably after the player/detail changes.
   `canUseAudioAnalyser`, `everPlayed`, and Player remounts.
 - Itqan has no CORS and is intentionally disabled; every CORS-capable provider
   must still animate while playing.
-- For non-CORS providers, render a lightweight CSS fallback instead of an empty
-  space, so the card does not look broken.
-- Add a browser regression check: play a track, assert the visualizer canvas or
-  bars are visible.
+- **2026-11-06 update:** first-play start fixed (#101). **Remove the fake/CSS
+  spectrum fallback** for providers that do not support the real spectrum
+  (`canUseAudioAnalyser` false / no CORS): show no fake animation; keep a fixed
+  height or collapse gracefully without layout shift, and keep the visualizer
+  toggle behavior clear (disabled/hidden where not applicable).
+- Add a browser regression check: play a track, assert the real visualizer for
+  CORS-capable providers and no fake bars for non-spectrum providers.
 
 ### 2. PWA icons have a black background
 
@@ -312,11 +335,12 @@ The bars no longer render reliably after the player/detail changes.
 - Remove the duplicate mobile/desktop switcher markup; one menu for both.
 - Keep the current tokens; no redesign.
 
-| PR   | Title                                                           | Scope                                            |
-| ---- | --------------------------------------------------------------- | ------------------------------------------------ |
-| 2c-1 | `fix(player): restore the spectrum and add a non-CORS fallback` | analyser gating, fallback bars, regression check |
-| 2c-2 | `fix(pwa): transparent and maskable icons`                      | icons, manifest purposes, install check          |
-| 2c-3 | `style(player): move modes into the More menu`                  | flat menu rows, active dot, remove card switcher |
+| PR   | Title                                                           | Scope                                                                        |
+| ---- | --------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| 2c-1 | `fix(player): restore the spectrum and add a non-CORS fallback` | done; first-play fix #101                                                    |
+| 2c-2 | `fix(pwa): transparent and maskable icons`                      | done in #102; transparent `any` + opaque maskable 192/512, opaque Apple icon |
+| 2c-3 | `style(player): move modes into the More menu`                  | done in #102; flat menu rows, active check, switcher removed                 |
+| 2c-4 | `fix(player): remove fake spectrum for unsupported providers`   | done in #102; no CSS bars, fixed height, disabled toggle + a11y copy         |
 
 ---
 
@@ -796,13 +820,14 @@ Rich Results test passes; CLS 0.
 Rules: no redesign, no new component library, no token rewrite. Only
 consistency and reduction.
 
-| PR  | Title                                               | Scope                                              |
-| --- | --------------------------------------------------- | -------------------------------------------------- |
-| 10a | `style: unify control sizes, radius and icon scale` | h-9/h-10, `rounded-lg`, `ICON_SIZE`                |
-| 10b | `style: reduce player chrome on small screens`      | hide visualizer by default, one-line download area |
-| 10c | `style: reciter card density`                       | 1 badge row, truncate name, riwayah secondary      |
-| 10d | `style: tahfeez panel 2x2 + presets`                | minimal, keep behavior                             |
-| 10e | `style: dark mode and RTL parity`                   | logical properties, contrast                       |
+| PR  | Title                                               | Scope                                                                           |
+| --- | --------------------------------------------------- | ------------------------------------------------------------------------------- |
+| 10a | `style: unify control sizes, radius and icon scale` | h-9/h-10, `rounded-lg`, `ICON_SIZE`                                             |
+| 10b | `style: reduce player chrome on small screens`      | hide visualizer by default, one-line download area                              |
+| 10c | `style: reciter card density`                       | 1 badge row, truncate name, riwayah secondary                                   |
+| 10d | `style: tahfeez panel 2x2 + presets`                | minimal, keep behavior                                                          |
+| 10e | `style: dark mode and RTL parity`                   | logical properties, contrast                                                    |
+| 10f | `feat(ui): multi-select provider filter tags`       | done in #102; provider chips, multi-select, URL `source`, RTL/i18n, empty state |
 
 Acceptance: screenshot diff (ar/en, light/dark, mobile/desktop), no functional
 change, bundle not larger.
@@ -915,15 +940,15 @@ Dependency order:
 ```
 0a–0e → merge develop
       → 1a, 1b
-      → 2a–2c, 2b-1…2b-4, 2c-1…2c-3
+      → 2a–2c, 2b-1…2b-4, 2c-1…2c-4
       → 3a, 3b
       → 4a–4d
       → 5a, 5c, 5d, 5b, 5e, 5f, 5g, 5h
       → 6a–6e
       → 7a–7d
-      → 8a, 8b
+      → 8a, 8b, 8c (Cloudflare CNAME pending)
       → 9a–9c
-      → 10a–10e
+      → 10a–10f
 ```
 
 ---
