@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
 import { ImSortAmountDesc } from 'react-icons/im';
-import { MdCloudDone, MdHistory } from 'react-icons/md';
+import { MdCloudDone, MdCloudDownload, MdHistory } from 'react-icons/md';
 import {
   TbSortAscendingLetters,
   TbSortDescendingNumbers,
@@ -25,6 +25,7 @@ import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { useRecentlyPlayed } from '@/hooks/use-recently-played';
 import { useReciters } from '@/hooks/use-reciters';
 import { enabledSourcesAtom, selectedReciterAtom } from '@/jotai/atom';
+import { canDownload } from '@/services/reciters/capabilities';
 import { LinkSource, Reciter, Riwaya } from '@/types';
 import { generateFavId } from '@/utils';
 
@@ -41,6 +42,7 @@ export default function RecitersList({ setIsOpen }: Props) {
   const { recentIds, addToRecent } = useRecentlyPlayed();
   const [showRecentOnly, setShowRecentOnly] = useState(false);
   const [showDownloadedOnly, setShowDownloadedOnly] = useState(false);
+  const [showDownloadableOnly, setShowDownloadableOnly] = useState(false);
 
   const isOnline = useNetworkStatus();
   const isDownloadedOnlyEffective = showDownloadedOnly || !isOnline;
@@ -108,12 +110,16 @@ export default function RecitersList({ setIsOpen }: Props) {
         r.moshaf.playlist.some((item) => cachedUrls.has(item.link))
       );
     }
+    if (showDownloadableOnly) {
+      result = result.filter((r) => canDownload(r.source));
+    }
     return result;
   }, [
     baseFilteredReciters,
     showRecentOnly,
     recentIds,
     isDownloadedOnlyEffective,
+    showDownloadableOnly,
     cachedUrls,
   ]);
   const { formatMessage } = useIntl();
@@ -192,6 +198,16 @@ export default function RecitersList({ setIsOpen }: Props) {
     id: 'filter.bySource',
     defaultMessage: 'Filter by source',
   });
+
+  const filterDownloadable = formatMessage({
+    id: 'filter.downloadable',
+    defaultMessage: 'Downloadable',
+  });
+
+  const hasNonDownloadableSource = useMemo(
+    () => availableSources.some(({ value }) => !canDownload(value)),
+    [availableSources]
+  );
 
   const { focusedIndex, setFocusedIndex, reciterRefs, searchInputRef } =
     useKeyboardNavigation(filteredReciters.length);
@@ -374,6 +390,26 @@ export default function RecitersList({ setIsOpen }: Props) {
                 </button>
               );
             })}
+            {hasNonDownloadableSource && (
+              <>
+                <span aria-hidden="true" className="mx-1 h-4 w-px bg-border" />
+                <button
+                  type="button"
+                  aria-pressed={showDownloadableOnly}
+                  onClick={() =>
+                    setShowDownloadableOnly((previous) => !previous)
+                  }
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 ${
+                    showDownloadableOnly
+                      ? 'border-transparent bg-emerald-600 text-white shadow-sm'
+                      : 'border-border bg-surface text-gray-500 hover:border-emerald-300 hover:text-foreground dark:text-gray-400'
+                  }`}
+                >
+                  <MdCloudDownload size={14} aria-hidden="true" />
+                  {filterDownloadable}
+                </button>
+              </>
+            )}
           </div>
         )}
 

@@ -2,7 +2,12 @@
 
 import { useAtomValue } from 'jotai';
 import React from 'react';
-import { MdCloudDone, MdCloudDownload, MdOutlineCancel } from 'react-icons/md';
+import {
+  MdCloudDone,
+  MdCloudDownload,
+  MdCloudOff,
+  MdOutlineCancel,
+} from 'react-icons/md';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { SURAHS } from '@/constants';
@@ -54,7 +59,15 @@ export default function TrackInfo({
 
       {/* Fixed-height download status area to prevent player card height changes */}
       <div className="min-h-[52px] w-full max-w-xs">
-        {!downloadsEnabled ? null : isDownloading ? (
+        {!downloadsEnabled ? (
+          <div className="flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-500 dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-400">
+            <MdCloudOff size={14} aria-hidden="true" />
+            <FormattedMessage
+              id="download.streamingOnly"
+              defaultMessage="Streaming only — download unavailable"
+            />
+          </div>
+        ) : isDownloading ? (
           <div className="flex w-full flex-col gap-1.5 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 dark:border-blue-900 dark:bg-blue-950/40">
             <div className="flex items-center justify-between gap-2">
               <span className="text-xs font-medium text-blue-700 dark:text-blue-300">

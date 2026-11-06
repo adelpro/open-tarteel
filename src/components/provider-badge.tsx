@@ -66,13 +66,14 @@ const NO_DOWNLOAD = () =>
     'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
   );
 
-/** Ordered by importance; the UI shows the first two. */
+/** Ordered by importance; the UI shows the first three. */
 export const getProviderBadges = (
   capabilities: ProviderCapabilities
 ): ProviderBadge[] => {
   const badges: ProviderBadge[] = [];
 
   if (capabilities.beta) badges.push(BETA());
+  if (!capabilities.download) badges.push(NO_DOWNLOAD());
   if (capabilities.timing !== 'none') badges.push(TIMING());
   if (
     capabilities.timing === 'word' ||
@@ -82,7 +83,6 @@ export const getProviderBadges = (
   ) {
     badges.push(WORD());
   }
-  if (!capabilities.download) badges.push(NO_DOWNLOAD());
 
   return badges;
 };
@@ -93,7 +93,7 @@ type Props = {
   className?: string;
 };
 
-export default function ProviderBadges({ source, max = 2, className }: Props) {
+export default function ProviderBadges({ source, max = 3, className }: Props) {
   const intl = useIntl();
   const capabilities = getCapabilities(source);
   const badges = getProviderBadges(capabilities);

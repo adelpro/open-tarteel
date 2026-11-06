@@ -6,10 +6,10 @@ import { LinkSource } from '@/types';
 import { getProviderBadges } from './provider-badge';
 
 describe('getProviderBadges', () => {
-  it('orders Itqan as timing + no download', () => {
+  it('orders Itqan as no download, then timing', () => {
     expect(
       getProviderBadges(getCapabilities(LinkSource.ITQAN)).map((b) => b.key)
-    ).toEqual(['timing', 'no-download']);
+    ).toEqual(['no-download', 'timing']);
   });
 
   it('orders Quran Foundation as timing + word', () => {
@@ -27,5 +27,13 @@ describe('getProviderBadges', () => {
     expect(
       getProviderBadges(getCapabilities(LinkSource.QURANAI)).map((b) => b.key)
     ).toEqual(['timing', 'word']);
+  });
+
+  it('puts the beta badge first for MP3Quran v4', () => {
+    expect(
+      getProviderBadges(getCapabilities(LinkSource.MP3QURAN_V4)).map(
+        (b) => b.key
+      )
+    ).toEqual(['beta', 'timing', 'word']);
   });
 });
