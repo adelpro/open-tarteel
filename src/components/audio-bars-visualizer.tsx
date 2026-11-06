@@ -1,7 +1,7 @@
 'use client';
 
 import { useAtomValue } from 'jotai';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactAudioSpectrum from 'react-audio-spectrum';
 
 if (typeof window !== 'undefined') {
