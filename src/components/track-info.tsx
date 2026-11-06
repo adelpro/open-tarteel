@@ -16,6 +16,8 @@ import { selectedReciterAtom } from '@/jotai/atom';
 import { canDownload } from '@/services/reciters/capabilities';
 import { formatBytes, formatTime, getSurahDisplayName } from '@/utils';
 
+import DownloadError from './download-error';
+
 type Props = {
   currentTrackId: number;
   duration: number;
@@ -29,8 +31,13 @@ export default function TrackInfo({
 }: Props) {
   const selectedReciter = useAtomValue(selectedReciterAtom);
   const language = useIntl().locale;
-  const { progress, downloadAllTracks, cancelDownload, isAllCached } =
-    useOfflineDownload();
+  const {
+    progress,
+    lastError,
+    downloadAllTracks,
+    cancelDownload,
+    isAllCached,
+  } = useOfflineDownload();
   const playlist = selectedReciter?.moshaf.playlist;
   if (!Array.isArray(playlist)) return null;
 
@@ -125,16 +132,19 @@ export default function TrackInfo({
             />
           </div>
         ) : (
-          <button
-            onClick={() => downloadAllTracks(playlist)}
-            className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-600 transition-colors hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-400 dark:hover:bg-blue-900/50"
-          >
-            <MdCloudDownload size={16} />
-            <FormattedMessage
-              id="download.downloadAllSurahs"
-              defaultMessage="Download all surahs"
-            />
-          </button>
+          <div className="space-y-1.5">
+            <DownloadError code={lastError} />
+            <button
+              onClick={() => downloadAllTracks(playlist)}
+              className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-600 transition-colors hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-400 dark:hover:bg-blue-900/50"
+            >
+              <MdCloudDownload size={16} />
+              <FormattedMessage
+                id="download.downloadAllSurahs"
+                defaultMessage="Download all surahs"
+              />
+            </button>
+          </div>
         )}
       </div>
     </div>

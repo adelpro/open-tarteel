@@ -13,8 +13,11 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import Tooltip from '@/components/tooltip';
 import { SURAHS } from '@/constants';
 import type { DownloadProgress } from '@/hooks/use-offline-download';
+import type { OfflineErrorCode } from '@/services/offline/types';
 import type { Playlist } from '@/types';
 import { cn, formatBytes, getSurahDisplayName } from '@/utils';
+
+import DownloadError from './download-error';
 
 /** Rough average MP3 size per surah (~5 MB) for pre-download estimate */
 const ESTIMATED_BYTES_PER_SURAH = 5 * 1024 * 1024;
@@ -27,6 +30,7 @@ type Props = {
   onDownloadAll: (playlist: Playlist) => void;
   onRemoveAll: (playlist: Playlist) => void;
   onCancel: () => void;
+  error?: OfflineErrorCode;
   checkStorageAvailable?: (expectedBytes: number) => Promise<boolean | null>;
   estimateStorage?: () => Promise<{
     usage: number;
@@ -43,6 +47,7 @@ export default function DownloadAllButton({
   onDownloadAll,
   onRemoveAll,
   onCancel,
+  error,
   checkStorageAvailable,
   estimateStorage,
 }: Props) {
@@ -210,6 +215,7 @@ export default function DownloadAllButton({
 
   return (
     <div className="space-y-2">
+      <DownloadError code={error ?? null} />
       {storageWarning && (
         <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
           <MdWarning size={16} className="mt-0.5 shrink-0" />

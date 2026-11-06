@@ -16,8 +16,13 @@ import { getAllReciters } from '@/utils/api';
 
 export default function CacheManagement() {
   const { locale } = useIntl();
-  const { cachedUrls, estimateStorage, getCachedMoshafs, removeCachedLinks } =
-    useOfflineDownload();
+  const {
+    cachedUrls,
+    storagePersisted,
+    estimateStorage,
+    getCachedMoshafs,
+    removeCachedLinks,
+  } = useOfflineDownload();
 
   const [moshafs, setMoshafs] = useState<CachedMoshaf[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,6 +88,16 @@ export default function CacheManagement() {
               used: formatBytes(storage.usage),
               quota: formatBytes(storage.quota),
             }}
+          />
+        </p>
+      )}
+
+      {storagePersisted === false && (
+        <p className="flex items-start gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+          <span aria-hidden="true">⚠</span>
+          <FormattedMessage
+            id="storage.notPersisted"
+            defaultMessage="The browser may remove downloads when storage is low."
           />
         </p>
       )}
