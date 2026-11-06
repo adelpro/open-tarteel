@@ -76,7 +76,6 @@ export default function PlayerControls({
   const [isClient, setIsClient] = useState(false);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const [showDesktopSleepMenu, setShowDesktopSleepMenu] = useState(false);
   const [showVisualizer, setShowVisualizer] = useAtom(showVisualizerAtom);
   const [volume, setVolume] = useAtom(volumeAtom);
   const isFullscreen = useAtomValue(fullscreenAtom);
@@ -153,7 +152,6 @@ export default function PlayerControls({
   }, [isTahfeezSupported, activeMode]);
 
   const moreMenuRef = useRef<HTMLDivElement>(null);
-  const desktopSleepMenuRef = useRef<HTMLDivElement>(null);
   const { formatMessage } = useIntl();
 
   // ── Custom Hook ─────────────────────────────────────
@@ -204,20 +202,6 @@ export default function PlayerControls({
       document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showMoreMenu]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        desktopSleepMenuRef.current &&
-        !desktopSleepMenuRef.current.contains(event.target as Node)
-      ) {
-        setShowDesktopSleepMenu(false);
-      }
-    };
-    if (showDesktopSleepMenu)
-      document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showDesktopSleepMenu]);
 
   // ── Handlers ─────────────────────────────────────────
   const togglePlaybackMode = () => {
@@ -528,9 +512,9 @@ export default function PlayerControls({
           </button>
         </Tooltip>
 
-        {/* Mobile Sleep Timer */}
+        {/* Sleep timer indicator (all sizes; set from the More menu) */}
         {remainingTime !== null && remainingTime > 0 && (
-          <div className="flex h-9 w-9 items-center justify-center sm:hidden">
+          <div className="flex h-9 w-9 items-center justify-center">
             <span className="flex items-center text-xs font-bold text-blue-500 dark:text-blue-400">
               <Image
                 src={sleepSVG}
@@ -742,8 +726,8 @@ export default function PlayerControls({
           )}
         </div>
 
-        {/* Desktop Controls */}
-        <div className="hidden items-center gap-2 sm:flex">
+        {/* Desktop quick actions (everything else lives in the More menu). */}
+        <div className="hidden items-center gap-2 md:flex">
           <Tooltip
             content={
               isFullscreen ? messages.exitFullscreen : messages.enterFullscreen
@@ -765,111 +749,6 @@ export default function PlayerControls({
               )}
             </button>
           </Tooltip>
-
-          {renderImageButton(
-            showVisualizer ? spectrumSVG : spectrumDisabledSVG,
-            !spectrumSupported
-              ? messages.spectrumUnavailable
-              : showVisualizer
-                ? messages.hideVisualizer
-                : messages.showVisualizer,
-            () => setShowVisualizer((previous) => !previous),
-            isPlaying || !spectrumSupported
-              ? 'pointer-events-none cursor-not-allowed opacity-30'
-              : '',
-            isPlaying || !spectrumSupported
-          )}
-
-          <Tooltip content={messages.playbackSpeed}>
-            <button
-              onClick={togglePlaybackSpeed}
-              className="relative flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-              aria-label={messages.playbackSpeed}
-            >
-              <MdSpeed size={ICON_SIZE} color="#6b7280" />
-              {playbackSpeed !== 1 && (
-                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[8px] font-bold text-white">
-                  {playbackSpeed}
-                </span>
-              )}
-            </button>
-          </Tooltip>
-
-          <div className="relative" ref={desktopSleepMenuRef}>
-            <Tooltip
-              content={
-                remainingTime
-                  ? messages.sleepTimerActive(getCurrentMinute(remainingTime))
-                  : messages.sleepTimer
-              }
-            >
-              <button
-                onClick={() => setShowDesktopSleepMenu((previous) => !previous)}
-                className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-                aria-label={
-                  remainingTime
-                    ? `Sleep timer active: ${getCurrentMinute(remainingTime)} minutes remaining`
-                    : messages.sleepTimer
-                }
-              >
-                <Image src={sleepSVG} alt="" width={16} height={16} />
-                {remainingTime !== null && remainingTime > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[8px] font-bold text-white">
-                    {getCurrentMinute(remainingTime)}
-                  </span>
-                )}
-              </button>
-            </Tooltip>
-
-            {showDesktopSleepMenu && (
-              <div className="absolute bottom-10 right-0 z-10 w-40 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
-                <div className="mb-1 px-2 text-xs font-medium text-gray-500 dark:text-gray-400">
-                  <Image
-                    src={sleepSVG}
-                    alt=""
-                    width={12}
-                    height={12}
-                    className="mr-1 inline"
-                  />
-                  {messages.sleepTimer}
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {SLEEP_MINUTES.map((minutes) => (
-                    <button
-                      key={minutes}
-                      onClick={() => {
-                        setSleepTimer(minutes);
-                        setShowDesktopSleepMenu(false);
-                      }}
-                      className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-                    >
-                      {minutes}m
-                    </button>
-                  ))}
-                  <button
-                    onClick={() => {
-                      setSleepTimer('end');
-                      setShowDesktopSleepMenu(false);
-                    }}
-                    className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-                  >
-                    {messages.untilEnd}
-                  </button>
-                  {remainingTime && (
-                    <button
-                      onClick={() => {
-                        clearSleepTimer();
-                        setShowDesktopSleepMenu(false);
-                      }}
-                      className="w-full rounded bg-red-100 px-2 py-1 text-xs text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
-                    >
-                      {messages.cancelTimer}
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
 
           {renderImageButton(
             playlistSVG,
