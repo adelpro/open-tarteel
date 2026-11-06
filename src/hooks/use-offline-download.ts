@@ -1,92 +1,247 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
+import { useCallback, useEffect, useMemo } from 'react';
 
+import { selectedReciterAtom } from '@/jotai/atom';
+import { offlineStateAtom } from '@/jotai/offline';
+import {
+  deleteDownloads,
+  getAllDownloads,
+  putDownload,
+  putDownloads,
+} from '@/services/offline/database';
+import type {
+  CachedMoshaf,
+  DownloadProgress,
+  OfflineDownloadRecord,
+  OfflineErrorCode,
+  StorageEstimate,
+} from '@/services/offline/types';
 import type { Playlist } from '@/types';
 
+export type {
+  CachedMoshaf,
+  DownloadProgress,
+  StorageEstimate,
+} from '@/services/offline/types';
+
 const OFFLINE_CACHE = 'quran-offline-downloads';
+const ESTIMATED_BYTES_PER_SURAH = 5 * 1024 * 1024;
+/** Keep 20% of free space for the browser and metadata. */
+const QUOTA_HEADROOM = 1.2;
 
-export type DownloadProgress = {
-  total: number;
-  completed: number;
-  failed: number;
-  downloadedBytes: number;
-  /** URL of the track currently being fetched */
-  currentUrl: string | null;
-  /** 0-1 fraction of the current single-track download */
-  currentTrackProgress: number;
-};
+let activeController: AbortController | null = null;
+let singleController: AbortController | null = null;
+let operationId = 0;
+let hydratePromise: Promise<void> | null = null;
+let persistPromise: Promise<boolean | null> | null = null;
 
-export type StorageEstimate = {
-  usage: number;
-  quota: number;
-  available: number;
-};
+class StorageQuotaError extends Error {
+  name = 'StorageQuotaError';
+}
 
-export type CachedMoshaf = {
-  reciterName: string;
-  moshafName: string;
-  trackCount: number;
-  totalBytes: number;
-  /** Links belonging to this moshaf in the cache */
-  links: string[];
-};
+function isQuotaError(error: unknown): boolean {
+  if (error instanceof StorageQuotaError) return true;
+  if (error instanceof DOMException) {
+    return (
+      error.name === 'QuotaExceededError' ||
+      error.name === 'NS_ERROR_DOM_QUOTA_REACHED'
+    );
+  }
+  return error instanceof Error && /quota/i.test(error.message);
+}
+
+const canUseCache = (): boolean =>
+  typeof window !== 'undefined' && 'caches' in window;
 
 export function useOfflineDownload() {
-  const [cachedUrls, setCachedUrls] = useState<Set<string>>(new Set());
-  const [progress, setProgress] = useState<DownloadProgress | null>(null);
-  const [singleTrackLoading, setSingleTrackLoading] = useState<string | null>(
-    null
-  );
-  const [singleTrackProgress, setSingleTrackProgress] = useState<number>(0);
-  const abortRef = useRef<AbortController | null>(null);
-  const singleAbortRef = useRef<AbortController | null>(null);
+  const selectedReciter = useAtomValue(selectedReciterAtom);
+  const [state, setState] = useAtom(offlineStateAtom);
+  const {
+    cachedUrls,
+    progress,
+    singleTrackLoading,
+    singleTrackProgress,
+    lastError,
+    storagePersisted,
+    hydrated,
+  } = state;
 
+  const context = useMemo(() => {
+    if (!selectedReciter) return null;
+    return {
+      reciterId: selectedReciter.id,
+      moshafId: selectedReciter.moshaf.id,
+      reciterName: selectedReciter.name,
+      moshafName: selectedReciter.moshaf.name,
+    };
+  }, [selectedReciter]);
+
+  const buildRecord = useCallback(
+    (url: string, bytes: number): OfflineDownloadRecord => {
+      const surahId = selectedReciter?.moshaf.playlist.find(
+        (item) => item.link === url
+      )?.surahId;
+      return {
+        url,
+        bytes,
+        downloadedAt: Date.now(),
+        backend: 'cache',
+        ...context,
+        ...(surahId ? { surahId } : {}),
+      };
+    },
+    [context, selectedReciter]
+  );
+
+  // ── Storage helpers ─────────────────────────────────
+  const estimateStorage =
+    useCallback(async (): Promise<StorageEstimate | null> => {
+      if (!navigator.storage?.estimate) return null;
+      try {
+        const estimate = await navigator.storage.estimate();
+        const usage = estimate.usage ?? 0;
+        const quota = estimate.quota ?? 0;
+        return { usage, quota, available: quota - usage };
+      } catch {
+        return null;
+      }
+    }, []);
+
+  const checkStorageAvailable = useCallback(
+    async (expectedBytes: number): Promise<boolean | null> => {
+      const estimate = await estimateStorage();
+      if (!estimate) return null; // cannot determine
+      return estimate.available > expectedBytes * QUOTA_HEADROOM;
+    },
+    [estimateStorage]
+  );
+
+  // ── Cache/metadata reconciliation ───────────────────
   const refreshCachedUrls = useCallback(async () => {
-    if (!('caches' in window)) return;
+    if (!canUseCache()) {
+      setState((previous) => ({ ...previous, hydrated: true }));
+      return;
+    }
+
     try {
       const cache = await caches.open(OFFLINE_CACHE);
       const keys = await cache.keys();
-      setCachedUrls(new Set(keys.map((r) => r.url)));
+      const urls = new Set(keys.map((request) => request.url));
+      const records = await getAllDownloads();
+      const known = new Map(records.map((record) => [record.url, record]));
+
+      const stale = records
+        .filter((record) => !urls.has(record.url))
+        .map((record) => record.url);
+      if (stale.length > 0) await deleteDownloads(stale);
+
+      const legacy: OfflineDownloadRecord[] = [...urls]
+        .filter((url) => !known.has(url))
+        .map((url) => ({
+          url,
+          bytes: 0,
+          downloadedAt: Date.now(),
+          backend: 'cache',
+        }));
+      if (legacy.length > 0) await putDownloads(legacy);
+
+      setState((previous) => ({
+        ...previous,
+        cachedUrls: urls,
+        hydrated: true,
+      }));
     } catch {
-      // Cache API not available
+      setState((previous) => ({ ...previous, hydrated: true }));
     }
-  }, []);
+  }, [setState]);
+
+  const hydrate = useCallback(async () => {
+    if (hydrated) return;
+    if (hydratePromise) return hydratePromise;
+
+    hydratePromise = (async () => {
+      await refreshCachedUrls();
+
+      if (typeof navigator !== 'undefined' && navigator.storage?.persist) {
+        persistPromise ??= navigator.storage.persist().catch(() => null);
+        const persisted = await persistPromise;
+        setState((previous) => ({
+          ...previous,
+          storagePersisted: persisted,
+        }));
+      }
+    })().finally(() => {
+      hydratePromise = null;
+    });
+
+    return hydratePromise;
+  }, [hydrated, refreshCachedUrls, setState]);
 
   useEffect(() => {
-    refreshCachedUrls();
-  }, [refreshCachedUrls]);
+    void hydrate();
+  }, [hydrate]);
 
-  // ── Helper: fetch with progress via ReadableStream ──
+  // ── Fetch with progress + quota guard ───────────────
   const fetchWithProgress = useCallback(
     async (
       url: string,
       signal: AbortSignal,
-      onProgress?: (received: number, total: number) => void
+      onProgress?: (
+        _received: number,
+        _total: number,
+        _speedBps: number
+      ) => void,
+      onContentLength?: (_bytes: number) => Promise<boolean>
     ): Promise<Response | null> => {
       const response = await fetch(url, { mode: 'cors', signal });
       if (!response.ok) return null;
 
       const contentLength = Number(response.headers.get('content-length')) || 0;
+      if (contentLength > 0 && onContentLength) {
+        const allowed = await onContentLength(contentLength);
+        if (!allowed) {
+          signal.throwIfAborted();
+          throw new StorageQuotaError('Not enough storage');
+        }
+      }
+
       if (!response.body || !contentLength) {
-        // Can't stream — just return the response as-is
         return response;
       }
 
       const reader = response.body.getReader();
       const chunks: ArrayBuffer[] = [];
       let received = 0;
+      let lastTime = performance.now();
+      let lastReceived = 0;
+      let speed = 0;
 
       for (;;) {
         const { done, value } = await reader.read();
         if (done) break;
-        chunks.push(value.buffer as ArrayBuffer);
+        // Copy into a fresh ArrayBuffer so Blob accepts the chunk under strict
+        // DOM typings (avoids SharedArrayBuffer/ArrayBufferLike mismatch).
+        const copy = new Uint8Array(value.byteLength);
+        copy.set(value);
+        chunks.push(copy.buffer);
         received += value.length;
-        onProgress?.(received, contentLength);
+
+        const now = performance.now();
+        const elapsed = (now - lastTime) / 1000;
+        if (elapsed >= 0.2) {
+          const instant = (received - lastReceived) / elapsed;
+          speed = speed === 0 ? instant : 0.4 * instant + 0.6 * speed;
+          lastTime = now;
+          lastReceived = received;
+          onProgress?.(received, contentLength, speed);
+        }
       }
 
-      const blob = new Blob(chunks);
-      return new Response(blob, {
+      onProgress?.(received, contentLength, speed);
+
+      return new Response(new Blob(chunks), {
         status: response.status,
         statusText: response.statusText,
         headers: response.headers,
@@ -95,182 +250,287 @@ export function useOfflineDownload() {
     []
   );
 
-  // ── Download a single track (with loading indicator + progress) ─
+  // ── Download a single track ─────────────────────────
   const downloadTrack = useCallback(
     async (url: string): Promise<boolean> => {
-      if (!('caches' in window)) return false;
+      if (!canUseCache()) return false;
+
+      let controller: AbortController | null = null;
+      let currentOperation = 0;
       try {
         const cache = await caches.open(OFFLINE_CACHE);
-        const existing = await cache.match(url);
-        if (existing) return true;
+        if (await cache.match(url)) {
+          setState((previous) => ({
+            ...previous,
+            cachedUrls: new Set([...previous.cachedUrls, url]),
+          }));
+          return true;
+        }
 
-        singleAbortRef.current?.abort();
-        const controller = new AbortController();
-        singleAbortRef.current = controller;
+        singleController?.abort();
+        controller = new AbortController();
+        singleController = controller;
+        currentOperation = ++operationId;
 
-        setSingleTrackLoading(url);
-        setSingleTrackProgress(0);
+        setState((previous) => ({
+          ...previous,
+          singleTrackLoading: url,
+          singleTrackProgress: 0,
+          lastError: null,
+        }));
 
         const response = await fetchWithProgress(
           url,
           controller.signal,
-          (received, total) => {
-            setSingleTrackProgress(total > 0 ? received / total : 0);
+          (received, total, speed) => {
+            if (currentOperation !== operationId) return;
+            setState((previous) => ({
+              ...previous,
+              singleTrackProgress: total > 0 ? received / total : 0,
+              progress: previous.progress
+                ? { ...previous.progress, speedBps: speed }
+                : previous.progress,
+            }));
+          },
+          async (bytes) => {
+            const available = await checkStorageAvailable(bytes);
+            return available !== false;
           }
         );
 
-        if (!response) {
-          setSingleTrackLoading(null);
-          setSingleTrackProgress(0);
-          return false;
-        }
+        if (!response) throw new Error('Download failed');
 
         const clone = response.clone();
+        const blob = await response.blob();
         await cache.put(url, clone);
-        setCachedUrls((previous) => new Set([...previous, url]));
-        setSingleTrackLoading(null);
-        setSingleTrackProgress(0);
+        await putDownload(buildRecord(url, blob.size));
+
+        setState((previous) => ({
+          ...previous,
+          cachedUrls: new Set([...previous.cachedUrls, url]),
+          singleTrackLoading: null,
+          singleTrackProgress: 0,
+        }));
         return true;
-      } catch {
-        setSingleTrackLoading(null);
-        setSingleTrackProgress(0);
+      } catch (error) {
+        if (currentOperation !== operationId) return false;
+        const code: OfflineErrorCode =
+          controller?.signal.aborted || controllerAborted(error)
+            ? null
+            : isQuotaError(error)
+              ? 'quota'
+              : 'network';
+        setState((previous) => ({
+          ...previous,
+          singleTrackLoading: null,
+          singleTrackProgress: 0,
+          lastError: code,
+        }));
         return false;
+      } finally {
+        if (controller && singleController === controller) {
+          singleController = null;
+        }
       }
     },
-    [fetchWithProgress]
+    [buildRecord, checkStorageAvailable, fetchWithProgress, setState]
   );
 
   // ── Download all tracks ─────────────────────────────
-  // Note: The Cache API shares the origin quota (often ~60% of free disk on
-  // Chrome) and can be evicted under storage pressure. Use `estimateStorage`
-  // to check available space before starting a bulk download.
   const downloadAllTracks = useCallback(
     async (playlist: Playlist) => {
-      if (!('caches' in window)) return;
+      if (!canUseCache()) return;
 
-      abortRef.current?.abort();
+      activeController?.abort();
       const controller = new AbortController();
-      abortRef.current = controller;
+      activeController = controller;
+      const currentOperation = ++operationId;
 
       const total = playlist.length;
+      const uncached = playlist.filter((item) => !cachedUrls.has(item.link));
+      const estimatedBytes = uncached.length * ESTIMATED_BYTES_PER_SURAH;
+
+      const hasSpace = await checkStorageAvailable(estimatedBytes);
+      if (hasSpace === false) {
+        setState((previous) => ({
+          ...previous,
+          progress: null,
+          lastError: 'quota',
+        }));
+        activeController = null;
+        return;
+      }
+
       let completed = 0;
       let failed = 0;
       let downloadedBytes = 0;
 
-      setProgress({
-        total,
-        completed,
-        failed,
-        downloadedBytes,
-        currentUrl: null,
-        currentTrackProgress: 0,
-      });
-
-      const cache = await caches.open(OFFLINE_CACHE);
-
-      for (const item of playlist) {
-        if (controller.signal.aborted) break;
-        try {
-          const existing = await cache.match(item.link);
-          if (existing) {
-            // Already cached — count its actual size
-            const blob = await existing.blob();
-            downloadedBytes += blob.size;
-            completed++;
-            setProgress({
-              total,
-              completed,
-              failed,
-              downloadedBytes,
-              currentUrl: null,
-              currentTrackProgress: 0,
-            });
-            continue;
-          }
-
-          // Download with streaming progress
-          setProgress({
+      const setProgress = (
+        update: Partial<DownloadProgress> & {
+          currentUrl: string | null;
+          currentTrackProgress: number;
+        }
+      ) => {
+        if (currentOperation !== operationId) return;
+        setState((previous) => ({
+          ...previous,
+          progress: {
             total,
             completed,
             failed,
             downloadedBytes,
-            currentUrl: item.link,
-            currentTrackProgress: 0,
-          });
+            ...update,
+          },
+        }));
+      };
 
-          const response = await fetchWithProgress(
-            item.link,
-            controller.signal,
-            (received, contentTotal) => {
-              setProgress({
-                total,
-                completed,
-                failed,
-                downloadedBytes,
-                currentUrl: item.link,
-                currentTrackProgress:
-                  contentTotal > 0 ? received / contentTotal : 0,
-              });
-            }
-          );
-
-          if (response) {
-            const clone = response.clone();
-            const blob = await response.blob();
-            downloadedBytes += blob.size;
-            await cache.put(item.link, clone);
-            setCachedUrls((previous) => new Set([...previous, item.link]));
-            completed++;
-          } else {
-            failed++;
-          }
-        } catch {
-          if (controller.signal.aborted) break;
-          failed++;
-        }
-        setProgress({
+      setState((previous) => ({
+        ...previous,
+        lastError: null,
+        progress: {
           total,
           completed,
           failed,
           downloadedBytes,
           currentUrl: null,
           currentTrackProgress: 0,
-        });
-      }
+        },
+      }));
 
-      setProgress(null);
-      await refreshCachedUrls();
+      try {
+        const cache = await caches.open(OFFLINE_CACHE);
+
+        for (const item of playlist) {
+          if (controller.signal.aborted) break;
+
+          try {
+            const existing = await cache.match(item.link);
+            if (existing) {
+              const blob = await existing.blob();
+              downloadedBytes += blob.size;
+              completed++;
+              setProgress({
+                currentUrl: null,
+                currentTrackProgress: 0,
+              });
+              continue;
+            }
+
+            setProgress({
+              currentUrl: item.link,
+              currentTrackProgress: 0,
+              speedBps: 0,
+              etaSeconds: undefined,
+            });
+
+            const response = await fetchWithProgress(
+              item.link,
+              controller.signal,
+              (received, contentTotal, speed) => {
+                setProgress({
+                  currentUrl: item.link,
+                  currentTrackProgress:
+                    contentTotal > 0 ? received / contentTotal : 0,
+                  speedBps: speed,
+                  etaSeconds:
+                    speed > 0 && contentTotal > 0
+                      ? (contentTotal - received) / speed
+                      : undefined,
+                });
+              },
+              async (bytes) => {
+                const available = await checkStorageAvailable(bytes);
+                return available !== false;
+              }
+            );
+
+            if (!response) {
+              failed++;
+            } else {
+              const clone = response.clone();
+              const blob = await response.blob();
+              await cache.put(item.link, clone);
+              await putDownload(buildRecord(item.link, blob.size));
+              downloadedBytes += blob.size;
+              completed++;
+              setState((previous) => ({
+                ...previous,
+                cachedUrls: new Set([...previous.cachedUrls, item.link]),
+              }));
+            }
+          } catch (error) {
+            if (controller.signal.aborted) break;
+            failed++;
+            if (isQuotaError(error)) {
+              setState((previous) => ({ ...previous, lastError: 'quota' }));
+              break;
+            }
+          }
+
+          setProgress({
+            currentUrl: null,
+            currentTrackProgress: 0,
+            speedBps: 0,
+            etaSeconds: undefined,
+          });
+        }
+      } finally {
+        if (currentOperation === operationId) {
+          setState((previous) => ({ ...previous, progress: null }));
+        }
+        if (activeController === controller) activeController = null;
+        await refreshCachedUrls();
+      }
     },
-    [refreshCachedUrls, fetchWithProgress]
+    [
+      buildRecord,
+      cachedUrls,
+      checkStorageAvailable,
+      fetchWithProgress,
+      refreshCachedUrls,
+      setState,
+    ]
   );
 
   const cancelDownload = useCallback(() => {
-    abortRef.current?.abort();
-    setProgress(null);
-  }, []);
+    activeController?.abort();
+    activeController = null;
+    operationId += 1;
+    setState((previous) => ({ ...previous, progress: null }));
+  }, [setState]);
 
   const cancelSingleDownload = useCallback(() => {
-    singleAbortRef.current?.abort();
-    setSingleTrackLoading(null);
-    setSingleTrackProgress(0);
-  }, []);
+    singleController?.abort();
+    singleController = null;
+    operationId += 1;
+    setState((previous) => ({
+      ...previous,
+      singleTrackLoading: null,
+      singleTrackProgress: 0,
+    }));
+  }, [setState]);
 
-  const removeTrack = useCallback(async (url: string) => {
-    if (!('caches' in window)) return;
-    const cache = await caches.open(OFFLINE_CACHE);
-    await cache.delete(url);
-    setCachedUrls((previous) => {
-      const next = new Set(previous);
-      next.delete(url);
-      return next;
-    });
-  }, []);
+  const removeTrack = useCallback(
+    async (url: string) => {
+      if (!canUseCache()) return;
+      const cache = await caches.open(OFFLINE_CACHE);
+      await cache.delete(url);
+      await deleteDownloads([url]);
+      setState((previous) => {
+        const next = new Set(previous.cachedUrls);
+        next.delete(url);
+        return { ...previous, cachedUrls: next };
+      });
+    },
+    [setState]
+  );
 
   const removeAllTracks = useCallback(
     async (playlist: Playlist) => {
-      if (!('caches' in window)) return;
+      if (!canUseCache()) return;
       const cache = await caches.open(OFFLINE_CACHE);
       await Promise.all(playlist.map((item) => cache.delete(item.link)));
+      await deleteDownloads(playlist.map((item) => item.link));
       await refreshCachedUrls();
     },
     [refreshCachedUrls]
@@ -294,34 +554,6 @@ export function useOfflineDownload() {
     [cachedUrls]
   );
 
-  // ── Storage estimation ──────────────────────────────
-  const estimateStorage =
-    useCallback(async (): Promise<StorageEstimate | null> => {
-      if (!navigator.storage?.estimate) return null;
-      try {
-        const estimate = await navigator.storage.estimate();
-        const usage = estimate.usage ?? 0;
-        const quota = estimate.quota ?? 0;
-        return { usage, quota, available: quota - usage };
-      } catch {
-        return null;
-      }
-    }, []);
-
-  /**
-   * Check whether there is enough storage for a download.
-   * `expectedBytes` is a rough estimate of the total download size.
-   * Returns true if there's enough room, false if not, null if unknown.
-   */
-  const checkStorageAvailable = useCallback(
-    async (expectedBytes: number): Promise<boolean | null> => {
-      const estimate = await estimateStorage();
-      if (!estimate) return null; // cannot determine
-      return estimate.available > expectedBytes;
-    },
-    [estimateStorage]
-  );
-
   // ── List cached mushafs with sizes (for cache management UI) ──
   const getCachedMoshafs = useCallback(
     async (
@@ -330,7 +562,7 @@ export function useOfflineDownload() {
         moshaf: { name: string; server: string; playlist: Playlist };
       }>
     ): Promise<CachedMoshaf[]> => {
-      if (!('caches' in window)) return [];
+      if (!canUseCache()) return [];
       try {
         const cache = await caches.open(OFFLINE_CACHE);
         const results: CachedMoshaf[] = [];
@@ -374,9 +606,10 @@ export function useOfflineDownload() {
   /** Delete all cached tracks for a given set of links */
   const removeCachedLinks = useCallback(
     async (links: string[]) => {
-      if (!('caches' in window)) return;
+      if (!canUseCache()) return;
       const cache = await caches.open(OFFLINE_CACHE);
       await Promise.all(links.map((link) => cache.delete(link)));
+      await deleteDownloads(links);
       await refreshCachedUrls();
     },
     [refreshCachedUrls]
@@ -387,6 +620,9 @@ export function useOfflineDownload() {
     progress,
     singleTrackLoading,
     singleTrackProgress,
+    lastError,
+    storagePersisted,
+    hydrate,
     downloadTrack,
     downloadAllTracks,
     cancelDownload,
@@ -402,4 +638,8 @@ export function useOfflineDownload() {
     getCachedMoshafs,
     removeCachedLinks,
   };
+}
+
+function controllerAborted(error: unknown): boolean {
+  return error instanceof DOMException && error.name === 'AbortError';
 }

@@ -30,6 +30,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
     progress,
     singleTrackLoading,
     singleTrackProgress,
+    lastError,
     downloadTrack,
     downloadAllTracks,
     cancelDownload,
@@ -111,6 +112,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
               cachedCount={cachedCount}
               isAllCached={allCached}
               progress={progress}
+              error={lastError}
               onDownloadAll={downloadAllTracks}
               onRemoveAll={removeAllTracks}
               onCancel={cancelDownload}
