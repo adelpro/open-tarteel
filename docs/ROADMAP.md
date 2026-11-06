@@ -56,6 +56,9 @@ never persists. Fix in 5c/5d; do not rely on the current cache layer.
 
 - URL: **https://staging--open-tarteel.netlify.app** (branch `staging`,
   fast-forwarded to the hardening branch).
+- Permanent hostname (planned): **https://staging-tarteel.quran.us.kg**,
+  CNAME to the `staging` branch deploy. `next-tarteel.quran.us.kg` is the
+  fallback name if the preferred hostname is unavailable.
 - Site: `open-tarteel` (`523478b8-4d28-4a59-9415-53f739567f92`). Production is
   `tarteel.quran.us.kg` and was not touched.
 - Verified: `/`, `/api/health`, `/manifest.webmanifest`, `/sw.js`, `/offline`,
@@ -712,13 +715,45 @@ Goal: replace the temporary tunnel with deploy previews.
 - Deploy preview per PR = live staging. No `netlify deploy` from CI until a
   token exists.
 
-| PR  | Title                                        | Scope                                                    |
-| --- | -------------------------------------------- | -------------------------------------------------------- |
-| 8a  | `chore(deploy): netlify config and env docs` | `netlify.toml`, `docs/DEPLOY.md`, conditional standalone |
-| 8b  | `ci(deploy): preview smoke test`             | curl `/api/health`, sitemap origin, SW headers           |
+### Permanent staging hostname
+
+Give staging a stable, memorable origin instead of the generated Netlify
+subdomain. Preferred name: **`staging-tarteel.quran.us.kg`**. Fallback:
+**`next-tarteel.quran.us.kg`** if the preferred name cannot be assigned.
+
+1. **Cloudflare DNS.** In the `quran.us.kg` zone add a `CNAME`:
+   - `staging-tarteel` → `staging--open-tarteel.netlify.app`
+   - proxy: **DNS only** first (grey cloud). After Netlify issues the
+     certificate, enable the proxy only if SSL/TLS mode is **Full (strict)**.
+   - keep the existing production record `tarteel.quran.us.kg` untouched.
+2. **Netlify staging channel.** Add `staging-tarteel.quran.us.kg` as a domain
+   alias/custom domain on the **`staging` branch deploy** context (not the
+   production context). Confirm the branch context is `staging`, and keep
+   `staging--open-tarteel.netlify.app` as a fallback alias.
+3. **App origin.** Set `NEXT_PUBLIC_APP_URL=https://staging-tarteel.quran.us.kg`
+   for the **branch-deploy** scope only. Deploy previews keep using
+   `DEPLOY_PRIME_URL` so PR metadata stays on the preview origin.
+4. **Cloudflare channel rules.** If the zone uses a redirect/cache rule for
+   staging, scope it to `staging-tarteel.quran.us.kg` and bypass cache for
+   `/sw.js`, `/api/*`, and `/.netlify/*`.
+5. **Verify.**
+   - `curl -fsS https://staging-tarteel.quran.us.kg/api/health`
+   - `curl -fsS https://staging-tarteel.quran.us.kg/sitemap.xml | head`
+   - `curl -fsSI https://staging-tarteel.quran.us.kg/sw.js`
+   - manifest `start_url` and OG URLs use the staging hostname.
+   - a push to `staging` updates the hostname; a PR preview still uses
+     `deploy-preview-<n>--open-tarteel.netlify.app`.
+
+| PR  | Title                                        | Scope                                                                 |
+| --- | -------------------------------------------- | --------------------------------------------------------------------- |
+| 8a  | `chore(deploy): netlify config and env docs` | `netlify.toml`, `docs/DEPLOY.md`, conditional standalone              |
+| 8b  | `ci(deploy): preview smoke test`             | curl `/api/health`, sitemap origin, SW headers                        |
+| 8c  | `chore(deploy): permanent staging hostname`  | Cloudflare CNAME, Netlify staging domain, branch env, smoke checklist |
 
 Acceptance: preview URL green, health 200, sitemap origin = preview origin, SW
-registers, no localhost in the bundle.
+registers, no localhost in the bundle. Permanent staging hostname resolves with
+a valid certificate, serves the `staging` branch, and keeps PR previews on
+their own origins.
 
 Blocked: Netlify CLI/token not available in this environment. Config can be
 written now; the first deploy needs the repo connected in Netlify or a token.

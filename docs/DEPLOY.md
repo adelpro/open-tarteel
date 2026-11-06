@@ -26,6 +26,47 @@ npx netlify-cli deploy --build
 The CLI prints a draft URL. This is a live staging deploy; it does not affect
 production.
 
+## Permanent staging hostname
+
+Staging should not depend on the generated `staging--open-tarteel.netlify.app`
+URL. Preferred hostname: **`staging-tarteel.quran.us.kg`**. Fallback:
+`next-tarteel.quran.us.kg`.
+
+### Cloudflare DNS
+
+In the `quran.us.kg` zone:
+
+| Type  | Name              | Target                              | Proxy    |
+| ----- | ----------------- | ----------------------------------- | -------- |
+| CNAME | `staging-tarteel` | `staging--open-tarteel.netlify.app` | DNS only |
+
+Leave `tarteel.quran.us.kg` (production) untouched. Enable the Cloudflare proxy
+only after Netlify issues the certificate and SSL/TLS mode is **Full (strict)**.
+If the zone has redirect or cache rules for staging, scope them to this
+hostname and bypass cache for `/sw.js`, `/api/*`, and `/.netlify/*`.
+
+### Netlify staging channel
+
+1. Open the `open-tarteel` site → **Domain management**.
+2. Add `staging-tarteel.quran.us.kg` to the **`staging` branch deploy**
+   context, not the production context.
+3. Keep `staging--open-tarteel.netlify.app` as a fallback alias.
+4. Set `NEXT_PUBLIC_APP_URL=https://staging-tarteel.quran.us.kg` for the
+   **branch-deploy** scope only. Deploy previews continue to derive their
+   origin from `DEPLOY_PRIME_URL`.
+
+### Verify
+
+```bash
+curl -fsS https://staging-tarteel.quran.us.kg/api/health
+curl -fsS https://staging-tarteel.quran.us.kg/sitemap.xml | head
+curl -fsSI https://staging-tarteel.quran.us.kg/sw.js
+```
+
+Expected: health `{"status":"ok",...}`, sitemap and OG URLs use
+`staging-tarteel.quran.us.kg`, `sw.js` is `no-cache`, and a push to `staging`
+updates this hostname while PR previews keep their own origins.
+
 ## Production
 
 ```bash
