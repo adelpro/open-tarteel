@@ -848,6 +848,7 @@ consistency and reduction.
 | 10d | `style: tahfeez panel 2x2 + presets`                | minimal, keep behavior                                                          |
 | 10e | `style: dark mode and RTL parity`                   | logical properties, contrast                                                    |
 | 10f | `feat(ui): multi-select provider filter tags`       | done in #102; provider chips, multi-select, URL `source`, RTL/i18n, empty state |
+| 10g | `feat(settings): group language and theme`          | Done: header toggles moved into Settings > Preferences with labels.             |
 
 Acceptance: screenshot diff (ar/en, light/dark, mobile/desktop), no functional
 change, bundle not larger.
