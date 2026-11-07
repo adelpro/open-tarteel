@@ -13,9 +13,9 @@ import { getAllRecitersFromAdapters, getReciterPlaylist } from './index';
  * an N+1 fetch loop against Itqan. The route-level `Cache-Control` header only
  * helps when a CDN is present, so keep a Next data-cache layer as well.
  *
- * Note: Next refuses entries over 2 MB. The current combined payload is larger
- * than that, so this layer is a no-op until the list/detail split lands
- * (see docs/ROADMAP.md, stage 5c).
+ * Note: Next refuses entries over 2 MB. The list DTO (~233 KB for all 549
+ * reciters) and per-reciter playlists stay well below that limit, so this
+ * layer is effective; warm `/api/reciters` responses are ~7 ms.
  */
 // Bump when the adapter shape, language handling, or pagination changes so a
 // deploy never serves data cached by the previous code.

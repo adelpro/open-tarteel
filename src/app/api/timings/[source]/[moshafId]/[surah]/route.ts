@@ -6,6 +6,7 @@ import {
   getAllRecitersCached,
   getSurahTimingsCached,
 } from '@/services/reciters/cached';
+import { HttpStatusError } from '@/services/reciters/shared-fetch';
 import { LinkSource } from '@/types';
 
 export const dynamic = 'force-dynamic';
@@ -60,14 +61,23 @@ export async function GET(
         },
       }
     );
-  } catch {
+  } catch (error) {
+    const rateLimited =
+      error instanceof HttpStatusError && error.status === 429;
+
     return NextResponse.json(
-      { error: 'Timing provider failed' },
       {
-        status: 502,
+        error: rateLimited
+          ? 'Timing provider rate limited'
+          : 'Timing provider failed',
+      },
+      {
+        status: rateLimited ? 429 : 502,
         headers: {
           'Cache-Control': 'private, no-store, max-age=0',
-          'Retry-After': '5',
+          'Retry-After': rateLimited
+            ? ((error as HttpStatusError).retryAfter ?? '30')
+            : '5',
           Vary: 'Cookie',
         },
       }

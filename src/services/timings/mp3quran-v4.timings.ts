@@ -1,3 +1,5 @@
+import { HttpStatusError } from '@/services/reciters/shared-fetch';
+
 import type { AyahTiming, TimingProvider } from './types';
 
 const DEFAULT_BASE = 'https://api-staging.mp3quran.net/v4';
@@ -15,7 +17,15 @@ export const mp3QuranV4Timings: TimingProvider = {
     const response = await fetch(
       `${base()}/recitations/${moshaf.recitationCode}/surahs/${surah}/ayah-timings`
     );
-    if (!response.ok) return [];
+    if (!response.ok) {
+      if (response.status === 429) {
+        throw new HttpStatusError(
+          429,
+          response.headers?.get?.('retry-after') ?? null
+        );
+      }
+      return [];
+    }
 
     const body: Response = await response.json();
     const rows = body.data?.ayahs ?? [];

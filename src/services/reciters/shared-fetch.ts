@@ -1,6 +1,17 @@
 // Type-only DOM global; derive it from fetch's signature to satisfy ESLint no-undef.
 type FetchOptions = Parameters<typeof fetch>[1];
 
+/** Preserve the upstream status so routes can surface 429 + Retry-After. */
+export class HttpStatusError extends Error {
+  constructor(
+    public readonly status: number,
+    public readonly retryAfter: string | null = null
+  ) {
+    super(`HTTP ${status}`);
+    this.name = 'HttpStatusError';
+  }
+}
+
 export const fetchWithTimeout = (
   url: string,
   timeoutMs = 10_000,
@@ -35,7 +46,10 @@ export const retryFetch = async (
       const response = await fetchWithTimeout(url, 10_000, init);
 
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+        throw new HttpStatusError(
+          response.status,
+          response.headers?.get?.('retry-after') ?? null
+        );
       }
 
       return response;

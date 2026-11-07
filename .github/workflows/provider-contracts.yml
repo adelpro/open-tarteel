@@ -1,0 +1,41 @@
+name: Provider contracts
+
+on:
+  schedule:
+    # Weekly, Monday 04:00 UTC. Failures should open an issue, not block PRs.
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      LIVE_PROVIDER_TESTS: '1'
+      ITQAN_API_KEY: ${{ secrets.ITQAN_API_KEY }}
+      QURAN_FOUNDATION_CLIENT_ID: ${{ secrets.QURAN_FOUNDATION_CLIENT_ID }}
+      QURAN_FOUNDATION_CLIENT_SECRET: ${{ secrets.QURAN_FOUNDATION_CLIENT_SECRET }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run live provider contracts
+        run: yarn test:contract

@@ -50,6 +50,7 @@
     "test:offline": "playwright test",
     "test:offline:ui": "playwright test --ui",
     "test:run": "vitest --run",
+    "test:contract": "vitest --run src/services/reciters/contracts.test.ts",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --run --coverage",
     "clean": "rimraf .next node_modules"
