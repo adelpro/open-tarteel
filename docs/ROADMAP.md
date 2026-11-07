@@ -1,6 +1,6 @@
 # Open Tarteel — Production Hardening & Provider Roadmap
 
-Last updated: 2026-11-06
+Last updated: 2026-11-07
 Owner: maintainers
 Status: active
 
@@ -39,7 +39,7 @@ and dependency, not by importance.
 | Check                        | Result                                               |
 | ---------------------------- | ---------------------------------------------------- |
 | `tsc` / ESLint / Prettier    | pass                                                 |
-| Tests                        | **350 pass** (21 files)                              |
+| Tests                        | **371 pass** (26 files); 1 Playwright offline test   |
 | Production build             | **416 pages**                                        |
 | Docker image                 | 250 MB, non-root, health `healthy`                   |
 | `/api/reciters` payload      | **183,690 B** default (371); **234,294 B** all (556) |
@@ -63,11 +63,9 @@ never persists. Fix in 5c/5d; do not rely on the current cache layer.
   `corepack yarn build`, publish `.next`, `@netlify/plugin-nextjs` v5.
   `quran.us.kg` uses Cloudflare DNS (not Netlify DNS), so a branch-deploy
   custom domain on the original site is not possible; staging uses its own site.
-- Custom domain (configured on Netlify, DNS pending):
-  **`staging-tarteel.quran.us.kg`**.
-  Cloudflare CNAME required (DNS-only first): `staging-tarteel` →
-  `open-tarteel-staging.netlify.app`. Enable proxy only after Netlify issues a
-  certificate and Cloudflare SSL/TLS is **Full (strict)**. Fallback hostname:
+- Custom domain (**live**, verified 2026-11-07):
+  **`staging-tarteel.quran.us.kg`** (Cloudflare CNAME → `open-tarteel-staging.netlify.app`).
+  Keep Cloudflare SSL/TLS at **Full (strict)**. Fallback hostname:
   `next-tarteel.quran.us.kg`. Production `tarteel.quran.us.kg` stays untouched.
 - Staging env: provider secrets copied, `NEXT_PUBLIC_APP_URL=https://staging-tarteel.quran.us.kg`,
   `NEXT_PUBLIC_ENABLE_MP3QURAN_V4=true`. Build hook `6aed9bb06ddd4a8f48a6eab6`.
@@ -674,6 +672,8 @@ reader usable.
 
 ## Stage 7 — Offline & service worker
 
+Status: **complete** (2026-11-07). Verified by the Playwright cold-start test.
+
 Goal: make downloaded audio actually work offline.
 
 ### Findings
@@ -698,15 +698,16 @@ Goal: make downloaded audio actually work offline.
 
 ### Work
 
-| PR  | Title                                                       | Scope                                                                |
-| --- | ----------------------------------------------------------- | -------------------------------------------------------------------- |
-| 7a  | `fix(sw): match cdn.mp3quran.net and unify audio cache`     | matcher, one cache, range plugin                                     |
-| 7b  | `fix(offline): shared download state + storage persistence` | atom/singleton, `navigator.storage.persist()`, quota errors          |
-| 7c  | `fix(offline): itqan download strategy`                     | same-origin range proxy with allowlist, or mark download unsupported |
-| 7d  | `test(offline): cold-start offline navigation`              | install → download → airplane mode → play/seek/next                  |
+| PR  | Title                                                       | Scope                                                             |
+| --- | ----------------------------------------------------------- | ----------------------------------------------------------------- |
+| 7a  | `fix(sw): match cdn.mp3quran.net and unify audio cache`     | Done in #109: matcher, one cache, range plugin                    |
+| 7b  | `fix(offline): shared download state + storage persistence` | Done in #110/#112: shared state, IndexedDB metadata, quota errors |
+| 7c  | `fix(offline): itqan download strategy`                     | Done in #108: downloads marked unavailable; no Itqan proxy yet    |
+| 7d  | `test(offline): cold-start offline navigation`              | Done: `tests/offline.spec.ts` (Playwright, standalone server)     |
 
 Acceptance: 3 downloaded surahs play and seek offline; no 404; quota errors are
-handled; Itqan never fails silently.
+handled; Itqan never fails silently. **Verified** with `yarn test:offline`
+(short surahs, offline reload, 206 range, playback, visualizer, settings).
 
 ---
 
