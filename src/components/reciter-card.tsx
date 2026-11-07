@@ -12,8 +12,6 @@ import { Reciter, Riwaya } from '@/types';
 import { cn, generateFavId } from '@/utils';
 import { useShareReciter } from '@/utils/share';
 
-import ProviderBadges from './provider-badge';
-
 type Props = {
   reciter: Reciter;
   favoriteCount: number;
@@ -108,9 +106,6 @@ export default function ReciterCard({
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {reciter.moshaf.name}
             </p>
-            <div className="mt-1 flex flex-wrap items-center justify-end gap-1">
-              <ProviderBadges source={reciter.source} />
-            </div>
           </div>
         </div>
 
