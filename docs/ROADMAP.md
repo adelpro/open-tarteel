@@ -36,17 +36,17 @@ and dependency, not by importance.
 
 ### Verified baseline
 
-| Check                        | Result                                               |
-| ---------------------------- | ---------------------------------------------------- |
-| `tsc` / ESLint / Prettier    | pass                                                 |
-| Tests                        | **371 pass** (26 files); 1 Playwright offline test   |
-| Production build             | **416 pages**                                        |
-| Docker image                 | 250 MB, non-root, health `healthy`                   |
-| `/api/reciters` payload      | **183,690 B** default (371); **234,294 B** all (556) |
-| `/api/reciters` cold latency | **3.2 s** default; **3.1 s** all                     |
-| `/api/reciters` cache        | **works**: 183 KB < 2 MB; warm **13 ms**             |
-| `/api/health`                | 19 ms                                                |
-| Lazy detail (each provider)  | 10–14 KB, 114 tracks; 0.4–1.6 s (Qurani 15 s cold)   |
+| Check                        | Result                                                        |
+| ---------------------------- | ------------------------------------------------------------- |
+| `tsc` / ESLint / Prettier    | pass                                                          |
+| Tests                        | **377 pass** (27 files); 2 Playwright tests; 6 live contracts |
+| Production build             | **416 pages**                                                 |
+| Docker image                 | 250 MB, non-root, health `healthy`                            |
+| `/api/reciters` payload      | **183,690 B** default (371); **234,294 B** all (556)          |
+| `/api/reciters` cold latency | **3.2 s** default; **3.1 s** all                              |
+| `/api/reciters` cache        | **works**: 183 KB < 2 MB; warm **13 ms**                      |
+| `/api/health`                | 19 ms                                                         |
+| Lazy detail (each provider)  | 10–14 KB, 114 tracks; 0.4–1.6 s (Qurani 15 s cold)            |
 
 Known defect in the current hardening: `src/services/reciters/cached.ts` caches
 the combined list, which is above Next's 2 MB `unstable_cache` limit. The cache
@@ -475,6 +475,8 @@ pin the contract tests so breakage is obvious.
 
 ## Stage 5 — Timing providers for range navigation
 
+Status: **complete** (2026-11-07). All providers are wired and contract-tested.
+
 Goal: enable repeat-range for every provider that has timings, in this order:
 MP3Quran v4 → MP3Quran v3 → Itqan → Qurani.ai → Quran Foundation.
 
@@ -520,54 +522,28 @@ export type TimingProvider = {
   `1..114` and positive ids, add `unstable_cache`, handle `429` +
   `Retry-After`, and reuse `segments` for word-level ranges.
 
-### Payload + cache fix (implemented)
+### Payload + cache fix (done)
 
 The catalog now returns `playlist: []` for every provider. MP3Quran stores
 `server` + compact `surahIds`, Qurani.ai stores the probe base in `server`, and
 Itqan/QF use their ids. The detail route hydrates one playlist through
 `getPlaylist` and caches it for an hour.
 
-Measured locally: default sources **183,690 B / 3.2 s cold / 13 ms warm**;
-all sources **234,294 B / 3.1 s cold**. Every detail is 10–14 KB
-with 114 tracks.
+Measured on 2026-11-07 (all sources): **232,882 B / 549 reciters**,
+**7.4 s cold**, **6.8 ms warm** — the 2 MB `unstable_cache` limit is no longer
+crossed and the cache is effective. The `< 100 KB` target remains an optional
+payload optimization, not a blocker.
 
-### Payload + cache fix (blocking for Stage 5)
-
-Two compounding problems:
-
-1. `/api/reciters` embeds a full 114-item playlist in every reciter. 319
-   entries produce **2,494,310 B**.
-2. `unstable_cache` refuses entries over 2 MB. The server log shows
-   `Failed to set Next.js data cache ... 2727756 bytes`, so the cache is
-   **silently not working**. The 0.56 s "warm" measurement is upstream luck,
-   not a cache hit.
-3. `/api/reciters/[id]/[moshafId]` re-fetches the whole list and filters in
-   memory, so it has the same cost as the list route.
-
-Fix:
-
-- Split `Reciter` (list DTO) from `ReciterDetail` (with playlist).
-- `/api/reciters` returns metadata only (name, source, riwayah, moshaf id/name,
-  surah count, capability flags). Target < 100 KB.
-- Add `getReciter(id, moshafId)` to `ReciterSource`; the detail route returns
-  one playlist.
-- Fetch the detail on selection and prefetch on hover; show a skeleton in the
-  player.
-- Cache each adapter separately so no entry crosses 2 MB.
-- Itqan: remove the 214 KB-per-reciter N+1 by lazy-loading tracks or using the
-  recitation-tracks list with `page_size` up to 1000 and only needed fields
-  (`id`, `surah`, `audio_url`, `ayahs_timings`). Send `Accept-Language`.
-
-| PR  | Title                                                          | Scope                                                                   |
-| --- | -------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| 5a  | `feat(timings): timing provider interface + registry`          | interface, resolution, cache, tests                                     |
-| 5b  | `feat(timings): mp3quran v4 ayah/word timings`                 | adapter + cache + basmalah handling                                     |
-| 5c  | `perf(reciters): slim list DTO and detail endpoint`            | split DTO, `getReciter`, per-adapter cache                              |
-| 5d  | `perf(itqan): remove N+1 detail fetches`                       | **Itqan done** (lazy tracks); payload split for other providers remains |
-| 5e  | `feat(timings): mp3quran v3 timing api`                        | reads map + per-surah timings                                           |
-| 5f  | `feat(timings): qurani.ai timings`                             | `includeTimings`, narrator mapping                                      |
-| 5g  | `fix(timings): harden quran foundation route`                  | validation, cache, 429, auth                                            |
-| 5h  | `test(providers): localization, env matrix and live contracts` | unit gaps, opt-in contract suite, weekly workflow                       |
+| PR  | Title                                                          | Scope                                                            |
+| --- | -------------------------------------------------------------- | ---------------------------------------------------------------- |
+| 5a  | `feat(timings): timing provider interface + registry`          | **Done**: interface, resolution, cache, tests                    |
+| 5b  | `feat(timings): mp3quran v4 ayah/word timings`                 | **Done**: adapter + cache + basmalah handling                    |
+| 5c  | `perf(reciters): slim list DTO and detail endpoint`            | **Done**: list DTO, lazy detail playlist, per-adapter cache      |
+| 5d  | `perf(itqan): remove N+1 detail fetches`                       | **Done**: lazy tracks for all providers; list playlists empty    |
+| 5e  | `feat(timings): mp3quran v3 timing api`                        | **Done**: reads map + per-surah timings                          |
+| 5f  | `feat(timings): qurani.ai timings`                             | **Done**: `includeTimings`, narrator mapping                     |
+| 5g  | `fix(timings): harden quran foundation route`                  | **Done**: validation, cache, 429 + upstream `Retry-After`        |
+| 5h  | `test(providers): localization, env matrix and live contracts` | **Done**: opt-in `yarn test:contract` + weekly provider workflow |
 
 ### Itqan API v1 (implemented for Itqan)
 
@@ -596,6 +572,8 @@ duration vs last `endMs` mismatch is detected and reported.
 ---
 
 ## Stage 6 — Tahfeez / repeat-range review
+
+Status: **complete** (2026-11-07). P0 and P1 are fixed; P2 polish is optional.
 
 Reviewed `origin/develop`: `tahfeez-mode-controls.tsx`,
 `use-tahfeez-session.ts`, `player-controls.tsx`, and the QF route.
@@ -662,8 +640,15 @@ Reviewed `origin/develop`: `tahfeez-mode-controls.tsx`,
   longer stops on every settings change.
 - Inputs use `<label htmlFor>`, strategy is a `radiogroup`, and loading/errors
   are announced with `aria-live`/`role="alert"`.
-- Timing route returns `Retry-After` on upstream failure.
-- Hook tests cover boundary advance, live range updates, and stop/reset.
+- Timing route returns `Retry-After` on upstream failure and propagates upstream
+  `429` with its own `Retry-After` value.
+- Audio listeners attach through a callback ref, so a late-mounting `<audio>`
+  element is picked up without `setTimeout` retries.
+- Hook tests cover boundary advance, live range updates, late audio mounting,
+  and stop/reset.
+
+Remaining: P2 polish only (repeat/delay presets, one-ayah quick repeat,
+per-reciter persistence); track with Stage 10d.
 
 Acceptance: no bleed on 3 surahs, settings change does not pause, switching to
 listening stops audio, invalid ranges explain themselves, keyboard + screen
