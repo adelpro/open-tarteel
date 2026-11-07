@@ -796,6 +796,8 @@ until the CNAME exists. Staging site is configured and deploys via build hook.
 
 ## Stage 9 — Google web best practices
 
+Status: **complete** (2026-11-07).
+
 | Area            | Finding                                                         | Action                                                                             |
 | --------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | Metadata        | title/description/OG/Twitter present; no canonical              | add `alternates.canonical` per page                                                |
@@ -809,11 +811,11 @@ until the CNAME exists. Staging site is configured and deploys via build hook.
 | Security        | no CSP                                                          | report-only CSP first                                                              |
 | SEO             | sitemap `lastModified` = now                                    | use data timestamps                                                                |
 
-| PR  | Title                                               | Scope                          |
-| --- | --------------------------------------------------- | ------------------------------ |
-| 9a  | `feat(seo): canonical, JSON-LD, sitemap timestamps` | metadata + structured data     |
-| 9b  | `fix(a11y): focus, labels, reduced motion`          | audit fixes                    |
-| 9c  | `perf: reciter payload budget and lazy visualizer`  | split/paginate, dynamic import |
+| PR  | Title                                               | Scope                                                                                  |
+| --- | --------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| 9a  | `feat(seo): canonical, JSON-LD, sitemap timestamps` | Done: canonicals, WebApplication/Organization/Breadcrumb JSON-LD, stable sitemap dates |
+| 9b  | `fix(a11y): focus, labels, reduced motion`          | Done: skip link, reduced-motion CSS, existing focus/label audit retained               |
+| 9c  | `perf: reciter payload budget and lazy visualizer`  | Done: visualizer lazy-loads and is hidden on mobile; payload split already landed      |
 
 Acceptance: Lighthouse mobile ≥ 90 perf, 100 a11y, 100 SEO, installable;
 Rich Results test passes; CLS 0.
@@ -822,18 +824,20 @@ Rich Results test passes; CLS 0.
 
 ## Stage 10 — Minimal UI cleanup
 
+Status: **complete** (2026-11-07).
+
 Rules: no redesign, no new component library, no token rewrite. Only
 consistency and reduction.
 
-| PR  | Title                                               | Scope                                                                           |
-| --- | --------------------------------------------------- | ------------------------------------------------------------------------------- |
-| 10a | `style: unify control sizes, radius and icon scale` | h-9/h-10, `rounded-lg`, `ICON_SIZE`                                             |
-| 10b | `style: reduce player chrome on small screens`      | hide visualizer by default, one-line download area                              |
-| 10c | `style: reciter card density`                       | 1 badge row, truncate name, riwayah secondary                                   |
-| 10d | `style: tahfeez panel 2x2 + presets`                | minimal, keep behavior                                                          |
-| 10e | `style: dark mode and RTL parity`                   | logical properties, contrast                                                    |
-| 10f | `feat(ui): multi-select provider filter tags`       | done in #102; provider chips, multi-select, URL `source`, RTL/i18n, empty state |
-| 10g | `feat(settings): group language and theme`          | Done: header toggles moved into Settings > Preferences with labels.             |
+| PR  | Title                                               | Scope                                                                               |
+| --- | --------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| 10a | `style: unify control sizes, radius and icon scale` | Done: player controls use consistent h-9/w-9 and `rounded-lg`                       |
+| 10b | `style: reduce player chrome on small screens`      | Done: visualizer hidden below `sm`, download card already one-line and fixed-height |
+| 10c | `style: reciter card density`                       | Done: badges removed, name truncates, riwayah stays secondary                       |
+| 10d | `style: tahfeez panel 2x2 + presets`                | Done: 2x2 input grid on mobile plus repeat/delay presets                            |
+| 10e | `style: dark mode and RTL parity`                   | Done: logical `start`/`end` positions for header, settings link and language menu   |
+| 10f | `feat(ui): multi-select provider filter tags`       | done in #102; provider chips, multi-select, URL `source`, RTL/i18n, empty state     |
+| 10g | `feat(settings): group language and theme`          | Done: header toggles moved into Settings > Preferences with labels.                 |
 
 Acceptance: screenshot diff (ar/en, light/dark, mobile/desktop), no functional
 change, bundle not larger.
