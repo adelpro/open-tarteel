@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export interface TimeRange {
   startTime: number;
@@ -56,12 +56,12 @@ const findRangeIndex = (ranges: TimeRange[], time: number): number => {
  * needs to call `start` / `handlePlayPause` / `updateRanges` / `stop` and read
  * `audioPlaying`.
  *
- * @param audioRef        - Ref to the shared HTMLAudioElement.
+ * @param audioElement    - The shared HTMLAudioElement, or null until it mounts.
  * @param onActiveChange  - Called with `true` when a session starts and `false`
  *                          when it ends, so the parent can block auto-advance.
  */
 export function useTahfeezSession(
-  audioRef: RefObject<HTMLAudioElement | null>,
+  audioElement: HTMLAudioElement | null,
   onActiveChange: (_active: boolean) => void
 ): TahfeezSessionControls {
   // ── Engine refs (no re-renders) ──────────────────────
@@ -78,7 +78,8 @@ export function useTahfeezSession(
   const [audioPlaying, setAudioPlaying] = useState(false);
 
   useEffect(() => {
-    let attachedAudio: HTMLAudioElement | null = null;
+    if (!audioElement) return;
+
     const onPlay = () => {
       setAudioPlaying(true);
     };
@@ -86,35 +87,15 @@ export function useTahfeezSession(
       setAudioPlaying(false);
     };
 
-    const attach = (element: HTMLAudioElement) => {
-      element.addEventListener('play', onPlay);
-      element.addEventListener('pause', onPause);
-      attachedAudio = element;
-    };
-    const detach = (element: HTMLAudioElement) => {
-      element.removeEventListener('play', onPlay);
-      element.removeEventListener('pause', onPause);
-    };
-
-    const currentAudio = audioRef.current;
-    if (currentAudio) {
-      attach(currentAudio);
-      return () => {
-        detach(currentAudio);
-      };
-    }
-
-    // audioRef.current may be null on first render — retry after a tick
-    const timer = setTimeout(() => {
-      const laterAudio = audioRef.current;
-      if (laterAudio) attach(laterAudio);
-    }, 0);
+    audioElement.addEventListener('play', onPlay);
+    audioElement.addEventListener('pause', onPause);
+    setAudioPlaying(!audioElement.paused);
 
     return () => {
-      clearTimeout(timer);
-      if (attachedAudio) detach(attachedAudio);
+      audioElement.removeEventListener('play', onPlay);
+      audioElement.removeEventListener('pause', onPause);
     };
-  }, [audioRef]);
+  }, [audioElement]);
 
   // ── Helpers ──────────────────────────────────────────
   const isActive = () => cleanupRef.current !== null;
@@ -147,16 +128,16 @@ export function useTahfeezSession(
     // Clean stop - cancel any pending delays and reset audio
     teardown();
 
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+    if (audioElement) {
+      audioElement.pause();
+      audioElement.currentTime = 0;
     }
 
     onActiveChange(false);
   };
 
   const start = (ranges: TimeRange[], repeat: number, delay: number) => {
-    const audio = audioRef.current;
+    const audio = audioElement;
     if (!audio || ranges.length === 0) return;
 
     teardown(); // stop any existing session
@@ -249,8 +230,7 @@ export function useTahfeezSession(
     if (ranges.length === 0) return;
 
     rangesRef.current = ranges;
-    const audio = audioRef.current;
-    const time = audio?.currentTime ?? ranges[0]?.startTime ?? 0;
+    const time = audioElement?.currentTime ?? ranges[0]?.startTime ?? 0;
     const nextIndex = findRangeIndex(ranges, time);
     const nextRange = ranges[nextIndex];
 
@@ -258,11 +238,11 @@ export function useTahfeezSession(
     repeatCountRef.current = 0;
 
     if (
-      audio &&
+      audioElement &&
       nextRange &&
       (time < nextRange.startTime || time > nextRange.endTime)
     ) {
-      audio.currentTime = nextRange.startTime;
+      audioElement.currentTime = nextRange.startTime;
     }
   };
 
@@ -276,7 +256,7 @@ export function useTahfeezSession(
     repeat: number,
     delay: number
   ) => {
-    const audio = audioRef.current;
+    const audio = audioElement;
     if (!audio) return;
 
     if (audioPlaying) {

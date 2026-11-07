@@ -56,6 +56,7 @@ type Props = {
   handlePreviousTrack: () => void;
   volumeRef: RefObject<HTMLDivElement | null>;
   audioRef: RefObject<HTMLAudioElement | null>;
+  audioElement: HTMLAudioElement | null;
   currentTrackId: number | undefined;
   tahfeezActiveRef: React.RefObject<boolean>;
   /** False when the current source has no CORS/WebAudio spectrum data. */
@@ -69,7 +70,7 @@ export default function PlayerControls({
   isPlaying,
   handlePreviousTrack,
   volumeRef,
-  audioRef,
+  audioElement,
   currentTrackId,
   tahfeezActiveRef,
   spectrumSupported = true,
@@ -100,7 +101,7 @@ export default function PlayerControls({
   // Latest ranges emitted by TahfeezModeControls — used when the play button starts a session
   const currentRangesRef = useRef<TimeRange[]>([]);
 
-  const session = useTahfeezSession(audioRef, (active) => {
+  const session = useTahfeezSession(audioElement, (active) => {
     tahfeezActiveRef.current = active;
   });
   const { audioPlaying } = session;

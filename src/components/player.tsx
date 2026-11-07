@@ -77,6 +77,15 @@ export default function Player({ playlist }: Props) {
   }, [isOnline, availableIndices, currentTrack]);
 
   const audioRef = useRef<HTMLAudioElement>(null);
+  // Mirror the element in state so Tahfeez can attach listeners when it mounts
+  // (the <audio> element only renders once a playlist exists).
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(
+    null
+  );
+  const setAudioElementRef = useCallback((element: HTMLAudioElement | null) => {
+    audioRef.current = element;
+    setAudioElement(element);
+  }, []);
   const volumeRef = useRef<HTMLInputElement>(null);
   // Shared ref: PlayerControls sets this true while a tahfeez session is running.
   // handleTrackEnded reads it to avoid auto-advancing mid-session.
@@ -302,7 +311,7 @@ export default function Player({ playlist }: Props) {
             </div>
           ) : (
             <audio
-              ref={audioRef}
+              ref={setAudioElementRef}
               id="audio"
               className="sr-only"
               onTimeUpdate={handleTimeUpdate}
@@ -327,6 +336,7 @@ export default function Player({ playlist }: Props) {
                 isPlaying={isPlaying}
                 volumeRef={volumeRef}
                 audioRef={audioRef}
+                audioElement={audioElement}
                 togglePlayPause={togglePlayPause}
                 handlePreviousTrack={handlePreviousTrack}
                 handleNextTrack={handleNextTrack}
@@ -353,6 +363,7 @@ export default function Player({ playlist }: Props) {
                 isPlaying={isPlaying}
                 volumeRef={volumeRef}
                 audioRef={audioRef}
+                audioElement={audioElement}
                 togglePlayPause={togglePlayPause}
                 handlePreviousTrack={handlePreviousTrack}
                 handleNextTrack={handleNextTrack}

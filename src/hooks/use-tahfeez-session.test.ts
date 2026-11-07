@@ -23,6 +23,9 @@ const createAudio = () => {
     removeEventListener: (event: string, handler: () => void) => {
       listeners.get(event)?.delete(handler);
     },
+    emit: (event: string) => {
+      for (const handler of listeners.get(event) ?? []) handler();
+    },
   };
   return audio as unknown as HTMLAudioElement & typeof audio;
 };
@@ -57,8 +60,9 @@ describe('useTahfeezSession', () => {
   it('starts on the first range and advances at the exact boundary', () => {
     const audio = createAudio();
     const onActiveChange = vi.fn();
-    const ref = { current: audio };
-    const { result } = renderHook(() => useTahfeezSession(ref, onActiveChange));
+    const { result } = renderHook(() =>
+      useTahfeezSession(audio, onActiveChange)
+    );
 
     act(() => {
       result.current.start(
@@ -90,8 +94,7 @@ describe('useTahfeezSession', () => {
 
   it('updates ranges without stopping playback', () => {
     const audio = createAudio();
-    const ref = { current: audio };
-    const { result } = renderHook(() => useTahfeezSession(ref, vi.fn()));
+    const { result } = renderHook(() => useTahfeezSession(audio, vi.fn()));
 
     act(() => {
       result.current.start([{ startTime: 1, endTime: 2 }], 1, 0);
@@ -111,8 +114,7 @@ describe('useTahfeezSession', () => {
 
   it('keeps the current range when a live update still contains the position', () => {
     const audio = createAudio();
-    const ref = { current: audio };
-    const { result } = renderHook(() => useTahfeezSession(ref, vi.fn()));
+    const { result } = renderHook(() => useTahfeezSession(audio, vi.fn()));
 
     act(() => {
       result.current.start(
@@ -136,11 +138,38 @@ describe('useTahfeezSession', () => {
     expect(audio.currentTime).toBe(5.5);
   });
 
+  it('attaches listeners when the audio element mounts later', () => {
+    const onActiveChange = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ audio }: { audio: HTMLAudioElement | null }) =>
+        useTahfeezSession(audio, onActiveChange),
+      { initialProps: { audio: null as HTMLAudioElement | null } }
+    );
+
+    expect(result.current.audioPlaying).toBe(false);
+
+    const audio = createAudio();
+    rerender({ audio });
+
+    act(() => {
+      audio.paused = false;
+      audio.emit('play');
+    });
+    expect(result.current.audioPlaying).toBe(true);
+
+    act(() => {
+      audio.paused = true;
+      audio.emit('pause');
+    });
+    expect(result.current.audioPlaying).toBe(false);
+  });
+
   it('stops the session and resets audio', () => {
     const audio = createAudio();
     const onActiveChange = vi.fn();
-    const ref = { current: audio };
-    const { result } = renderHook(() => useTahfeezSession(ref, onActiveChange));
+    const { result } = renderHook(() =>
+      useTahfeezSession(audio, onActiveChange)
+    );
 
     act(() => {
       result.current.start([{ startTime: 3, endTime: 4 }], 1, 0);
