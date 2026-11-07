@@ -1,7 +1,7 @@
 'use client';
 
 import { useAtomValue } from 'jotai';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactAudioSpectrum from 'react-audio-spectrum';
 
 if (typeof window !== 'undefined') {
@@ -52,12 +52,29 @@ export default function AudioBarsVisualizer({
   // start animating immediately. Once mounted we never unmount it — the Web
   // Audio API only allows one MediaElementSourceNode per HTMLMediaElement.
   const [everPlayed, setEverPlayed] = useState(false);
+  const hasPrimedRef = useRef(false);
 
   useEffect(() => {
     if (isPlaying && !everPlayed) {
       setEverPlayed(true);
     }
   }, [isPlaying, everPlayed]);
+
+  useEffect(() => {
+    if (!enabled || !isPlaying || !everPlayed || hasPrimedRef.current) return;
+
+    const audio = document.getElementById(audioId) as HTMLAudioElement | null;
+    if (!audio || audio.paused) return;
+
+    // react-audio-spectrum attaches its `onplay` handler inside its own effect.
+    // On the very first play the real play event has already fired by the time
+    // the component mounts, so re-dispatch it once to start the analyser.
+    hasPrimedRef.current = true;
+    const frame = requestAnimationFrame(() => {
+      if (!audio.paused) audio.dispatchEvent(new Event('play'));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [audioId, enabled, isPlaying, everPlayed]);
 
   useEffect(() => {
     const calculateWidth = () => {
@@ -74,35 +91,13 @@ export default function AudioBarsVisualizer({
   const visible = showVisualizer && isPlaying && enabled;
   const mountSpectrum = everPlayed || isPlaying;
 
-  // Keep the height but never create an AudioContext for a source the browser
-  // refuses to share samples from. Providers without CORS (e.g. Itqan) have no
-  // real spectrum data, so show no fake bars at all.
-  if (!enabled) {
-    return (
-      <div
-        aria-hidden="true"
-        className="mb-2 w-full max-w-md"
-        style={{ height: VISUALIZER_HEIGHT }}
-      />
-    );
-  }
+  // Providers without CORS (e.g. Itqan) have no real spectrum data. Do not
+  // reserve an empty visualizer area for them.
+  if (!enabled) return null;
 
-  // Before first play: reserve the height without drawing fake bars. The
-  // AudioContext is only created after a user gesture (see above).
-  if (!mountSpectrum) {
-    return (
-      <div
-        aria-hidden="true"
-        className="mb-2 flex w-full max-w-md items-end justify-center px-4"
-        style={{
-          height: VISUALIZER_HEIGHT,
-          visibility: showVisualizer ? 'visible' : 'hidden',
-        }}
-      >
-        <span className="h-px w-2/3 rounded-full bg-gray-200 dark:bg-gray-700" />
-      </div>
-    );
-  }
+  // Before the first play there is nothing real to draw; do not show a fake
+  // placeholder.
+  if (!mountSpectrum) return null;
 
   // After first play: keep ReactAudioSpectrum permanently mounted,
   // only toggle CSS visibility so the MediaElementSourceNode is never recreated.
