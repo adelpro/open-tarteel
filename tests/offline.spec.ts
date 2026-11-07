@@ -54,6 +54,19 @@ test('downloaded audio survives a cold offline start', async ({
   await expect(
     page.getByRole('button', { name: 'Remove download' })
   ).toHaveCount(3);
+
+  // Offline, the download-all action must not be offered.
+  const playlistDialog = page.getByRole('dialog');
+  await expect(
+    playlistDialog.getByText('Offline — downloads unavailable')
+  ).toBeVisible();
+  await expect(
+    playlistDialog.getByRole('button', { name: 'Download', exact: true })
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: 'Download all surahs', exact: true })
+  ).toHaveCount(0);
+
   await page.getByRole('button', { name: 'Close' }).first().click();
   await expect(page.getByRole('dialog')).toBeHidden();
 

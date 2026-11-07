@@ -4,6 +4,7 @@ import React, { useCallback, useState } from 'react';
 import {
   MdCloudDone,
   MdCloudDownload,
+  MdCloudOff,
   MdDeleteOutline,
   MdOutlineCancel,
   MdWarning,
@@ -17,8 +18,6 @@ import type { OfflineErrorCode } from '@/services/offline/types';
 import type { Playlist } from '@/types';
 import { cn, formatBytes, getSurahDisplayName } from '@/utils';
 
-import DownloadError from './download-error';
-
 /** Rough average MP3 size per surah (~5 MB) for pre-download estimate */
 const ESTIMATED_BYTES_PER_SURAH = 5 * 1024 * 1024;
 
@@ -26,6 +25,7 @@ type Props = {
   playlist: Playlist;
   cachedCount: number;
   isAllCached: boolean;
+  isOnline: boolean;
   progress: DownloadProgress | null;
   onDownloadAll: (playlist: Playlist) => void;
   onRemoveAll: (playlist: Playlist) => void;
@@ -39,10 +39,25 @@ type Props = {
   } | null>;
 };
 
+type Status = 'downloading' | 'saved' | 'offline' | 'error' | 'idle';
+
+function getStatus(
+  isDownloading: boolean,
+  isAllCached: boolean,
+  isOnline: boolean,
+  error?: OfflineErrorCode
+): Status {
+  if (isDownloading) return 'downloading';
+  if (isAllCached) return 'saved';
+  if (!isOnline) return 'offline';
+  return error ? 'error' : 'idle';
+}
+
 export default function DownloadAllButton({
   playlist,
   cachedCount,
   isAllCached,
+  isOnline,
   progress,
   onDownloadAll,
   onRemoveAll,
@@ -91,161 +106,233 @@ export default function DownloadAllButton({
     formatMessage,
   ]);
 
-  if (isDownloading) {
-    const percent = Math.round((progress.completed / progress.total) * 100);
-    const trackPercent = Math.round(progress.currentTrackProgress * 100);
+  const status = getStatus(isDownloading, isAllCached, isOnline, error);
+  const cachedPercent =
+    playlist.length > 0 ? Math.round((cachedCount / playlist.length) * 100) : 0;
+  const progressPercent = progress
+    ? Math.round((progress.completed / progress.total) * 100)
+    : cachedPercent;
+  const trackPercent = progress
+    ? Math.round(progress.currentTrackProgress * 100)
+    : 0;
 
-    // Find current surah name from currentUrl
-    const currentSurahName = (() => {
-      if (!progress.currentUrl) return null;
-      const currentItem = playlist.find((p) => p.link === progress.currentUrl);
-      if (!currentItem) return null;
-      const surah = SURAHS.find((s) => s.id.toString() === currentItem.surahId);
-      if (!surah) return null;
-      return getSurahDisplayName(surah, locale);
-    })();
-
-    return (
-      <div className="flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2.5 dark:border-blue-900 dark:bg-blue-950/40">
-        <div className="min-w-0 flex-1">
-          <div className="mb-1 flex items-center justify-between text-xs">
-            <span className="font-medium text-blue-700 dark:text-blue-300">
-              <FormattedMessage
-                id="download.downloading"
-                defaultMessage="Downloading… {completed}/{total}"
-                values={{
-                  completed: progress.completed,
-                  total: progress.total,
-                }}
-              />
-              {progress.downloadedBytes > 0 && (
-                <span className="ms-1 text-[10px] font-normal text-blue-500 dark:text-blue-400">
-                  ({formatBytes(progress.downloadedBytes)})
-                </span>
-              )}
-            </span>
-            <span className="text-blue-500 dark:text-blue-400">{percent}%</span>
-          </div>
-          {/* Overall progress */}
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-blue-200 dark:bg-blue-800">
-            <div
-              className="h-full rounded-full bg-blue-500 transition-all duration-300"
-              style={{ width: `${percent}%` }}
-            />
-          </div>
-          {/* Current surah progress */}
-          <div
-            className={cn(
-              'mt-1.5 transition-opacity duration-200',
-              currentSurahName ? 'opacity-100' : 'opacity-0'
-            )}
-          >
-            <div className="flex items-center justify-between text-[10px] text-blue-600 dark:text-blue-400">
-              <span className="truncate">{currentSurahName || '\u00A0'}</span>
-              <span>{trackPercent}%</span>
-            </div>
-            <div className="mt-0.5 h-1 w-full overflow-hidden rounded-full bg-blue-100 dark:bg-blue-900">
-              <div
-                className="h-full rounded-full bg-blue-400 transition-all duration-200"
-                style={{ width: `${trackPercent}%` }}
-              />
-            </div>
-          </div>
-          {progress.failed > 0 && (
-            <span className="mt-1 text-[10px] text-red-500">
-              <FormattedMessage
-                id="download.failed"
-                defaultMessage="{count} failed"
-                values={{ count: progress.failed }}
-              />
-            </span>
-          )}
-        </div>
-        <Tooltip
-          content={formatMessage({
-            id: 'download.cancel',
-            defaultMessage: 'Cancel download',
-          })}
-        >
-          <button
-            onClick={onCancel}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-red-500 hover:bg-red-100 active:bg-red-200 dark:hover:bg-red-900/30"
-            aria-label={formatMessage({
-              id: 'download.cancel',
-              defaultMessage: 'Cancel download',
-            })}
-          >
-            <MdOutlineCancel size={22} />
-          </button>
-        </Tooltip>
-      </div>
+  const currentSurahName = (() => {
+    if (!progress?.currentUrl) return null;
+    const currentItem = playlist.find(
+      (item) => item.link === progress.currentUrl
     );
-  }
+    if (!currentItem) return null;
+    const surah = SURAHS.find((s) => s.id.toString() === currentItem.surahId);
+    return surah ? getSurahDisplayName(surah, locale) : null;
+  })();
 
-  if (isAllCached) {
-    return (
-      <div className="flex items-center justify-between rounded-lg border border-green-100 bg-green-50 px-3 py-2 dark:border-green-900 dark:bg-green-950/40">
-        <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-300">
-          <MdCloudDone size={20} />
+  const errorMessage =
+    status === 'error'
+      ? error === 'quota'
+        ? formatMessage({
+            id: 'download.errorQuota',
+            defaultMessage:
+              'Not enough storage. Free up space or remove downloads, then try again.',
+          })
+        : error === 'network'
+          ? formatMessage({
+              id: 'download.errorNetwork',
+              defaultMessage:
+                'Download failed. Check your connection and try again.',
+            })
+          : formatMessage({
+              id: 'download.errorUnknown',
+              defaultMessage: 'Download failed. Try again.',
+            })
+      : null;
+
+  const label = (() => {
+    switch (status) {
+      case 'downloading':
+        return (
+          <FormattedMessage
+            id="download.downloading"
+            defaultMessage="Downloading… {completed}/{total}"
+            values={{
+              completed: progress?.completed ?? cachedCount,
+              total: progress?.total ?? playlist.length,
+            }}
+          />
+        );
+      case 'saved':
+        return (
           <FormattedMessage
             id="download.allSaved"
             defaultMessage="All surahs saved offline"
           />
-        </div>
-        <Tooltip
-          content={formatMessage({
-            id: 'download.removeAll',
-            defaultMessage: 'Remove all downloads',
-          })}
+        );
+      case 'offline':
+        return (
+          <FormattedMessage
+            id="download.offlineUnavailable"
+            defaultMessage="Offline — downloads unavailable"
+          />
+        );
+      case 'error':
+        return errorMessage;
+      default:
+        return (
+          <FormattedMessage
+            id="download.downloadAll"
+            defaultMessage="Download all surahs for offline ({cached}/{total})"
+            values={{ cached: cachedCount, total: playlist.length }}
+          />
+        );
+    }
+  })();
+
+  const subtitle = (() => {
+    if (status === 'downloading') {
+      return currentSurahName ?? '\u00A0';
+    }
+    if (storageWarning) return storageWarning;
+    return (
+      <FormattedMessage
+        id="download.savedCount"
+        defaultMessage="{cached} of {total} surahs saved"
+        values={{ cached: cachedCount, total: playlist.length }}
+      />
+    );
+  })();
+
+  const percent = status === 'downloading' ? trackPercent : progressPercent;
+
+  const Icon =
+    status === 'saved'
+      ? MdCloudDone
+      : status === 'offline'
+        ? MdCloudOff
+        : status === 'error'
+          ? MdWarning
+          : MdCloudDownload;
+
+  return (
+    <div
+      className={cn(
+        'flex min-h-[76px] flex-col justify-center rounded-lg border px-3 py-2 transition-colors',
+        status === 'saved' &&
+          'border-green-100 bg-green-50 dark:border-green-900 dark:bg-green-950/40',
+        status === 'downloading' &&
+          'border-blue-100 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/40',
+        status === 'error' &&
+          'border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/40',
+        status === 'offline' &&
+          'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/60',
+        status === 'idle' &&
+          'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/40'
+      )}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <div
+          aria-live="polite"
+          className={cn(
+            'flex min-w-0 items-center gap-2 text-sm font-medium',
+            status === 'saved' && 'text-green-700 dark:text-green-300',
+            status === 'downloading' && 'text-blue-700 dark:text-blue-300',
+            status === 'error' && 'text-red-700 dark:text-red-300',
+            status === 'offline' && 'text-gray-600 dark:text-gray-300',
+            status === 'idle' && 'text-blue-700 dark:text-blue-300'
+          )}
         >
-          <button
-            onClick={() => onRemoveAll(playlist)}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30"
-            aria-label={formatMessage({
+          <Icon size={20} className="shrink-0" aria-hidden="true" />
+          <span className="truncate">{label}</span>
+        </div>
+
+        {status === 'downloading' ? (
+          <Tooltip
+            content={formatMessage({
+              id: 'download.cancel',
+              defaultMessage: 'Cancel download',
+            })}
+          >
+            <button
+              onClick={onCancel}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-red-500 hover:bg-red-100 active:bg-red-200 dark:hover:bg-red-900/30"
+              aria-label={formatMessage({
+                id: 'download.cancel',
+                defaultMessage: 'Cancel download',
+              })}
+            >
+              <MdOutlineCancel size={20} />
+            </button>
+          </Tooltip>
+        ) : status === 'saved' ? (
+          <Tooltip
+            content={formatMessage({
               id: 'download.removeAll',
               defaultMessage: 'Remove all downloads',
             })}
           >
-            <MdDeleteOutline size={18} />
+            <button
+              onClick={() => onRemoveAll(playlist)}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30"
+              aria-label={formatMessage({
+                id: 'download.removeAll',
+                defaultMessage: 'Remove all downloads',
+              })}
+            >
+              <MdDeleteOutline size={18} />
+            </button>
+          </Tooltip>
+        ) : status === 'idle' || status === 'error' ? (
+          <button
+            onClick={handleDownloadAll}
+            className="flex h-8 shrink-0 items-center gap-1 rounded-full bg-blue-600 px-2.5 text-xs font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-400"
+          >
+            <MdCloudDownload size={16} aria-hidden="true" />
+            <FormattedMessage id="download.action" defaultMessage="Download" />
           </button>
-        </Tooltip>
+        ) : null}
       </div>
-    );
-  }
 
-  return (
-    <div className="space-y-2">
-      <DownloadError code={error ?? null} />
-      {storageWarning && (
-        <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
-          <MdWarning size={16} className="mt-0.5 shrink-0" />
-          <span>{storageWarning}</span>
-        </div>
-      )}
-      {/* Low-storage hint */}
-      {cachedCount > 0 && !isAllCached && (
-        <p className="text-[10px] text-amber-600 dark:text-amber-400">
-          <FormattedMessage
-            id="storage.lowWarning"
-            defaultMessage="Downloads may be removed by your browser if storage is low."
-          />
-        </p>
-      )}
-      <button
-        onClick={handleDownloadAll}
+      <div
         className={cn(
-          'flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
-          'border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100',
-          'dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300 dark:hover:bg-blue-900/50'
+          'mt-1.5 h-1.5 w-full overflow-hidden rounded-full',
+          status === 'saved' && 'bg-green-200 dark:bg-green-800',
+          status === 'downloading' && 'bg-blue-200 dark:bg-blue-800',
+          status === 'error' && 'bg-red-200 dark:bg-red-900',
+          status === 'offline' && 'bg-gray-200 dark:bg-gray-700',
+          status === 'idle' && 'bg-blue-200 dark:bg-blue-800'
         )}
       >
-        <MdCloudDownload size={20} />
-        <FormattedMessage
-          id="download.downloadAll"
-          defaultMessage="Download all surahs for offline ({cached}/{total})"
-          values={{ cached: cachedCount, total: playlist.length }}
+        <div
+          className={cn(
+            'h-full rounded-full transition-all duration-300',
+            status === 'saved' && 'bg-green-500',
+            status === 'downloading' && 'bg-blue-500',
+            status === 'error' && 'bg-red-400',
+            status === 'offline' && 'bg-gray-400',
+            status === 'idle' && 'bg-blue-500'
+          )}
+          style={{
+            width: `${status === 'downloading' ? progressPercent : cachedPercent}%`,
+          }}
         />
-      </button>
+      </div>
+
+      <div
+        className={cn(
+          'mt-1 flex h-3.5 items-center justify-between gap-2 text-[10px]',
+          status === 'saved' && 'text-green-600 dark:text-green-400',
+          status === 'downloading' && 'text-blue-600 dark:text-blue-400',
+          status === 'error' && 'text-red-600 dark:text-red-400',
+          status === 'offline' && 'text-gray-500 dark:text-gray-400',
+          status === 'idle' && 'text-blue-500 dark:text-blue-400'
+        )}
+      >
+        <span
+          className="truncate"
+          title={typeof subtitle === 'string' ? subtitle : undefined}
+        >
+          {subtitle}
+        </span>
+        <span className="shrink-0">{percent}%</span>
+      </div>
     </div>
   );
 }
