@@ -57,3 +57,8 @@ testsprite_tests/tmp/config.json
 
 # Local Netlify folder
 .netlify
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
