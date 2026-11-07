@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0-rc.1] - 2026-11-07
+
+### Features
+
+- reciter picker rebuilt as the open-tilawa sheet: mobile bottom sheet with
+  drag-to-dismiss, docked desktop panel, pinned search/filters, compact rows
+  and incremental loading
+- manual offline mode with a persisted switch, banner and "Go online" action
+- Tahfeez offline gating, 2x2 panel and repeat/delay presets
+- settings groups language/theme under Preferences
+- SEO canonicals, WebApplication/Organization/Breadcrumb JSON-LD and stable
+  sitemap dates
+- skip-to-content link, reduced-motion support and lazy mobile visualizer
+- opt-in live provider contract suite and weekly workflow
+
+### Fixes
+
+- download controls keep a stable height and hide offline actions
+- provider 429 responses propagate `Retry-After`
+- Tahfeez attaches listeners to the live audio element
+- RTL logical positioning for header, settings link and language menu
+
+### Tests
+
+- 377 unit tests, 2 Playwright offline tests, 6 opt-in live contract tests
+
 ## [0.4.0]
 
 ### Features

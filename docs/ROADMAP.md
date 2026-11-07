@@ -844,6 +844,24 @@ change, bundle not larger.
 
 ---
 
+## Stage 11 — Reciter picker sheet (complete)
+
+Status: **complete** (2026-11-07). Ported the open-tilawa interaction while
+keeping every existing filter and data hook.
+
+- Mobile: native bottom sheet at 90dvh with drag-to-dismiss, history Back
+  entry, pinned search and filters.
+- Desktop: docked 360px start-side panel, non-modal, optional pin; the page
+  stays interactive behind it.
+- Compact 64px rows replace the card grid: name, riwaya/source, favourite and
+  view counts, source pill, offline badge, favourite action.
+- Pinned toolbar keeps search, source chips, riwaya chips, Recent/Favorites/
+  Downloaded/Downloadable scopes and sort visible.
+- Incremental loading: 80 rows at a time via IntersectionObserver.
+- Fixes the old mobile footer overlap and nested-button markup.
+
+---
+
 ## Provider matrix
 
 Values verified against official docs and live endpoints on 2026-11-05.
@@ -958,7 +976,8 @@ Dependency order:
       → 7a–7d
       → 8a, 8b, 8c (Cloudflare CNAME pending)
       → 9a–9c
-      → 10a–10f
+      → 10a–10g
+      → 11 (reciter picker sheet)
 ```
 
 ---
