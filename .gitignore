@@ -62,3 +62,6 @@ testsprite_tests/tmp/config.json
 /test-results/
 /playwright-report/
 /blob-report/
+
+# Local screenshots
+/screenshots/

@@ -4,7 +4,9 @@ import { useAtom } from 'jotai';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import CacheManagement from '@/components/cache-management';
+import LanguageSwitcher from '@/components/language-switcher';
 import ProviderBadges from '@/components/provider-badge';
+import ThemeSwitcher from '@/components/theme-switcher';
 import useDirection from '@/hooks/use-direction';
 import { enabledSourcesAtom, forcedOfflineAtom } from '@/jotai/atom';
 import { isMp3QuranV4Enabled } from '@/services/reciters/flags';
@@ -55,6 +57,65 @@ export default function SettingsPage() {
         <h1 className="mb-6 text-center text-3xl font-bold">
           <FormattedMessage id="settings.title" defaultMessage="Settings" />
         </h1>
+
+        {/* ── Language & appearance ── */}
+        <section
+          className="m-1 space-y-5 rounded p-4 text-start md:m-2 md:border md:border-gray-200 md:bg-white md:p-8 md:shadow-sm md:dark:border-gray-600 md:dark:bg-gray-800"
+          dir={isRTL ? 'rtl' : 'ltr'}
+        >
+          <div className="space-y-1">
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-300">
+              <FormattedMessage
+                id="settings.preferences"
+                defaultMessage="Preferences"
+              />
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              <FormattedMessage
+                id="settings.preferencesDescription"
+                defaultMessage="Language and appearance for this device."
+              />
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 p-3 dark:border-gray-700">
+              <div className="space-y-1">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                  <FormattedMessage
+                    id="settings.language"
+                    defaultMessage="Language"
+                  />
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <FormattedMessage
+                    id="settings.languageDescription"
+                    defaultMessage="Choose the interface language."
+                  />
+                </p>
+              </div>
+              <LanguageSwitcher />
+            </div>
+
+            <div className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 p-3 dark:border-gray-700">
+              <div className="space-y-1">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                  <FormattedMessage
+                    id="settings.theme"
+                    defaultMessage="Theme"
+                  />
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <FormattedMessage
+                    id="settings.themeDescription"
+                    defaultMessage="Switch between light and dark mode."
+                  />
+                </p>
+              </div>
+              <ThemeSwitcher />
+            </div>
+          </div>
+        </section>
 
         <section
           className="m-1 space-y-4 rounded p-4 text-start md:m-2 md:border md:border-gray-200 md:bg-white md:p-8 md:shadow-sm md:dark:border-gray-600 md:dark:bg-gray-800"

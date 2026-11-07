@@ -5,10 +5,8 @@ import { useEffect } from 'react';
 
 import ExitFullscreen from '@/components/exit-fullscreen';
 import Footer from '@/components/footer';
-import LanguageSwitcher from '@/components/language-switcher';
 import NetworkStatusIndicator from '@/components/network-status-indicator';
 import SettingsLink from '@/components/settings-link';
-import ThemeSwitcher from '@/components/theme-switcher';
 import { fullscreenAtom } from '@/jotai/atom';
 
 export default function FullscreenController({
@@ -47,8 +45,6 @@ export default function FullscreenController({
         style={{ direction: 'ltr' }}
       >
         <NetworkStatusIndicator />
-        <LanguageSwitcher />
-        <ThemeSwitcher />
       </div>
       <div className="flex w-full flex-grow items-center justify-center">
         {children}
