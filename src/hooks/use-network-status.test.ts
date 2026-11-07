@@ -1,5 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
+import { createStore, Provider } from 'jotai';
+import React from 'react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+
+import { forcedOfflineAtom } from '@/jotai/atom';
 
 import { useNetworkStatus } from './use-network-status';
 
@@ -59,6 +63,23 @@ describe('useNetworkStatus', () => {
         configurable: true,
       });
       window.dispatchEvent(new Event('online'));
+    });
+
+    expect(result.current).toBe(true);
+  });
+
+  it('reports offline while manual offline mode is enabled', () => {
+    const store = createStore();
+    store.set(forcedOfflineAtom, true);
+    const wrapper = ({ children }: { children: React.ReactNode }) =>
+      React.createElement(Provider, { store }, children);
+
+    const { result } = renderHook(() => useNetworkStatus(), { wrapper });
+
+    expect(result.current).toBe(false);
+
+    act(() => {
+      store.set(forcedOfflineAtom, false);
     });
 
     expect(result.current).toBe(true);

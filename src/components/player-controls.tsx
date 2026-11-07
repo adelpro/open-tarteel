@@ -22,6 +22,7 @@ import { useIntl } from 'react-intl';
 import Tooltip from '@/components/tooltip';
 import { ICON_SIZE, SLEEP_MINUTES } from '@/constants';
 import useDirection from '@/hooks/use-direction';
+import { useNetworkStatus } from '@/hooks/use-network-status';
 import { useSleepTimer } from '@/hooks/use-sleep-timer';
 import { TimeRange, useTahfeezSession } from '@/hooks/use-tahfeez-session';
 import {
@@ -86,6 +87,7 @@ export default function PlayerControls({
     'listening'
   );
   const selectedReciter = useAtomValue(selectedReciterAtom);
+  const isOnline = useNetworkStatus();
 
   // ── Tahfeez session (engine lives in the hook) ───────
   const [tahfeezSettings, setTahfeezSettings] = useState<TahfeezSettings>({
@@ -141,10 +143,9 @@ export default function PlayerControls({
     }
   }, [chapterNumber]);
 
-  const isTahfeezSupported = canUseRangeMode(
-    selectedReciter?.source,
-    selectedReciter?.moshaf
-  );
+  const isTahfeezSupported =
+    canUseRangeMode(selectedReciter?.source, selectedReciter?.moshaf) &&
+    isOnline;
 
   useEffect(() => {
     if (!isTahfeezSupported && activeMode === 'tahfeez') {
@@ -258,6 +259,10 @@ export default function PlayerControls({
       id: 'tahfeez.modeDisabledProvider',
       defaultMessage:
         'Tahfeez mode is only available for quran.foundation reciters',
+    }),
+    tahfeezModeDisabledOffline: formatMessage({
+      id: 'tahfeez.modeDisabledOffline',
+      defaultMessage: 'Tahfeez mode is unavailable while offline',
     }),
     play: formatMessage({ id: 'player.play', defaultMessage: 'Play' }),
     pause: formatMessage({ id: 'player.pause', defaultMessage: 'Pause' }),
@@ -612,7 +617,9 @@ export default function PlayerControls({
                 title={
                   isTahfeezSupported
                     ? undefined
-                    : messages.tahfeezModeDisabledProvider
+                    : !isOnline
+                      ? messages.tahfeezModeDisabledOffline
+                      : messages.tahfeezModeDisabledProvider
                 }
                 onClick={() => {
                   setActiveMode('tahfeez');

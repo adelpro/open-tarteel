@@ -20,6 +20,10 @@ export const showVisualizerAtom = createAtomWithStorage<boolean>(
   'show-visualizer',
   true
 );
+export const forcedOfflineAtom = createAtomWithStorage<boolean>(
+  'forced-offline',
+  false
+);
 
 const getInitialLocale = (): Language => {
   if (typeof window !== 'undefined') {

@@ -1,13 +1,16 @@
 'use client';
 
+import { useAtom } from 'jotai';
 import React from 'react';
 import { MdCloudOff } from 'react-icons/md';
 import { FormattedMessage } from 'react-intl';
 
 import { useNetworkStatus } from '@/hooks/use-network-status';
+import { forcedOfflineAtom } from '@/jotai/atom';
 
 export default function NetworkStatusIndicator() {
   const isOnline = useNetworkStatus();
+  const [forcedOffline, setForcedOffline] = useAtom(forcedOfflineAtom);
 
   if (isOnline) return null;
 
@@ -26,10 +29,26 @@ export default function NetworkStatusIndicator() {
         <MdCloudOff className="size-3.5 shrink-0 text-amber-200" />
         <span className="max-w-[180px] truncate sm:max-w-none">
           <FormattedMessage
-            id="offline.status"
-            defaultMessage="Offline Mode — Showing downloaded content"
+            id={forcedOffline ? 'offline.forcedStatus' : 'offline.status'}
+            defaultMessage={
+              forcedOffline
+                ? 'Offline mode — downloaded content only'
+                : 'Offline Mode — Showing downloaded content'
+            }
           />
         </span>
+        {forcedOffline && (
+          <button
+            type="button"
+            onClick={() => setForcedOffline(false)}
+            className="ms-1 shrink-0 rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold underline-offset-2 transition-colors hover:bg-white/30 hover:underline"
+          >
+            <FormattedMessage
+              id="offline.goOnline"
+              defaultMessage="Go online"
+            />
+          </button>
+        )}
       </div>
     </aside>
   );

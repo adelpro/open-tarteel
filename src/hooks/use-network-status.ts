@@ -1,8 +1,12 @@
 'use client';
 
+import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';
 
+import { forcedOfflineAtom } from '@/jotai/atom';
+
 export function useNetworkStatus() {
+  const forcedOffline = useAtomValue(forcedOfflineAtom);
   // The first render must be identical on the server and in the browser.
   // `navigator.onLine` is undefined during SSR, so reading it here would make
   // the server render the offline banner while an online client renders
@@ -11,6 +15,11 @@ export function useNetworkStatus() {
   const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
+    if (forcedOffline) {
+      setIsOnline(false);
+      return;
+    }
+
     const checkConnectivity = async () => {
       if (!navigator.onLine) {
         setIsOnline(false);
@@ -47,7 +56,7 @@ export function useNetworkStatus() {
       window.removeEventListener('online', handleConnectivityChange);
       window.removeEventListener('offline', handleConnectivityChange);
     };
-  }, []);
+  }, [forcedOffline]);
 
-  return isOnline;
+  return forcedOffline ? false : isOnline;
 }

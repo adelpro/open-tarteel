@@ -1,14 +1,15 @@
 'use client';
 
 import { useAtom } from 'jotai';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import CacheManagement from '@/components/cache-management';
 import ProviderBadges from '@/components/provider-badge';
 import useDirection from '@/hooks/use-direction';
-import { enabledSourcesAtom } from '@/jotai/atom';
+import { enabledSourcesAtom, forcedOfflineAtom } from '@/jotai/atom';
 import { isMp3QuranV4Enabled } from '@/services/reciters/flags';
 import { LinkSource } from '@/types';
+import { cn } from '@/utils';
 
 const AVAILABLE_SOURCES: { source: LinkSource; id: string }[] = [
   { source: LinkSource.MP3QURAN, id: 'settings.source.mp3quran' },
@@ -30,7 +31,9 @@ const AVAILABLE_SOURCES: { source: LinkSource; id: string }[] = [
 
 export default function SettingsPage() {
   const { isRTL } = useDirection();
+  const { formatMessage } = useIntl();
   const [enabledSources, setEnabledSources] = useAtom(enabledSourcesAtom);
+  const [forcedOffline, setForcedOffline] = useAtom(forcedOfflineAtom);
 
   const toggleSource = (source: LinkSource) => {
     setEnabledSources((previous) => {
@@ -108,6 +111,68 @@ export default function SettingsPage() {
               );
             })}
           </ul>
+        </section>
+
+        {/* ── Manual offline mode ── */}
+        <section
+          className="m-1 space-y-4 rounded p-4 text-start md:m-2 md:border md:border-gray-200 md:bg-white md:p-8 md:shadow-sm md:dark:border-gray-600 md:dark:bg-gray-800"
+          dir={isRTL ? 'rtl' : 'ltr'}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-1">
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-300">
+                <FormattedMessage
+                  id="settings.offlineMode"
+                  defaultMessage="Offline mode"
+                />
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                <FormattedMessage
+                  id="settings.offlineModeDescription"
+                  defaultMessage="Use downloaded content only and hide network-only actions."
+                />
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={forcedOffline}
+              aria-label={formatMessage({
+                id: 'settings.offlineMode',
+                defaultMessage: 'Offline mode',
+              })}
+              onClick={() => setForcedOffline((previous) => !previous)}
+              className={cn(
+                'mt-1 flex h-6 w-11 shrink-0 items-center rounded-full p-1 transition-colors',
+                forcedOffline
+                  ? 'justify-end bg-amber-600'
+                  : 'justify-start bg-gray-300 dark:bg-gray-600'
+              )}
+            >
+              <span className="h-4 w-4 rounded-full bg-white shadow" />
+            </button>
+          </div>
+          <p
+            className={cn(
+              'text-xs',
+              forcedOffline
+                ? 'text-amber-700 dark:text-amber-400'
+                : 'text-gray-500 dark:text-gray-400'
+            )}
+          >
+            <FormattedMessage
+              id={
+                forcedOffline
+                  ? 'settings.offlineModeActive'
+                  : 'settings.offlineModeHint'
+              }
+              defaultMessage={
+                forcedOffline
+                  ? 'Offline mode is on. Only downloaded reciters and surahs are available.'
+                  : 'Turn this on before switching to airplane mode to try the offline experience.'
+              }
+            />
+          </p>
         </section>
 
         {/* ── Offline downloads / cache management ── */}

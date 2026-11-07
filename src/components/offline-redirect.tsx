@@ -1,20 +1,24 @@
 'use client';
 
+import { useAtomValue } from 'jotai';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+
+import { forcedOfflineAtom } from '@/jotai/atom';
 
 const CONNECTIVITY_CHECK_URL = 'https://www.gstatic.com/generate_204';
 
 export default function OfflineRedirect() {
   const pathname = usePathname();
   const router = useRouter();
+  const forcedOffline = useAtomValue(forcedOfflineAtom);
 
   useEffect(() => {
     let cancelled = false;
 
     const checkConnectivity = async () => {
       // Only handle returning to home when on the /offline fallback page
-      if (pathname !== '/offline' || cancelled) return;
+      if (pathname !== '/offline' || cancelled || forcedOffline) return;
 
       if (!navigator.onLine) return;
 
@@ -49,7 +53,7 @@ export default function OfflineRedirect() {
     return () => {
       cancelled = true;
     };
-  }, [pathname, router]);
+  }, [pathname, router, forcedOffline]);
 
   return null;
 }
