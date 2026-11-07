@@ -45,6 +45,7 @@ export const metadata: Metadata = {
   title: 'Open Tarteel — Quran Audio Player',
   description:
     'Listen to the Holy Quran recited by world-renowned reciters. Free, open-source Quran audio player with playlist support.',
+  alternates: { canonical: '/' },
   openGraph: {
     title: 'Open Tarteel — Quran Audio Player',
     description:
@@ -67,6 +68,33 @@ const tajawal = Tajawal({
   subsets: ['arabic'],
   preload: true,
 });
+
+const siteJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebApplication',
+      name: clientConfig.APP_NAME,
+      url: clientConfig.APP_URL,
+      description:
+        'Listen to the Holy Quran recited by world-renowned reciters. Free and open-source.',
+      applicationCategory: 'MultimediaApplication',
+      operatingSystem: 'Any',
+      inLanguage: ['ar', 'en', 'de'],
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+    },
+    {
+      '@type': 'Organization',
+      name: clientConfig.APP_NAME,
+      url: clientConfig.APP_URL,
+      logo: `${clientConfig.APP_URL}/images/192x192.png`,
+    },
+  ],
+};
 
 export default async function RootLayout({
   children,
@@ -91,7 +119,20 @@ export default async function RootLayout({
           <body
             className={`${tajawal.className} min-h-full bg-background antialiased`}
           >
-            <main className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background text-foreground">
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-gray-900 focus:shadow-lg dark:focus:bg-gray-800 dark:focus:text-gray-100"
+            >
+              Skip to content / تخطَّ إلى المحتوى
+            </a>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+            />
+            <main
+              id="main-content"
+              className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background text-foreground"
+            >
               <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
                 <div className="absolute -left-[10%] -top-[15%] h-[520px] w-[520px] rounded-full bg-sky-500/[0.06] blur-[80px] dark:bg-sky-400/[0.07]" />
                 <div className="absolute -right-[8%] top-[25%] h-[420px] w-[420px] rounded-full bg-indigo-500/[0.05] blur-[80px] dark:bg-indigo-400/[0.07]" />

@@ -51,9 +51,32 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function Page({ params }: Props) {
   const { id } = await params;
+  const appUrl = normalizeAppUrl(clientConfig.APP_URL) ?? '';
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: appUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: `Reciter ${id}`,
+        item: `${appUrl}/reciter/${id}`,
+      },
+    ],
+  };
 
   return (
     <main className="flex w-full flex-col items-center justify-center bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <Hero />
       <ReciterPage key={id} id={id} />
     </main>

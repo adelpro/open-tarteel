@@ -5,6 +5,7 @@ import OfflineRetryButton from './retry-button';
 
 export const metadata = {
   title: 'Offline — Open Tarteel',
+  alternates: { canonical: '/offline' },
 };
 
 export default function OfflinePage() {

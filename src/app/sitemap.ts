@@ -8,6 +8,10 @@ import { getAllReciters } from '@/utils/api';
 
 export const revalidate = 86400;
 
+// Content timestamps are not exposed by the upstream catalogs. Bump this when
+// site content changes instead of claiming every URL changed on every crawl.
+const CONTENT_LAST_MODIFIED = new Date('2026-11-07T00:00:00.000Z');
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const appUrl = normalizeAppUrl(clientConfig.APP_URL) ?? '';
 
@@ -24,7 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const recitersMap = reciterIds.map((id) => ({
     url: `${appUrl}/reciter/${id}`,
-    lastModified: new Date(),
+    lastModified: CONTENT_LAST_MODIFIED,
     changeFrequency: 'weekly' as const,
     priority: 0.7,
   }));
@@ -32,25 +36,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     {
       url: appUrl,
-      lastModified: new Date(),
+      lastModified: CONTENT_LAST_MODIFIED,
       changeFrequency: 'daily',
       priority: 1,
     },
     {
       url: `${appUrl}/about`,
-      lastModified: new Date(),
+      lastModified: CONTENT_LAST_MODIFIED,
       changeFrequency: 'monthly',
       priority: 0.4,
     },
     {
       url: `${appUrl}/contact`,
-      lastModified: new Date(),
+      lastModified: CONTENT_LAST_MODIFIED,
       changeFrequency: 'monthly',
       priority: 0.4,
     },
     {
       url: `${appUrl}/privacy`,
-      lastModified: new Date(),
+      lastModified: CONTENT_LAST_MODIFIED,
       changeFrequency: 'yearly',
       priority: 0.3,
     },

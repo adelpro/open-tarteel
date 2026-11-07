@@ -19,10 +19,14 @@ import { Playlist } from '@/types';
 import { cn } from '@/utils';
 import { canUseAudioAnalyser } from '@/utils/audio-cors';
 
-import AudioBarsVisualizer from './audio-bars-visualizer';
 import PlayerControls from './player-controls';
 import Range from './range';
 import TrackInfo from './track-info';
+
+const AudioBarsVisualizer = dynamic(
+  () => import('@/components/audio-bars-visualizer'),
+  { ssr: false }
+);
 
 const PlaylistDialog = dynamic(
   () =>
@@ -324,11 +328,13 @@ export default function Player({ playlist }: Props) {
             />
           )}
 
-          <AudioBarsVisualizer
-            audioId="audio"
-            isPlaying={isPlaying}
-            enabled={canAnalyse}
-          />
+          <div className="hidden w-full sm:block">
+            <AudioBarsVisualizer
+              audioId="audio"
+              isPlaying={isPlaying}
+              enabled={canAnalyse}
+            />
+          </div>
 
           {isFullscreen ? (
             <>
