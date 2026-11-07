@@ -48,7 +48,7 @@ export default function RecitersList({ setIsOpen }: Props) {
   const isDownloadedOnlyEffective = showDownloadedOnly || !isOnline;
 
   const { reciters, loading, error } = useReciters();
-  const { cachedUrls } = useOfflineDownload();
+  const { isReciterDownloaded } = useOfflineDownload();
   const enabledSources = useAtomValue(enabledSourcesAtom);
   const recitersBySource = useMemo(
     () =>
@@ -106,9 +106,7 @@ export default function RecitersList({ setIsOpen }: Props) {
         );
     }
     if (isDownloadedOnlyEffective) {
-      result = result.filter((r) =>
-        r.moshaf.playlist.some((item) => cachedUrls.has(item.link))
-      );
+      result = result.filter((r) => isReciterDownloaded(r.id, r.moshaf.id));
     }
     if (showDownloadableOnly) {
       result = result.filter((r) => canDownload(r.source));
@@ -119,8 +117,8 @@ export default function RecitersList({ setIsOpen }: Props) {
     showRecentOnly,
     recentIds,
     isDownloadedOnlyEffective,
+    isReciterDownloaded,
     showDownloadableOnly,
-    cachedUrls,
   ]);
   const { formatMessage } = useIntl();
 
@@ -470,8 +468,9 @@ export default function RecitersList({ setIsOpen }: Props) {
             filteredReciters.map((reciter, index) => {
               const favId = generateFavId(reciter);
               const isFavorited = favoriteReciters.includes(favId);
-              const hasOffline = reciter.moshaf.playlist.some((item) =>
-                cachedUrls.has(item.link)
+              const hasOffline = isReciterDownloaded(
+                reciter.id,
+                reciter.moshaf.id
               );
 
               return (

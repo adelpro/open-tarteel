@@ -2,22 +2,17 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { MdCloudDone, MdDeleteOutline } from 'react-icons/md';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
-import { Language } from '@/constants/language';
 import {
   type CachedMoshaf,
   type StorageEstimate,
   useOfflineDownload,
 } from '@/hooks/use-offline-download';
-import type { Reciter } from '@/types';
 import { formatBytes } from '@/utils';
-import { getAllReciters } from '@/utils/api';
 
 export default function CacheManagement() {
-  const { locale } = useIntl();
   const {
-    cachedUrls,
     storagePersisted,
     estimateStorage,
     getCachedMoshafs,
@@ -36,34 +31,23 @@ export default function CacheManagement() {
   const scan = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch all reciters from all sources to match cached URLs
-      const reciters: Reciter[] = await getAllReciters(locale as Language, []);
-      const result = await getCachedMoshafs(
-        reciters.map((r) => ({
-          name: r.name,
-          moshaf: {
-            name: r.moshaf.name,
-            server: r.moshaf.server,
-            playlist: r.moshaf.playlist,
-          },
-        }))
-      );
+      const result = await getCachedMoshafs();
       setMoshafs(result);
       await refreshStorage();
     } catch {
       // ignore
     }
     setLoading(false);
-  }, [locale, getCachedMoshafs, refreshStorage]);
+  }, [getCachedMoshafs, refreshStorage]);
 
-  // Re-scan when cached URLs change
+  // Re-scan when the shared download records change
   useEffect(() => {
     scan();
-  }, [scan, cachedUrls]);
+  }, [scan]);
 
   const handleDelete = async (moshaf: CachedMoshaf) => {
     await removeCachedLinks(moshaf.links);
-    // Storage estimate is refreshed automatically via cachedUrls → scan → refreshStorage
+    // Storage estimate is refreshed by the shared records → scan → refreshStorage
   };
 
   if (loading) {

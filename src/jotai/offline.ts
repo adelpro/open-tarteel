@@ -2,11 +2,13 @@ import { atom } from 'jotai';
 
 import type {
   DownloadProgress,
+  OfflineDownloadRecord,
   OfflineErrorCode,
 } from '@/services/offline/types';
 
 export type OfflineState = {
   cachedUrls: Set<string>;
+  records: OfflineDownloadRecord[];
   progress: DownloadProgress | null;
   singleTrackLoading: string | null;
   singleTrackProgress: number;
@@ -17,6 +19,7 @@ export type OfflineState = {
 
 export const offlineStateAtom = atom<OfflineState>({
   cachedUrls: new Set<string>(),
+  records: [],
   progress: null,
   singleTrackLoading: null,
   singleTrackProgress: 0,
