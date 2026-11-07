@@ -17,6 +17,7 @@ test('manual offline mode gates network content', async ({ page }) => {
 
   // The reciter selector falls back to downloaded-only content.
   await page.goto('/');
+  await page.waitForTimeout(800);
   await page.getByRole('button', { name: 'Open reciter selector' }).click();
   await expect(page.getByText('No downloaded reciters found')).toBeVisible();
   await page.getByRole('button', { name: 'Close' }).first().click();
