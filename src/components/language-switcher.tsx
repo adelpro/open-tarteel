@@ -43,7 +43,7 @@ export default function LanguageSwitcher() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-10 z-50 min-w-32 overflow-hidden rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-800">
+        <div className="absolute end-0 top-10 z-50 min-w-32 overflow-hidden rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-800">
           {Object.entries(LANGUAGES).map(([code, config]) => (
             <button
               key={code}
@@ -52,7 +52,7 @@ export default function LanguageSwitcher() {
                 handleLanguageChange(code as Language);
               }}
               className={[
-                'flex w-full items-center px-3 py-2 text-left text-sm',
+                'flex w-full items-center px-3 py-2 text-start text-sm',
                 'hover:bg-gray-100 dark:hover:bg-gray-700',
                 locale === code
                   ? 'font-semibold text-brand-CTA-blue-500'

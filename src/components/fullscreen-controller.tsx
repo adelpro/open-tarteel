@@ -41,7 +41,7 @@ export default function FullscreenController({
     <>
       <SettingsLink />
       <div
-        className="fixed right-4 top-4 z-50 flex items-center gap-2"
+        className="fixed end-4 top-4 z-50 flex items-center gap-2"
         style={{ direction: 'ltr' }}
       >
         <NetworkStatusIndicator />

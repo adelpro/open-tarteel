@@ -197,8 +197,8 @@ export default function TahfeezModeControls({
 
   return (
     <div className="flex w-full flex-col">
-      {/* Settings inputs */}
-      <div className="mb-4 flex w-full flex-wrap items-center justify-center gap-3 px-2">
+      {/* Settings inputs: 2x2 on mobile, one row from sm up */}
+      <div className="mb-3 grid w-full grid-cols-2 items-end justify-items-center gap-3 px-2 sm:grid-cols-4">
         <div className="flex flex-col items-center gap-1">
           <label htmlFor={fromId} className={LABEL_CLASS}>
             {formatMessage({ id: 'tahfeez.fromAyah' })}
@@ -294,6 +294,56 @@ export default function TahfeezModeControls({
             className={INPUT_CLASS}
           />
         </div>
+      </div>
+
+      {/* Quick presets */}
+      <div className="mb-4 flex w-full flex-wrap items-center justify-center gap-2 px-2 text-xs">
+        <span className={LABEL_CLASS}>
+          {formatMessage({ id: 'tahfeez.repeat' })}
+        </span>
+        {[3, 5, 7, 10].map((value) => (
+          <button
+            key={`repeat-${value}`}
+            type="button"
+            aria-pressed={tahfeezSettings.repeat === value}
+            onClick={() =>
+              setTahfeezSettings((previous) => ({
+                ...previous,
+                repeat: value,
+              }))
+            }
+            className={`rounded-md border px-2 py-0.5 font-medium transition-colors ${
+              tahfeezSettings.repeat === value
+                ? 'border-blue-600 bg-blue-600 text-white'
+                : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+            }`}
+          >
+            {value}×
+          </button>
+        ))}
+        <span className={`${LABEL_CLASS} ms-2`}>
+          {formatMessage({ id: 'tahfeez.delay' })}
+        </span>
+        {[0, 1, 2, 3].map((value) => (
+          <button
+            key={`delay-${value}`}
+            type="button"
+            aria-pressed={tahfeezSettings.delay === value}
+            onClick={() =>
+              setTahfeezSettings((previous) => ({
+                ...previous,
+                delay: value,
+              }))
+            }
+            className={`rounded-md border px-2 py-0.5 font-medium transition-colors ${
+              tahfeezSettings.delay === value
+                ? 'border-blue-600 bg-blue-600 text-white'
+                : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+            }`}
+          >
+            {value}s
+          </button>
+        ))}
       </div>
 
       {/* Strategy selector */}

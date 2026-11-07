@@ -236,7 +236,7 @@ export default function PlayerControls({
         onClick={onClick}
         disabled={disabled}
         className={cn(
-          'flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700',
+          'flex h-9 w-9 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700',
           extraClass
         )}
         aria-label={alt}
@@ -414,7 +414,7 @@ export default function PlayerControls({
           >
             <button
               onClick={() => setShowVolumeSlider((previous) => !previous)}
-              className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+              className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
               aria-label={
                 volume > 0 ? messages.muteVolume : messages.unmuteVolume
               }
@@ -489,7 +489,7 @@ export default function PlayerControls({
           <button
             onClick={togglePlaybackMode}
             className={cn(
-              'flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700',
+              'flex h-9 w-9 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700',
               playbackMode !== 'off' && 'animate-slideInWithFade'
             )}
             aria-label={
@@ -545,7 +545,7 @@ export default function PlayerControls({
           >
             <button
               onClick={toggleFullscreen}
-              className="flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+              className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
               aria-label={
                 isFullscreen
                   ? messages.exitFullscreen
@@ -572,7 +572,7 @@ export default function PlayerControls({
           <Tooltip content={messages.more}>
             <button
               onClick={() => setShowMoreMenu((previous) => !previous)}
-              className="relative flex h-9 w-9 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+              className="relative flex h-9 w-9 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
               aria-label={messages.more}
             >
               <span className="text-lg font-bold text-gray-600 dark:text-gray-300">
