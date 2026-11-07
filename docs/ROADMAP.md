@@ -710,17 +710,17 @@ Acceptance: 3 downloaded surahs play and seek offline; no 404; quota errors are
 handled; Itqan never fails silently. **Verified** with `yarn test:offline`
 (short surahs, offline reload, 206 range, playback, visualizer, settings).
 
-### Follow-up — Offline UX (7e/7h done, 7f/7g open)
+### Follow-up — Offline UX (complete)
 
 Stage 7 fixed the offline mechanics; these gaps were found while testing the
 installed/local build.
 
-| PR  | Title                                                        | Scope                                                                                                                                                       |
-| --- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 7e  | `fix(offline): hide download-all when every surah is cached` | **Done**: offline/saved states gate both the playlist header and the player `TrackInfo`; all-cached shows a static row, offline offers no action.           |
-| 7f  | `feat(player): disable Tahfeez mode offline`                 | `useNetworkStatus` gates the mode switch; keep Listening active, explain why with i18n copy, stop an active session on connectivity loss.                   |
-| 7g  | `feat(offline): manual full-offline switch`                  | Persisted Auto/Offline override (settings + header indicator); forced offline skips network reads, gates online-only actions, and shows an explicit banner. |
-| 7h  | `style(offline): stabilize download controls`                | **Done**: fixed-height status cards with reserved bar/subtitle slots, stable playlist row height and no banner removal on connectivity changes.             |
+| PR  | Title                                                        | Scope                                                                                                                                                 |
+| --- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 7e  | `fix(offline): hide download-all when every surah is cached` | **Done**: offline/saved states gate both the playlist header and the player `TrackInfo`; all-cached shows a static row, offline offers no action.     |
+| 7f  | `feat(player): disable Tahfeez mode offline`                 | **Done**: connectivity gates the mode switch with offline copy; an active session returns to Listening when the connection drops.                     |
+| 7g  | `feat(offline): manual full-offline switch`                  | **Done**: persisted switch in settings plus a "Go online" banner action; forced offline gates network-only actions and shows downloaded content only. |
+| 7h  | `style(offline): stabilize download controls`                | **Done**: fixed-height status cards with reserved bar/subtitle slots, stable playlist row height and no banner removal on connectivity changes.       |
 
 Acceptance: on the reciter page, player and settings, no network-only action is
 enabled offline; "Download all" disappears or is replaced when everything is
