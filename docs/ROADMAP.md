@@ -90,13 +90,14 @@ never persists. Fix in 5c/5d; do not rely on the current cache layer.
 - Recheck: `gh run list --repo adelpro/open-tarteel --branch develop -L 5` and
   `gh run list --repo adelpro/open-tarteel --status failure -L 8`.
 
-### Open requests (2026-11-06)
+### Open requests (2026-11-07)
 
-| Request                                                          | Plan item        | Notes                                                                                                             |
-| ---------------------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Remove fake spectrum for providers without real spectrum support | **2c-4**         | Done in #102: CSS fallback removed; fixed height/no shift; toggle disabled with a11y copy for non-CORS providers. |
-| Reciters filter tags by provider (multi-select)                  | **10f**          | Done in #102: provider chips, multi-select, URL-backed (`source`), RTL/i18n, reset when a source is disabled.     |
-| Check failing GitHub Actions                                     | CI section above | No active branch failures found; stale superseded failures only.                                                  |
+| Request                                                                                            | Plan item        | Notes                                                                                                             |
+| -------------------------------------------------------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Remove fake spectrum for providers without real spectrum support                                   | **2c-4**         | Done in #102: CSS fallback removed; fixed height/no shift; toggle disabled with a11y copy for non-CORS providers. |
+| Reciters filter tags by provider (multi-select)                                                    | **10f**          | Done in #102: provider chips, multi-select, URL-backed (`source`), RTL/i18n, reset when a source is disabled.     |
+| Check failing GitHub Actions                                                                       | CI section above | No active branch failures found; stale superseded failures only.                                                  |
+| Offline UX: stale "Download all", Tahfeez offline, manual offline switch, download UI layout shift | **7e–7h**        | Reported 2026-11-07 while testing the installed/local build; see the Stage 7 follow-up.                           |
 
 ### Temporary tunnel (optional)
 
@@ -708,6 +709,24 @@ Goal: make downloaded audio actually work offline.
 Acceptance: 3 downloaded surahs play and seek offline; no 404; quota errors are
 handled; Itqan never fails silently. **Verified** with `yarn test:offline`
 (short surahs, offline reload, 206 range, playback, visualizer, settings).
+
+### Follow-up — Offline UX (open, reported 2026-11-07)
+
+Stage 7 fixed the offline mechanics; these gaps were found while testing the
+installed/local build.
+
+| PR  | Title                                                        | Scope                                                                                                                                                                                            |
+| --- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 7e  | `fix(offline): hide download-all when every surah is cached` | Derive the state from `isAllCached` in both the playlist header and player `TrackInfo`; replace the actionable button with a static "All surahs saved offline" row (remove-all stays available). |
+| 7f  | `feat(player): disable Tahfeez mode offline`                 | `useNetworkStatus` gates the mode switch; keep Listening active, explain why with i18n copy, stop an active session on connectivity loss.                                                        |
+| 7g  | `feat(offline): manual full-offline switch`                  | Persisted Auto/Offline override (settings + header indicator); forced offline skips network reads, gates online-only actions, and shows an explicit banner.                                      |
+| 7h  | `style(offline): stabilize download controls`                | Reserved-height slots for idle/downloading/all-cached/error states, no height flash; unify the global and per-surah download treatment; keep row height stable while progress bars appear.       |
+
+Acceptance: on the reciter page, player and settings, no network-only action is
+enabled offline; "Download all" disappears or is replaced when everything is
+cached; the manual offline switch survives reload; download state changes cause
+no layout shift (CLS 0 in the panel); the Playwright offline suite covers the
+new states.
 
 ---
 
