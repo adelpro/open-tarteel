@@ -60,6 +60,7 @@ export function useOfflineDownload() {
   const [state, setState] = useAtom(offlineStateAtom);
   const {
     cachedUrls,
+    records,
     progress,
     singleTrackLoading,
     singleTrackProgress,
@@ -147,9 +148,15 @@ export function useOfflineDownload() {
         }));
       if (legacy.length > 0) await putDownloads(legacy);
 
+      const nextRecords = [
+        ...records.filter((record) => urls.has(record.url)),
+        ...legacy,
+      ];
+
       setState((previous) => ({
         ...previous,
         cachedUrls: urls,
+        records: nextRecords,
         hydrated: true,
       }));
     } catch {
@@ -303,11 +310,16 @@ export function useOfflineDownload() {
         const clone = response.clone();
         const blob = await response.blob();
         await cache.put(url, clone);
-        await putDownload(buildRecord(url, blob.size));
+        const record = buildRecord(url, blob.size);
+        await putDownload(record);
 
         setState((previous) => ({
           ...previous,
           cachedUrls: new Set([...previous.cachedUrls, url]),
+          records: [
+            ...previous.records.filter((item) => item.url !== url),
+            record,
+          ],
           singleTrackLoading: null,
           singleTrackProgress: 0,
         }));
@@ -450,12 +462,19 @@ export function useOfflineDownload() {
               const clone = response.clone();
               const blob = await response.blob();
               await cache.put(item.link, clone);
-              await putDownload(buildRecord(item.link, blob.size));
+              const record = buildRecord(item.link, blob.size);
+              await putDownload(record);
               downloadedBytes += blob.size;
               completed++;
               setState((previous) => ({
                 ...previous,
                 cachedUrls: new Set([...previous.cachedUrls, item.link]),
+                records: [
+                  ...previous.records.filter(
+                    (entry) => entry.url !== item.link
+                  ),
+                  record,
+                ],
               }));
             }
           } catch (error) {
@@ -519,7 +538,11 @@ export function useOfflineDownload() {
       setState((previous) => {
         const next = new Set(previous.cachedUrls);
         next.delete(url);
-        return { ...previous, cachedUrls: next };
+        return {
+          ...previous,
+          cachedUrls: next,
+          records: previous.records.filter((record) => record.url !== url),
+        };
       });
     },
     [setState]
@@ -541,6 +564,15 @@ export function useOfflineDownload() {
     [cachedUrls]
   );
 
+  const isReciterDownloaded = useCallback(
+    (reciterId: string, moshafId: string) =>
+      records.some(
+        (record) =>
+          record.reciterId === reciterId && record.moshafId === moshafId
+      ),
+    [records]
+  );
+
   const getCachedCount = useCallback(
     (playlist: Playlist) =>
       playlist.filter((item) => cachedUrls.has(item.link)).length,
@@ -555,53 +587,65 @@ export function useOfflineDownload() {
   );
 
   // ── List cached mushafs with sizes (for cache management UI) ──
-  const getCachedMoshafs = useCallback(
-    async (
-      reciters: Array<{
-        name: string;
-        moshaf: { name: string; server: string; playlist: Playlist };
-      }>
-    ): Promise<CachedMoshaf[]> => {
-      if (!canUseCache()) return [];
-      try {
-        const cache = await caches.open(OFFLINE_CACHE);
-        const results: CachedMoshaf[] = [];
+  const getCachedMoshafs = useCallback(async (): Promise<CachedMoshaf[]> => {
+    if (!canUseCache()) return [];
+    try {
+      const cache = await caches.open(OFFLINE_CACHE);
+      const sourceRecords: OfflineDownloadRecord[] =
+        records.length > 0
+          ? records
+          : [...cachedUrls].map((url) => ({
+              url,
+              bytes: 0,
+              downloadedAt: 0,
+              backend: 'cache' as const,
+            }));
 
-        for (const reciter of reciters) {
-          const playlistLinks = reciter.moshaf.playlist.map(
-            (item) => item.link
-          );
-          const cachedLinks: string[] = [];
-          let totalBytes = 0;
+      const groups = new Map<
+        string,
+        {
+          reciterName: string;
+          moshafName: string;
+          links: string[];
+          totalBytes: number;
+        }
+      >();
 
-          for (const link of playlistLinks) {
-            if (!cachedUrls.has(link)) continue;
-            cachedLinks.push(link);
-            const match = await cache.match(link);
-            if (match) {
-              const blob = await match.blob();
-              totalBytes += blob.size;
-            }
-          }
+      for (const record of sourceRecords) {
+        const key = `${record.reciterId ?? 'unknown'}:${record.moshafId ?? 'unknown'}`;
+        const group = groups.get(key) ?? {
+          reciterName: record.reciterName ?? 'Unknown reciter',
+          moshafName: record.moshafName ?? 'Audio',
+          links: [],
+          totalBytes: 0,
+        };
 
-          if (cachedLinks.length > 0) {
-            results.push({
-              reciterName: reciter.name,
-              moshafName: reciter.moshaf.name,
-              trackCount: cachedLinks.length,
-              totalBytes,
-              links: cachedLinks,
-            });
+        group.links.push(record.url);
+        if (record.bytes > 0) {
+          group.totalBytes += record.bytes;
+        } else {
+          const match = await cache.match(record.url);
+          if (match) {
+            const blob = await match.blob();
+            group.totalBytes += blob.size;
           }
         }
-
-        return results;
-      } catch {
-        return [];
+        groups.set(key, group);
       }
-    },
-    [cachedUrls]
-  );
+
+      return [...groups.values()]
+        .filter((group) => group.links.length > 0)
+        .map((group) => ({
+          reciterName: group.reciterName,
+          moshafName: group.moshafName,
+          trackCount: group.links.length,
+          totalBytes: group.totalBytes,
+          links: group.links,
+        }));
+    } catch {
+      return [];
+    }
+  }, [cachedUrls, records]);
 
   /** Delete all cached tracks for a given set of links */
   const removeCachedLinks = useCallback(
@@ -617,6 +661,7 @@ export function useOfflineDownload() {
 
   return {
     cachedUrls,
+    records,
     progress,
     singleTrackLoading,
     singleTrackProgress,
@@ -630,6 +675,7 @@ export function useOfflineDownload() {
     removeTrack,
     removeAllTracks,
     isTrackCached,
+    isReciterDownloaded,
     getCachedCount,
     isAllCached,
     refreshCachedUrls,
