@@ -52,6 +52,8 @@ type SheetProps = {
   /** Desktop only: keep the panel docked after picking a row. */
   pinned?: boolean;
   onTogglePin?: () => void;
+  /** Skip the history Back when the sheet closes because a row was picked. */
+  skipHistoryBack?: { current: boolean };
 };
 
 /**
@@ -66,6 +68,7 @@ export default function Sheet({
   children,
   pinned = false,
   onTogglePin,
+  skipHistoryBack,
 }: SheetProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -193,9 +196,11 @@ export default function Sheet({
     window.addEventListener('popstate', onPop);
     return () => {
       window.removeEventListener('popstate', onPop);
-      sheetLayer.release(token);
+      const skip = skipHistoryBack?.current ?? false;
+      if (skipHistoryBack) skipHistoryBack.current = false;
+      sheetLayer.release(token, !skip);
     };
-  }, [open, wide, token]);
+  }, [open, wide, token, skipHistoryBack]);
 
   useEffect(() => {
     if (!wide || !open) return;

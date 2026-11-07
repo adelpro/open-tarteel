@@ -36,14 +36,14 @@ export function createSheetLayer(deps: SheetLayerDeps) {
       open.push({ token, close });
     },
 
-    release(token: string) {
+    release(token: string, back = true) {
       const at = open.findIndex((entry) => entry.token === token);
       if (at >= 0) open.splice(at, 1);
       if (open.length > 0) return;
 
       deps.schedule(() => {
         if (open.length > 0) return;
-        if (ours() && deps.href() === here) deps.back();
+        if (back && ours() && deps.href() === here) deps.back();
       });
     },
 

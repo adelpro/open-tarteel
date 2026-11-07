@@ -328,7 +328,7 @@ export default function Player({ playlist }: Props) {
             />
           )}
 
-          <div className="hidden w-full sm:block">
+          <div className="w-full">
             <AudioBarsVisualizer
               audioId="audio"
               isPlaying={isPlaying}

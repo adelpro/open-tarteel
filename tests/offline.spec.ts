@@ -13,10 +13,14 @@ test('downloaded audio survives a cold offline start', async ({
   });
 
   await page.goto(RECITER_PATH);
+  await page.waitForTimeout(1500);
   await page.getByRole('button', { name: 'Playlist' }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
   await expect(
     page.getByRole('button', { name: 'Download surah' }).first()
   ).toBeVisible();
+  // Let IndexedDB hydration settle before the first tap.
+  await page.waitForTimeout(1000);
 
   // Download three short surahs. Al-Faatiha is first so the default track
   // can play straight from the offline cache.

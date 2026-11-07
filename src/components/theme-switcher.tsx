@@ -50,7 +50,7 @@ export default function ThemeSwitcher() {
       onClick={toggleTheme}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       className={[
-        'z-50 flex h-8 w-8 items-center justify-center rounded-full',
+        'flex h-8 w-8 items-center justify-center rounded-full',
         'border border-gray-300 bg-white text-sm font-semibold text-gray-600 shadow-sm',
         'transition-all duration-200 hover:bg-gray-50 hover:text-gray-900',
         'focus:outline-none focus:ring-brand-CTA-blue-500 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2',

@@ -10,7 +10,7 @@ import React, {
   useState,
 } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
-import { MdClose, MdCloudDone, MdSearch } from 'react-icons/md';
+import { MdClose, MdCloudDone, MdSearch, MdVisibility } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import { SOURCE_LABEL_IDS } from '@/constants';
@@ -53,6 +53,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
   const [showDownloadedOnly, setShowDownloadedOnly] = useState(false);
   const [showDownloadableOnly, setShowDownloadableOnly] = useState(false);
   const [pinned, setPinned] = useState(false);
+  const skipHistoryBack = useRef(false);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const sentinelRef = useRef<HTMLLIElement>(null);
 
@@ -204,9 +205,13 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
       addToRecent(favId);
       syncView(favId);
       setSelectedReciter(reciter);
-      if (!pinned) setIsOpen(false);
+      if (!pinned) {
+        skipHistoryBack.current = true;
+        setIsOpen(false);
+      }
 
       const parameters = new URLSearchParams(window.location.search);
+      parameters.delete('moshafId');
       const moshafParameter = `moshafId=${reciter.moshaf.id}`;
       const existingParameters = parameters.toString();
       const queryString = existingParameters
@@ -286,7 +291,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
         )}
       </div>
 
-      <div className="flex gap-2 overflow-x-auto px-4 py-2 lg:flex-wrap lg:overflow-visible">
+      <div className="flex flex-wrap gap-2 px-4 pt-2">
         <button
           type="button"
           aria-pressed={selectedSources.length === 0}
@@ -319,7 +324,8 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
             {label}
           </button>
         ))}
-        <span aria-hidden="true" className="my-1 w-px shrink-0 bg-border" />
+      </div>
+      <div className="flex flex-wrap gap-2 px-4 py-2">
         <button
           type="button"
           aria-pressed={selectedRiwaya === 'all'}
@@ -429,6 +435,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
       toolbar={toolbar}
       pinned={pinned}
       onTogglePin={() => setPinned((value) => !value)}
+      skipHistoryBack={skipHistoryBack}
     >
       {error && filteredReciters.length === 0 ? (
         <p className="px-4 py-8 text-center text-sm text-red-500">{error}</p>
@@ -488,20 +495,25 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
                             aria-hidden="true"
                           />
                         )}
-                        <span className="tnum inline-flex shrink-0 items-center gap-0.5">
-                          <BsStarFill
-                            className="size-3 text-yellow-400"
-                            aria-hidden="true"
-                          />
-                          {favoriteCounts[favId] ?? 0}
-                        </span>
-                        <span className="tnum shrink-0">
-                          {viewCounts[favId] ?? 0}{' '}
-                          {formatMessage({
-                            id: 'views',
-                            defaultMessage: 'views',
-                          })}
-                        </span>
+                      </span>
+                    </span>
+                    <span className="flex w-10 shrink-0 flex-col items-end gap-0.5 text-[10px] text-muted">
+                      <span className="tnum inline-flex items-center gap-0.5">
+                        <BsStarFill
+                          className="size-3 text-yellow-400"
+                          aria-hidden="true"
+                        />
+                        {favoriteCounts[favId] ?? 0}
+                      </span>
+                      <span
+                        className="tnum inline-flex items-center gap-0.5"
+                        title={formatMessage({
+                          id: 'views',
+                          defaultMessage: 'views',
+                        })}
+                      >
+                        <MdVisibility className="size-3" aria-hidden="true" />
+                        {viewCounts[favId] ?? 0}
                       </span>
                     </span>
                     <span className="bg-border/60 shrink-0 rounded-full px-2 py-1 text-[10px] text-foreground">
