@@ -19,7 +19,8 @@ import { getAllRecitersFromAdapters, getReciterPlaylist } from './index';
  */
 // Bump when the adapter shape, language handling, or pagination changes so a
 // deploy never serves data cached by the previous code.
-const CACHE_VERSION = 'v5-timings';
+// v6 adds the per-track `hasTimings` flag to cached Itqan playlists.
+const CACHE_VERSION = 'v6-timings';
 
 const getCachedReciters = unstable_cache(
   (language: Language, sources: LinkSource[] | null) =>

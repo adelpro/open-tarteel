@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0-rc.5] - 2026-11-08
+
+### Fixed
+
+- stale Itqan playlist cache no longer hides per-track timing availability;
+  the cache version is bumped and an older cached reciter is refreshed once
+- Tahfeez is disabled for Itqan recitations without ayah timings, with the
+  reason shown on the row
+
 ## [0.5.0-rc.4] - 2026-11-08
 
 ### Fixed

@@ -55,6 +55,7 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
   const [queryMoshafId, setQueryMoshafId] = useState<string>();
   const [retryKey, setRetryKey] = useState(0);
   const requestRef = useRef(0);
+  const timingRefreshRef = useRef<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -88,7 +89,19 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
 
   useEffect(() => {
     if (!id || !targetMoshafId) return;
-    if (playlistReady) return;
+
+    // A cached Itqan reciter from before the timing flag existed has a playlist
+    // but no `hasTimings`, which would leave Tahfeez enabled for a recitation
+    // with no timings. Refresh the detail once in that case.
+    const refreshKey = `${id}:${targetMoshafId}`;
+    const needsTimingRefresh =
+      selectedReciter?.source === LinkSource.ITQAN &&
+      selectedReciter.moshaf.hasTimings === undefined &&
+      selectedReciter.moshaf.playlist.length > 0 &&
+      timingRefreshRef.current !== refreshKey;
+
+    if (playlistReady && !needsTimingRefresh) return;
+    if (needsTimingRefresh) timingRefreshRef.current = refreshKey;
 
     if (
       selectedReciter?.id === id &&

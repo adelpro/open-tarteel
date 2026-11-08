@@ -649,6 +649,15 @@ export default function PlayerControls({
             label={messages.tahfeezMode}
             pressed={activeMode === 'tahfeez'}
             disabled={!isTahfeezSupported}
+            title={
+              isTahfeezSupported
+                ? undefined
+                : !isOnline
+                  ? messages.tahfeezModeDisabledOffline
+                  : selectedReciter?.moshaf.hasTimings === false
+                    ? messages.tahfeezModeDisabledNoTimings
+                    : messages.tahfeezModeDisabledProvider
+            }
             onClick={() => {
               setActiveMode('tahfeez');
               setShowMoreMenu(false);
@@ -857,6 +866,7 @@ function MenuRow({
   disabled = false,
   pressed,
   trailing,
+  title,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -864,12 +874,14 @@ function MenuRow({
   disabled?: boolean;
   pressed?: boolean;
   trailing?: React.ReactNode;
+  title?: string;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
+      title={title}
       aria-pressed={pressed}
       className="flex min-h-12 w-full items-center gap-3 rounded-[8px] px-2 text-start text-[14px] text-ink transition-colors duration-120 hover:bg-surface-sunken disabled:cursor-not-allowed disabled:opacity-50"
     >
