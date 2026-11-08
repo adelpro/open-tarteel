@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0-rc.4] - 2026-11-08
+
+### Fixed
+
+- Itqan timing coverage is now reported as partial and the provider badge says
+  "Some timings" instead of claiming every recitation has ayah timings
+- Itqan lazy playlists mark each surah with its real timing availability and the
+  API folds that into `moshaf.hasTimings`; Tahfeez is disabled with an explicit
+  "This recitation has no ayah timings" reason instead of a provider-level
+  message
+
 ## [0.5.0-rc.3] - 2026-11-08
 
 ### Fixed

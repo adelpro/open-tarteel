@@ -40,11 +40,13 @@ const BETA = () =>
     'warning'
   );
 
-const TIMING = () =>
+const TIMING = (coverage: 'all' | 'partial' | 'none') =>
   badge(
     'timing',
-    'provider.badge.timing',
-    'Timing',
+    coverage === 'partial'
+      ? 'provider.badge.timingPartial'
+      : 'provider.badge.timing',
+    coverage === 'partial' ? 'Some timings' : 'Timing',
     <MdGraphicEq size={12} aria-hidden="true" />,
     'primary'
   );
@@ -75,7 +77,8 @@ export const getProviderBadges = (
 
   if (capabilities.beta) badges.push(BETA());
   if (!capabilities.download) badges.push(NO_DOWNLOAD());
-  if (capabilities.timing !== 'none') badges.push(TIMING());
+  if (capabilities.timing !== 'none')
+    badges.push(TIMING(capabilities.timingCoverage));
   if (
     capabilities.timing === 'word' ||
     capabilities.timing === 'letter' ||

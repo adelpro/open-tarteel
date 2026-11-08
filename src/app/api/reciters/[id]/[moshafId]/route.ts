@@ -49,12 +49,21 @@ export async function GET(
           language
         );
         if (playlist && playlist.length > 0) {
+          // Only override `hasTimings` when the provider actually reported it
+          // per track. MP3Quran's lazy playlist says nothing, so its catalog
+          // value (or the absence of one) is left alone.
+          const reportsTimings = playlist.some(
+            (item) => item.hasTimings !== undefined
+          );
           resolved = {
             ...reciter,
             moshaf: {
               ...reciter.moshaf,
               playlist,
               surah_total: String(playlist.length),
+              hasTimings: reportsTimings
+                ? playlist.some((item) => item.hasTimings)
+                : reciter.moshaf.hasTimings,
             },
           };
         }

@@ -277,6 +277,10 @@ export default function PlayerControls({
       id: 'tahfeez.modeDisabledOffline',
       defaultMessage: 'Tahfeez mode is unavailable while offline',
     }),
+    tahfeezModeDisabledNoTimings: formatMessage({
+      id: 'tahfeez.modeDisabledNoTimings',
+      defaultMessage: 'This recitation has no ayah timings',
+    }),
     play: formatMessage({ id: 'player.play', defaultMessage: 'Play' }),
     pause: formatMessage({ id: 'player.pause', defaultMessage: 'Pause' }),
     enterFullscreen: formatMessage({

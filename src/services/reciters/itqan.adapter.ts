@@ -120,6 +120,10 @@ export const ItqanAdapter = {
         // Keep the `c=<app-slug>` query parameter: Itqan uses it for usage
         // accounting, and the URL is otherwise already absolute.
         link: track.audio_url,
+        // Some recitations ship without timings, and others only cover part of
+        // the mushaf. The API route folds this into `moshaf.hasTimings`.
+        hasTimings:
+          Array.isArray(track.ayahs_timings) && track.ayahs_timings.length > 0,
       }));
   },
 } satisfies ReciterSource;

@@ -49,8 +49,9 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     label: { ar: 'إتقان', en: 'Itqan' },
     beta: false,
     // https://docs.cms.itqan.dev/docs/guides/recitations-ayah-timings/
+    // Timings exist per surah, and some recitations omit them entirely.
     timing: 'ayah',
-    timingCoverage: 'all',
+    timingCoverage: 'partial',
     timingIntegration: 'implemented',
     names: 'ar+en',
     riwayah: { multiple: true, qiraah: true },

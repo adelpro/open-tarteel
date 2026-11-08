@@ -184,11 +184,13 @@
   "player.modeSwitcher": "Wiedergabemodus",
   "provider.badge.beta": "Beta",
   "provider.badge.timing": "Zeitangaben",
+  "provider.badge.timingPartial": "Teilweise Timings",
   "provider.badge.word": "Wort für Wort",
   "provider.badge.noDownload": "Kein Download",
   "provider.badge.more": "+{count}",
   "tahfeez.noTimings": "Für diese Sure sind keine Zeitangaben verfügbar.",
   "tahfeez.modeDisabledOffline": "Der Tahfeez-Modus ist offline nicht verfügbar.",
+  "tahfeez.modeDisabledNoTimings": "Diese Rezitation hat keine Ayah-Timings",
   "settings.source.mp3quranv4": "MP3 Quran v4 (Beta)",
   "tahfeez.invalidRange": "Die Start-Aya muss vor der End-Aya liegen.",
   "tahfeez.strategy": "Wiederholungsmodus"
