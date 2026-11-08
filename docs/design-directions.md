@@ -8,14 +8,14 @@ thrown away. Read the diagnosis first, then pick a path.
 
 ## Diagnosis: why the current UI feels wrong
 
-| Complaint | Actual cause in the code |
-| --- | --- |
-| `⋯` menu hidden / clipped on mobile | `player-controls.tsx` renders an absolutely-positioned dropdown at `absolute bottom-10 end-0 w-52`. It opens upward, has no max-height or scroll, and sits inside the player card. On a phone the top of the menu leaves the viewport and gets cut. |
-| Reciter tag hierarchy | `reciters-list.tsx` stacks three identical chip rows — sources, riwayat, scope — plus sort and count, all at the same `text-xs` / pill weight. Every filter looks equally important, so none reads as primary, and the list is pushed below the fold. |
-| Offline message | A fixed amber pill, `h-8`, `text-xs`, with a pinging dot. Amber says *error*, but offline is a normal state. A permanent `animate-ping` is alarm motion. Padding is 12px horizontal and 32px tall, which is under the 44px touch target for its "Go online" button. |
-| Download all under player | `track-info.tsx` reserves a permanent `min-h-[72px]` coloured card under the transport, four lines tall, in every state including "all saved". A secondary maintenance task owns the most valuable space in the app. |
-| Theme colours | Four competing blues (`sky-500`, `#0190dd`, `blue-600`, `#2563eb`), plus indigo and violet decorative orbs, plus amber and green status blocks. No single hue owns "action". Dark mode is a blue-black navy, which reads like a developer dashboard. |
-| Settings UI/UX | Three heading sizes, black "Select all" button, bare checkboxes, sections that only get a border from `md` up, `m-1` margins, and no back affordance. It reads as a debug page, not a product surface. |
+| Complaint                           | Actual cause in the code                                                                                                                                                                                                                                            |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `⋯` menu hidden / clipped on mobile | `player-controls.tsx` renders an absolutely-positioned dropdown at `absolute bottom-10 end-0 w-52`. It opens upward, has no max-height or scroll, and sits inside the player card. On a phone the top of the menu leaves the viewport and gets cut.                 |
+| Reciter tag hierarchy               | `reciters-list.tsx` stacks three identical chip rows — sources, riwayat, scope — plus sort and count, all at the same `text-xs` / pill weight. Every filter looks equally important, so none reads as primary, and the list is pushed below the fold.               |
+| Offline message                     | A fixed amber pill, `h-8`, `text-xs`, with a pinging dot. Amber says _error_, but offline is a normal state. A permanent `animate-ping` is alarm motion. Padding is 12px horizontal and 32px tall, which is under the 44px touch target for its "Go online" button. |
+| Download all under player           | `track-info.tsx` reserves a permanent `min-h-[72px]` coloured card under the transport, four lines tall, in every state including "all saved". A secondary maintenance task owns the most valuable space in the app.                                                |
+| Theme colours                       | Four competing blues (`sky-500`, `#0190dd`, `blue-600`, `#2563eb`), plus indigo and violet decorative orbs, plus amber and green status blocks. No single hue owns "action". Dark mode is a blue-black navy, which reads like a developer dashboard.                |
+| Settings UI/UX                      | Three heading sizes, black "Select all" button, bare checkboxes, sections that only get a border from `md` up, `m-1` margins, and no back affordance. It reads as a debug page, not a product surface.                                                              |
 
 ---
 
@@ -34,19 +34,20 @@ current sky-blue can't. It is the biggest visual change but the smallest
 conceptual one: same layout, new skin and hierarchy.
 
 **Palette (light)**
-| Token | Value | Role |
-| --- | --- | --- |
-| canvas | `#F6F2E9` | page, warm paper |
-| surface | `#FFFCF6` | cards, sheets |
-| surface-sunken | `#EFEADD` | inset rows, offline strip |
-| border | `#E3DCCB` | hairlines |
-| ink | `#1A1813` | primary text |
-| ink-muted | `#6A6558` | secondary text |
-| primary | `#0C6B53` | action, focus, progress |
-| on-primary | `#FFFCF6` | text on emerald |
-| primary-soft | `#DCEBE3` | selected row, active chip |
-| mark | `#8A6420` | favourite, active recitation |
-| success / warning / danger | `#2E7D5B` / `#A9690A` / `#B23A2E` | status only |
+
+| Token                      | Value                             | Role                         |
+| -------------------------- | --------------------------------- | ---------------------------- |
+| canvas                     | `#F6F2E9`                         | page, warm paper             |
+| surface                    | `#FFFCF6`                         | cards, sheets                |
+| surface-sunken             | `#EFEADD`                         | inset rows, offline strip    |
+| border                     | `#E3DCCB`                         | hairlines                    |
+| ink                        | `#1A1813`                         | primary text                 |
+| ink-muted                  | `#6A6558`                         | secondary text               |
+| primary                    | `#0C6B53`                         | action, focus, progress      |
+| on-primary                 | `#FFFCF6`                         | text on emerald              |
+| primary-soft               | `#DCEBE3`                         | selected row, active chip    |
+| mark                       | `#8A6420`                         | favourite, active recitation |
+| success / warning / danger | `#2E7D5B` / `#A9690A` / `#B23A2E` | status only                  |
 
 **Palette (dark)** canvas `#0B110F`, surface `#121A17`, raised `#18231F`,
 border `#26332E`, ink `#EDE9DF`, muted `#A5A196`, primary `#63C9A6`,
@@ -108,14 +109,14 @@ devotional product that is a real cost.
 
 ## Comparison
 
-| | Mihrab | Night Qari | Quiet Index |
-| --- | --- | --- | --- |
-| Identity | strong | strong | weak |
-| Arabic readability | best | good | good |
-| Dark-mode quality | strong | best | good |
-| Migration cost | medium | high | low |
-| Risk of looking generic | low | low | high |
-| Fits long listening sessions | best | best | good |
+|                              | Mihrab | Night Qari | Quiet Index |
+| ---------------------------- | ------ | ---------- | ----------- |
+| Identity                     | strong | strong     | weak        |
+| Arabic readability           | best   | good       | good        |
+| Dark-mode quality            | strong | best       | good        |
+| Migration cost               | medium | high       | low         |
+| Risk of looking generic      | low    | low        | high        |
+| Fits long listening sessions | best   | best       | good        |
 
 **Recommendation: Mihrab.** It fixes the colour system at the root, keeps the
 existing component structure, and gives the product an identity the current
@@ -136,7 +137,7 @@ One component, two presentations, never a clipped dropdown.
   **Player** (visualiser, speed), **App** (fullscreen, playlist).
   Rows are 48px, icon 20px, label 15px, check on the right.
 - **Desktop (≥ 1024px):** an anchored popover above the trigger, `min-width:
-  280px`, `max-height: min(70dvh, 520px)`, scroll, `shadow-lg`, collision-aware
+280px`, `max-height: min(70dvh, 520px)`, scroll, `shadow-lg`, collision-aware
   so it flips below when there is no room.
 - Never render the menu with `position: absolute` inside the player card again.
 
@@ -162,7 +163,7 @@ Replace three equal chip rows with one primary axis and one disclosure.
   horizontally scrollable row. Selected = `primary-soft` fill, `primary` text,
   no border. This is the only always-visible filter.
 - **Secondary:** a `Filters` button with an active-count badge opens a sheet
-  with two labelled groups, *Sources* and *Riwayat*, using check rows. This
+  with two labelled groups, _Sources_ and _Riwayat_, using check rows. This
   removes 15–25 chips from the default view.
 - **Tertiary:** sort as a compact `A–Z ▾` trigger; the result count moves to
   the far right of the same row at 12px muted.
@@ -209,14 +210,14 @@ Demote it to a single quiet row, and let it disappear.
 ### 5. Theme colours
 
 - **One action hue.** Emerald owns buttons, links, focus, progress, selected
-  states. Brass is a *mark*, not an action: favourites and the active recitation
+  states. Brass is a _mark_, not an action: favourites and the active recitation
   indicator only. Status colours never decorate.
 - **Delete the decorative layer.** Remove the indigo/violet orbs and the body
   radial gradients. Depth comes from a 1px border and one surface step.
 - **Kill the blue zoo.** Replace `sky-*`, `blue-*`, `#0190dd`, `#2563eb`,
   `#3b82f6` with `primary` / `primary-hover` / `primary-soft`.
 - **Dark is green-black, not navy.** Surfaces step `#0B110F → #121A17 →
-  #18231F`; borders carry elevation instead of shadows.
+#18231F`; borders carry elevation instead of shadows.
 - Contrast targets: body ≥ 7:1, muted ≥ 4.5:1, primary on canvas ≥ 4.5:1.
 
 ### 6. Settings

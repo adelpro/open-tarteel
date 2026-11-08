@@ -3,6 +3,7 @@
 Status: Phase 0 approved. Phases 1–2 implemented, awaiting validation.
 
 Progress:
+
 - Phase 0 — themes, tokens, primitives: done, screenshots in `docs/previews/phase-0/`.
 - Phase 1 — Tag primitive: revised after feedback (8px corners, roomier, grouped,
   optical centring).
@@ -28,11 +29,11 @@ Progress:
 
 Theme selection becomes two independent choices instead of one toggle:
 
-| Palette | Mode | Character |
-| --- | --- | --- |
+| Palette   | Mode         | Character                                                                                                                    |
+| --------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | `classic` | light / dark | The existing zinc + sky-blue identity, kept but cleaned of hard-coded blues. Nothing visually breaks for people who like it. |
-| `warm` | light / dark | Warm paper `#F6F2E9` + ink, emerald `#0C6B53`, brass marks. |
-| `night` | light / dark | Dark-first green-black `#0A0D0C` + mint `#6FE3B8`, brass marks. Light mode is a cool paper secondary. |
+| `warm`    | light / dark | Warm paper `#F6F2E9` + ink, emerald `#0C6B53`, brass marks.                                                                  |
+| `night`   | light / dark | Dark-first green-black `#0A0D0C` + mint `#6FE3B8`, brass marks. Light mode is a cool paper secondary.                        |
 
 Implementation: `data-theme="classic|warm|night"` on `<html>` alongside the
 existing `light`/`dark` class. Tokens are declared per `data-theme` in
