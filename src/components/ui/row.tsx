@@ -45,7 +45,9 @@ export default function Row({
           labelNode
         )}
         {description ? (
-          <p className="text-[13px] leading-5 text-ink-muted">{description}</p>
+          <div className="text-[13px] leading-5 text-ink-muted">
+            {description}
+          </div>
         ) : null}
       </div>
       {children ? <div className="shrink-0">{children}</div> : null}

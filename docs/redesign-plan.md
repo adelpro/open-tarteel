@@ -16,7 +16,11 @@ Progress:
   language select, offline switch, download management.
 - Palette decision: `warm` is the default; `classic` and `night` remain
   selectable.
-- Next: full codebase cleanup, modern web guidance pass, final report.
+- Post-review fixes: `/offline-check` route restored (was a private `_`
+  folder), connectivity probe deduped into one shared store, desktop playlist
+  and fullscreen rows removed from the More sheet, and the spectrum replaced
+  with the open-tilawa canvas models (Bars / Peaks / Waves).
+- Next: redeploy to staging after the fixes.
 
 ## Decisions locked for this plan
 

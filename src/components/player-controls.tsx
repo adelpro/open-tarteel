@@ -38,6 +38,7 @@ import {
   playbackSpeedAtom,
   selectedReciterAtom,
   showVisualizerAtom,
+  visualizerModelAtom,
   volumeAtom,
 } from '@/jotai/atom';
 import { canUseRangeMode } from '@/services/reciters/capabilities';
@@ -46,6 +47,7 @@ import { cn } from '@/utils';
 import DownloadAllButton from './download-all-button';
 import TahfeezModeControls, { TahfeezSettings } from './tahfeez-mode-controls';
 import ActionSheet from './ui/action-sheet';
+import Segmented from './ui/segmented';
 import Switch from './ui/switch';
 // ─── Helpers ─────────────────────────────────────────
 const getCurrentMinute = (seconds: number): number => Math.ceil(seconds / 60);
@@ -90,6 +92,7 @@ export default function PlayerControls({
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showVisualizer, setShowVisualizer] = useAtom(showVisualizerAtom);
+  const [visualizerModel, setVisualizerModel] = useAtom(visualizerModelAtom);
   const [volume, setVolume] = useAtom(volumeAtom);
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackSpeed, setPlaybackSpeed] = useAtom(playbackSpeedAtom);
@@ -382,6 +385,13 @@ export default function PlayerControls({
       id: 'download.failedShort',
       defaultMessage: 'Download failed',
     }),
+    visualizerStyle: formatMessage({
+      id: 'player.visualizerStyle',
+      defaultMessage: 'Spectrum style',
+    }),
+    bars: formatMessage({ id: 'player.bars', defaultMessage: 'Bars' }),
+    peaks: formatMessage({ id: 'player.peaks', defaultMessage: 'Peaks' }),
+    waves: formatMessage({ id: 'player.waves', defaultMessage: 'Waves' }),
   };
 
   // ── Render ───────────────────────────────────────────
@@ -702,6 +712,20 @@ export default function PlayerControls({
               label={messages.visualizer}
             />
           </div>
+          {showVisualizer && spectrumSupported ? (
+            <div className="px-2 pb-2">
+              <Segmented
+                value={visualizerModel}
+                onChange={setVisualizerModel}
+                label={messages.visualizerStyle}
+                options={[
+                  { value: 'bars', label: messages.bars },
+                  { value: 'peaks', label: messages.peaks },
+                  { value: 'ribbon', label: messages.waves },
+                ]}
+              />
+            </div>
+          ) : null}
           <MenuRow
             icon={<MdSpeed size={18} aria-hidden="true" />}
             label={messages.playbackSpeedLabel}
@@ -734,32 +758,36 @@ export default function PlayerControls({
           </MenuGroup>
         ) : null}
 
-        <MenuGroup label={messages.appSettings}>
-          <MenuRow
-            icon={
-              isFullscreen ? (
-                <BsFullscreenExit size={18} aria-hidden="true" />
-              ) : (
-                <BsFullscreen size={18} aria-hidden="true" />
-              )
-            }
-            label={
-              isFullscreen ? messages.exitFullscreen : messages.enterFullscreen
-            }
-            onClick={() => {
-              toggleFullscreen();
-              setShowMoreMenu(false);
-            }}
-          />
-          <MenuRow
-            icon={<Image src={playlistSVG} alt="" width={18} height={18} />}
-            label={messages.togglePlaylist}
-            onClick={() => {
-              togglePlaylistOpen();
-              setShowMoreMenu(false);
-            }}
-          />
-        </MenuGroup>
+        <div className="md:hidden">
+          <MenuGroup label={messages.appSettings}>
+            <MenuRow
+              icon={
+                isFullscreen ? (
+                  <BsFullscreenExit size={18} aria-hidden="true" />
+                ) : (
+                  <BsFullscreen size={18} aria-hidden="true" />
+                )
+              }
+              label={
+                isFullscreen
+                  ? messages.exitFullscreen
+                  : messages.enterFullscreen
+              }
+              onClick={() => {
+                toggleFullscreen();
+                setShowMoreMenu(false);
+              }}
+            />
+            <MenuRow
+              icon={<Image src={playlistSVG} alt="" width={18} height={18} />}
+              label={messages.togglePlaylist}
+              onClick={() => {
+                togglePlaylistOpen();
+                setShowMoreMenu(false);
+              }}
+            />
+          </MenuGroup>
+        </div>
       </ActionSheet>
 
       {progress || lastError ? (

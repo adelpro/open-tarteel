@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0-rc.3] - 2026-11-08
+
+### Fixed
+
+- connectivity probe restored at `/offline-check` (the old `_`-prefixed route
+  was private and always returned 404, causing an endless request loop after
+  changing reciter sources)
+- one shared network-status store: one probe per 10s instead of one per mounted
+  consumer, and the probe bypasses the service worker cache
+- settings no longer renders a block element inside a paragraph, removing the
+  hydration mismatch on that page
+- desktop no longer shows Playlist and Fullscreen in both the quick actions and
+  the More sheet
+
+### Changed
+
+- spectrum replaced with the open-tilawa canvas models: Bars, Peaks, and Waves,
+  all reading log-spaced 90–4500 Hz bands so every bar moves; style switch in
+  the More sheet
+- `react-audio-spectrum` dependency removed
+
 ## [0.5.0-rc.2] - 2026-11-08
 
 ### Changed

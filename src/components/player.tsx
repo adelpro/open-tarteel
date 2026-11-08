@@ -13,6 +13,7 @@ import {
   fullscreenAtom,
   playbackModeAtom,
   playbackSpeedAtom,
+  visualizerModelAtom,
   volumeAtom,
 } from '@/jotai/atom';
 import { Playlist } from '@/types';
@@ -46,6 +47,7 @@ type Props = {
 export default function Player({ playlist }: Props) {
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackMode] = useAtom(playbackModeAtom);
+  const visualizerModel = useAtomValue(visualizerModelAtom);
   const previousTrackRef = useRef<number | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useAtom(currentTimeAtom);
@@ -333,6 +335,7 @@ export default function Player({ playlist }: Props) {
               audioId="audio"
               isPlaying={isPlaying}
               enabled={canAnalyse}
+              model={visualizerModel}
             />
           </div>
 

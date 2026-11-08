@@ -2,125 +2,277 @@
 
 import { useAtomValue } from 'jotai';
 import React, { useEffect, useRef, useState } from 'react';
-import ReactAudioSpectrum from 'react-audio-spectrum';
-
-if (typeof window !== 'undefined') {
-  const OriginalAudioContext =
-    window.AudioContext || (window as any).webkitAudioContext;
-  if (
-    OriginalAudioContext &&
-    !(OriginalAudioContext.prototype as any).__patched
-  ) {
-    const originalCreate =
-      OriginalAudioContext.prototype.createMediaElementSource;
-    OriginalAudioContext.prototype.createMediaElementSource = function (
-      mediaElement: HTMLMediaElement
-    ) {
-      if ((mediaElement as any).__mediaElementSource) {
-        return (mediaElement as any).__mediaElementSource;
-      }
-      const source = originalCreate.call(this, mediaElement);
-      (mediaElement as any).__mediaElementSource = source;
-      return source;
-    };
-    (OriginalAudioContext.prototype as any).__patched = true;
-  }
-}
 
 import { showVisualizerAtom } from '@/jotai/atom';
+import { ensureAnalyser, getAnalyser } from '@/utils/audio-analyser';
+import {
+  follow,
+  logBands,
+  type VisualiserModel,
+  waveTints,
+} from '@/utils/visualiser-models';
 
-const VISUALIZER_HEIGHT = 90;
+const HEIGHT = 72;
+const BARS = 28;
+const GAP = 3;
+const RIBBON_POINTS = 56;
 
-type AudioVisualizerProps = {
+const WAVES = [
+  { gain: 1, attack: 0.5, release: 0.14 },
+  { gain: 0.8, attack: 0.37, release: 0.12 },
+  { gain: 0.62, attack: 0.27, release: 0.1 },
+  { gain: 0.46, attack: 0.19, release: 0.08 },
+];
+
+const WAVE_ALPHA = [0.72, 0.55, 0.42, 0.3];
+
+type Props = {
   audioId: string;
   isPlaying: boolean;
   /** False for cross-origin audio without CORS (e.g. Itqan). */
   enabled?: boolean;
+  model?: VisualiserModel;
 };
 
+/**
+ * Canvas spectrum with three shapes: bars, peaks, and a four-layer ribbon.
+ *
+ * All three read log-spaced bands in the 90–4500 Hz voice range, so every
+ * column carries a real band; the old linear buckets left the far end of the
+ * row flat on low-bitrate recitations. x index 0 sits at the right edge, which
+ * keeps the bass where the eye starts in both LTR and RTL.
+ */
 export default function AudioBarsVisualizer({
   audioId,
   isPlaying,
   enabled = true,
-}: AudioVisualizerProps) {
+  model = 'ribbon',
+}: Props) {
   const showVisualizer = useAtomValue(showVisualizerAtom);
-  const [visualizerWidth, setVisualizerWidth] = useState(400);
-
-  // Track whether the user has ever started playback.
-  // Mount ReactAudioSpectrum on the first play render (not the next one) so the
-  // AudioContext is created in response to user interaction and the library can
-  // start animating immediately. Once mounted we never unmount it — the Web
-  // Audio API only allows one MediaElementSourceNode per HTMLMediaElement.
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [everPlayed, setEverPlayed] = useState(false);
-  const hasPrimedRef = useRef(false);
 
   useEffect(() => {
-    if (isPlaying && !everPlayed) {
-      setEverPlayed(true);
-    }
-  }, [isPlaying, everPlayed]);
+    if (isPlaying) setEverPlayed(true);
+  }, [isPlaying]);
 
+  // The context must be created after a play gesture, and only once per
+  // element. CORS-less sources are never connected: they would be silent.
   useEffect(() => {
-    if (!enabled || !isPlaying || !everPlayed || hasPrimedRef.current) return;
-
+    if (!everPlayed || !enabled) return;
     const audio = document.getElementById(audioId) as HTMLAudioElement | null;
-    if (!audio || audio.paused) return;
-
-    // react-audio-spectrum attaches its `onplay` handler inside its own effect.
-    // On the very first play the real play event has already fired by the time
-    // the component mounts, so re-dispatch it once to start the analyser.
-    hasPrimedRef.current = true;
-    const frame = requestAnimationFrame(() => {
-      if (!audio.paused) audio.dispatchEvent(new Event('play'));
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [audioId, enabled, isPlaying, everPlayed]);
+    if (!audio) return;
+    const prime = () => {
+      ensureAnalyser(audio);
+    };
+    prime();
+    audio.addEventListener('play', prime);
+    return () => audio.removeEventListener('play', prime);
+  }, [audioId, enabled, everPlayed]);
 
   useEffect(() => {
-    const calculateWidth = () => {
-      setVisualizerWidth(Math.min(window.innerWidth * 0.8, 400));
+    if (!everPlayed || !enabled || !showVisualizer) return;
+
+    const canvas = canvasRef.current;
+    const canvasContext = canvas?.getContext('2d');
+    if (!canvas || !canvasContext) return;
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const reduced =
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+
+    let width = 0;
+    let barWidth = 2;
+    let raf = 0;
+
+    const levels = new Array<number>(BARS).fill(0);
+    const peaks = new Array<number>(BARS).fill(0);
+    const waves = WAVES.map(() => new Float32Array(RIBBON_POINTS));
+
+    const readTokens = () => {
+      const styles = getComputedStyle(document.documentElement);
+      const pick = (name: string, fallback: string) =>
+        styles.getPropertyValue(name).trim() || fallback;
+      return {
+        front: pick('--accent', '#0c6b53'),
+        back: pick('--accent-line', '#bcd8ca'),
+        line: pick('--border', '#e3dccb'),
+      };
     };
 
-    calculateWidth();
-    window.addEventListener('resize', calculateWidth);
+    let tokens = readTokens();
+    let tints = waveTints(tokens.front, tokens.back);
+
+    const measure = () => {
+      width = canvas.clientWidth || 320;
+      barWidth = Math.max(2, (width - GAP * (BARS - 1)) / BARS);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(HEIGHT * dpr);
+      canvasContext.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    /** Index 0 at the right edge, so the voice starts where the eye starts. */
+    const xFor = (index: number, step = barWidth + GAP) =>
+      width - barWidth - index * step;
+
+    const barHeightFor = (level: number) => Math.pow(level, 0.65) * HEIGHT;
+
+    const drawBars = () => {
+      canvasContext.fillStyle = tints[0];
+      for (let index = 0; index < levels.length; index += 1) {
+        const barHeight = barHeightFor(levels[index]);
+        if (barHeight < 0.5) continue;
+        canvasContext.fillRect(
+          xFor(index),
+          HEIGHT - barHeight,
+          barWidth,
+          barHeight
+        );
+      }
+    };
+
+    const drawPeaks = () => {
+      drawBars();
+      for (let index = 0; index < peaks.length; index += 1) {
+        if (peaks[index] <= 0) continue;
+        const y = HEIGHT - barHeightFor(peaks[index]);
+        canvasContext.fillRect(xFor(index), y - 2, barWidth, 1.5);
+      }
+    };
+
+    const drawWaves = () => {
+      const amplitude = (HEIGHT - 6) * 0.72;
+      const step = width / (RIBBON_POINTS - 1);
+      const y = new Float32Array(RIBBON_POINTS);
+      const yFor = (level: number) =>
+        HEIGHT - Math.pow(Math.min(1, level), 0.7) * amplitude;
+
+      for (let layer = WAVES.length - 1; layer >= 0; layer -= 1) {
+        const samples = waves[layer];
+        for (let index = 0; index < samples.length; index += 1) {
+          y[index] = yFor(samples[index]);
+        }
+        canvasContext.fillStyle = tints[layer];
+        canvasContext.globalAlpha = WAVE_ALPHA[layer];
+        canvasContext.beginPath();
+        canvasContext.moveTo(width, y[0]);
+        for (let index = 1; index < samples.length - 1; index += 1) {
+          const x = width - index * step;
+          canvasContext.quadraticCurveTo(
+            x,
+            y[index],
+            x - step / 2,
+            (y[index] + y[index + 1]) / 2
+          );
+        }
+        canvasContext.lineTo(0, y[RIBBON_POINTS - 1]);
+        canvasContext.lineTo(0, HEIGHT);
+        canvasContext.lineTo(width, HEIGHT);
+        canvasContext.closePath();
+        canvasContext.fill();
+      }
+
+      canvasContext.globalAlpha = 1;
+      canvasContext.fillStyle = tokens.line;
+      canvasContext.fillRect(0, HEIGHT - 1, width, 1);
+    };
+
+    const draw = () => {
+      canvasContext.clearRect(0, 0, width, HEIGHT);
+      canvasContext.globalAlpha = 1;
+      if (!isPlaying) return;
+      if (model === 'peaks') drawPeaks();
+      else if (model === 'bars') drawBars();
+      else drawWaves();
+      canvasContext.globalAlpha = 1;
+    };
+
+    measure();
+    draw();
+
+    const observer = new ResizeObserver(() => {
+      measure();
+      draw();
+    });
+    observer.observe(canvas);
+
+    const theme = new MutationObserver(() => {
+      tokens = readTokens();
+      tints = waveTints(tokens.front, tokens.back);
+      draw();
+    });
+    theme.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme', 'class'],
+    });
+
+    if (!isPlaying || reduced) {
+      return () => {
+        observer.disconnect();
+        theme.disconnect();
+      };
+    }
+
+    const bins = new Uint8Array(512);
+
+    const tick = () => {
+      const analyser = getAnalyser();
+      if (analyser) {
+        analyser.getByteFrequencyData(bins);
+        if (model === 'ribbon') {
+          const target = logBands(
+            bins,
+            RIBBON_POINTS,
+            analyser.context.sampleRate
+          );
+          for (const [layer, style] of WAVES.entries()) {
+            const samples = waves[layer];
+            for (let index = 0; index < samples.length; index += 1) {
+              samples[index] = follow(
+                samples[index],
+                target[index] * style.gain,
+                style.attack,
+                style.release
+              );
+            }
+          }
+        } else {
+          const target = logBands(bins, BARS, analyser.context.sampleRate);
+          for (let index = 0; index < BARS; index += 1) {
+            levels[index] = follow(levels[index], target[index], 0.5, 0.14);
+            peaks[index] = Math.max(levels[index], peaks[index] - 0.008);
+          }
+        }
+        draw();
+      }
+
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+
     return () => {
-      window.removeEventListener('resize', calculateWidth);
+      cancelAnimationFrame(raf);
+      observer.disconnect();
+      theme.disconnect();
     };
-  }, []);
+  }, [everPlayed, enabled, isPlaying, model, showVisualizer]);
 
-  const visible = showVisualizer && isPlaying && enabled;
-  const mountSpectrum = everPlayed || isPlaying;
-
-  // Providers without CORS (e.g. Itqan) have no real spectrum data. Do not
-  // reserve an empty visualizer area for them.
   if (!enabled) return null;
+  if (!everPlayed && !isPlaying) return null;
 
-  // Before the first play there is nothing real to draw; do not show a fake
-  // placeholder.
-  if (!mountSpectrum) return null;
-
-  // After first play: keep ReactAudioSpectrum permanently mounted,
-  // only toggle CSS visibility so the MediaElementSourceNode is never recreated.
   return (
     <div
       className="mb-2 flex w-full max-w-md justify-center"
       style={{
-        height: VISUALIZER_HEIGHT,
-        visibility: visible ? 'visible' : 'hidden',
+        height: HEIGHT,
+        visibility: showVisualizer && isPlaying ? 'visible' : 'hidden',
       }}
     >
-      <ReactAudioSpectrum
-        id="audio-spectrum"
-        audioId={audioId}
-        height={VISUALIZER_HEIGHT}
-        width={visualizerWidth}
-        capColor="#0191e2"
-        capHeight={2}
-        meterWidth={10}
-        meterCount={28}
-        meterColor="#0191e2"
-        gap={4}
-        silent={!isPlaying}
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        className="block h-full w-full"
       />
     </div>
   );

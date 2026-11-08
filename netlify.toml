@@ -20,3 +20,9 @@
   for = "/api/health"
   [headers.values]
     Cache-Control = "no-store"
+
+# Connectivity probes must never be cached.
+[[headers]]
+  for = "/offline-check"
+  [headers.values]
+    Cache-Control = "no-store, max-age=0"

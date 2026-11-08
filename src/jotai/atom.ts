@@ -72,6 +72,12 @@ export const paletteAtom = createAtomWithStorage<Palette>(
   'theme-palette',
   'warm'
 );
+
+export type VisualiserModel = 'bars' | 'peaks' | 'ribbon';
+export const visualizerModelAtom = createAtomWithStorage<VisualiserModel>(
+  'visualizer-model',
+  'ribbon'
+);
 export const enabledSourcesAtom = createAtomWithStorage<LinkSource[]>(
   'enabled-sources',
   [LinkSource.MP3QURAN, LinkSource.ITQAN]

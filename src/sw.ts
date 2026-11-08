@@ -6,6 +6,7 @@ import {
   ExpirationPlugin,
   type HandlerCallbackOptions,
   NetworkFirst,
+  NetworkOnly,
   RangeRequestsPlugin,
   Serwist,
 } from 'serwist';
@@ -198,7 +199,15 @@ const pageNavigationCache = {
   },
 };
 
+/** Connectivity probes must never be served from a cache. */
+const connectivityProbe = {
+  matcher: ({ url, sameOrigin }: { url: URL; sameOrigin: boolean }) =>
+    sameOrigin && url.pathname === '/offline-check',
+  handler: new NetworkOnly(),
+};
+
 const runtimeCaching = [
+  connectivityProbe,
   pageNavigationCache,
   quranAudioCache,
   apiRecitersCache,

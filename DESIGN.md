@@ -349,6 +349,11 @@ above the controls, not below them.
   15px label, check at the end.
 - Secondary controls (speed, visualiser, sleep) are visible only while active
   or inside the sheet; the transport row never exceeds five items.
+- Spectrum: a 72px canvas with three styles — Bars, Peaks, and Waves (four
+  trailing silhouettes). Bands are log-spaced 90–4500 Hz, so every column
+  carries a real band even on low-bitrate recitations; x index 0 is the right
+  edge, keeping the bass under the eye in both LTR and RTL. The style switch
+  lives under the Visualizer row in the More sheet.
 
 ### Download status
 
