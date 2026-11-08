@@ -301,13 +301,13 @@ export default function Player({ playlist }: Props) {
         'flex w-full max-w-xl flex-col items-center justify-center',
         isFullscreen
           ? 'w-full max-w-xl bg-background text-foreground'
-          : 'max-w-xl rounded-md border border-gray-200 p-2 shadow-md transition-transform dark:border-gray-200/50'
+          : 'max-w-xl rounded-[16px] border border-border bg-surface p-3'
       )}
     >
       {typeof currentTrack === 'number' && (
         <div className="flex w-full flex-col items-center justify-center">
           {!isOnline && availableIndices.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-4 text-center text-sm font-medium text-amber-600 dark:text-amber-400">
+            <div className="flex flex-col items-center justify-center p-4 text-center text-[13px] font-medium text-ink-muted">
               <FormattedMessage
                 id="offline.noDownloadedSurahs"
                 defaultMessage="No downloaded surahs for this reciter. Connect to the internet to stream or download."

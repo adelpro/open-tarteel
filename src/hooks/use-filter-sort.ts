@@ -17,8 +17,8 @@ import { fuzzySearch, generateFavId } from '@/utils';
 
 // Define parsers for URL state management
 // Using descriptive keys (query, riwaya, source) for clarity
-// Define all possible Riwaya values plus 'all'
-const riwayaValues = ['all', ...Object.values(Riwaya)] as const;
+// Define all possible Riwaya values. Empty selection means "all".
+const riwayaValues = Object.values(Riwaya) as readonly Riwaya[];
 const sourceValues = [
   LinkSource.MP3QURAN,
   LinkSource.MP3QURAN_V4,
@@ -29,9 +29,9 @@ const sourceValues = [
 
 const filterSearchParsers = {
   searchQuery: parseAsString.withDefault(''),
-  selectedRiwaya: parseAsStringLiteral(riwayaValues).withDefault(
-    'all' as const
-  ),
+  selectedRiwiyat: parseAsArrayOf(
+    parseAsStringLiteral(riwayaValues)
+  ).withDefault([]),
   selectedSources: parseAsArrayOf(
     parseAsStringLiteral(sourceValues)
   ).withDefault([]),
@@ -54,12 +54,12 @@ export function useFilterSort({
 }: UseFilterSortParams) {
   // Use nuqs for URL state management with descriptive keys
   const [
-    { searchQuery: searchTerm, selectedRiwaya, selectedSources },
+    { searchQuery: searchTerm, selectedRiwiyat, selectedSources },
     setFilters,
   ] = useQueryStates(filterSearchParsers, {
     urlKeys: {
       searchQuery: 'query',
-      selectedRiwaya: 'riwaya',
+      selectedRiwiyat: 'riwaya',
       selectedSources: 'source',
     },
     history: 'push',
@@ -98,7 +98,10 @@ export function useFilterSort({
     let filtered = reciters.filter((r) => {
       const id = generateFavId(r);
       if (showOnlyFavorites && !favoriteReciters.includes(id)) return false;
-      if (selectedRiwaya !== 'all' && r.moshaf.riwaya !== selectedRiwaya)
+      if (
+        selectedRiwiyat.length > 0 &&
+        !selectedRiwiyat.includes(r.moshaf.riwaya)
+      )
         return false;
       if (selectedSources.length > 0 && !selectedSources.includes(r.source))
         return false;
@@ -140,7 +143,7 @@ export function useFilterSort({
     reciters,
     favoriteReciters,
     showOnlyFavorites,
-    selectedRiwaya,
+    selectedRiwiyat,
     selectedSources,
     searchTerm,
     sortMode,
@@ -151,9 +154,9 @@ export function useFilterSort({
   return {
     searchTerm,
     setSearchTerm: (value: string) => setFilters({ searchQuery: value }),
-    selectedRiwaya,
-    setSelectedRiwaya: (value: Riwaya | 'all') =>
-      setFilters({ selectedRiwaya: value }),
+    selectedRiwiyat,
+    setSelectedRiwiyat: (value: Riwaya[]) =>
+      setFilters({ selectedRiwiyat: value }),
     selectedSources,
     setSelectedSources: (value: LinkSource[]) =>
       setFilters({ selectedSources: value }),

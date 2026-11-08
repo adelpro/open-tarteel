@@ -1,8 +1,7 @@
 'use client';
 
 import { useAtom } from 'jotai';
-import { useState } from 'react';
-import { IoLanguageOutline } from 'react-icons/io5';
+import { MdExpandMore } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import type { Language } from '@/constants/language';
@@ -13,57 +12,38 @@ const COOKIE_NAME = 'locale';
 const MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 
 export default function LanguageSwitcher() {
-  const { formatMessage } = useIntl();
-  const { locale } = useIntl();
+  const { formatMessage, locale } = useIntl();
   const [, setLocale] = useAtom(localeAtom);
-  const [isOpen, setIsOpen] = useState(false);
 
   const handleLanguageChange = (language: Language) => {
-    const nextLocale = language;
-    setIsOpen(false);
-    setLocale(nextLocale);
-    document.cookie = `${COOKIE_NAME}=${nextLocale}; path=/; max-age=${MAX_AGE}; SameSite=Lax`;
+    setLocale(language);
+    document.cookie = `${COOKIE_NAME}=${language}; path=/; max-age=${MAX_AGE}; SameSite=Lax`;
+    window.location.reload();
   };
 
   return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => {
-          setIsOpen((current) => !current);
-        }}
+    <div className="relative inline-flex items-center">
+      <select
+        value={locale}
+        onChange={(event) =>
+          handleLanguageChange(event.target.value as Language)
+        }
         aria-label={formatMessage({
           id: 'language.select',
           defaultMessage: 'Select language',
         })}
-        aria-expanded={isOpen}
-        className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-600 shadow-sm transition-all duration-200 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-brand-CTA-blue-500 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100"
+        className="focus-visible:ring-primary/35 h-10 appearance-none rounded-[8px] border border-border bg-surface pe-9 ps-3 text-[13px] font-bold text-ink focus:outline-none focus-visible:ring-2"
       >
-        <IoLanguageOutline className="size-5" />
-      </button>
-
-      {isOpen && (
-        <div className="absolute end-0 top-10 z-50 min-w-32 overflow-hidden rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-800">
-          {Object.entries(LANGUAGES).map(([code, config]) => (
-            <button
-              key={code}
-              type="button"
-              onClick={() => {
-                handleLanguageChange(code as Language);
-              }}
-              className={[
-                'flex w-full items-center px-3 py-2 text-start text-sm',
-                'hover:bg-gray-100 dark:hover:bg-gray-700',
-                locale === code
-                  ? 'font-semibold text-brand-CTA-blue-500'
-                  : 'text-gray-700 dark:text-gray-200',
-              ].join(' ')}
-            >
-              {config.label}
-            </button>
-          ))}
-        </div>
-      )}
+        {Object.entries(LANGUAGES).map(([code, config]) => (
+          <option key={code} value={code}>
+            {config.label}
+          </option>
+        ))}
+      </select>
+      <MdExpandMore
+        className="pointer-events-none absolute end-2 size-4 text-ink-muted"
+        aria-hidden="true"
+      />
     </div>
   );
 }

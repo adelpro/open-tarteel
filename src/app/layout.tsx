@@ -16,6 +16,7 @@ import type { Language } from '@/constants/language';
 import { clientConfig, getDefaultLocale } from '@/utils';
 
 export const viewport: Viewport = {
+  colorScheme: 'light dark',
   themeColor: '#000000',
   width: 'device-width',
   initialScale: 1,
@@ -133,7 +134,7 @@ export default async function RootLayout({
               id="main-content"
               className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background text-foreground"
             >
-              <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+              <div className="ambient-orbs pointer-events-none fixed inset-0 -z-10 overflow-hidden">
                 <div className="absolute -left-[10%] -top-[15%] h-[520px] w-[520px] rounded-full bg-sky-500/[0.06] blur-[80px] dark:bg-sky-400/[0.07]" />
                 <div className="absolute -right-[8%] top-[25%] h-[420px] w-[420px] rounded-full bg-indigo-500/[0.05] blur-[80px] dark:bg-indigo-400/[0.07]" />
                 <div className="absolute bottom-[-10%] left-[35%] h-[340px] w-[340px] rounded-full bg-violet-500/[0.04] blur-[70px] dark:bg-violet-400/[0.06]" />

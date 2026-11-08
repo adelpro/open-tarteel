@@ -52,7 +52,7 @@ export default function CacheManagement() {
 
   if (loading) {
     return (
-      <p className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+      <p className="py-4 text-center text-[13px] text-ink-muted">
         <FormattedMessage
           id="settings.cacheLoading"
           defaultMessage="Scanning cached downloads…"
@@ -64,7 +64,7 @@ export default function CacheManagement() {
   return (
     <div className="space-y-4">
       {storage && (
-        <p className="text-xs text-gray-500 dark:text-gray-400">
+        <p className="text-[12px] text-ink-muted">
           <FormattedMessage
             id="settings.cacheStorageUsed"
             defaultMessage="Storage used: {used} of {quota}"
@@ -77,7 +77,7 @@ export default function CacheManagement() {
       )}
 
       {storagePersisted === false && (
-        <p className="flex items-start gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+        <p className="flex items-start gap-2 rounded-[8px] bg-surface-sunken px-3 py-2 text-[12px] text-warning">
           <span aria-hidden="true">⚠</span>
           <FormattedMessage
             id="storage.notPersisted"
@@ -87,27 +87,27 @@ export default function CacheManagement() {
       )}
 
       {moshafs.length === 0 ? (
-        <p className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+        <p className="py-4 text-center text-[13px] text-ink-muted">
           <FormattedMessage
             id="settings.cacheEmpty"
             defaultMessage="No offline downloads yet."
           />
         </p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-2">
           {moshafs.map((moshaf) => (
             <li
               key={`${moshaf.reciterName}-${moshaf.moshafName}`}
-              className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800"
+              className="flex items-center justify-between rounded-[10px] border border-border bg-surface px-3 py-2.5"
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <MdCloudDone size={16} className="shrink-0 text-green-500" />
-                  <span className="truncate font-medium text-gray-900 dark:text-gray-100">
+                  <MdCloudDone size={16} className="shrink-0 text-success" />
+                  <span className="truncate text-[14px] font-bold text-ink">
                     {moshaf.reciterName}
                   </span>
                 </div>
-                <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-0.5 text-[12px] text-ink-muted">
                   {moshaf.moshafName} &middot;{' '}
                   <FormattedMessage
                     id="settings.cacheTracks"
@@ -119,7 +119,7 @@ export default function CacheManagement() {
               </div>
               <button
                 onClick={() => handleDelete(moshaf)}
-                className="ms-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30"
+                className="ms-3 flex size-9 shrink-0 items-center justify-center rounded-full text-danger transition-colors duration-120 hover:bg-surface-sunken"
                 aria-label={`Remove ${moshaf.reciterName}`}
                 title={`Remove ${moshaf.reciterName}`}
               >

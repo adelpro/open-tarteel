@@ -112,10 +112,6 @@ export default function DownloadAllButton({
   const progressPercent = progress
     ? Math.round((progress.completed / progress.total) * 100)
     : cachedPercent;
-  const trackPercent = progress
-    ? Math.round(progress.currentTrackProgress * 100)
-    : 0;
-
   const currentSurahName = (() => {
     if (!progress?.currentUrl) return null;
     const currentItem = playlist.find(
@@ -178,9 +174,8 @@ export default function DownloadAllButton({
       default:
         return (
           <FormattedMessage
-            id="download.downloadAll"
-            defaultMessage="Download all surahs for offline ({cached}/{total})"
-            values={{ cached: cachedCount, total: playlist.length }}
+            id="download.downloadAllSurahs"
+            defaultMessage="Download all surahs"
           />
         );
     }
@@ -200,8 +195,6 @@ export default function DownloadAllButton({
     );
   })();
 
-  const percent = status === 'downloading' ? trackPercent : progressPercent;
-
   const Icon =
     status === 'saved'
       ? MdCloudDone
@@ -211,36 +204,39 @@ export default function DownloadAllButton({
           ? MdWarning
           : MdCloudDownload;
 
+  const iconTone =
+    status === 'saved'
+      ? 'text-success'
+      : status === 'error'
+        ? 'text-danger'
+        : status === 'offline'
+          ? 'text-ink-muted'
+          : 'text-primary';
+
+  const progressTone =
+    status === 'saved'
+      ? 'bg-success'
+      : status === 'error'
+        ? 'bg-danger'
+        : status === 'offline'
+          ? 'bg-ink-muted'
+          : 'bg-primary';
+
   return (
-    <div
-      className={cn(
-        'flex min-h-[76px] flex-col justify-center rounded-lg border px-3 py-2 transition-colors',
-        status === 'saved' &&
-          'border-green-100 bg-green-50 dark:border-green-900 dark:bg-green-950/40',
-        status === 'downloading' &&
-          'border-blue-100 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/40',
-        status === 'error' &&
-          'border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/40',
-        status === 'offline' &&
-          'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/60',
-        status === 'idle' &&
-          'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/40'
-      )}
-    >
-      <div className="flex items-center justify-between gap-2">
-        <div
-          aria-live="polite"
-          className={cn(
-            'flex min-w-0 items-center gap-2 text-sm font-medium',
-            status === 'saved' && 'text-green-700 dark:text-green-300',
-            status === 'downloading' && 'text-blue-700 dark:text-blue-300',
-            status === 'error' && 'text-red-700 dark:text-red-300',
-            status === 'offline' && 'text-gray-600 dark:text-gray-300',
-            status === 'idle' && 'text-blue-700 dark:text-blue-300'
-          )}
-        >
-          <Icon size={20} className="shrink-0" aria-hidden="true" />
-          <span className="truncate">{label}</span>
+    <div className="rounded-[10px] border border-border bg-surface p-2">
+      <div className="flex items-center gap-2">
+        <div aria-live="polite" className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            <Icon
+              size={16}
+              className={cn('shrink-0', iconTone)}
+              aria-hidden="true"
+            />
+            <p className="truncate text-[13px] font-bold text-ink">{label}</p>
+          </div>
+          <p className="mt-0.5 truncate text-[11px] text-ink-muted">
+            {subtitle}
+          </p>
         </div>
 
         {status === 'downloading' ? (
@@ -252,13 +248,13 @@ export default function DownloadAllButton({
           >
             <button
               onClick={onCancel}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-red-500 hover:bg-red-100 active:bg-red-200 dark:hover:bg-red-900/30"
+              className="flex size-9 shrink-0 items-center justify-center rounded-full text-danger transition-colors duration-120 hover:bg-surface-sunken"
               aria-label={formatMessage({
                 id: 'download.cancel',
                 defaultMessage: 'Cancel download',
               })}
             >
-              <MdOutlineCancel size={20} />
+              <MdOutlineCancel size={18} />
             </button>
           </Tooltip>
         ) : status === 'saved' ? (
@@ -270,7 +266,7 @@ export default function DownloadAllButton({
           >
             <button
               onClick={() => onRemoveAll(playlist)}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30"
+              className="flex size-9 shrink-0 items-center justify-center rounded-full text-danger transition-colors duration-120 hover:bg-surface-sunken"
               aria-label={formatMessage({
                 id: 'download.removeAll',
                 defaultMessage: 'Remove all downloads',
@@ -282,57 +278,38 @@ export default function DownloadAllButton({
         ) : status === 'idle' || status === 'error' ? (
           <button
             onClick={handleDownloadAll}
-            className="flex h-8 shrink-0 items-center gap-1 rounded-full bg-blue-600 px-2.5 text-xs font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-400"
+            className="flex h-9 shrink-0 items-center gap-1.5 rounded-[8px] bg-primary px-3 text-[12px] font-bold leading-none text-on-primary transition-colors duration-120 hover:bg-primary-hover disabled:opacity-50"
           >
-            <MdCloudDownload size={16} aria-hidden="true" />
-            <FormattedMessage id="download.action" defaultMessage="Download" />
+            <MdCloudDownload
+              size={15}
+              className="shrink-0"
+              aria-hidden="true"
+            />
+            <span className="leading-none">
+              <FormattedMessage
+                id="download.action"
+                defaultMessage="Download"
+              />
+            </span>
           </button>
         ) : null}
       </div>
 
-      <div
-        className={cn(
-          'mt-1.5 h-1.5 w-full overflow-hidden rounded-full',
-          status === 'saved' && 'bg-green-200 dark:bg-green-800',
-          status === 'downloading' && 'bg-blue-200 dark:bg-blue-800',
-          status === 'error' && 'bg-red-200 dark:bg-red-900',
-          status === 'offline' && 'bg-gray-200 dark:bg-gray-700',
-          status === 'idle' && 'bg-blue-200 dark:bg-blue-800'
-        )}
-      >
-        <div
-          className={cn(
-            'h-full rounded-full transition-all duration-300',
-            status === 'saved' && 'bg-green-500',
-            status === 'downloading' && 'bg-blue-500',
-            status === 'error' && 'bg-red-400',
-            status === 'offline' && 'bg-gray-400',
-            status === 'idle' && 'bg-blue-500'
-          )}
-          style={{
-            width: `${status === 'downloading' ? progressPercent : cachedPercent}%`,
-          }}
-        />
-      </div>
-
-      <div
-        className={cn(
-          'mt-1 flex h-3.5 items-center justify-between gap-2 text-[10px]',
-          status === 'saved' && 'text-green-600 dark:text-green-400',
-          status === 'downloading' && 'text-blue-600 dark:text-blue-400',
-          status === 'error' && 'text-red-600 dark:text-red-400',
-          status === 'offline' && 'text-gray-500 dark:text-gray-400',
-          status === 'idle' && 'text-blue-500 dark:text-blue-400'
-        )}
-      >
-        <span
-          className="truncate"
-          title={typeof subtitle === 'string' ? subtitle : undefined}
-        >
-          {subtitle}
-        </span>
-        <span className="shrink-0">{percent}%</span>
-      </div>
+      {status !== 'idle' || cachedPercent > 0 ? (
+        <div className="mt-2 h-0.5 w-full overflow-hidden rounded-full bg-surface-sunken">
+          <div
+            className={cn(
+              'h-full rounded-full transition-[width] duration-300',
+              progressTone
+            )}
+            style={{
+              width: `${
+                status === 'downloading' ? progressPercent : cachedPercent
+              }%`,
+            }}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

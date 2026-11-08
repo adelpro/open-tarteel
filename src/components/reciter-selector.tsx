@@ -1,18 +1,16 @@
 'use client';
 
 import { useAtomValue } from 'jotai';
-import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
 import { FaRegShareFromSquare } from 'react-icons/fa6';
-import { MdCloudDone } from 'react-icons/md';
+import { MdCloudDone, MdExpandMore } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import { useFavorites } from '@/hooks/use-favorites';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { selectedReciterAtom } from '@/jotai/atom';
-import searchSVG from '@/svgs/search.svg';
 import { generateFavId } from '@/utils';
 import { useShareReciter } from '@/utils/share';
 
@@ -47,11 +45,10 @@ export default function ReciterSelector() {
   const allCached = mounted && playlist ? isAllCached(playlist) : false;
 
   if (!mounted) {
-    // SSR and first client render will match here
     return (
       <div className="flex w-full justify-center">
-        <div className="flex w-full max-w-lg items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-white to-gray-100 p-3 shadow-md shadow-gray-300/20 dark:from-gray-700 dark:to-gray-600">
-          <span className="h-4 w-40 animate-pulse rounded-full bg-gray-300 dark:bg-gray-600" />
+        <div className="flex min-h-16 w-full max-w-lg items-center rounded-2xl border border-border bg-surface p-1.5">
+          <span className="h-4 w-40 animate-pulse rounded-full bg-surface-sunken" />
         </div>
       </div>
     );
@@ -66,6 +63,13 @@ export default function ReciterSelector() {
       defaultMessage: 'Select A Reciter',
     });
 
+  const moshafName =
+    selectedReciter?.moshaf?.name ??
+    formatMessage({
+      id: 'reciter.selectHint',
+      defaultMessage: 'Choose a reciter to start listening',
+    });
+
   const favId = selectedReciter ? generateFavId(selectedReciter) : null;
   const isFavorite = favId ? favoriteReciters.includes(favId) : false;
 
@@ -75,91 +79,87 @@ export default function ReciterSelector() {
   };
 
   return (
-    <div className="flex w-[95%] justify-center">
-      <div className="flex w-full max-w-lg cursor-pointer items-center justify-between gap-3 rounded-xl border border-gray-300/80 bg-gradient-to-r from-gray-100 to-gray-200/80 p-3 shadow-md shadow-gray-300/20 transition-all duration-200 hover:from-gray-50 hover:to-gray-200 hover:shadow-lg hover:shadow-gray-300/25 focus:outline-none focus:ring-4 focus:ring-gray-400/50 active:scale-95 dark:border-gray-300/40 dark:from-gray-700 dark:shadow-gray-700/15 dark:hover:from-gray-700 dark:hover:to-gray-600 dark:hover:shadow-gray-600/20">
+    <div className="flex w-full justify-center">
+      <div className="flex w-full max-w-lg items-center gap-1 rounded-2xl border border-border bg-surface p-1.5">
         <button
           type="button"
           onClick={handleSearch}
-          className="flex w-full items-center justify-between text-start"
-          aria-label="Open reciter selector"
+          aria-label={formatMessage({
+            id: 'reciter.openSelector',
+            defaultMessage: 'Open reciter selector',
+          })}
+          className="flex min-h-12 min-w-0 flex-1 items-center gap-3 rounded-[10px] px-3 py-1.5 text-start transition-colors duration-120 hover:bg-surface-sunken"
         >
-          <span className="max-w-[200px] truncate font-semibold text-gray-900 dark:text-gray-100">
-            {displayedReciterName}
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-[16px] font-bold text-ink">
+              {displayedReciterName}
+            </span>
+            <span className="mt-0.5 block truncate text-[12px] text-ink-muted">
+              {moshafName}
+            </span>
           </span>
+          <MdExpandMore
+            className="size-5 shrink-0 text-ink-muted"
+            aria-hidden="true"
+          />
+        </button>
 
-          <div className="flex items-center gap-2">
-            {/* Download state indicator */}
-            {selectedReciter && playlist && allCached && (
+        <div className="flex shrink-0 items-center">
+          {selectedReciter && playlist && allCached ? (
+            <span
+              className="flex size-11 items-center justify-center text-success"
+              title={formatMessage({
+                id: 'download.allSaved',
+                defaultMessage: 'All surahs saved offline',
+              })}
+            >
               <MdCloudDone
-                size={22}
-                className="text-green-500"
-                title={formatMessage({
+                size={20}
+                aria-label={formatMessage({
                   id: 'download.allSaved',
                   defaultMessage: 'All surahs saved offline',
                 })}
-                aria-label="All surahs downloaded"
               />
-            )}
+            </span>
+          ) : null}
 
-            {/* Share */}
-            {selectedReciter && (
-              <FaRegShareFromSquare
-                size={22}
-                className="cursor-pointer text-gray-600/80 transition-colors hover:text-white"
-                onClick={handleShare}
-                tabIndex={0}
-                role="button"
-                aria-label="Share reciter"
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    handleShare(event);
-                  }
-                }}
-              />
-            )}
+          {selectedReciter ? (
+            <button
+              type="button"
+              onClick={handleShare}
+              aria-label={formatMessage({
+                id: 'reciter.share',
+                defaultMessage: 'Share reciter',
+              })}
+              className="flex size-11 items-center justify-center rounded-[10px] text-ink-muted transition-colors duration-120 hover:bg-surface-sunken hover:text-ink"
+            >
+              <FaRegShareFromSquare size={20} aria-hidden="true" />
+            </button>
+          ) : null}
 
-            {/* Favorite */}
-            {selectedReciter &&
-              favId &&
-              (isFavorite ? (
+          {selectedReciter && favId ? (
+            <button
+              type="button"
+              onClick={() => toggleFavorite(favId)}
+              aria-pressed={isFavorite}
+              aria-label={formatMessage({
+                id: 'favorites',
+                defaultMessage: 'favorites',
+              })}
+              className="flex size-11 items-center justify-center rounded-[10px] text-ink-muted transition-colors duration-120 hover:bg-surface-sunken hover:text-ink"
+            >
+              {isFavorite ? (
                 <BsStarFill
-                  size={25}
-                  className="cursor-pointer text-yellow-300 transition-colors hover:text-yellow-200"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    toggleFavorite(favId);
-                  }}
-                  tabIndex={0}
-                  role="button"
-                  aria-pressed="true"
-                  aria-label="Remove from favorites"
+                  size={20}
+                  className="text-mark"
+                  aria-hidden="true"
                 />
               ) : (
-                <BsStar
-                  size={25}
-                  className="cursor-pointer text-gray-600/80 transition-colors hover:text-white"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    toggleFavorite(favId);
-                  }}
-                  tabIndex={0}
-                  role="button"
-                  aria-pressed="false"
-                  aria-label="Add to favorites"
-                />
-              ))}
-
-            {/* Search icon */}
-            <Image
-              src={searchSVG}
-              alt="Search reciters"
-              width={30}
-              height={30}
-              className="cursor-pointer text-gray-600/80 transition-colors hover:text-gray-900 dark:text-gray-400/80 dark:hover:text-gray-100"
-              onClick={handleSearch}
-            />
-          </div>
-        </button>
+                <BsStar size={20} aria-hidden="true" />
+              )}
+            </button>
+          ) : null}
+        </div>
       </div>
 
       <ReciterSelectorDialog isOpen={isOpen} setIsOpen={setIsOpen} />

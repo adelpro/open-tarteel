@@ -65,6 +65,13 @@ export const themeAtom = createAtomWithStorage<Theme>(
   'theme-preference',
   'system'
 );
+
+/** The colour palette is a separate axis from the light/dark mode. */
+export type Palette = 'classic' | 'warm' | 'night';
+export const paletteAtom = createAtomWithStorage<Palette>(
+  'theme-palette',
+  'warm'
+);
 export const enabledSourcesAtom = createAtomWithStorage<LinkSource[]>(
   'enabled-sources',
   [LinkSource.MP3QURAN, LinkSource.ITQAN]

@@ -4,6 +4,7 @@ import { useAtom } from 'jotai';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import NetworkStatusIndicator from '@/components/network-status-indicator';
 import ReciterSelector from '@/components/reciter-selector';
 import { useReciters } from '@/hooks/use-reciters';
 import { selectedReciterAtom } from '@/jotai/atom';
@@ -73,6 +74,9 @@ export default function Home() {
   return (
     <div className="flex w-full flex-col items-center justify-center gap-y-4 text-foreground">
       <Logo />
+      <div className="w-full max-w-lg">
+        <NetworkStatusIndicator />
+      </div>
       <ReciterSelector />
     </div>
   );

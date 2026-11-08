@@ -45,9 +45,7 @@ describe('DownloadAllButton', () => {
   it('offers the download action when tracks are missing online', () => {
     renderButton();
 
-    expect(
-      screen.getByText('Download all surahs for offline (0/2)')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Download all surahs')).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Download' })
     ).toBeInTheDocument();

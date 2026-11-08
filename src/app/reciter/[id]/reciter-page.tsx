@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
+import NetworkStatusIndicator from '@/components/network-status-indicator';
 import ReciterSelector from '@/components/reciter-selector';
 import SimpleSkeleton from '@/components/simple-skeleton';
 import { fullscreenAtom, selectedReciterAtom } from '@/jotai/atom';
@@ -167,7 +168,7 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
         <button
           type="button"
           onClick={() => setRetryKey((key) => key + 1)}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+          className="h-11 rounded-[10px] bg-primary px-4 text-[13px] font-bold text-on-primary transition-colors duration-120 hover:bg-primary-hover"
         >
           {formatMessage({ id: 'reciter.retry', defaultMessage: 'Retry' })}
         </button>
@@ -187,6 +188,7 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
   return (
     <div className="flex w-full items-center justify-center p-1 md:p-2">
       <div className="flex w-full flex-col items-center justify-center gap-4">
+        {!isFullscreen && <NetworkStatusIndicator />}
         {!isFullscreen && <ReciterSelector />}
         {isFullscreen && (
           <p className="mb-5 flex items-center justify-center gap-2 text-4xl font-bold text-gray-500">

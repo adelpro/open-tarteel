@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0-rc.2] - 2026-11-08
+
+### Changed
+
+- three selectable palettes (`warm` default, `classic`, `night`) with an
+  independent light/system/dark mode, applied before first paint
+- one 8px Tag primitive with grouped labels; filter chip rows replaced by a
+  segmented scope control and a grouped multi-select Filters sheet
+- reciter rows rebuilt: plain provider text, aligned favourite/view counts,
+  selected-row tint, and a border-only selector trigger
+- offline strip docked above the reciter trigger; neutral passive state and a
+  forced variant with a warning edge and `Go online`
+- player `⋯` menu is now a bottom sheet on mobile and a compact dialog on
+  desktop; download-all moved into its Offline group with a floating progress
+  pill and no permanent card under the player
+- settings rebuilt as grouped cards with a palette picker, language select,
+  source switches, offline switch, and download management
+- player, playlist, seek slider, and hero retokenised
+- DESIGN.md, redesign plan, and validation screenshots added
+
+### Removed
+
+- unused `download-error.tsx` and `theme-switcher.tsx`
+- gradient/pill chip styling and the permanent download status card
+
 ## [0.5.0-rc.1] - 2026-11-07
 
 ### Features

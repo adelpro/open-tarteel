@@ -29,6 +29,9 @@ export default function FullscreenController({
     return (
       <>
         <ExitFullscreen />
+        <div className="fixed inset-x-0 top-0 z-50 mx-auto w-full max-w-xl px-3 pt-[max(12px,env(safe-area-inset-top))]">
+          <NetworkStatusIndicator />
+        </div>
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-background">
           {children}
         </div>
@@ -38,12 +41,6 @@ export default function FullscreenController({
 
   return (
     <>
-      <div
-        className="fixed end-4 top-4 z-50 flex items-center gap-2"
-        style={{ direction: 'ltr' }}
-      >
-        <NetworkStatusIndicator />
-      </div>
       <div className="flex w-full flex-grow items-center justify-center">
         {children}
       </div>

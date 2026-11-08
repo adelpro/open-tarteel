@@ -16,13 +16,20 @@ import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { BiVolumeFull, BiVolumeMute } from 'react-icons/bi';
 import { BsFullscreen, BsFullscreenExit } from 'react-icons/bs';
 import { FiHeadphones, FiRepeat } from 'react-icons/fi';
-import { MdCheck, MdRepeatOne, MdSpeed } from 'react-icons/md';
+import {
+  MdCheck,
+  MdCloudDownload,
+  MdRepeatOne,
+  MdSpeed,
+  MdWarning,
+} from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import Tooltip from '@/components/tooltip';
 import { ICON_SIZE, SLEEP_MINUTES } from '@/constants';
 import useDirection from '@/hooks/use-direction';
 import { useNetworkStatus } from '@/hooks/use-network-status';
+import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { useSleepTimer } from '@/hooks/use-sleep-timer';
 import { TimeRange, useTahfeezSession } from '@/hooks/use-tahfeez-session';
 import {
@@ -36,7 +43,10 @@ import {
 import { canUseRangeMode } from '@/services/reciters/capabilities';
 import { cn } from '@/utils';
 
+import DownloadAllButton from './download-all-button';
 import TahfeezModeControls, { TahfeezSettings } from './tahfeez-mode-controls';
+import ActionSheet from './ui/action-sheet';
+import Switch from './ui/switch';
 // ─── Helpers ─────────────────────────────────────────
 const getCurrentMinute = (seconds: number): number => Math.ceil(seconds / 60);
 
@@ -89,6 +99,20 @@ export default function PlayerControls({
   );
   const selectedReciter = useAtomValue(selectedReciterAtom);
   const isOnline = useNetworkStatus();
+  const {
+    progress,
+    lastError,
+    downloadAllTracks,
+    cancelDownload,
+    removeAllTracks,
+    isAllCached,
+    getCachedCount,
+    checkStorageAvailable,
+    estimateStorage,
+  } = useOfflineDownload();
+  const downloadPlaylist = selectedReciter?.moshaf.playlist;
+  const cachedCount = downloadPlaylist ? getCachedCount(downloadPlaylist) : 0;
+  const allCached = downloadPlaylist ? isAllCached(downloadPlaylist) : false;
 
   // ── Tahfeez session (engine lives in the hook) ───────
   const [tahfeezSettings, setTahfeezSettings] = useState<TahfeezSettings>({
@@ -154,7 +178,6 @@ export default function PlayerControls({
     }
   }, [isTahfeezSupported, activeMode]);
 
-  const moreMenuRef = useRef<HTMLDivElement>(null);
   const { formatMessage } = useIntl();
   const { isRTL } = useDirection();
 
@@ -193,20 +216,6 @@ export default function PlayerControls({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showVolumeSlider, volumeRef]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        moreMenuRef.current &&
-        !moreMenuRef.current.contains(event.target as Node)
-      ) {
-        setShowMoreMenu(false);
-      }
-    };
-    if (showMoreMenu)
-      document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showMoreMenu]);
-
   // ── Handlers ─────────────────────────────────────────
   const togglePlaybackMode = () => {
     setPlaybackMode((previous) =>
@@ -236,7 +245,7 @@ export default function PlayerControls({
         onClick={onClick}
         disabled={disabled}
         className={cn(
-          'flex h-9 w-9 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700',
+          'flex size-11 items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken',
           extraClass
         )}
         aria-label={alt}
@@ -315,6 +324,10 @@ export default function PlayerControls({
       },
       { speed: playbackSpeed }
     ),
+    playbackSpeedLabel: formatMessage({
+      id: 'player.playbackSpeedLabel',
+      defaultMessage: 'Playback speed',
+    }),
     volumeControl: formatMessage({
       id: 'player.volumeControl',
       defaultMessage: 'Volume control',
@@ -351,6 +364,23 @@ export default function PlayerControls({
     modeSwitcher: formatMessage({
       id: 'player.modeSwitcher',
       defaultMessage: 'Playback mode',
+    }),
+    playerSettings: formatMessage({
+      id: 'player.settings',
+      defaultMessage: 'Player',
+    }),
+    appSettings: formatMessage({ id: 'player.app', defaultMessage: 'App' }),
+    offlineSection: formatMessage({
+      id: 'download.offlineSection',
+      defaultMessage: 'Offline',
+    }),
+    visualizer: formatMessage({
+      id: 'player.visualizer',
+      defaultMessage: 'Visualizer',
+    }),
+    downloadFailed: formatMessage({
+      id: 'download.failedShort',
+      defaultMessage: 'Download failed',
     }),
   };
 
@@ -414,15 +444,15 @@ export default function PlayerControls({
           >
             <button
               onClick={() => setShowVolumeSlider((previous) => !previous)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
+              className="flex size-11 items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken"
               aria-label={
                 volume > 0 ? messages.muteVolume : messages.unmuteVolume
               }
             >
               {volume > 0 ? (
-                <BiVolumeFull size={ICON_SIZE} color="#6b7280" />
+                <BiVolumeFull size={ICON_SIZE} className="text-ink-muted" />
               ) : (
-                <BiVolumeMute size={ICON_SIZE} color="#6b7280" />
+                <BiVolumeMute size={ICON_SIZE} className="text-ink-muted" />
               )}
             </button>
           </Tooltip>
@@ -489,7 +519,7 @@ export default function PlayerControls({
           <button
             onClick={togglePlaybackMode}
             className={cn(
-              'flex h-9 w-9 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700',
+              'flex size-11 items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken',
               playbackMode !== 'off' && 'animate-slideInWithFade'
             )}
             aria-label={
@@ -515,7 +545,7 @@ export default function PlayerControls({
                 height={ICON_SIZE}
               />
             ) : (
-              <MdRepeatOne size={ICON_SIZE} color="#3b82f6" />
+              <MdRepeatOne size={ICON_SIZE} className="text-primary" />
             )}
           </button>
         </Tooltip>
@@ -537,7 +567,7 @@ export default function PlayerControls({
         )}
 
         {/* Desktop quick actions (everything else lives in the More menu). */}
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-1 md:flex">
           <Tooltip
             content={
               isFullscreen ? messages.exitFullscreen : messages.enterFullscreen
@@ -545,7 +575,7 @@ export default function PlayerControls({
           >
             <button
               onClick={toggleFullscreen}
-              className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
+              className="flex size-11 items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken"
               aria-label={
                 isFullscreen
                   ? messages.exitFullscreen
@@ -553,9 +583,9 @@ export default function PlayerControls({
               }
             >
               {isFullscreen ? (
-                <BsFullscreenExit size={ICON_SIZE} color="#6b7280" />
+                <BsFullscreenExit size={ICON_SIZE} className="text-ink-muted" />
               ) : (
-                <BsFullscreen size={ICON_SIZE} color="#6b7280" />
+                <BsFullscreen size={ICON_SIZE} className="text-ink-muted" />
               )}
             </button>
           </Tooltip>
@@ -567,206 +597,259 @@ export default function PlayerControls({
           )}
         </div>
 
-        {/* More Menu */}
-        <div className="relative" ref={moreMenuRef}>
-          <Tooltip content={messages.more}>
-            <button
-              onClick={() => setShowMoreMenu((previous) => !previous)}
-              className="relative flex h-9 w-9 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
-              aria-label={messages.more}
-            >
-              <span className="text-lg font-bold text-gray-600 dark:text-gray-300">
-                ⋯
-              </span>
-              {activeMode === 'tahfeez' && (
-                <span
-                  aria-hidden="true"
-                  className="absolute end-1 top-1 size-1.5 rounded-full bg-brand-CTA-blue-500"
-                />
-              )}
-            </button>
-          </Tooltip>
-
-          {showMoreMenu && (
-            <div className="absolute bottom-10 end-0 z-10 flex w-52 flex-col gap-1 rounded-lg bg-white p-2 shadow-lg dark:bg-gray-800">
-              <div className="px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400">
-                {messages.modeSwitcher}
-              </div>
-              <button
-                type="button"
-                aria-pressed={activeMode === 'listening'}
-                onClick={() => {
-                  setActiveMode('listening');
-                  setShowMoreMenu(false);
-                }}
-                className={cn(
-                  'flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700',
-                  activeMode === 'listening' &&
-                    'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-                )}
-              >
-                <FiHeadphones size={16} aria-hidden="true" />
-                <span>{messages.listeningMode}</span>
-                {activeMode === 'listening' && (
-                  <MdCheck size={16} className="ms-auto" aria-hidden="true" />
-                )}
-              </button>
-              <button
-                type="button"
-                aria-pressed={activeMode === 'tahfeez'}
-                disabled={!isTahfeezSupported}
-                title={
-                  isTahfeezSupported
-                    ? undefined
-                    : !isOnline
-                      ? messages.tahfeezModeDisabledOffline
-                      : messages.tahfeezModeDisabledProvider
-                }
-                onClick={() => {
-                  setActiveMode('tahfeez');
-                  setShowMoreMenu(false);
-                }}
-                className={cn(
-                  'flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-200 dark:hover:bg-gray-700',
-                  activeMode === 'tahfeez' &&
-                    'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-                )}
-              >
-                <FiRepeat size={16} aria-hidden="true" />
-                <span>{messages.tahfeezMode}</span>
-                {activeMode === 'tahfeez' && (
-                  <MdCheck size={16} className="ms-auto" aria-hidden="true" />
-                )}
-              </button>
-
-              <div className="my-1 h-px bg-gray-200 dark:bg-gray-700" />
-
-              <div className="px-2 py-1 text-xs font-medium text-gray-500 dark:text-gray-400">
-                <Image
-                  src={sleepSVG}
-                  alt=""
-                  width={12}
-                  height={12}
-                  className="me-0.5 inline"
-                />
-                {messages.sleepTimer}
-              </div>
-              <div className="flex flex-wrap gap-1">
-                {SLEEP_MINUTES.map((minutes) => (
-                  <button
-                    key={minutes}
-                    onClick={() => {
-                      setSleepTimer(minutes);
-                      setShowMoreMenu(false);
-                    }}
-                    className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-                  >
-                    {minutes}m
-                  </button>
-                ))}
-                <button
-                  onClick={() => {
-                    setSleepTimer('end');
-                    setShowMoreMenu(false);
-                  }}
-                  className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-                >
-                  {messages.untilEnd}
-                </button>
-                {remainingTime && (
-                  <button
-                    onClick={() => {
-                      clearSleepTimer();
-                      setShowMoreMenu(false);
-                    }}
-                    className="w-full rounded bg-red-100 px-2 py-1 text-xs text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
-                  >
-                    Cancel Timer
-                  </button>
-                )}
-              </div>
-
-              <div className="my-1 h-px bg-gray-200 dark:bg-gray-700" />
-
-              <button
-                onClick={() => {
-                  toggleFullscreen();
-                  setShowMoreMenu(false);
-                }}
-                className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-              >
-                {isFullscreen ? (
-                  <BsFullscreenExit size={16} color="#6b7280" />
-                ) : (
-                  <BsFullscreen size={16} color="#6b7280" />
-                )}
-                <span>
-                  {isFullscreen
-                    ? messages.exitFullscreen
-                    : messages.enterFullscreen}
-                </span>
-              </button>
-
-              <button
-                aria-label={
-                  !spectrumSupported
-                    ? messages.spectrumUnavailable
-                    : showVisualizer
-                      ? messages.hideVisualizer
-                      : messages.showVisualizer
-                }
-                title={
-                  !spectrumSupported ? messages.spectrumUnavailable : undefined
-                }
-                onClick={() => {
-                  setShowVisualizer((previous) => !previous);
-                  setShowMoreMenu(false);
-                }}
-                disabled={isPlaying || !spectrumSupported}
-                className={cn(
-                  'flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700',
-                  (isPlaying || !spectrumSupported) &&
-                    'cursor-not-allowed opacity-50'
-                )}
-              >
-                <Image
-                  src={showVisualizer ? spectrumSVG : spectrumDisabledSVG}
-                  alt=""
-                  width={16}
-                  height={16}
-                />
-                <span>
-                  {showVisualizer
-                    ? messages.hideVisualizer
-                    : messages.showVisualizer}
-                </span>
-              </button>
-
-              <button
-                onClick={() => {
-                  togglePlaybackSpeed();
-                  setShowMoreMenu(false);
-                }}
-                className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-              >
-                <MdSpeed size={16} color="#6b7280" />
-                <span>{messages.playbackSpeed}</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  togglePlaylistOpen();
-                  setShowMoreMenu(false);
-                }}
-                className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-              >
-                <Image src={playlistSVG} alt="" width={16} height={16} />
-                <span>{messages.togglePlaylist}</span>
-              </button>
-            </div>
-          )}
-        </div>
+        {/* More menu */}
+        <Tooltip content={messages.more}>
+          <button
+            onClick={() => setShowMoreMenu(true)}
+            className="relative flex size-11 items-center justify-center rounded-[10px] text-ink-muted transition-colors duration-120 hover:bg-surface-sunken hover:text-ink"
+            aria-label={messages.more}
+          >
+            <span className="text-lg font-bold">⋯</span>
+            {activeMode === 'tahfeez' ? (
+              <span
+                aria-hidden="true"
+                className="absolute end-2 top-2 size-1.5 rounded-full bg-primary"
+              />
+            ) : null}
+          </button>
+        </Tooltip>
       </div>
+
+      <ActionSheet
+        open={showMoreMenu}
+        onClose={() => setShowMoreMenu(false)}
+        title={messages.more}
+      >
+        <MenuGroup label={messages.modeSwitcher}>
+          <MenuRow
+            icon={<FiHeadphones size={18} aria-hidden="true" />}
+            label={messages.listeningMode}
+            pressed={activeMode === 'listening'}
+            onClick={() => {
+              setActiveMode('listening');
+              setShowMoreMenu(false);
+            }}
+          />
+          <MenuRow
+            icon={<FiRepeat size={18} aria-hidden="true" />}
+            label={messages.tahfeezMode}
+            pressed={activeMode === 'tahfeez'}
+            disabled={!isTahfeezSupported}
+            onClick={() => {
+              setActiveMode('tahfeez');
+              setShowMoreMenu(false);
+            }}
+          />
+        </MenuGroup>
+
+        <MenuGroup label={messages.sleepTimer}>
+          <div className="flex flex-wrap gap-1.5 px-2 pb-2">
+            {SLEEP_MINUTES.map((minutes) => (
+              <button
+                key={minutes}
+                type="button"
+                onClick={() => {
+                  setSleepTimer(minutes);
+                  setShowMoreMenu(false);
+                }}
+                className="h-9 rounded-[8px] border border-border bg-surface px-3 text-[12px] font-bold text-ink transition-colors duration-120 hover:bg-surface-sunken"
+              >
+                {minutes}m
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                setSleepTimer('end');
+                setShowMoreMenu(false);
+              }}
+              className="h-9 rounded-[8px] border border-border bg-surface px-3 text-[12px] font-bold text-ink transition-colors duration-120 hover:bg-surface-sunken"
+            >
+              {messages.untilEnd}
+            </button>
+            {remainingTime ? (
+              <button
+                type="button"
+                onClick={() => {
+                  clearSleepTimer();
+                  setShowMoreMenu(false);
+                }}
+                className="h-9 rounded-[8px] px-3 text-[12px] font-bold text-danger transition-colors duration-120 hover:bg-surface-sunken"
+              >
+                {messages.cancelTimer}
+              </button>
+            ) : null}
+          </div>
+        </MenuGroup>
+
+        <MenuGroup label={messages.playerSettings}>
+          <div className="flex min-h-12 items-center gap-3 rounded-[8px] px-2">
+            <span className="flex size-5 shrink-0 items-center justify-center text-ink-muted">
+              <Image
+                src={showVisualizer ? spectrumSVG : spectrumDisabledSVG}
+                alt=""
+                width={18}
+                height={18}
+              />
+            </span>
+            <span className="min-w-0 flex-1 truncate text-[14px] text-ink">
+              {messages.visualizer}
+            </span>
+            <Switch
+              checked={showVisualizer}
+              onCheckedChange={setShowVisualizer}
+              disabled={isPlaying || !spectrumSupported}
+              label={messages.visualizer}
+            />
+          </div>
+          <MenuRow
+            icon={<MdSpeed size={18} aria-hidden="true" />}
+            label={messages.playbackSpeedLabel}
+            onClick={() => togglePlaybackSpeed()}
+            trailing={
+              <span className="text-[12px] font-bold tabular-nums text-ink-muted">
+                {playbackSpeed}×
+              </span>
+            }
+          />
+        </MenuGroup>
+
+        {downloadPlaylist && downloadPlaylist.length > 0 ? (
+          <MenuGroup label={messages.offlineSection}>
+            <div className="px-2 pb-2">
+              <DownloadAllButton
+                playlist={downloadPlaylist}
+                cachedCount={cachedCount}
+                isAllCached={allCached}
+                isOnline={isOnline}
+                progress={progress}
+                error={lastError}
+                onDownloadAll={downloadAllTracks}
+                onRemoveAll={removeAllTracks}
+                onCancel={cancelDownload}
+                checkStorageAvailable={checkStorageAvailable}
+                estimateStorage={estimateStorage}
+              />
+            </div>
+          </MenuGroup>
+        ) : null}
+
+        <MenuGroup label={messages.appSettings}>
+          <MenuRow
+            icon={
+              isFullscreen ? (
+                <BsFullscreenExit size={18} aria-hidden="true" />
+              ) : (
+                <BsFullscreen size={18} aria-hidden="true" />
+              )
+            }
+            label={
+              isFullscreen ? messages.exitFullscreen : messages.enterFullscreen
+            }
+            onClick={() => {
+              toggleFullscreen();
+              setShowMoreMenu(false);
+            }}
+          />
+          <MenuRow
+            icon={<Image src={playlistSVG} alt="" width={18} height={18} />}
+            label={messages.togglePlaylist}
+            onClick={() => {
+              togglePlaylistOpen();
+              setShowMoreMenu(false);
+            }}
+          />
+        </MenuGroup>
+      </ActionSheet>
+
+      {progress || lastError ? (
+        <button
+          type="button"
+          onClick={() => setShowMoreMenu(true)}
+          className="fixed bottom-[calc(env(safe-area-inset-bottom)+72px)] left-1/2 z-40 flex h-10 -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-surface px-3.5 text-[12px] font-bold text-ink shadow-md md:bottom-6"
+        >
+          {progress ? (
+            <MdCloudDownload
+              className="size-4 text-primary"
+              aria-hidden="true"
+            />
+          ) : (
+            <MdWarning className="size-4 text-danger" aria-hidden="true" />
+          )}
+          <span className="tabular-nums">
+            {progress
+              ? formatMessage(
+                  {
+                    id: 'download.downloadingShort',
+                    defaultMessage: 'Downloading {completed}/{total}',
+                  },
+                  {
+                    completed: progress.completed,
+                    total: progress.total,
+                  }
+                )
+              : messages.downloadFailed}
+          </span>
+          {progress ? (
+            <span className="tabular-nums text-ink-muted">
+              {Math.round((progress.completed / progress.total) * 100)}%
+            </span>
+          ) : null}
+        </button>
+      ) : null}
     </div>
+  );
+}
+
+function MenuGroup({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="border-b border-border py-1 last:border-b-0">
+      <h3 className="px-2 pb-1 pt-2 text-[12px] font-bold text-ink-muted">
+        {label}
+      </h3>
+      {children}
+    </section>
+  );
+}
+
+function MenuRow({
+  icon,
+  label,
+  onClick,
+  disabled = false,
+  pressed,
+  trailing,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+  pressed?: boolean;
+  trailing?: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-pressed={pressed}
+      className="flex min-h-12 w-full items-center gap-3 rounded-[8px] px-2 text-start text-[14px] text-ink transition-colors duration-120 hover:bg-surface-sunken disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      <span className="flex size-5 shrink-0 items-center justify-center text-ink-muted">
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1 truncate">{label}</span>
+      {pressed ? (
+        <MdCheck className="size-4 shrink-0 text-primary" aria-hidden="true" />
+      ) : (
+        trailing
+      )}
+    </button>
   );
 }

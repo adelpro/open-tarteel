@@ -40,28 +40,21 @@ export default function Hero() {
 
       {/* Main heading with gradient text */}
       <h1
-        className="mb-4 text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl md:text-5xl lg:text-6xl"
+        className="mb-4 text-3xl font-black tracking-tight text-ink sm:text-4xl md:text-5xl lg:text-6xl"
         itemProp="headline"
       >
-        <span className="text-brand-CTA-blue-500">
+        <span className="text-primary">
           <FormattedMessage id="appName" />
         </span>
       </h1>
 
       {/* Description with subtle animation */}
       <p
-        className="max-w-md text-lg text-gray-600 dark:text-gray-300 sm:max-w-lg sm:text-xl md:max-w-xl md:text-2xl"
+        className="max-w-md text-lg text-ink-muted sm:max-w-lg sm:text-xl md:max-w-xl md:text-2xl"
         itemProp="description"
       >
         <FormattedMessage id="appDescription" />
       </p>
-
-      {/* Decorative elements */}
-      <div className="mt-8 hidden items-center justify-center space-x-2 md:flex">
-        <div className="h-px w-12 bg-gradient-to-r from-transparent via-brand-CTA-blue-500 to-transparent" />
-        <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-CTA-blue-500" />
-        <div className="h-px w-12 bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
-      </div>
     </section>
   );
 }

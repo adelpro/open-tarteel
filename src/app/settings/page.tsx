@@ -1,17 +1,20 @@
 'use client';
 
 import { useAtom } from 'jotai';
+import { useRouter } from 'next/navigation';
+import { MdArrowBack } from 'react-icons/md';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import CacheManagement from '@/components/cache-management';
 import LanguageSwitcher from '@/components/language-switcher';
 import ProviderBadges from '@/components/provider-badge';
-import ThemeSwitcher from '@/components/theme-switcher';
+import ThemePicker from '@/components/theme-picker';
+import Row from '@/components/ui/row';
+import Switch from '@/components/ui/switch';
 import useDirection from '@/hooks/use-direction';
 import { enabledSourcesAtom, forcedOfflineAtom } from '@/jotai/atom';
 import { isMp3QuranV4Enabled } from '@/services/reciters/flags';
 import { LinkSource } from '@/types';
-import { cn } from '@/utils';
 
 const AVAILABLE_SOURCES: { source: LinkSource; id: string }[] = [
   { source: LinkSource.MP3QURAN, id: 'settings.source.mp3quran' },
@@ -31,9 +34,39 @@ const AVAILABLE_SOURCES: { source: LinkSource; id: string }[] = [
     : []),
 ];
 
+function Group({
+  title,
+  description,
+  action,
+  children,
+}: {
+  title: string;
+  description?: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="space-y-2">
+      <div className="px-1">
+        <div className="flex min-h-6 items-center justify-between gap-3">
+          <h2 className="text-[12px] font-bold text-ink-muted">{title}</h2>
+          {action ? <div className="shrink-0">{action}</div> : null}
+        </div>
+        {description ? (
+          <p className="mt-0.5 text-[12px] text-ink-muted">{description}</p>
+        ) : null}
+      </div>
+      <div className="divide-y divide-border overflow-hidden rounded-[16px] border border-border bg-surface">
+        {children}
+      </div>
+    </section>
+  );
+}
+
 export default function SettingsPage() {
   const { isRTL } = useDirection();
   const { formatMessage } = useIntl();
+  const router = useRouter();
   const [enabledSources, setEnabledSources] = useAtom(enabledSourcesAtom);
   const [forcedOffline, setForcedOffline] = useAtom(forcedOfflineAtom);
 
@@ -41,7 +74,7 @@ export default function SettingsPage() {
     setEnabledSources((previous) => {
       if (previous.includes(source)) {
         if (previous.length <= 1) return previous;
-        return previous.filter((s) => s !== source);
+        return previous.filter((value) => value !== source);
       }
       return [...previous, source];
     });
@@ -51,210 +84,168 @@ export default function SettingsPage() {
     setEnabledSources(AVAILABLE_SOURCES.map(({ source }) => source));
   };
 
-  return (
-    <div className="mt-10 flex w-full flex-col items-center justify-center bg-background text-foreground">
-      <div className="mx-auto w-full max-w-2xl">
-        <h1 className="mb-6 text-center text-3xl font-bold">
-          <FormattedMessage id="settings.title" defaultMessage="Settings" />
-        </h1>
+  const handleBack = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push('/');
+    }
+  };
 
-        {/* ── Language & appearance ── */}
-        <section
-          className="m-1 space-y-5 rounded p-4 text-start md:m-2 md:border md:border-gray-200 md:bg-white md:p-8 md:shadow-sm md:dark:border-gray-600 md:dark:bg-gray-800"
-          dir={isRTL ? 'rtl' : 'ltr'}
-        >
-          <div className="space-y-1">
-            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-300">
+  return (
+    <div
+      className="flex w-full flex-col items-center pb-24 pt-6 sm:pb-10"
+      dir={isRTL ? 'rtl' : 'ltr'}
+    >
+      <div className="mx-auto w-full max-w-xl px-4">
+        <header className="mb-6 flex items-start gap-3">
+          <button
+            type="button"
+            onClick={handleBack}
+            aria-label={formatMessage({
+              id: 'settings.back',
+              defaultMessage: 'Back',
+            })}
+            className="-ms-2 flex size-11 shrink-0 items-center justify-center rounded-[10px] text-ink-muted transition-colors duration-120 hover:bg-surface-sunken hover:text-ink"
+          >
+            <MdArrowBack className="size-5 rtl:rotate-180" aria-hidden="true" />
+          </button>
+          <div className="min-w-0">
+            <h1 className="text-[24px] font-bold leading-tight text-ink">
+              <FormattedMessage id="settings.title" defaultMessage="Settings" />
+            </h1>
+            <p className="mt-1 text-[13px] text-ink-muted">
               <FormattedMessage
-                id="settings.preferences"
-                defaultMessage="Preferences"
-              />
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              <FormattedMessage
-                id="settings.preferencesDescription"
-                defaultMessage="Language and appearance for this device."
+                id="settings.subtitle"
+                defaultMessage="Language, appearance, and downloads for this device."
               />
             </p>
           </div>
+        </header>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 p-3 dark:border-gray-700">
-              <div className="space-y-1">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                  <FormattedMessage
-                    id="settings.language"
-                    defaultMessage="Language"
-                  />
-                </h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  <FormattedMessage
-                    id="settings.languageDescription"
-                    defaultMessage="Choose the interface language."
-                  />
-                </p>
-              </div>
-              <LanguageSwitcher />
-            </div>
-
-            <div className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 p-3 dark:border-gray-700">
-              <div className="space-y-1">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                  <FormattedMessage
-                    id="settings.theme"
-                    defaultMessage="Theme"
-                  />
-                </h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  <FormattedMessage
-                    id="settings.themeDescription"
-                    defaultMessage="Switch between light and dark mode."
-                  />
-                </p>
-              </div>
-              <ThemeSwitcher />
-            </div>
-          </div>
-        </section>
-
-        <section
-          className="m-1 space-y-4 rounded p-4 text-start md:m-2 md:border md:border-gray-200 md:bg-white md:p-8 md:shadow-sm md:dark:border-gray-600 md:dark:bg-gray-800"
-          dir={isRTL ? 'rtl' : 'ltr'}
-        >
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-300">
-            <FormattedMessage
-              id="settings.reciterSources"
-              defaultMessage="Reciter sources"
-            />
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            <FormattedMessage
-              id="settings.reciterSourcesDescription"
-              defaultMessage="Choose which sources to show in the reciter list. At least one must be enabled."
-            />
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={selectAll}
-              className="rounded-lg border border-gray-300 bg-gray-900 px-3 py-1.5 text-sm font-medium text-gray-100 transition-colors hover:bg-gray-600"
-            >
-              <FormattedMessage
-                id="settings.selectAll"
-                defaultMessage="Select all"
-              />
-            </button>
-          </div>
-          <ul className="space-y-3">
-            {AVAILABLE_SOURCES.map(({ source, id }) => {
-              const isChecked = enabledSources.includes(source);
-              return (
-                <li key={source} className="flex items-start gap-3">
-                  <input
-                    id={`source-${source}`}
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={() => toggleSource(source)}
-                    className="mt-1 h-4 w-4 rounded border-gray-300 text-brand-CTA-blue-600 focus:ring-brand-CTA-blue-500 dark:border-gray-500 dark:bg-gray-700 dark:checked:border-brand-CTA-blue-500 dark:checked:bg-brand-CTA-blue-600"
-                    aria-describedby={`source-desc-${source}`}
-                  />
-                  <div className="flex flex-col gap-1">
-                    <label
-                      htmlFor={`source-${source}`}
-                      className="cursor-pointer text-gray-900 dark:text-gray-100"
-                      id={`source-desc-${source}`}
-                    >
-                      <FormattedMessage id={id} defaultMessage={source} />
-                    </label>
-                    <ProviderBadges source={source} />
-                  </div>
-                </li>
-              );
+        <div className="space-y-8">
+          <Group
+            title={formatMessage({
+              id: 'settings.appearance',
+              defaultMessage: 'Appearance',
             })}
-          </ul>
-        </section>
-
-        {/* ── Manual offline mode ── */}
-        <section
-          className="m-1 space-y-4 rounded p-4 text-start md:m-2 md:border md:border-gray-200 md:bg-white md:p-8 md:shadow-sm md:dark:border-gray-600 md:dark:bg-gray-800"
-          dir={isRTL ? 'rtl' : 'ltr'}
-        >
-          <div className="flex items-start justify-between gap-4">
-            <div className="space-y-1">
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-300">
+          >
+            <div className="p-4">
+              <p className="text-[15px] font-bold text-ink">
+                <FormattedMessage id="settings.theme" defaultMessage="Theme" />
+              </p>
+              <p className="mt-0.5 text-[13px] text-ink-muted">
                 <FormattedMessage
-                  id="settings.offlineMode"
-                  defaultMessage="Offline mode"
-                />
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                <FormattedMessage
-                  id="settings.offlineModeDescription"
-                  defaultMessage="Use downloaded content only and hide network-only actions."
+                  id="settings.themeDescription"
+                  defaultMessage="Choose a palette and a light or dark mode."
                 />
               </p>
+              <ThemePicker className="mt-3" />
             </div>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={forcedOffline}
-              aria-label={formatMessage({
+            <Row
+              label={formatMessage({
+                id: 'settings.language',
+                defaultMessage: 'Language',
+              })}
+              description={formatMessage({
+                id: 'settings.languageDescription',
+                defaultMessage: 'Choose the interface language.',
+              })}
+            >
+              <LanguageSwitcher />
+            </Row>
+          </Group>
+
+          <Group
+            title={formatMessage({
+              id: 'settings.reciterSources',
+              defaultMessage: 'Reciter sources',
+            })}
+            description={formatMessage({
+              id: 'settings.reciterSourcesDescription',
+              defaultMessage:
+                'Choose which sources to show in the reciter list. At least one stays enabled.',
+            })}
+            action={
+              <button
+                type="button"
+                onClick={selectAll}
+                className="h-11 whitespace-nowrap px-2 text-[13px] font-bold text-primary"
+              >
+                <FormattedMessage
+                  id="settings.selectAll"
+                  defaultMessage="Select all"
+                />
+              </button>
+            }
+          >
+            {AVAILABLE_SOURCES.map(({ source, id }) => (
+              <Row
+                key={source}
+                label={formatMessage({ id, defaultMessage: source })}
+                description={<ProviderBadges source={source} max={2} />}
+              >
+                <Switch
+                  checked={enabledSources.includes(source)}
+                  onCheckedChange={() => toggleSource(source)}
+                  label={formatMessage({ id, defaultMessage: source })}
+                />
+              </Row>
+            ))}
+          </Group>
+
+          <Group
+            title={formatMessage({
+              id: 'settings.playback',
+              defaultMessage: 'Playback',
+            })}
+          >
+            <Row
+              label={formatMessage({
                 id: 'settings.offlineMode',
                 defaultMessage: 'Offline mode',
               })}
-              onClick={() => setForcedOffline((previous) => !previous)}
-              className={cn(
-                'mt-1 flex h-6 w-11 shrink-0 items-center rounded-full p-1 transition-colors',
+              description={
                 forcedOffline
-                  ? 'justify-end bg-amber-600'
-                  : 'justify-start bg-gray-300 dark:bg-gray-600'
-              )}
+                  ? formatMessage({
+                      id: 'settings.offlineModeActive',
+                      defaultMessage:
+                        'Offline mode is on. Only downloaded reciters and surahs are available.',
+                    })
+                  : formatMessage({
+                      id: 'settings.offlineModeDescription',
+                      defaultMessage:
+                        'Use downloaded content only and hide network-only actions.',
+                    })
+              }
             >
-              <span className="h-4 w-4 rounded-full bg-white shadow" />
-            </button>
-          </div>
-          <p
-            className={cn(
-              'text-xs',
-              forcedOffline
-                ? 'text-amber-700 dark:text-amber-400'
-                : 'text-gray-500 dark:text-gray-400'
-            )}
-          >
-            <FormattedMessage
-              id={
-                forcedOffline
-                  ? 'settings.offlineModeActive'
-                  : 'settings.offlineModeHint'
-              }
-              defaultMessage={
-                forcedOffline
-                  ? 'Offline mode is on. Only downloaded reciters and surahs are available.'
-                  : 'Turn this on before switching to airplane mode to try the offline experience.'
-              }
-            />
-          </p>
-        </section>
+              <Switch
+                checked={forcedOffline}
+                onCheckedChange={setForcedOffline}
+                label={formatMessage({
+                  id: 'settings.offlineMode',
+                  defaultMessage: 'Offline mode',
+                })}
+              />
+            </Row>
+          </Group>
 
-        {/* ── Offline downloads / cache management ── */}
-        <section
-          className="m-1 space-y-4 rounded p-4 text-start md:m-2 md:border md:border-gray-200 md:bg-white md:p-8 md:shadow-sm md:dark:border-gray-600 md:dark:bg-gray-800"
-          dir={isRTL ? 'rtl' : 'ltr'}
-        >
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-300">
-            <FormattedMessage
-              id="settings.cacheManagement"
-              defaultMessage="Offline downloads"
-            />
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            <FormattedMessage
-              id="settings.cacheManagementDescription"
-              defaultMessage="Manage downloaded recitations stored on your device."
-            />
-          </p>
-          <CacheManagement />
-        </section>
+          <Group
+            title={formatMessage({
+              id: 'settings.cacheManagement',
+              defaultMessage: 'Offline downloads',
+            })}
+            description={formatMessage({
+              id: 'settings.cacheManagementDescription',
+              defaultMessage:
+                'Manage downloaded recitations stored on this device.',
+            })}
+          >
+            <div className="p-4">
+              <CacheManagement />
+            </div>
+          </Group>
+        </div>
       </div>
     </div>
   );

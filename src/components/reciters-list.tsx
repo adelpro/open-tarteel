@@ -10,7 +10,13 @@ import React, {
   useState,
 } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
-import { MdClose, MdCloudDone, MdSearch, MdVisibility } from 'react-icons/md';
+import {
+  MdClose,
+  MdCloudDone,
+  MdExpandMore,
+  MdSearch,
+  MdVisibility,
+} from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import { SOURCE_LABEL_IDS } from '@/constants';
@@ -27,11 +33,13 @@ import { useRecentlyPlayed } from '@/hooks/use-recently-played';
 import { useReciters } from '@/hooks/use-reciters';
 import { enabledSourcesAtom, selectedReciterAtom } from '@/jotai/atom';
 import { canDownload } from '@/services/reciters/capabilities';
-import { LinkSource, Reciter } from '@/types';
+import { Reciter } from '@/types';
 import { cn, generateFavId } from '@/utils';
 
+import ReciterFilters from './reciter-filters';
 import Sheet from './sheet';
 import SimpleSkeleton from './simple-skeleton';
+import Segmented from './ui/segmented';
 
 type Props = {
   isOpen: boolean;
@@ -39,9 +47,6 @@ type Props = {
 };
 
 const PAGE_SIZE = 80;
-
-const chip =
-  'shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors';
 
 export default function RecitersList({ isOpen, setIsOpen }: Props) {
   const router = useRouter();
@@ -89,8 +94,8 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
   const {
     searchTerm,
     setSearchTerm,
-    selectedRiwaya,
-    setSelectedRiwaya,
+    selectedRiwiyat,
+    setSelectedRiwiyat,
     selectedSources,
     setSelectedSources,
     sortMode,
@@ -138,7 +143,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
     setVisibleCount(PAGE_SIZE);
   }, [
     searchTerm,
-    selectedRiwaya,
+    selectedRiwiyat,
     selectedSources,
     sortMode,
     showRecentOnly,
@@ -188,17 +193,6 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
     }
   }, [favoriteRecitersList.length, setShowOnlyFavorites]);
 
-  const toggleSource = useCallback(
-    (source: LinkSource) => {
-      setSelectedSources(
-        selectedSources.includes(source)
-          ? selectedSources.filter((value) => value !== source)
-          : [...selectedSources, source]
-      );
-    },
-    [selectedSources, setSelectedSources]
-  );
-
   const handleSelectReciter = useCallback(
     (reciter: Reciter) => {
       const favId = generateFavId(reciter);
@@ -236,27 +230,27 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
             defaultMessage: 'Sort by Favorite',
           });
 
-  const scopeChip = (
-    active: boolean,
-    label: string,
-    onClick: () => void,
-    key: string
-  ) => (
-    <button
-      key={key}
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={cn(
-        chip,
-        active
-          ? 'border-transparent bg-brand-CTA-blue-600 text-white'
-          : 'hover:bg-border/40 border-border bg-surface text-foreground'
-      )}
-    >
-      {label}
-    </button>
-  );
+  const sortShortLabel =
+    sortMode === 'alphabetical'
+      ? 'A–Z'
+      : sortMode === 'views'
+        ? formatMessage({ id: 'sort.shortViews', defaultMessage: 'Views' })
+        : formatMessage({ id: 'sort.shortPopular', defaultMessage: 'Popular' });
+
+  const scope = isDownloadedOnlyEffective
+    ? 'downloaded'
+    : showRecentOnly
+      ? 'recent'
+      : showOnlyFavorites
+        ? 'favorites'
+        : 'all';
+
+  const setScope = (value: string) => {
+    if (!isOnline && value !== 'downloaded') return;
+    setShowRecentOnly(value === 'recent');
+    setShowOnlyFavorites(value === 'favorites');
+    setShowDownloadedOnly(value === 'downloaded');
+  };
 
   const toolbar = (
     <div className="shrink-0 border-b border-border">
@@ -291,135 +285,88 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
         )}
       </div>
 
-      <div className="flex flex-wrap gap-2 px-4 pt-2">
-        <button
-          type="button"
-          aria-pressed={selectedSources.length === 0}
-          onClick={() => setSelectedSources([])}
-          className={cn(
-            chip,
-            selectedSources.length === 0
-              ? 'border-transparent bg-brand-CTA-blue-600 text-white'
-              : 'hover:bg-border/40 border-border bg-surface text-foreground'
-          )}
-        >
-          {formatMessage({
-            id: 'filter.allSources',
-            defaultMessage: 'All sources',
+      <div className="space-y-2 px-4 py-2">
+        <Segmented
+          value={scope}
+          onChange={setScope}
+          label={formatMessage({
+            id: 'filter.scope',
+            defaultMessage: 'Reciter scope',
           })}
-        </button>
-        {availableSources.map(({ value, label }) => (
-          <button
-            key={value}
-            type="button"
-            aria-pressed={selectedSources.includes(value)}
-            onClick={() => toggleSource(value)}
-            className={cn(
-              chip,
-              selectedSources.includes(value)
-                ? 'border-transparent bg-brand-CTA-blue-600 text-white'
-                : 'hover:bg-border/40 border-border bg-surface text-foreground'
-            )}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      <div className="flex flex-wrap gap-2 px-4 py-2">
-        <button
-          type="button"
-          aria-pressed={selectedRiwaya === 'all'}
-          onClick={() => setSelectedRiwaya('all')}
-          className={cn(
-            chip,
-            selectedRiwaya === 'all'
-              ? 'border-transparent bg-brand-CTA-blue-600 text-white'
-              : 'hover:bg-border/40 border-border bg-surface text-foreground'
-          )}
-        >
-          {formatMessage({
-            id: 'filter.allRiwiyat',
-            defaultMessage: 'All riwayas',
-          })}
-        </button>
-        {availableRiwiyat.map(({ value, label }) => (
-          <button
-            key={value}
-            type="button"
-            aria-pressed={selectedRiwaya === value}
-            onClick={() => setSelectedRiwaya(value)}
-            className={cn(
-              chip,
-              selectedRiwaya === value
-                ? 'border-transparent bg-brand-CTA-blue-600 text-white'
-                : 'hover:bg-border/40 border-border bg-surface text-foreground'
-            )}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+          options={[
+            {
+              value: 'all',
+              label: formatMessage({ id: 'filter.all', defaultMessage: 'All' }),
+              disabled: !isOnline,
+            },
+            {
+              value: 'recent',
+              label: formatMessage({
+                id: 'reciter.recent',
+                defaultMessage: 'Recent',
+              }),
+              disabled: !isOnline,
+            },
+            {
+              value: 'favorites',
+              label: formatMessage({
+                id: 'filter.favorites',
+                defaultMessage: 'Favorites',
+              }),
+              disabled: !isOnline,
+            },
+            {
+              value: 'downloaded',
+              label: formatMessage({
+                id: 'filter.downloaded',
+                defaultMessage: 'Downloaded',
+              }),
+            },
+          ]}
+        />
 
-      <div className="flex flex-wrap items-center gap-2 px-4 py-2">
-        {scopeChip(
-          showRecentOnly,
-          formatMessage({ id: 'reciter.recent', defaultMessage: 'Recent' }),
-          () => setShowRecentOnly((value) => !value),
-          'recent'
-        )}
-        {scopeChip(
-          showOnlyFavorites,
-          formatMessage({
-            id: 'filter.favorites',
-            defaultMessage: 'Favorites',
-          }),
-          () => setShowOnlyFavorites(!showOnlyFavorites),
-          'favorites'
-        )}
-        {isOnline &&
-          scopeChip(
-            showDownloadedOnly,
-            formatMessage({
-              id: 'filter.downloaded',
-              defaultMessage: 'Downloaded',
-            }),
-            () => setShowDownloadedOnly((value) => !value),
-            'downloaded'
-          )}
-        {scopeChip(
-          showDownloadableOnly,
-          formatMessage({
-            id: 'filter.downloadable',
-            defaultMessage: 'Downloadable',
-          }),
-          () => setShowDownloadableOnly((value) => !value),
-          'downloadable'
-        )}
-        <button
-          type="button"
-          onClick={() =>
-            setSortMode((previous) =>
-              previous === 'popular'
-                ? 'alphabetical'
-                : previous === 'alphabetical'
-                  ? 'views'
-                  : 'popular'
-            )
-          }
-          className={cn(
-            chip,
-            'hover:bg-border/40 ms-auto border-border bg-surface text-foreground'
-          )}
-        >
-          {sortLabel}
-        </button>
-        <span className="tnum w-full text-[11px] text-muted">
-          {filteredReciters.length}{' '}
-          {formatMessage({
-            id: 'reciterDialog.count',
-            defaultMessage: 'reciters',
-          })}
-        </span>
+        <div className="flex items-center gap-2">
+          <ReciterFilters
+            availableSources={availableSources}
+            availableRiwiyat={availableRiwiyat}
+            selectedSources={selectedSources}
+            selectedRiwiyat={selectedRiwiyat}
+            onSourcesChange={setSelectedSources}
+            onRiwiyatChange={setSelectedRiwiyat}
+            downloadableOnly={showDownloadableOnly}
+            onDownloadableOnlyChange={setShowDownloadableOnly}
+            resultCount={filteredReciters.length}
+          />
+
+          <button
+            type="button"
+            onClick={() =>
+              setSortMode((previous) =>
+                previous === 'popular'
+                  ? 'alphabetical'
+                  : previous === 'alphabetical'
+                    ? 'views'
+                    : 'popular'
+              )
+            }
+            aria-label={sortLabel}
+            className="flex h-10 items-center gap-1 rounded-[8px] border border-border bg-surface px-3 text-[13px] font-bold text-ink transition-colors duration-120 hover:bg-surface-sunken"
+          >
+            <span>{sortShortLabel}</span>
+            <MdExpandMore
+              className="size-4 text-ink-muted"
+              aria-hidden="true"
+            />
+          </button>
+
+          <span className="ms-auto text-[12px] tabular-nums text-ink-muted">
+            {filteredReciters.length}{' '}
+            {formatMessage({
+              id: 'reciterDialog.count',
+              defaultMessage: 'reciters',
+            })}
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -468,58 +415,69 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
             );
 
             return (
-              <li key={favId} className="border-border/60 border-b">
+              <li key={favId} className="border-b border-border">
                 <div className="flex w-full min-w-0 items-center">
                   <button
                     type="button"
                     onClick={() => handleSelectReciter(reciter)}
                     aria-current={current ? 'true' : undefined}
-                    className="hover:bg-border/30 flex min-h-16 min-w-0 flex-1 items-center gap-3 px-4 py-2 text-start transition-colors"
+                    className={cn(
+                      'flex min-h-16 min-w-0 flex-1 items-center gap-3 px-4 py-2 text-start transition-colors hover:bg-surface-sunken',
+                      current && 'bg-primary-soft'
+                    )}
                   >
                     <span className="min-w-0 flex-1">
                       <span
                         className={cn(
-                          'block truncate text-base text-foreground',
-                          current && 'font-semibold'
+                          'block truncate text-[16px] text-foreground',
+                          current && 'font-bold'
                         )}
                       >
                         {reciter.name}
                       </span>
-                      <span className="mt-1 flex min-w-0 items-center gap-2 overflow-hidden text-[11px] text-muted">
-                        <span className="min-w-0 flex-1 truncate">
+                      <span className="mt-1 flex min-w-0 items-center gap-1.5 overflow-hidden text-[12px] text-muted">
+                        <span className="min-w-0 truncate">
                           {reciter.moshaf.name}
+                        </span>
+                        <span aria-hidden="true">·</span>
+                        <span className="shrink-0 text-[11px]">
+                          {formatMessage({
+                            id: SOURCE_LABEL_IDS[reciter.source],
+                          })}
                         </span>
                         {downloaded && (
                           <MdCloudDone
-                            className="size-3.5 shrink-0 text-green-500"
+                            className="size-3.5 shrink-0 text-success"
                             aria-hidden="true"
                           />
                         )}
                       </span>
                     </span>
-                    <span className="flex w-10 shrink-0 flex-col items-end gap-0.5 text-[10px] text-muted">
-                      <span className="tnum inline-flex items-center gap-0.5">
+                    <span className="flex w-12 shrink-0 flex-col items-end gap-1 text-[11px] leading-none text-muted">
+                      <span className="flex items-center justify-end gap-1">
                         <BsStarFill
-                          className="size-3 text-yellow-400"
+                          className="size-3 shrink-0 text-mark"
                           aria-hidden="true"
                         />
-                        {favoriteCounts[favId] ?? 0}
+                        <span className="tnum w-5 text-end">
+                          {favoriteCounts[favId] ?? 0}
+                        </span>
                       </span>
                       <span
-                        className="tnum inline-flex items-center gap-0.5"
+                        className="flex items-center justify-end gap-1"
                         title={formatMessage({
                           id: 'views',
                           defaultMessage: 'views',
                         })}
                       >
-                        <MdVisibility className="size-3" aria-hidden="true" />
-                        {viewCounts[favId] ?? 0}
+                        <MdVisibility
+                          className="size-3 shrink-0"
+                          aria-hidden="true"
+                        />
+                        <span className="tnum w-5 text-end">
+                          {viewCounts[favId] ?? 0}
+                        </span>
                       </span>
-                    </span>
-                    <span className="bg-border/60 shrink-0 rounded-full px-2 py-1 text-[10px] text-foreground">
-                      {formatMessage({
-                        id: SOURCE_LABEL_IDS[reciter.source],
-                      })}
                     </span>
                   </button>
                   <button
@@ -537,10 +495,10 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
                           })
                     }
                     aria-pressed={isFavorite}
-                    className="hover:bg-border/40 me-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:text-foreground"
+                    className="me-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-sunken hover:text-foreground"
                   >
                     {isFavorite ? (
-                      <BsStarFill className="size-5 text-yellow-400" />
+                      <BsStarFill className="size-5 text-mark" />
                     ) : (
                       <BsStar className="size-5" />
                     )}

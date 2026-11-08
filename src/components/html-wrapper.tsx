@@ -1,56 +1,39 @@
 'use client';
 
-import { useAtom } from 'jotai';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 
 import useDirection from '@/hooks/use-direction';
-import { type Theme, themeAtom } from '@/jotai/atom';
+import { useTheme } from '@/hooks/use-theme';
 
-function resolveTheme(theme: Theme): 'dark' | 'light' {
-  if (theme === 'system') {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'dark'
-      : 'light';
-  }
-  return theme;
-}
-
-const themeScript = `(function(){try{var k='theme-preference',s=localStorage.getItem(k),t=null;if(s){try{t=JSON.parse(s)}catch(e){t=s}}var d=t==='dark'||((!t||t==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);var cl=document.documentElement.classList;if(d){cl.add('dark');cl.remove('light');}else{cl.add('light');cl.remove('dark');}}catch(e){}})();`;
+/**
+ * Runs before first paint: restores the palette and the light/dark mode so the
+ * app never flashes the default theme on reload.
+ */
+const themeScript = `(function(){try{
+var p=localStorage.getItem('theme-palette');
+if(p){try{p=JSON.parse(p)}catch(e){}}
+if(p!=='classic'&&p!=='night'&&p!=='warm'){p='warm';}
+var s=localStorage.getItem('theme-preference'),t=null;
+if(s){try{t=JSON.parse(s)}catch(e){t=s;}}
+var d=t==='dark'||((!t||t==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+var el=document.documentElement;el.setAttribute('data-theme',p);
+var cl=el.classList;
+if(d){cl.add('dark');cl.remove('light');}else{cl.add('light');cl.remove('dark');}
+}catch(e){}})();`;
 
 export default function HtmlWrapper({ children }: { children: ReactNode }) {
   const { locale } = useIntl();
   const { isRTL } = useDirection();
-  const [theme] = useAtom(themeAtom);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    const updateTheme = () => {
-      const resolvedTheme = resolveTheme(theme);
-      const cl = document.documentElement.classList;
-      if (resolvedTheme === 'dark') {
-        cl.add('dark');
-        cl.remove('light');
-      } else {
-        cl.add('light');
-        cl.remove('dark');
-      }
-    };
-
-    updateTheme();
-
-    if (theme === 'system') {
-      mediaQuery.addEventListener('change', updateTheme);
-      return () => mediaQuery.removeEventListener('change', updateTheme);
-    }
-  }, [theme]);
+  // Keeps <html> in sync when the user changes palette or mode.
+  useTheme();
 
   return (
     <html
       lang={locale}
       suppressHydrationWarning
       dir={isRTL ? 'rtl' : 'ltr'}
+      data-theme="warm"
       className="h-[100vh]"
     >
       {/* eslint-disable-next-line @next/next/no-head-element */}

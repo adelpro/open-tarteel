@@ -7,7 +7,12 @@ import { FormattedMessage } from 'react-intl';
 
 import { useNetworkStatus } from '@/hooks/use-network-status';
 import { forcedOfflineAtom } from '@/jotai/atom';
+import { cn } from '@/utils';
 
+/**
+ * A quiet, docked offline strip. Passive offline is a neutral state; only a
+ * user-forced offline mode gets the warning tone and an action.
+ */
 export default function NetworkStatusIndicator() {
   const isOnline = useNetworkStatus();
   const [forcedOffline, setForcedOffline] = useAtom(forcedOfflineAtom);
@@ -19,36 +24,47 @@ export default function NetworkStatusIndicator() {
       aria-label="Offline status"
       role="status"
       aria-live="polite"
-      className="animate-fade-down"
+      className="w-full"
     >
-      <div className="flex h-8 items-center gap-1.5 rounded-full border border-amber-400/40 bg-amber-600/95 px-3 text-xs font-semibold text-white shadow-sm backdrop-blur-md transition-all dark:border-amber-500/30 dark:bg-amber-700/95">
-        <span className="relative flex size-2 shrink-0">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-200 opacity-75" />
-          <span className="relative inline-flex size-2 rounded-full bg-white" />
-        </span>
-        <MdCloudOff className="size-3.5 shrink-0 text-amber-200" />
-        <span className="max-w-[180px] truncate sm:max-w-none">
+      <div
+        className={cn(
+          'flex min-h-11 w-full items-center gap-2 rounded-[10px] border bg-surface-sunken px-3 py-2 text-[13px]',
+          forcedOffline
+            ? 'border-s-[3px] border-border border-s-warning'
+            : 'border-border'
+        )}
+      >
+        <MdCloudOff
+          className={cn(
+            'size-4 shrink-0',
+            forcedOffline ? 'text-warning' : 'text-ink-muted'
+          )}
+          aria-hidden="true"
+        />
+
+        <span className="min-w-0 flex-1 leading-5 text-ink">
           <FormattedMessage
             id={forcedOffline ? 'offline.forcedStatus' : 'offline.status'}
             defaultMessage={
               forcedOffline
-                ? 'Offline mode — downloaded content only'
-                : 'Offline Mode — Showing downloaded content'
+                ? 'Offline — downloads only'
+                : 'Offline — showing downloads'
             }
           />
         </span>
-        {forcedOffline && (
+
+        {forcedOffline ? (
           <button
             type="button"
             onClick={() => setForcedOffline(false)}
-            className="ms-1 shrink-0 rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold underline-offset-2 transition-colors hover:bg-white/30 hover:underline"
+            className="-me-2 flex h-11 shrink-0 items-center rounded-[8px] px-2 text-[13px] font-bold text-primary transition-colors duration-120 hover:bg-surface"
           >
             <FormattedMessage
               id="offline.goOnline"
               defaultMessage="Go online"
             />
           </button>
-        )}
+        ) : null}
       </div>
     </aside>
   );

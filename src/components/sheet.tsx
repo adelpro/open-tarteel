@@ -307,7 +307,7 @@ export default function Sheet({
               defaultMessage: pinned ? 'Unpin panel' : 'Pin panel',
             })}
             className={cn(
-              'hover:bg-border/60 flex h-11 w-11 items-center justify-center rounded-full transition-colors',
+              'flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-surface-sunken',
               pinned ? 'text-foreground' : 'text-muted'
             )}
           >
@@ -325,7 +325,7 @@ export default function Sheet({
             id: 'close',
             defaultMessage: 'Close',
           })}
-          className="hover:bg-border/60 -me-2 flex h-11 w-11 items-center justify-center rounded-full text-muted transition-colors hover:text-foreground"
+          className="-me-2 flex h-11 w-11 items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-sunken hover:text-foreground"
         >
           <MdClose className="size-5" />
         </button>
@@ -376,7 +376,7 @@ export default function Sheet({
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-1.5 flex justify-center"
       >
-        <span className="bg-foreground/20 h-1 w-9 rounded-full" />
+        <span className="h-1 w-9 rounded-full bg-border-strong" />
       </span>
       <div ref={panelRef} className="flex h-[90dvh] flex-col">
         <div
