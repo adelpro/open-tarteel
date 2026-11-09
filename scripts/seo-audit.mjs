@@ -39,8 +39,10 @@ const alternatesOf = (xml) =>
     ...xml.matchAll(/<xhtml:link[^>]*hreflang="([^"]+)"[^>]*href="([^"]+)"/g),
   ].map((match) => [match[1], match[2]]);
 
+const normalizeUrl = (value) => value.replace(/\/+$/, '');
+
 const samePage = (canonical, loc) => {
-  if (canonical === loc) return true;
+  if (normalizeUrl(canonical) === normalizeUrl(loc)) return true;
   if (!isLocal) return false;
   try {
     return new URL(canonical).pathname === new URL(loc).pathname;
