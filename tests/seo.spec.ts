@@ -33,10 +33,11 @@ test('the German page stays German and internal links keep the prefix', async ({
   await expect(page.locator('html')).toHaveAttribute('lang', 'de');
 });
 
-test('a reciter page has a name and 114 surah links', async ({ page }) => {
+test('a reciter page keeps the logo and has no surah list', async ({ page }) => {
   await page.goto('/reciter/itqan.dev-2');
-  await expect(page.locator('h1')).toContainText(/بدر|Badr/);
-  await expect(page.locator('a[href*="surah="]')).toHaveCount(114);
+  await expect(page.locator('h1')).toContainText(/القرآن|Holy Quran|Koran/);
+  await expect(page.locator('img[alt*="Logo"]').first()).toBeVisible();
+  await expect(page.locator('a[href*="surah="]')).toHaveCount(0);
 });
 
 test('an unknown reciter is a 404', async ({ page }) => {

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 
-import { SURAHS } from '@/constants';
-import { breadcrumbTrail, itemList } from '@/lib/seo/json-ld';
+import Hero from '@/components/hero';
+import { breadcrumbTrail } from '@/lib/seo/json-ld';
 import { buildPageMetadata } from '@/lib/seo/metadata';
 import { type SeoLocale, withLocale } from '@/lib/seo/routes';
 import { SITE } from '@/lib/seo/site';
@@ -15,7 +15,6 @@ import { buildLocalPlaylist } from '@/utils/build-local-playlist';
 import { getRequestLocale } from '@/utils/request-locale';
 
 import ReciterPage from './reciter-page';
-import ReciterSeo from './reciter-seo';
 
 export const dynamic = 'force-dynamic';
 
@@ -147,36 +146,15 @@ export default async function Page({ params, searchParams }: Props) {
       url: `${SITE.url}${withLocale(locale, canonicalPath)}`,
     },
   ]);
-  const surahList = itemList(
-    locale === 'ar' ? 'السور' : locale === 'de' ? 'Suren' : 'Surahs',
-    SURAHS.map((surah) => ({
-      name:
-        locale === 'ar'
-          ? surah.name
-          : locale === 'de'
-            ? surah.germanName
-            : surah.englishName,
-      url: `${SITE.url}${withLocale(
-        locale,
-        `${canonicalPath}?moshafId=${reciter.moshaf.id}&surah=${surah.id}`
-      )}`,
-    }))
-  );
-
   return (
     <main className="flex w-full flex-col items-center justify-center bg-background text-foreground">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([breadcrumb, surahList]).replace(
-            /</g,
-            '\\u003c'
-          ),
+          __html: JSON.stringify(breadcrumb).replace(/</g, '\\u003c'),
         }}
       />
-      <div className="w-full py-6">
-        <ReciterSeo reciter={reciter} locale={locale} variants={variants} />
-      </div>
+      <Hero />
       <ReciterPage
         id={id}
         initialReciter={reciter}
