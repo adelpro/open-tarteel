@@ -124,6 +124,9 @@ and readiness checks.
 - Security headers (HSTS, `X-Content-Type-Options`, `X-Frame-Options`,
   `Referrer-Policy`, `Permissions-Policy`) are configured in `next.config.ts`.
   Add a Content-Security-Policy once your CDN/analytics requirements are known.
+- SEO, the URL locale policy, and the Search Console runbook live in
+  [`docs/SEO.md`](docs/SEO.md). Preview deploys are `noindex` via
+  `SEO_NOINDEX` or the Netlify preview header.
 
 ## Contributing
 

@@ -12,6 +12,7 @@ import OfflineRedirect from '@/components/offline-redirect';
 import PwaUpdater from '@/components/pwa-updater';
 import StoragePersist from '@/components/storage-persist';
 import { websiteGraph } from '@/lib/seo/json-ld';
+import { SITE } from '@/lib/seo/site';
 import { clientConfig } from '@/utils';
 import { getRequestLocale } from '@/utils/request-locale';
 
@@ -62,6 +63,9 @@ export const metadata: Metadata = {
       'Listen to the Holy Quran recited by world-renowned reciters. Free and open-source.',
     images: ['/images/logo-og.png'],
   },
+  verification: SITE.verification
+    ? { google: SITE.verification }
+    : undefined,
 };
 
 const tajawal = Tajawal({

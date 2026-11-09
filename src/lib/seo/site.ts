@@ -10,6 +10,7 @@ export const SITE = {
   github: 'https://github.com/adelpro/open-tarteel',
   ogImage: '/opengraph-image.png',
   logo: '/images/icon-512.png',
+  verification: process.env.GOOGLE_SITE_VERIFICATION,
 } as const;
 
 export const OG_LOCALES: Record<SeoLocale, string> = {
