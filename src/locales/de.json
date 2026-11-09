@@ -1,6 +1,9 @@
 {
   "appName": "Der Heilige Koran",
   "appDescription": "Berührende Rezitationen ohne Ablenkungen.",
+  "home.recitersTitle": "Rezitatoren",
+  "home.recitersDescription": "Hören Sie den Heiligen Koran, rezitiert von vertrauenswürdigen Rezitatoren.",
+  "home.continueListening": "Weiterhören",
   "close": "Schließen",
   "footer.home": "Startseite",
   "footer.about": "Über die App",

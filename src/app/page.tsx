@@ -1,86 +1,125 @@
-'use client';
+import { Suspense } from 'react';
 
-import { useAtom } from 'jotai';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import Hero from '@/components/hero';
+import LocalizedLink from '@/components/localized-link';
+import SimpleSkeleton from '@/components/simple-skeleton';
+import { itemList } from '@/lib/seo/json-ld';
+import { buildPageMetadata } from '@/lib/seo/metadata';
+import { type SeoLocale, withLocale } from '@/lib/seo/routes';
+import { SITE } from '@/lib/seo/site';
+import ar from '@/locales/ar.json';
+import de from '@/locales/de.json';
+import en from '@/locales/en.json';
+import { getAllReciters } from '@/utils/api';
+import { getRequestLocale } from '@/utils/request-locale';
 
-import NetworkStatusIndicator from '@/components/network-status-indicator';
-import ReciterSelector from '@/components/reciter-selector';
-import { useLocalePath } from '@/hooks/use-locale-path';
-import { useReciters } from '@/hooks/use-reciters';
-import { selectedReciterAtom } from '@/jotai/atom';
+import HomeClient from './home-client';
 
-import Logo from '../components/hero';
+export const revalidate = 3600;
 
-export default function Home() {
-  const [selectedReciter, setSelectedReciter] = useAtom(selectedReciterAtom);
-  const { reciters, loading } = useReciters();
-  const router = useRouter();
-  const localePath = useLocalePath();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [isClient, setIsClient] = useState(false);
+type HomeCopy = {
+  appName: string;
+  appDescription: string;
+  recitersTitle: string;
+  recitersDescription: string;
+};
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+const COPY: Record<SeoLocale, HomeCopy> = {
+  ar: {
+    appName: ar.appName,
+    appDescription: ar.appDescription,
+    recitersTitle: ar['home.recitersTitle'],
+    recitersDescription: ar['home.recitersDescription'],
+  },
+  en: {
+    appName: en.appName,
+    appDescription: en.appDescription,
+    recitersTitle: en['home.recitersTitle'],
+    recitersDescription: en['home.recitersDescription'],
+  },
+  de: {
+    appName: de.appName,
+    appDescription: de.appDescription,
+    recitersTitle: de['home.recitersTitle'],
+    recitersDescription: de['home.recitersDescription'],
+  },
+};
 
-  // Validate selectedReciter exists in reciters list
-  useEffect(() => {
-    if (!isClient || loading || reciters.length === 0) return;
+export async function generateMetadata() {
+  const locale = await getRequestLocale();
+  const copy = COPY[locale];
+  return buildPageMetadata({
+    locale,
+    path: '/',
+    title: `${copy.appName} — Open Tarteel`,
+    description: copy.appDescription,
+  });
+}
 
-    if (selectedReciter) {
-      const exists = reciters.some((r) => r.id === selectedReciter.id);
-      if (!exists) {
-        setSelectedReciter(null);
-        return;
-      }
-    }
-  }, [isClient, loading, reciters, selectedReciter, setSelectedReciter]);
+export default async function Home() {
+  const locale = await getRequestLocale();
+  const copy = COPY[locale];
 
-  useEffect(() => {
-    if (!isClient || !selectedReciter || loading) return;
-
-    // Verify reciter exists before redirecting
-    const exists = reciters.some((r) => r.id === selectedReciter.id);
-    if (!exists) return;
-
-    const currentPath = `${pathname}?${searchParams.toString()}`;
-    const targetPath = `/reciter/${selectedReciter.id}?moshafId=${selectedReciter.moshaf.id}`;
-    if (currentPath !== targetPath) {
-      router.push(localePath(targetPath));
-    }
-  }, [
-    selectedReciter,
-    pathname,
-    searchParams,
-    router,
-    localePath,
-    isClient,
-    loading,
-    reciters,
-  ]);
-
-  if (!isClient) {
-    return (
-      <div className="flex w-full flex-col items-center justify-center gap-y-4 text-foreground">
-        <Logo />
-        <div className="flex w-full max-w-lg items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-white to-gray-100 p-3 shadow-md">
-          <span className="max-w-[200px] truncate font-semibold text-gray-900">
-            Select A Reciter
-          </span>
-        </div>
-      </div>
-    );
+  let reciters: Awaited<ReturnType<typeof getAllReciters>> = [];
+  try {
+    reciters = await getAllReciters(locale);
+  } catch {
+    // The interactive selector still works; the crawlable list is best-effort.
   }
+
+  const seen = new Set<string>();
+  const homeReciters = reciters
+    .filter((reciter) => {
+      if (seen.has(reciter.id)) return false;
+      seen.add(reciter.id);
+      return true;
+    })
+    .slice(0, 12);
+
+  const reciterList = itemList(
+    copy.recitersTitle,
+    homeReciters.map((reciter) => ({
+      name: `${reciter.name} — ${reciter.moshaf.name}`,
+      url: `${SITE.url}${withLocale(locale, `/reciter/${reciter.id}`)}`,
+    }))
+  );
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-y-4 text-foreground">
-      <Logo />
-      <div className="w-full max-w-lg">
-        <NetworkStatusIndicator />
-      </div>
-      <ReciterSelector />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(reciterList).replace(/</g, '\\u003c'),
+        }}
+      />
+      <Hero />
+
+      {homeReciters.length > 0 ? (
+        <section className="mx-auto w-full max-w-lg px-2">
+          <h2 className="text-[1.125rem] font-bold text-ink">
+            {copy.recitersTitle}
+          </h2>
+          <p className="mt-1 text-[13px] text-ink-muted">
+            {copy.recitersDescription}
+          </p>
+          <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
+            {homeReciters.map((reciter) => (
+              <li key={reciter.id}>
+                <LocalizedLink
+                  href={`/reciter/${reciter.id}`}
+                  className="text-[13px] font-medium text-primary hover:text-primary-hover"
+                >
+                  {reciter.name}
+                </LocalizedLink>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      <Suspense fallback={<SimpleSkeleton />}>
+        <HomeClient />
+      </Suspense>
     </div>
   );
 }

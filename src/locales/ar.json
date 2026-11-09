@@ -1,6 +1,9 @@
 {
   "appName": "القرآن الكريم",
   "appDescription": "تلاوات تلامس القلب دون إلهاءات.",
+  "home.recitersTitle": "القرّاء",
+  "home.recitersDescription": "استمع إلى تلاوات القرآن الكريم من قرّاء موثوقين.",
+  "home.continueListening": "متابعة الاستماع",
   "close": "إغلاق",
   "footer.home": "الصفحة الرئيسية",
   "footer.about": "معلومات عن التطبيق",

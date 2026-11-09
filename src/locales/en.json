@@ -1,6 +1,9 @@
 {
   "appName": "The Holy Quran",
   "appDescription": "Heartfelt recitations without distractions.",
+  "home.recitersTitle": "Reciters",
+  "home.recitersDescription": "Listen to the Holy Quran recited by trusted reciters.",
+  "home.continueListening": "Continue listening",
   "close": "Close",
   "footer.home": "Home",
   "footer.about": "About the app",
