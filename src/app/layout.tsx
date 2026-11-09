@@ -2,7 +2,6 @@ import './globals.css';
 
 import type { Metadata, Viewport } from 'next';
 import { Tajawal } from 'next/font/google';
-import { cookies, headers } from 'next/headers';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import { EnabledSourcesCookieSync } from '@/components/enabled-sources-cookie-sync';
@@ -12,8 +11,8 @@ import IntlProviderWrapper from '@/components/intl-provider-wrapper';
 import OfflineRedirect from '@/components/offline-redirect';
 import PwaUpdater from '@/components/pwa-updater';
 import StoragePersist from '@/components/storage-persist';
-import type { Language } from '@/constants/language';
-import { clientConfig, getDefaultLocale } from '@/utils';
+import { clientConfig } from '@/utils';
+import { getRequestLocale } from '@/utils/request-locale';
 
 export const viewport: Viewport = {
   colorScheme: 'light dark',
@@ -102,16 +101,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const headerStore = await headers();
-
-  const cookieLocale = cookieStore.get('locale')?.value;
-  const acceptLanguage = headerStore.get('accept-language');
-
-  const resolvedLocale: Language =
-    cookieLocale === 'ar' || cookieLocale === 'en' || cookieLocale === 'de'
-      ? cookieLocale
-      : getDefaultLocale(acceptLanguage);
+  const resolvedLocale = await getRequestLocale();
 
   return (
     <NuqsAdapter>
