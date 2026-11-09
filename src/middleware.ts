@@ -29,6 +29,19 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Dynamic reciter routes are real files under /en and /de. Rewriting them
+  // into the bare dynamic route makes Next answer 404, so let the explicit
+  // route handle the locale and only pass the request locale header.
+  if (pathname.startsWith(`/${locale}/reciter/`)) {
+    const response = NextResponse.next();
+    response.cookies.set('locale', locale, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: 'lax',
+    });
+    return response;
+  }
+
   const response = NextResponse.rewrite(
     new URL(`${stripLocale(pathname)}${search}`, request.url),
     { request: { headers: requestHeaders } }
@@ -46,5 +59,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

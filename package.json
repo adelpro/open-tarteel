@@ -53,6 +53,7 @@
     "test:contract": "vitest --run src/services/reciters/contracts.test.ts",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --run --coverage",
+    "seo:audit": "node scripts/seo-audit.mjs",
     "clean": "rimraf .next node_modules"
   },
   "lint-staged": {

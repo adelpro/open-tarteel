@@ -17,8 +17,7 @@ import { getRequestLocale } from '@/utils/request-locale';
 import ReciterPage from './reciter-page';
 import ReciterSeo from './reciter-seo';
 
-export const revalidate = 86400;
-export const dynamicParams = false;
+export const dynamic = 'force-dynamic';
 
 const COPY = { ar, en, de } as const;
 
@@ -27,16 +26,6 @@ type Props = {
   searchParams: Promise<{ moshafId?: string; surah?: string }>;
 };
 
-/**
- * Every known reciter id is a real page. An id that is not in the catalog is a
- * 404 at the router, before a loading shell can turn it into a 200.
- */
-export async function generateStaticParams() {
-  const reciters = await getAllReciters('ar');
-  return [...new Set(reciters.map((reciter) => reciter.id))].map((id) => ({
-    id,
-  }));
-}
 
 const findVariants = async (id: string, locale: SeoLocale) => {
   try {

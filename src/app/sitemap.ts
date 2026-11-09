@@ -66,19 +66,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const reciterRoute = ROUTES.find((route) => route.name === 'reciter');
   const reciterIds = [...new Set(reciters.map((reciter) => reciter.id))];
 
+  // Reciter pages are Arabic documents. The English and German URLs exist as
+  // canonicalised twins, so they are not listed and carry no hreflang pair.
   for (const id of reciterIds) {
     const path = `/reciter/${id}`;
-    for (const locale of LOCALES as readonly SeoLocale[]) {
-      entries.push({
-        url: absolute(appUrl, withLocale(locale, path)),
-        lastModified: CONTENT_LAST_MODIFIED,
-        changeFrequency: reciterRoute?.changeFrequency ?? 'weekly',
-        priority: reciterRoute?.priority ?? 0.7,
-        alternates: {
-          languages: languagesFor(appUrl, path),
-        },
-      });
-    }
+    entries.push({
+      url: absolute(appUrl, withLocale('ar', path)),
+      lastModified: CONTENT_LAST_MODIFIED,
+      changeFrequency: reciterRoute?.changeFrequency ?? 'weekly',
+      priority: reciterRoute?.priority ?? 0.7,
+    });
   }
 
   return entries;
