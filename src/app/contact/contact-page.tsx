@@ -94,7 +94,10 @@ export default function ContactPage() {
   );
 
   return (
-    <main className="flex min-h-[70vh] w-full items-center justify-center p-4 md:p-8">
+    <main className="flex min-h-[70vh] w-full flex-col items-center justify-center gap-6 p-4 md:p-8">
+      <h1 className="text-center text-2xl font-bold text-ink">
+        {formatMessage({ id: 'contact.contact_us' })}
+      </h1>
       {formSubmitted ? (
         <div
           className="flex w-full max-w-lg animate-fade-up flex-col items-center justify-center gap-6 rounded-3xl border border-gray-200/60 bg-white/60 p-10 shadow-2xl backdrop-blur-xl dark:border-gray-700/60 dark:bg-gray-900/60"
@@ -129,11 +132,6 @@ export default function ContactPage() {
         </div>
       ) : (
         <div className="w-full max-w-2xl animate-fade-up">
-          <div className="mb-10 text-center">
-            <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 drop-shadow-sm dark:text-white sm:text-5xl">
-              {formatMessage({ id: 'contact.contact_us' })}
-            </h1>
-          </div>
           <div className="rounded-3xl border border-gray-200/60 bg-white/60 p-6 shadow-2xl backdrop-blur-xl dark:border-gray-700/60 dark:bg-gray-900/60 sm:p-10">
             <form
               className="flex flex-col gap-6"

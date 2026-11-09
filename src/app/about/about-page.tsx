@@ -76,6 +76,27 @@ export default function AboutPage() {
           </p>
         </div>
 
+        <section className="m-1 rounded p-2 ps-4 md:m-2 md:border md:border-gray-200 md:p-8 md:shadow-sm md:dark:border-gray-700">
+          <h2 className="mb-3 text-2xl font-semibold">
+            <FormattedMessage
+              defaultMessage="أسئلة شائعة"
+              id="about.faq.title"
+            />
+          </h2>
+          <div className="space-y-4">
+            {[1, 2, 3, 4].map((number) => (
+              <div key={number}>
+                <h3 className="text-lg font-semibold">
+                  <FormattedMessage id={`about.faq.q${number}`} />
+                </h3>
+                <p className="mt-1">
+                  <FormattedMessage id={`about.faq.a${number}`} />
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <div className="mt-5 flex w-full max-w-2xl items-center justify-center text-sm text-gray-600">
           <p>
             <FormattedMessage

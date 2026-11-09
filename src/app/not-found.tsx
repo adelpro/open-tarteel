@@ -3,6 +3,10 @@ import Image from 'next/image';
 import LocalizedLink from '@/components/localized-link';
 import failSVG from '@/svgs/fail.svg';
 
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
 export default function NotFound() {
   return (
     <main className="mt-4 flex min-h-screen items-center justify-center bg-gray-100 p-4">
