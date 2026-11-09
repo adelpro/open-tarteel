@@ -1,6 +1,6 @@
 'use client';
 
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import React, {
   useCallback,
@@ -32,7 +32,11 @@ import { useNetworkStatus } from '@/hooks/use-network-status';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { useRecentlyPlayed } from '@/hooks/use-recently-played';
 import { useReciters } from '@/hooks/use-reciters';
-import { enabledSourcesAtom, selectedReciterAtom } from '@/jotai/atom';
+import {
+  enabledSourcesAtom,
+  reciterListPinnedAtom,
+  selectedReciterAtom,
+} from '@/jotai/atom';
 import { canDownload } from '@/services/reciters/capabilities';
 import { Reciter } from '@/types';
 import { cn, generateFavId } from '@/utils';
@@ -64,7 +68,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
   const [showRecentOnly, setShowRecentOnly] = useState(false);
   const [showDownloadedOnly, setShowDownloadedOnly] = useState(false);
   const [showDownloadableOnly, setShowDownloadableOnly] = useState(false);
-  const [pinned, setPinned] = useState(false);
+  const [pinned, setPinned] = useAtom(reciterListPinnedAtom);
   const skipHistoryBack = useRef(false);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const sentinelRef = useRef<HTMLLIElement>(null);
@@ -206,7 +210,10 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
       addToRecent(favId);
       syncView(favId);
       setSelectedReciter(reciter);
-      if (!pinned) {
+      const isDesktop =
+        typeof window !== 'undefined' &&
+        window.matchMedia('(min-width: 1024px)').matches;
+      if (!pinned || !isDesktop) {
         skipHistoryBack.current = true;
         setIsOpen(false);
       }
@@ -385,7 +392,10 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
         defaultMessage: 'Select a Reciter',
       })}
       open={isOpen}
-      onClose={() => setIsOpen(false)}
+      onClose={() => {
+        setIsOpen(false);
+        setPinned(false);
+      }}
       toolbar={toolbar}
       pinned={pinned}
       onTogglePin={() => setPinned((value) => !value)}

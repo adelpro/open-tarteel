@@ -1,6 +1,6 @@
 'use client';
 
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
@@ -10,14 +10,14 @@ import { useIntl } from 'react-intl';
 
 import { useFavorites } from '@/hooks/use-favorites';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
-import { selectedReciterAtom } from '@/jotai/atom';
+import { reciterListOpenAtom, selectedReciterAtom } from '@/jotai/atom';
 import { generateFavId } from '@/utils';
 import { useShareReciter } from '@/utils/share';
 
 import ReciterSelectorDialog from './reciter-selector-dialog';
 
 export default function ReciterSelector() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useAtom(reciterListOpenAtom);
   const [mounted, setMounted] = useState(false);
   const autoOpenedRef = useRef(false);
 
@@ -37,7 +37,7 @@ export default function ReciterSelector() {
       setIsOpen(true);
       autoOpenedRef.current = true;
     }
-  }, [searchParams]);
+  }, [searchParams, setIsOpen]);
 
   const playlist = selectedReciter?.moshaf?.playlist ?? null;
 

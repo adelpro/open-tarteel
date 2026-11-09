@@ -2,23 +2,18 @@
 
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
-import { useIntl } from 'react-intl';
 
-import LocalizedLink from '@/components/localized-link';
 import NetworkStatusIndicator from '@/components/network-status-indicator';
 import ReciterSelector from '@/components/reciter-selector';
 import { useReciters } from '@/hooks/use-reciters';
 import { selectedReciterAtom } from '@/jotai/atom';
 
 /**
- * The interactive part of the home page. The server page above it carries the
- * H1, the description and the crawlable reciter links; this component only
- * adds the selector and the "continue listening" shortcut.
+ * The interactive part of the home page: the selector and the player.
  */
 export default function HomeClient() {
   const [selectedReciter, setSelectedReciter] = useAtom(selectedReciterAtom);
   const { reciters, loading } = useReciters();
-  const { formatMessage } = useIntl();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -55,15 +50,6 @@ export default function HomeClient() {
         <NetworkStatusIndicator />
       </div>
       <ReciterSelector />
-      {selectedReciter ? (
-        <LocalizedLink
-          href={`/reciter/${selectedReciter.id}?moshafId=${selectedReciter.moshaf.id}`}
-          className="text-[13px] font-bold text-primary hover:text-primary-hover"
-        >
-          {formatMessage({ id: 'home.continueListening' })} —{' '}
-          {selectedReciter.name}
-        </LocalizedLink>
-      ) : null}
     </div>
   );
 }

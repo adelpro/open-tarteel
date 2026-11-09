@@ -1,3 +1,5 @@
+import { atom } from 'jotai';
+
 import { LinkSource, Reciter, Riwaya } from '@/types';
 
 import { createAtomWithStorage } from './create-atom-with-storage';
@@ -68,3 +70,7 @@ export const enabledSourcesAtom = createAtomWithStorage<LinkSource[]>(
   'enabled-sources',
   [LinkSource.MP3QURAN, LinkSource.ITQAN]
 );
+
+/** Desktop reciter panel state. It must survive a route change. */
+export const reciterListOpenAtom = atom(false);
+export const reciterListPinnedAtom = atom(false);
