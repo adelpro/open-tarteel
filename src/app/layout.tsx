@@ -63,9 +63,7 @@ export const metadata: Metadata = {
       'Listen to the Holy Quran recited by world-renowned reciters. Free and open-source.',
     images: ['/images/logo-og.png'],
   },
-  verification: SITE.verification
-    ? { google: SITE.verification }
-    : undefined,
+  verification: SITE.verification ? { google: SITE.verification } : undefined,
 };
 
 const tajawal = Tajawal({
@@ -104,7 +102,7 @@ export default async function RootLayout({
             />
             <main
               id="main-content"
-              className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background text-foreground"
+              className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background pb-20 text-foreground"
             >
               <div className="ambient-orbs pointer-events-none fixed inset-0 -z-10 overflow-hidden">
                 <div className="absolute -left-[10%] -top-[15%] h-[520px] w-[520px] rounded-full bg-sky-500/[0.06] blur-[80px] dark:bg-sky-400/[0.07]" />
