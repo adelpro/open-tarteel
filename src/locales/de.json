@@ -29,6 +29,7 @@
   "reciter.select": "Rezitator auswählen",
   "reciter.loadError": "Dieser Rezitator konnte nicht geladen werden. Bitte erneut versuchen.",
   "reciter.retry": "Erneut versuchen",
+  "reciter.description": "Hören Sie den Heiligen Koran, rezitiert von {name} — {moshaf}.",
   "favorites": "Favoriten",
   "views": "Aufrufe",
   "searchPlaceHolder": "Rezitator suchen",

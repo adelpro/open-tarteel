@@ -10,44 +10,23 @@ import NetworkStatusIndicator from '@/components/network-status-indicator';
 import ReciterSelector from '@/components/reciter-selector';
 import SimpleSkeleton from '@/components/simple-skeleton';
 import { fullscreenAtom, selectedReciterAtom } from '@/jotai/atom';
-import type { Playlist, Reciter } from '@/types';
+import type { Reciter } from '@/types';
 import { LinkSource } from '@/types';
-
-/** Build MP3Quran/Qurani.ai playlists from the compact catalog hints. */
-const buildLocalPlaylist = (reciter: Reciter): Playlist | null => {
-  const { moshaf } = reciter;
-
-  if (
-    reciter.source === LinkSource.MP3QURAN &&
-    moshaf.server &&
-    moshaf.surahIds
-  ) {
-    return moshaf.surahIds
-      .split(',')
-      .filter(Boolean)
-      .map((surahId) => ({
-        surahId,
-        link: `${moshaf.server}${surahId.padStart(3, '0')}.mp3`,
-      }));
-  }
-
-  if (reciter.source === LinkSource.QURANAI && moshaf.server) {
-    const total = Number(moshaf.surah_total) || 114;
-    return Array.from({ length: total }, (_, index) => {
-      const surahNumber = index + 1;
-      return {
-        surahId: String(surahNumber),
-        link: `${moshaf.server}${surahNumber}.mp3`,
-      };
-    });
-  }
-
-  return null;
-};
+import { buildLocalPlaylist } from '@/utils/build-local-playlist';
 
 const Player = dynamic(() => import('@/components/player'), { ssr: false });
 
-function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
+function ReciterContent({
+  id,
+  moshafId,
+  initialReciter,
+  initialSurah,
+}: {
+  id: string;
+  moshafId?: string;
+  initialReciter?: Reciter;
+  initialSurah?: number;
+}) {
   const [selectedReciter, setSelectedReciter] = useAtom(selectedReciterAtom);
   const [isFullscreen, setFullscreen] = useAtom(fullscreenAtom);
   const { formatMessage, locale } = useIntl();
@@ -63,6 +42,19 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
     setMounted(true);
   }, []);
 
+  // The server page already resolved this reciter and playlist. Seed the atom so
+  // the selector and the player share the same identity immediately.
+  useEffect(() => {
+    if (!initialReciter) return;
+    if (
+      selectedReciter?.id === initialReciter.id &&
+      selectedReciter.moshaf.id === initialReciter.moshaf.id
+    ) {
+      return;
+    }
+    setSelectedReciter(initialReciter);
+  }, [initialReciter, selectedReciter, setSelectedReciter]);
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setFullscreen(false);
@@ -72,22 +64,39 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [setFullscreen]);
 
-  // Fall back to the selected atom when a link omits `moshafId`.
+  // Fall back to the server-resolved reciter, then the selected atom, when a
+  // link omits `moshafId`.
   const targetMoshafId =
     moshafId ??
     queryMoshafId ??
+    initialReciter?.moshaf.id ??
     (id && selectedReciter?.id === id ? selectedReciter.moshaf.id : undefined);
+
+  const activeReciter =
+    selectedReciter?.id === id && selectedReciter.moshaf.id === targetMoshafId
+      ? selectedReciter
+      : initialReciter;
 
   const playlistReady = Boolean(
     id &&
     targetMoshafId &&
-    selectedReciter?.id === id &&
-    selectedReciter.moshaf.id === targetMoshafId &&
-    selectedReciter.moshaf.playlist.length > 0
+    activeReciter?.id === id &&
+    activeReciter.moshaf.id === targetMoshafId &&
+    activeReciter.moshaf.playlist.length > 0
   );
 
   useEffect(() => {
     if (!id || !targetMoshafId) return;
+
+    // The server already supplied this reciter with its playlist; do not refetch.
+    if (
+      initialReciter &&
+      initialReciter.id === id &&
+      initialReciter.moshaf.id === targetMoshafId &&
+      initialReciter.moshaf.playlist.length > 0
+    ) {
+      return;
+    }
 
     // A cached Itqan reciter from before the timing flag existed has a playlist
     // but no `hasTimings`, which would leave Tahfeez enabled for a recitation
@@ -159,6 +168,7 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
     playlistReady,
     retryKey,
     selectedReciter,
+    initialReciter,
     setSelectedReciter,
     targetMoshafId,
     id,
@@ -169,11 +179,21 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
   }
 
   const reciterReady = Boolean(
-    selectedReciter &&
-      selectedReciter.id === id &&
-      selectedReciter.moshaf.id === targetMoshafId &&
-      selectedReciter.moshaf.playlist.length > 0
+    activeReciter &&
+    activeReciter.id === id &&
+    activeReciter.moshaf.id === targetMoshafId &&
+    activeReciter.moshaf.playlist.length > 0
   );
+
+  const initialTrackIndex =
+    initialSurah && activeReciter
+      ? Math.max(
+          0,
+          activeReciter.moshaf.playlist.findIndex(
+            (item) => Number(item.surahId) === initialSurah
+          )
+        )
+      : 0;
 
   return (
     <div className="flex w-full items-center justify-center p-1 md:p-2">
@@ -182,7 +202,7 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
         {!isFullscreen && <ReciterSelector />}
         {isFullscreen && (
           <p className="mb-5 flex items-center justify-center gap-2 text-4xl font-bold text-gray-500">
-            {selectedReciter?.name}
+            {activeReciter?.name}
           </p>
         )}
         {detailError ? (
@@ -190,7 +210,8 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
             <p>
               {formatMessage({
                 id: 'reciter.loadError',
-                defaultMessage: 'Could not load this reciter. Please try again.',
+                defaultMessage:
+                  'Could not load this reciter. Please try again.',
               })}
             </p>
             <button
@@ -201,11 +222,12 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
               {formatMessage({ id: 'reciter.retry', defaultMessage: 'Retry' })}
             </button>
           </div>
-        ) : reciterReady && selectedReciter ? (
+        ) : reciterReady && activeReciter ? (
           <Suspense fallback={<SimpleSkeleton />}>
             <Player
-              key={`${selectedReciter.id}:${selectedReciter.moshaf.id}`}
-              playlist={selectedReciter.moshaf.playlist}
+              key={`${activeReciter.id}:${activeReciter.moshaf.id}`}
+              playlist={activeReciter.moshaf.playlist}
+              initialTrackIndex={initialTrackIndex}
             />
           </Suspense>
         ) : (
@@ -219,14 +241,23 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
 export default function ReciterPage({
   id,
   moshafId,
+  initialReciter,
+  initialSurah,
 }: {
   id: string;
   moshafId?: string;
+  initialReciter?: Reciter;
+  initialSurah?: number;
 }) {
   return (
     <Suspense fallback={<SimpleSkeleton />}>
       <div className="flex w-full max-w-lg items-center justify-center p-1 md:p-4">
-        <ReciterContent id={id} moshafId={moshafId} />
+        <ReciterContent
+          id={id}
+          moshafId={moshafId}
+          initialReciter={initialReciter}
+          initialSurah={initialSurah}
+        />
       </div>
     </Suspense>
   );

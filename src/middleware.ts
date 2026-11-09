@@ -1,10 +1,6 @@
-import { NextResponse, type NextRequest } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
-import {
-  DEFAULT_LOCALE,
-  localeFromPath,
-  stripLocale,
-} from '@/lib/seo/routes';
+import { DEFAULT_LOCALE, localeFromPath, stripLocale } from '@/lib/seo/routes';
 
 const PUBLIC_FILE =
   /\.(?:png|jpe?g|gif|svg|ico|webp|avif|woff2?|ttf|otf|css|js|mjs|map|xml|txt|webmanifest)$/i;
@@ -25,13 +21,18 @@ export function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-tarteel-locale', locale);
 
-  const response =
-    locale === DEFAULT_LOCALE
-      ? NextResponse.next({ request: { headers: requestHeaders } })
-      : NextResponse.rewrite(
-          new URL(`${stripLocale(pathname)}${search}`, request.url),
-          { request: { headers: requestHeaders } }
-        );
+  if (locale === DEFAULT_LOCALE) {
+    // Passing a cloned header bag through `NextResponse.next` loses the
+    // downstream 404 status in Next 15.5, so mutate the request headers in
+    // place for the bare (Arabic) tree.
+    request.headers.set('x-tarteel-locale', locale);
+    return NextResponse.next();
+  }
+
+  const response = NextResponse.rewrite(
+    new URL(`${stripLocale(pathname)}${search}`, request.url),
+    { request: { headers: requestHeaders } }
+  );
 
   if (locale !== DEFAULT_LOCALE) {
     response.cookies.set('locale', locale, {

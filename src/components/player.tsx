@@ -42,9 +42,10 @@ const PlaylistDialog = dynamic(
 
 type Props = {
   playlist: Playlist;
+  initialTrackIndex?: number;
 };
 
-export default function Player({ playlist }: Props) {
+export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackMode] = useAtom(playbackModeAtom);
   const visualizerModel = useAtomValue(visualizerModelAtom);
@@ -52,7 +53,9 @@ export default function Player({ playlist }: Props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useAtom(currentTimeAtom);
   const [duration, setDuration] = useState(0);
-  const [currentTrack, setCurrentTrack] = useState<number | undefined>(0);
+  const [currentTrack, setCurrentTrack] = useState<number | undefined>(
+    initialTrackIndex
+  );
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 

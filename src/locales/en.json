@@ -29,6 +29,7 @@
   "reciter.select": "Select A Reciter",
   "reciter.loadError": "Could not load this reciter. Please try again.",
   "reciter.retry": "Retry",
+  "reciter.description": "Listen to the Holy Quran recited by {name} — {moshaf}.",
   "favorites": "favorites",
   "views": "views",
   "searchPlaceHolder": "Search A Reciter",

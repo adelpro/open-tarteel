@@ -29,6 +29,7 @@
   "reciter.select": "اختر القارئ",
   "reciter.loadError": "تعذر تحميل هذا القارئ. حاول مرة أخرى.",
   "reciter.retry": "إعادة المحاولة",
+  "reciter.description": "استمع إلى القرآن الكريم بصوت {name} — {moshaf}.",
   "favorites": "المفضلة",
   "views": "المشاهدات",
   "sort": "تغيير الترتيب",
