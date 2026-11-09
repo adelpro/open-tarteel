@@ -53,6 +53,11 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
   const { formatMessage } = useIntl();
   const selectedReciter = useAtomValue(selectedReciterAtom);
   const setSelectedReciter = useSetAtom(selectedReciterAtom);
+  // A reciter can appear once per moshaf/riwaya, so the reciter id alone is
+  // not unique in this list. Match the same identity used for favourites.
+  const selectedFavId = selectedReciter
+    ? generateFavId(selectedReciter)
+    : null;
   const { recentIds, addToRecent } = useRecentlyPlayed();
   const [showRecentOnly, setShowRecentOnly] = useState(false);
   const [showDownloadedOnly, setShowDownloadedOnly] = useState(false);
@@ -408,7 +413,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
           {filteredReciters.slice(0, visibleCount).map((reciter) => {
             const favId = generateFavId(reciter);
             const isFavorite = favoriteReciters.includes(favId);
-            const current = selectedReciter?.id === reciter.id;
+            const current = selectedFavId === favId;
             const downloaded = isReciterDownloaded(
               reciter.id,
               reciter.moshaf.id

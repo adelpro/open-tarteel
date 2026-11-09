@@ -486,7 +486,7 @@ export default function PlayerControls({
                 style={{
                   writingMode: 'vertical-lr',
                   WebkitAppearance: 'slider-vertical',
-                  background: `linear-gradient(to top, #3b82f6 0%, #3b82f6 ${volume * 100}%, #cbd5e1 ${volume * 100}%, #cbd5e1 100%)`,
+                  background: `linear-gradient(to top, var(--accent) 0%, var(--accent) ${volume * 100}%, var(--border-strong) ${volume * 100}%, var(--border-strong) 100%)`,
                   borderRadius: '9999px',
                 }}
                 aria-label={messages.volumeControl}

@@ -78,7 +78,7 @@ export default async function Page({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <Hero />
-      <ReciterPage key={id} id={id} />
+      <ReciterPage id={id} />
     </main>
   );
 }

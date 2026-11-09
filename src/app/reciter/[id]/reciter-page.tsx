@@ -2,6 +2,7 @@
 
 import { useAtom } from 'jotai';
 import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -50,18 +51,16 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
   const [selectedReciter, setSelectedReciter] = useAtom(selectedReciterAtom);
   const [isFullscreen, setFullscreen] = useAtom(fullscreenAtom);
   const { formatMessage, locale } = useIntl();
+  const searchParams = useSearchParams();
+  const queryMoshafId = searchParams.get('moshafId') ?? undefined;
   const [mounted, setMounted] = useState(false);
   const [detailError, setDetailError] = useState(false);
-  const [queryMoshafId, setQueryMoshafId] = useState<string>();
   const [retryKey, setRetryKey] = useState(0);
   const requestRef = useRef(0);
   const timingRefreshRef = useRef<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
-    setQueryMoshafId(
-      new URLSearchParams(window.location.search).get('moshafId') ?? undefined
-    );
   }, []);
 
   useEffect(() => {
@@ -169,34 +168,12 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
     return <SimpleSkeleton />;
   }
 
-  if (detailError) {
-    return (
-      <div className="flex flex-col items-center gap-3 p-6 text-center text-sm text-gray-500">
-        <p>
-          {formatMessage({
-            id: 'reciter.loadError',
-            defaultMessage: 'Could not load this reciter. Please try again.',
-          })}
-        </p>
-        <button
-          type="button"
-          onClick={() => setRetryKey((key) => key + 1)}
-          className="h-11 rounded-[10px] bg-primary px-4 text-[13px] font-bold text-on-primary transition-colors duration-120 hover:bg-primary-hover"
-        >
-          {formatMessage({ id: 'reciter.retry', defaultMessage: 'Retry' })}
-        </button>
-      </div>
-    );
-  }
-
-  if (
-    !selectedReciter ||
-    selectedReciter.id !== id ||
-    selectedReciter.moshaf.id !== targetMoshafId ||
-    selectedReciter.moshaf.playlist.length === 0
-  ) {
-    return <SimpleSkeleton />;
-  }
+  const reciterReady = Boolean(
+    selectedReciter &&
+      selectedReciter.id === id &&
+      selectedReciter.moshaf.id === targetMoshafId &&
+      selectedReciter.moshaf.playlist.length > 0
+  );
 
   return (
     <div className="flex w-full items-center justify-center p-1 md:p-2">
@@ -205,15 +182,35 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
         {!isFullscreen && <ReciterSelector />}
         {isFullscreen && (
           <p className="mb-5 flex items-center justify-center gap-2 text-4xl font-bold text-gray-500">
-            {selectedReciter.name}
+            {selectedReciter?.name}
           </p>
         )}
-        <Suspense fallback={<SimpleSkeleton />}>
-          <Player
-            key={`${selectedReciter.id}:${selectedReciter.moshaf.id}`}
-            playlist={selectedReciter.moshaf.playlist}
-          />
-        </Suspense>
+        {detailError ? (
+          <div className="flex flex-col items-center gap-3 p-6 text-center text-sm text-gray-500">
+            <p>
+              {formatMessage({
+                id: 'reciter.loadError',
+                defaultMessage: 'Could not load this reciter. Please try again.',
+              })}
+            </p>
+            <button
+              type="button"
+              onClick={() => setRetryKey((key) => key + 1)}
+              className="h-11 rounded-[10px] bg-primary px-4 text-[13px] font-bold text-on-primary transition-colors duration-120 hover:bg-primary-hover"
+            >
+              {formatMessage({ id: 'reciter.retry', defaultMessage: 'Retry' })}
+            </button>
+          </div>
+        ) : reciterReady && selectedReciter ? (
+          <Suspense fallback={<SimpleSkeleton />}>
+            <Player
+              key={`${selectedReciter.id}:${selectedReciter.moshaf.id}`}
+              playlist={selectedReciter.moshaf.playlist}
+            />
+          </Suspense>
+        ) : (
+          <SimpleSkeleton />
+        )}
       </div>
     </div>
   );
