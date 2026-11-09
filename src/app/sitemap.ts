@@ -2,6 +2,7 @@
 
 import type { MetadataRoute } from 'next';
 
+import { mergedReciters } from '@/data/merged-reciters';
 import {
   alternatesFor,
   LOCALES,
@@ -22,10 +23,7 @@ const CONTENT_LAST_MODIFIED = new Date('2026-11-09T00:00:00.000Z');
 const absolute = (origin: string, path: string): string =>
   `${origin}${path === '/' ? '/' : path}`;
 
-const languagesFor = (
-  origin: string,
-  path: string
-): Record<string, string> => {
+const languagesFor = (origin: string, path: string): Record<string, string> => {
   const alternates = alternatesFor(path);
   return {
     ar: absolute(origin, alternates.ar),
@@ -64,7 +62,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   const reciterRoute = ROUTES.find((route) => route.name === 'reciter');
-  const reciterIds = [...new Set(reciters.map((reciter) => reciter.id))];
+  let reciterIds = [...new Set(reciters.map((reciter) => reciter.id))];
+
+  if (reciterIds.length === 0) {
+    // Keep the last known catalogue URLs when an upstream provider is down.
+    const fallback = new Set<string>();
+    for (const reciter of mergedReciters) {
+      for (const entries of Object.values(reciter.providers)) {
+        if (!Array.isArray(entries)) continue;
+        for (const entry of entries as Array<{ id?: unknown }>) {
+          if (typeof entry?.id === 'string') fallback.add(entry.id);
+        }
+      }
+    }
+    reciterIds = [...fallback];
+  }
 
   // Reciter pages are Arabic documents. The English and German URLs exist as
   // canonicalised twins, so they are not listed and carry no hreflang pair.

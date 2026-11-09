@@ -15,8 +15,6 @@ import { getRequestLocale } from '@/utils/request-locale';
 
 import HomeClient from './home-client';
 
-export const revalidate = 3600;
-
 type HomeCopy = {
   appName: string;
   appDescription: string;

@@ -17,9 +17,11 @@ const surahName = (surah: (typeof SURAHS)[number], locale: SeoLocale) =>
 export default function ReciterSeo({
   reciter,
   locale,
+  variants = [],
 }: {
   reciter: Reciter;
   locale: SeoLocale;
+  variants?: Reciter[];
 }) {
   return (
     <section className="mx-auto w-full max-w-3xl px-2">
@@ -29,6 +31,25 @@ export default function ReciterSeo({
       <p className="mt-1 text-center text-[13px] text-ink-muted">
         {reciter.moshaf.name}
       </p>
+
+      {variants.length > 1 ? (
+        <ul className="mt-3 flex flex-wrap justify-center gap-2">
+          {variants.map((variant) => (
+            <li key={variant.moshaf.id}>
+              <LocalizedLink
+                href={`/reciter/${reciter.id}?moshafId=${variant.moshaf.id}`}
+                className={
+                  variant.moshaf.id === reciter.moshaf.id
+                    ? 'rounded-[6px] border border-primary bg-primary-soft px-2.5 py-1 text-[12px] font-bold text-primary'
+                    : 'text-ink-secondary rounded-[6px] border border-border px-2.5 py-1 text-[12px] hover:bg-surface-sunken'
+                }
+              >
+                {variant.moshaf.name}
+              </LocalizedLink>
+            </li>
+          ))}
+        </ul>
+      ) : null}
 
       <h2 className="mt-6 text-[1rem] font-bold text-ink">
         {locale === 'ar' ? 'السور' : locale === 'de' ? 'Suren' : 'Surahs'}

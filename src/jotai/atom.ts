@@ -1,6 +1,4 @@
-import type { Language } from '@/constants/language';
 import { LinkSource, Reciter, Riwaya } from '@/types';
-import { getDefaultLocale } from '@/utils/get-default-locale';
 
 import { createAtomWithStorage } from './create-atom-with-storage';
 
@@ -23,18 +21,6 @@ export const showVisualizerAtom = createAtomWithStorage<boolean>(
 export const forcedOfflineAtom = createAtomWithStorage<boolean>(
   'forced-offline',
   false
-);
-
-const getInitialLocale = (): Language => {
-  if (typeof window !== 'undefined') {
-    return getDefaultLocale(navigator.language);
-  }
-  return 'ar';
-};
-
-export const localeAtom = createAtomWithStorage<Language>(
-  'locale',
-  getInitialLocale()
 );
 
 export const currentTimeAtom = createAtomWithStorage<number>('current-time', 0);

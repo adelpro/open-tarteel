@@ -12,9 +12,7 @@ describe('buildPageMetadata', () => {
   });
 
   it('uses the locale canonical', () => {
-    expect(meta.alternates?.canonical).toBe(
-      'https://tarteel.example/en/about'
-    );
+    expect(meta.alternates?.canonical).toBe('https://tarteel.example/en/about');
   });
 
   it('declares all language twins and x-default', () => {
@@ -51,5 +49,20 @@ describe('buildPageMetadata', () => {
       robots: { index: false, follow: false },
     });
     expect(privateMeta.robots).toEqual({ index: false, follow: false });
+  });
+
+  it('can omit hreflang for a canonicalised reciter twin', () => {
+    const reciterMeta = buildPageMetadata({
+      origin: 'https://tarteel.example',
+      locale: 'ar',
+      path: '/reciter/itqan.dev-2',
+      title: 'Badr',
+      description: 'Badr',
+      omitLanguages: true,
+    });
+    expect(reciterMeta.alternates?.canonical).toBe(
+      'https://tarteel.example/reciter/itqan.dev-2'
+    );
+    expect(reciterMeta.alternates?.languages).toBeUndefined();
   });
 });

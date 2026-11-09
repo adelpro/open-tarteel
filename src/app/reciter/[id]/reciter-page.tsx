@@ -225,7 +225,7 @@ function ReciterContent({
         ) : reciterReady && activeReciter ? (
           <Suspense fallback={<SimpleSkeleton />}>
             <Player
-              key={`${activeReciter.id}:${activeReciter.moshaf.id}`}
+              key={`${activeReciter.id}:${activeReciter.moshaf.id}:${initialTrackIndex}`}
               playlist={activeReciter.moshaf.playlist}
               initialTrackIndex={initialTrackIndex}
             />

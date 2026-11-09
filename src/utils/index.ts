@@ -4,7 +4,6 @@ export * from './format-bytes';
 export * from './format-time';
 export * from './generate-fav-id';
 export * from './get-circular-replacer';
-export * from './get-default-locale';
 export * from './get-error-message';
 export * from './is-valid-email';
 export * from './is-valid-magnet-uri';

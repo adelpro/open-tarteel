@@ -13,6 +13,8 @@ type BuildMetadataInput = {
   image?: string;
   type?: 'website' | 'article';
   robots?: Metadata['robots'];
+  /** Canonical-only pages (reciter twins) must not declare hreflang. */
+  omitLanguages?: boolean;
 };
 
 const absolute = (origin: string, value: string): string =>
@@ -38,6 +40,7 @@ export const buildPageMetadata = ({
   image = SITE.ogImage,
   type = 'website',
   robots,
+  omitLanguages = false,
 }: BuildMetadataInput): Metadata => {
   const base = origin.replace(/\/+$/, '');
   const canonical = `${base}${withLocale(locale, path)}`;
@@ -50,12 +53,16 @@ export const buildPageMetadata = ({
     description,
     alternates: {
       canonical,
-      languages: {
-        ar: absolute(base, alternates.ar),
-        en: absolute(base, alternates.en),
-        de: absolute(base, alternates.de),
-        'x-default': absolute(base, alternates['x-default']),
-      },
+      ...(omitLanguages
+        ? {}
+        : {
+            languages: {
+              ar: absolute(base, alternates.ar),
+              en: absolute(base, alternates.en),
+              de: absolute(base, alternates.de),
+              'x-default': absolute(base, alternates['x-default']),
+            },
+          }),
     },
     openGraph: {
       type,

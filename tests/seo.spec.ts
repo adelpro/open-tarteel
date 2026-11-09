@@ -6,10 +6,14 @@ test('home has a canonical and JSON-LD', async ({ page }) => {
     'href',
     /^https?:\/\/[^/]+\/?$/
   );
-  await expect(page.locator('script[type="application/ld+json"]')).not.toHaveCount(0);
+  await expect(
+    page.locator('script[type="application/ld+json"]')
+  ).not.toHaveCount(0);
 });
 
-test('the English about page keeps its language and twins', async ({ page }) => {
+test('the English about page keeps its language and twins', async ({
+  page,
+}) => {
   await page.goto('/en/about');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
@@ -17,6 +21,16 @@ test('the English about page keeps its language and twins', async ({ page }) => 
     /\/en\/about$/
   );
   await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(4);
+});
+
+test('the German page stays German and internal links keep the prefix', async ({
+  page,
+}) => {
+  await page.goto('/de/about');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+  await page.locator('a[href="/de/privacy"]').first().click();
+  await expect(page).toHaveURL(/\/de\/privacy$/);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'de');
 });
 
 test('a reciter page has a name and 114 surah links', async ({ page }) => {

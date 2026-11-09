@@ -18,7 +18,9 @@ const failures = [];
 const notes = [];
 
 const check = (label, ok, detail = '') => {
-  console.log(`  ${ok ? 'ok  ' : 'FAIL'}  ${label}${detail ? ` — ${detail}` : ''}`);
+  console.log(
+    `  ${ok ? 'ok  ' : 'FAIL'}  ${label}${detail ? ` — ${detail}` : ''}`
+  );
   if (!ok) failures.push(`${label}${detail ? `: ${detail}` : ''}`);
 };
 
@@ -33,9 +35,9 @@ const locsOf = (xml) =>
   [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 
 const alternatesOf = (xml) =>
-  [...xml.matchAll(/<xhtml:link[^>]*hreflang="([^"]+)"[^>]*href="([^"]+)"/g)].map(
-    (match) => [match[1], match[2]]
-  );
+  [
+    ...xml.matchAll(/<xhtml:link[^>]*hreflang="([^"]+)"[^>]*href="([^"]+)"/g),
+  ].map((match) => [match[1], match[2]]);
 
 const samePage = (canonical, loc) => {
   if (canonical === loc) return true;
@@ -49,15 +51,25 @@ const samePage = (canonical, loc) => {
 
 const main = async () => {
   const { response, text: xml } = await get(`${SITE}/sitemap.xml`);
-  check('sitemap answers 200', response.status === 200, String(response.status));
-  check('sitemap is XML', (response.headers.get('content-type') ?? '').includes('xml'));
+  check(
+    'sitemap answers 200',
+    response.status === 200,
+    String(response.status)
+  );
+  check(
+    'sitemap is XML',
+    (response.headers.get('content-type') ?? '').includes('xml')
+  );
   check('sitemap declares xhtml', xml.includes('xmlns:xhtml='));
 
   const locs = locsOf(xml);
   const alternates = alternatesOf(xml);
   check('sitemap lists URLs', locs.length > 0, String(locs.length));
   check('no duplicate loc', locs.length === new Set(locs).size);
-  check('every loc is absolute', locs.every((loc) => /^https?:\/\//.test(loc)));
+  check(
+    'every loc is absolute',
+    locs.every((loc) => /^https?:\/\//.test(loc))
+  );
   const paired = locs.filter((loc) => !/\/reciter\//.test(loc));
   check(
     'every paired URL has four language twins',
@@ -78,23 +90,40 @@ const main = async () => {
       `${SITE}/en/about`,
       `${SITE}/contact`,
       `${SITE}/privacy`,
-      ...locs.filter((loc) => loc.includes('/reciter/') && !/\/(en|de)\/reciter\//.test(loc)).slice(0, 2),
+      ...locs
+        .filter(
+          (loc) =>
+            loc.includes('/reciter/') && !/\/(en|de)\/reciter\//.test(loc)
+        )
+        .slice(0, 2),
     ]),
   ];
 
   for (const loc of sample) {
-    const target = isLocal
-      ? loc.replace(/^https?:\/\/[^/]+/, SITE)
-      : loc;
+    const target = isLocal ? loc.replace(/^https?:\/\/[^/]+/, SITE) : loc;
     const { response: pageResponse, text: html } = await get(target);
-    check(`${loc} answers 200`, pageResponse.status === 200, String(pageResponse.status));
+    check(
+      `${loc} answers 200`,
+      pageResponse.status === 200,
+      String(pageResponse.status)
+    );
 
     const robots = pageResponse.headers.get('x-robots-tag') ?? '';
-    check(`${loc} is not noindex`, !/noindex/i.test(robots));
+    const metaRobots =
+      html.match(/<meta name="robots" content="([^"]+)"/)?.[1] ?? '';
+    check(
+      `${loc} is not noindex`,
+      !/noindex/i.test(robots) && !/noindex/i.test(metaRobots)
+    );
 
     const canonical = html.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
     check(`${loc} has a canonical`, Boolean(canonical));
-    if (canonical) check(`${loc} canonical points at itself`, samePage(canonical, loc), canonical);
+    if (canonical)
+      check(
+        `${loc} canonical points at itself`,
+        samePage(canonical, loc),
+        canonical
+      );
 
     const pageAlternates = [
       ...html.matchAll(/<link rel="alternate" hreflang="([^"]+)"/g),
@@ -102,8 +131,23 @@ const main = async () => {
     if (pageAlternates.length > 0) {
       check(
         `${loc} declares ar, en, de and x-default`,
-        ['ar', 'en', 'de', 'x-default'].every((lang) => pageAlternates.includes(lang)),
+        ['ar', 'en', 'de', 'x-default'].every((lang) =>
+          pageAlternates.includes(lang)
+        ),
         pageAlternates.join(', ')
+      );
+      const pageAlternateHrefs = [
+        ...html.matchAll(
+          /<link rel="alternate" hreflang="[^"]+" href="([^"]+)"/g
+        ),
+      ].map((match) => match[1]);
+      check(
+        `${loc} hreflang targets are in the sitemap`,
+        pageAlternateHrefs.every(
+          (href) =>
+            locs.includes(href) ||
+            (isLocal && locs.some((item) => samePage(item, href)))
+        )
       );
     } else {
       notes.push(`${loc} has no hreflang links`);
@@ -112,7 +156,10 @@ const main = async () => {
 
   const { text: robots } = await get(`${SITE}/robots.txt`);
   check('robots.txt names the sitemap', robots.includes('Sitemap:'));
-  check('robots.txt has no blanket disallow', !/^\s*Disallow:\s*\/\s*$/m.test(robots));
+  check(
+    'robots.txt has no blanket disallow',
+    !/^\s*Disallow:\s*\/\s*$/m.test(robots)
+  );
 };
 
 try {
@@ -128,5 +175,7 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log('seo audit: compatible with the protocol and Search Console checks');
+console.log(
+  'seo audit: compatible with the protocol and Search Console checks'
+);
 if (notes.length > 0) console.log(`(${notes.length} note(s), not errors)`);

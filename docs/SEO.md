@@ -5,7 +5,7 @@
 - Arabic is the default and lives at bare paths: `/`, `/about`, `/reciter/[id]`.
 - English lives under `/en`, German under `/de`.
 - `x-default` is always Arabic.
-- Reciter pages are Arabic documents. `/en/reciter/[id]` and `/de/reciter/[id]` exist as canonicalised twins, are excluded from the sitemap, and declare no `hreflang` pair. This follows the open-tilawa model: a translated reciter page is a thin twin of the Arabic document.
+- Reciter pages are Arabic documents. `/en/reciter/[id]` and `/de/reciter/[id]` redirect to the Arabic document, are excluded from the sitemap, and declare no `hreflang` pair. This follows the open-tilawa model: a translated reciter page is a thin twin of the Arabic document.
 - `?moshafId` and `?surah` are player state, not separate documents. Their canonical is `/reciter/[id]`.
 
 ## Source of truth

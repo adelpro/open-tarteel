@@ -26,13 +26,20 @@ type Props = {
   searchParams: Promise<{ moshafId?: string; surah?: string }>;
 };
 
+type FindResult = { status: 'ok'; variants: Reciter[] } | { status: 'error' };
 
-const findVariants = async (id: string, locale: SeoLocale) => {
+const findVariants = async (
+  id: string,
+  locale: SeoLocale
+): Promise<FindResult> => {
   try {
     const reciters = await getAllReciters(locale);
-    return reciters.filter((reciter) => reciter.id === id);
+    return {
+      status: 'ok',
+      variants: reciters.filter((reciter) => reciter.id === id),
+    };
   } catch {
-    return [];
+    return { status: 'error' };
   }
 };
 
@@ -47,11 +54,21 @@ const descriptionFor = (
     .replace('{moshaf}', moshafName);
 };
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params, searchParams }: Props) {
   const { id } = await params;
+  const query = await searchParams;
   const locale = await getRequestLocale();
-  const variants = await findVariants(id, locale);
-  const reciter = variants[0];
+  const result = await findVariants(id, locale);
+  if (result.status === 'error') {
+    return {
+      title: 'Reciter temporarily unavailable — Open Tarteel',
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const reciter =
+    result.variants.find((item) => item.moshaf.id === query.moshafId) ??
+    result.variants[0];
 
   if (!reciter) {
     return {
@@ -65,6 +82,7 @@ export async function generateMetadata({ params }: Props) {
     path: `/reciter/${id}`,
     title: `${reciter.name} — ${reciter.moshaf.name} | Open Tarteel`,
     description: descriptionFor(locale, reciter, reciter.moshaf.name),
+    omitLanguages: true,
   });
 }
 
@@ -72,8 +90,13 @@ export default async function Page({ params, searchParams }: Props) {
   const { id } = await params;
   const query = await searchParams;
   const locale = await getRequestLocale();
-  const variants = await findVariants(id, locale);
+  const result = await findVariants(id, locale);
 
+  if (result.status === 'error') {
+    throw new Error('Reciter catalogue unavailable');
+  }
+
+  const variants = result.variants;
   if (variants.length === 0) {
     notFound();
   }
@@ -152,7 +175,7 @@ export default async function Page({ params, searchParams }: Props) {
         }}
       />
       <div className="w-full py-6">
-        <ReciterSeo reciter={reciter} locale={locale} />
+        <ReciterSeo reciter={reciter} locale={locale} variants={variants} />
       </div>
       <ReciterPage
         id={id}
