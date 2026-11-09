@@ -11,6 +11,7 @@ import IntlProviderWrapper from '@/components/intl-provider-wrapper';
 import OfflineRedirect from '@/components/offline-redirect';
 import PwaUpdater from '@/components/pwa-updater';
 import StoragePersist from '@/components/storage-persist';
+import { websiteGraph } from '@/lib/seo/json-ld';
 import { clientConfig } from '@/utils';
 import { getRequestLocale } from '@/utils/request-locale';
 
@@ -69,33 +70,6 @@ const tajawal = Tajawal({
   preload: true,
 });
 
-const siteJsonLd = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'WebApplication',
-      name: clientConfig.APP_NAME,
-      url: clientConfig.APP_URL,
-      description:
-        'Listen to the Holy Quran recited by world-renowned reciters. Free and open-source.',
-      applicationCategory: 'MultimediaApplication',
-      operatingSystem: 'Any',
-      inLanguage: ['ar', 'en', 'de'],
-      offers: {
-        '@type': 'Offer',
-        price: '0',
-        priceCurrency: 'USD',
-      },
-    },
-    {
-      '@type': 'Organization',
-      name: clientConfig.APP_NAME,
-      url: clientConfig.APP_URL,
-      logo: `${clientConfig.APP_URL}/images/192x192.png`,
-    },
-  ],
-};
-
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -118,7 +92,11 @@ export default async function RootLayout({
             </a>
             <script
               type="application/ld+json"
-              dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify(
+                  websiteGraph({ locale: resolvedLocale })
+                ).replace(/</g, '\\u003c'),
+              }}
             />
             <main
               id="main-content"
