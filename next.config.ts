@@ -43,6 +43,8 @@ const withSerwist = withSerwistInit({
   maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB
 });
 
+const noindex = isNetlifyPreview || process.env.SEO_NOINDEX === 'true';
+
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
@@ -54,6 +56,9 @@ const securityHeaders = [
     key: 'Permissions-Policy',
     value: 'camera=(), microphone=(), geolocation=(), payment=()',
   },
+  ...(noindex
+    ? [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }]
+    : []),
   ...(isProduction
     ? [
         {
