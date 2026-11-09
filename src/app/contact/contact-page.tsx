@@ -1,11 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import Loader from '@/components/loader';
+import LocalizedLink from '@/components/localized-link';
 import sendSVG from '@/svgs/send.svg';
 import { isValidEmail } from '@/utils';
 
@@ -121,11 +121,11 @@ export default function ContactPage() {
           >
             {formatMessage({ id: 'contact.thank_you_for_contacting' })}
           </p>
-          <Link href="/" className="mt-4 flex w-full justify-center">
+          <LocalizedLink href="/" className="mt-4 flex w-full justify-center">
             <button className="w-full rounded-xl bg-gray-100 px-6 py-4 text-lg font-bold text-gray-700 transition-all hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
               {formatMessage({ id: 'contact.back_to_home' })}
             </button>
-          </Link>
+          </LocalizedLink>
         </div>
       ) : (
         <div className="w-full max-w-2xl animate-fade-up">

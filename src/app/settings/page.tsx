@@ -12,6 +12,7 @@ import ThemePicker from '@/components/theme-picker';
 import Row from '@/components/ui/row';
 import Switch from '@/components/ui/switch';
 import useDirection from '@/hooks/use-direction';
+import { useLocalePath } from '@/hooks/use-locale-path';
 import { enabledSourcesAtom, forcedOfflineAtom } from '@/jotai/atom';
 import { isMp3QuranV4Enabled } from '@/services/reciters/flags';
 import { LinkSource } from '@/types';
@@ -67,6 +68,7 @@ export default function SettingsPage() {
   const { isRTL } = useDirection();
   const { formatMessage } = useIntl();
   const router = useRouter();
+  const localePath = useLocalePath();
   const [enabledSources, setEnabledSources] = useAtom(enabledSourcesAtom);
   const [forcedOffline, setForcedOffline] = useAtom(forcedOfflineAtom);
 
@@ -88,7 +90,7 @@ export default function SettingsPage() {
     if (typeof window !== 'undefined' && window.history.length > 1) {
       router.back();
     } else {
-      router.push('/');
+      router.push(localePath('/'));
     }
   };
 

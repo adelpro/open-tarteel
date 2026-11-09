@@ -10,17 +10,19 @@ import { useRouter } from 'next/navigation';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { FormattedMessage } from 'react-intl';
 
+import { useLocalePath } from '@/hooks/use-locale-path';
 import { selectedReciterAtom } from '@/jotai/atom';
 
 import { FooterLink } from './footer-link';
 
 export default function Footer() {
   const router = useRouter();
+  const localePath = useLocalePath();
   const setSelectedReciter = useSetAtom(selectedReciterAtom);
   const handleHomeClick = (event: React.MouseEvent) => {
     event.preventDefault();
     setSelectedReciter(null);
-    router.push('/');
+    router.push(localePath('/'));
   };
 
   return (

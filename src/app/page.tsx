@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import NetworkStatusIndicator from '@/components/network-status-indicator';
 import ReciterSelector from '@/components/reciter-selector';
+import { useLocalePath } from '@/hooks/use-locale-path';
 import { useReciters } from '@/hooks/use-reciters';
 import { selectedReciterAtom } from '@/jotai/atom';
 
@@ -15,6 +16,7 @@ export default function Home() {
   const [selectedReciter, setSelectedReciter] = useAtom(selectedReciterAtom);
   const { reciters, loading } = useReciters();
   const router = useRouter();
+  const localePath = useLocalePath();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isClient, setIsClient] = useState(false);
@@ -46,13 +48,14 @@ export default function Home() {
     const currentPath = `${pathname}?${searchParams.toString()}`;
     const targetPath = `/reciter/${selectedReciter.id}?moshafId=${selectedReciter.moshaf.id}`;
     if (currentPath !== targetPath) {
-      router.push(targetPath);
+      router.push(localePath(targetPath));
     }
   }, [
     selectedReciter,
     pathname,
     searchParams,
     router,
+    localePath,
     isClient,
     loading,
     reciters,

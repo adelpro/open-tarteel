@@ -1,12 +1,14 @@
 'use client';
 
 import { useAtom } from 'jotai';
+import { usePathname, useRouter } from 'next/navigation';
 import { MdExpandMore } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import type { Language } from '@/constants/language';
 import { LANGUAGES } from '@/constants/language';
 import { localeAtom } from '@/jotai/atom';
+import { stripLocale, withLocale } from '@/lib/seo/routes';
 
 const COOKIE_NAME = 'locale';
 const MAX_AGE = 60 * 60 * 24 * 365; // 1 year
@@ -14,11 +16,13 @@ const MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 export default function LanguageSwitcher() {
   const { formatMessage, locale } = useIntl();
   const [, setLocale] = useAtom(localeAtom);
+  const router = useRouter();
+  const pathname = usePathname();
 
   const handleLanguageChange = (language: Language) => {
     setLocale(language);
     document.cookie = `${COOKIE_NAME}=${language}; path=/; max-age=${MAX_AGE}; SameSite=Lax`;
-    window.location.reload();
+    router.push(withLocale(language, stripLocale(pathname)));
   };
 
   return (

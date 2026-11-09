@@ -27,6 +27,7 @@ import {
 } from '@/gun/view-rank';
 import { useFavorites } from '@/hooks/use-favorites';
 import { useFilterSort } from '@/hooks/use-filter-sort';
+import { useLocalePath } from '@/hooks/use-locale-path';
 import { useNetworkStatus } from '@/hooks/use-network-status';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { useRecentlyPlayed } from '@/hooks/use-recently-played';
@@ -50,6 +51,7 @@ const PAGE_SIZE = 80;
 
 export default function RecitersList({ isOpen, setIsOpen }: Props) {
   const router = useRouter();
+  const localePath = useLocalePath();
   const { formatMessage } = useIntl();
   const selectedReciter = useAtomValue(selectedReciterAtom);
   const setSelectedReciter = useSetAtom(selectedReciterAtom);
@@ -217,9 +219,9 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
         ? `${moshafParameter}&${existingParameters}`
         : moshafParameter;
 
-      router.push(`/reciter/${reciter.id}?${queryString}`);
+      router.push(localePath(`/reciter/${reciter.id}?${queryString}`));
     },
-    [addToRecent, pinned, router, setIsOpen, setSelectedReciter]
+    [addToRecent, localePath, pinned, router, setIsOpen, setSelectedReciter]
   );
 
   const sortLabel =
