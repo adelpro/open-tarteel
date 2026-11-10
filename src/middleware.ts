@@ -54,12 +54,20 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const response = NextResponse.rewrite(
-    new URL(`${stripLocale(pathname)}${search}`, request.url),
-    { request: { headers: requestHeaders } }
-  );
+  const stripped = stripLocale(pathname);
+  // A protocol-relative path such as `/en//evil.example` would resolve against
+  // the attacker's origin. Only same-origin paths may be rewritten.
+  if (stripped.startsWith('//')) {
+    return NextResponse.next();
+  }
 
-  return response;
+  const target = request.nextUrl.clone();
+  target.pathname = stripped;
+  target.search = search;
+
+  return NextResponse.rewrite(target, {
+    request: { headers: requestHeaders },
+  });
 }
 
 export const config = {

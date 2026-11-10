@@ -37,7 +37,7 @@ const locsOf = (xml) =>
 const alternatesOf = (xml) =>
   [
     ...xml.matchAll(/<xhtml:link[^>]*hreflang="([^"]+)"[^>]*href="([^"]+)"/g),
-  ].map((match) => [match[1], match[2]]);
+  ].map((match) => [match[1].toLowerCase(), match[2]]);
 
 const normalizeUrl = (value) => value.replace(/\/+$/, '');
 
@@ -128,8 +128,8 @@ const main = async () => {
       );
 
     const pageAlternates = [
-      ...html.matchAll(/<link rel="alternate" hreflang="([^"]+)"/g),
-    ].map((match) => match[1]);
+      ...html.matchAll(/<link rel="alternate" hreflang="([^"]+)"/gi),
+    ].map((match) => match[1].toLowerCase());
     if (pageAlternates.length > 0) {
       check(
         `${loc} declares ar, en, de and x-default`,
@@ -140,7 +140,7 @@ const main = async () => {
       );
       const pageAlternateHrefs = [
         ...html.matchAll(
-          /<link rel="alternate" hreflang="[^"]+" href="([^"]+)"/g
+          /<link rel="alternate" hreflang="[^"]+" href="([^"]+)"/gi
         ),
       ].map((match) => match[1]);
       check(

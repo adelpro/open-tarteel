@@ -1,5 +1,19 @@
 import { expect, test } from '@playwright/test';
 
+test('server HTML declares the URL language', async ({ request }) => {
+  for (const [path, lang] of [
+    ['/', 'ar'],
+    ['/en', 'en'],
+    ['/de', 'de'],
+    ['/en/about', 'en'],
+    ['/de/about', 'de'],
+  ] as const) {
+    const response = await request.get(path);
+    const html = await response.text();
+    expect(html).toContain(`<html lang="${lang}"`);
+  }
+});
+
 test('home has a canonical and JSON-LD', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(

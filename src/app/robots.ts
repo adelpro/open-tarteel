@@ -17,13 +17,18 @@ export default function robots(): MetadataRoute.Robots {
     };
   }
 
+  const hasOrigin = /^https?:\/\//i.test(appUrl);
+
   return {
     rules: {
       userAgent: '*',
       allow: '/',
       disallow: ['/api/', '/private/'],
     },
-    sitemap: `${appUrl}/sitemap.xml`,
-    host: appUrl,
+    // A relative `Sitemap:` is ignored by crawlers, and an empty `Host:` is
+    // invalid. Only emit both when the configured origin is absolute.
+    ...(hasOrigin
+      ? { sitemap: `${appUrl}/sitemap.xml`, host: appUrl }
+      : {}),
   };
 }
