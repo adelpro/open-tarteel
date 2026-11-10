@@ -1,12 +1,14 @@
 'use client';
 
 import { useAtom } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
 import NetworkStatusIndicator from '@/components/network-status-indicator';
 import ReciterSelector from '@/components/reciter-selector';
 import { useReciters } from '@/hooks/use-reciters';
 import { selectedReciterAtom } from '@/jotai/atom';
+import { reciterRouteFor } from '@/lib/reciter-route';
 
 /**
  * The interactive part of the home page: the selector and the player.
@@ -15,15 +17,22 @@ export default function HomeClient() {
   const [selectedReciter, setSelectedReciter] = useAtom(selectedReciterAtom);
   const { reciters, loading } = useReciters();
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
+  const redirectedRef = useRef(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Returning listeners resume their player. The middleware already covers
+  // loads that carry the route cookie; this handles the first visit after an
+  // upgrade (localStorage only) and client-side navigation back home.
   useEffect(() => {
-    if (loading || reciters.length === 0) return;
+    if (!mounted || !selectedReciter || redirectedRef.current) return;
+
     if (
-      selectedReciter &&
+      !loading &&
+      reciters.length > 0 &&
       !reciters.some(
         (reciter) =>
           reciter.id === selectedReciter.id &&
@@ -31,8 +40,12 @@ export default function HomeClient() {
       )
     ) {
       setSelectedReciter(null);
+      return;
     }
-  }, [loading, reciters, selectedReciter, setSelectedReciter]);
+
+    redirectedRef.current = true;
+    router.replace(reciterRouteFor(selectedReciter));
+  }, [mounted, selectedReciter, loading, reciters, setSelectedReciter, router]);
 
   if (!mounted) {
     return (

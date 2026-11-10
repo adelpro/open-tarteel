@@ -8,6 +8,7 @@ import { useIntl } from 'react-intl';
 
 import NetworkStatusIndicator from '@/components/network-status-indicator';
 import PlayerSkeleton from '@/components/player-skeleton';
+import { clearReciterRouteCookie } from '@/components/reciter-route-cookie';
 import ReciterSelector from '@/components/reciter-selector';
 import { fullscreenAtom, selectedReciterAtom } from '@/jotai/atom';
 import type { Reciter } from '@/types';
@@ -57,6 +58,11 @@ function ReciterContent({
     }
     setSelectedReciter(initialReciter);
   }, [initialReciter, selectedReciter, setSelectedReciter]);
+
+  // A broken reciter must not trap the home redirect on every visit.
+  useEffect(() => {
+    if (detailError) clearReciterRouteCookie();
+  }, [detailError]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

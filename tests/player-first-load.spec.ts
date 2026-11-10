@@ -20,6 +20,36 @@ const storedReciter = {
 
 const RECITER_PATH = '/reciter/mp3quran.net-1?moshafId=1';
 
+test('a stored reciter opens the player from the home', async ({ page }) => {
+  await page.addInitScript((reciter) => {
+    localStorage.setItem('selected-reciter', JSON.stringify(reciter));
+  }, storedReciter);
+
+  await page.goto('/');
+
+  await expect(page).toHaveURL(/\/reciter\/mp3quran\.net-1\?moshafId=1$/);
+  await expect(page.locator('#audio')).toHaveCount(1);
+});
+
+test('the route cookie redirects on the server', async ({
+  page,
+  context,
+  baseURL,
+}) => {
+  await context.addCookies([
+    {
+      name: 'reciter-route',
+      value: encodeURIComponent(RECITER_PATH),
+      url: baseURL as string,
+    },
+  ]);
+
+  await page.goto('/');
+
+  await expect(page).toHaveURL(/\/reciter\/mp3quran\.net-1\?moshafId=1$/);
+  await expect(page.locator('#audio')).toHaveCount(1);
+});
+
 test('a stored reciter renders its player on a cold load', async ({ page }) => {
   await page.addInitScript((reciter) => {
     localStorage.setItem('selected-reciter', JSON.stringify(reciter));

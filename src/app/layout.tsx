@@ -10,6 +10,7 @@ import HtmlWrapper from '@/components/html-wrapper';
 import IntlProviderWrapper from '@/components/intl-provider-wrapper';
 import OfflineRedirect from '@/components/offline-redirect';
 import PwaUpdater from '@/components/pwa-updater';
+import ReciterRouteCookie from '@/components/reciter-route-cookie';
 import StoragePersist from '@/components/storage-persist';
 import { websiteGraph } from '@/lib/seo/json-ld';
 import { SITE } from '@/lib/seo/site';
@@ -110,6 +111,7 @@ export default async function RootLayout({
                 <div className="absolute bottom-[-10%] left-[35%] h-[340px] w-[340px] rounded-full bg-violet-500/[0.04] blur-[70px] dark:bg-violet-400/[0.06]" />
               </div>
               <EnabledSourcesCookieSync />
+              <ReciterRouteCookie />
               <StoragePersist />
               <OfflineRedirect />
               {process.env.NEXT_PUBLIC_IS_PREVIEW !== 'true' && <PwaUpdater />}
