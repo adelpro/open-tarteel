@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 - server-rendered home and reciter pages with canonical URLs, hreflang and
   localized metadata for crawlers
+- long-press the volume icon to mute or restore the previous level; a tap still
+  opens the level popover
+- about page documents the multiple recitation providers, with the source
+  shown for every reciter
 
 ### Changed
 
