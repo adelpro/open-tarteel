@@ -33,6 +33,46 @@ worktree, or `git switch staging` in another shell). Audio, the reciter API and
 the service worker behave the same locally; only metadata origins follow
 `NEXT_PUBLIC_APP_URL`.
 
+### When the build-minute quota resets
+
+Netlify's legacy free plan allows 300 build minutes per monthly cycle. When it
+is exhausted, **sites keep serving** but new builds are disabled for every site
+on the account; free tier has no extra usage packages. The allowance resets on
+the billing date shown under **Usage & billing**.
+
+Before the next deploy:
+
+1. `open-tarteel` (production) → Site configuration → Build & deploy →
+   Branches → **Deploy only the production branch**. This removes the
+   `develop--open-tarteel.netlify.app` channel; delete that stale deploy too.
+2. `open-tarteel-staging` → turn **Auto publishing off** (or stop builds), so a
+   push to `staging` cannot start a build. `staging` is tested locally now.
+3. Make sure builds are not stopped on the production site.
+
+Then promote and deploy production only:
+
+```bash
+# develop and staging should match; staging is tested locally
+git switch develop && git merge --ff-only staging
+git push origin develop
+
+# production deploy
+git switch main && git merge --ff-only develop
+git push origin main
+```
+
+Verify the deploy:
+
+```bash
+curl -fsS https://tarteel.quran.us.kg/api/health   # version must be the tag
+curl -fsSI https://tarteel.quran.us.kg/sw.js       # Cache-Control: no-cache
+curl -fsS https://tarteel.quran.us.kg/sitemap.xml | head
+```
+
+Only push a tag after the deploy is verified; the `Release from Tag` workflow
+creates the GitHub release from the changelog section matching the tag
+(`0.5.0-rc.6`, no `v` prefix).
+
 ## One-time setup
 
 ```bash
