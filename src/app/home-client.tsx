@@ -1,7 +1,6 @@
 'use client';
 
 import { useAtom } from 'jotai';
-import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import NetworkStatusIndicator from '@/components/network-status-indicator';
@@ -17,7 +16,6 @@ export default function HomeClient() {
   const [selectedReciter, setSelectedReciter] = useAtom(selectedReciterAtom);
   const { reciters, loading } = useReciters();
   const [mounted, setMounted] = useState(false);
-  const router = useRouter();
   const redirectedRef = useRef(false);
 
   useEffect(() => {
@@ -44,8 +42,10 @@ export default function HomeClient() {
     }
 
     redirectedRef.current = true;
-    router.replace(reciterRouteFor(selectedReciter));
-  }, [mounted, selectedReciter, loading, reciters, setSelectedReciter, router]);
+    // A hard navigation avoids an App Router transition that waits on the
+    // dynamic reciter page; the URL is authoritative either way.
+    window.location.replace(reciterRouteFor(selectedReciter));
+  }, [mounted, selectedReciter, loading, reciters, setSelectedReciter]);
 
   if (!mounted) {
     return (
