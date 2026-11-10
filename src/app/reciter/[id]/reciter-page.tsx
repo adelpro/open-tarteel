@@ -47,12 +47,19 @@ function ReciterContent({
   }, []);
 
   // The server page already resolved this reciter and playlist. Seed the atom so
-  // the selector and the player share the same identity immediately.
+  // the selector and the player share the same identity immediately. A stored
+  // entry can have an empty playlist (the catalog only carries hints), so also
+  // fill that in — otherwise the empty selection masks the server playlist.
   useEffect(() => {
     if (!initialReciter) return;
-    if (
+    const sameReciter =
       selectedReciter?.id === initialReciter.id &&
-      selectedReciter.moshaf.id === initialReciter.moshaf.id
+      selectedReciter.moshaf.id === initialReciter.moshaf.id;
+    const storedHasPlaylist =
+      (selectedReciter?.moshaf.playlist.length ?? 0) > 0;
+    if (
+      sameReciter &&
+      (storedHasPlaylist || initialReciter.moshaf.playlist.length === 0)
     ) {
       return;
     }
@@ -81,10 +88,15 @@ function ReciterContent({
     initialReciter?.moshaf.id ??
     (id && selectedReciter?.id === id ? selectedReciter.moshaf.id : undefined);
 
-  const activeReciter =
-    selectedReciter?.id === id && selectedReciter.moshaf.id === targetMoshafId
-      ? selectedReciter
-      : initialReciter;
+  // Prefer a reciter that actually has a playlist. An empty stored entry must
+  // not hide the server-resolved playlist behind a permanent skeleton.
+  const storedMatches =
+    selectedReciter?.id === id && selectedReciter.moshaf.id === targetMoshafId;
+  const storedHasPlaylist =
+    storedMatches && (selectedReciter?.moshaf.playlist.length ?? 0) > 0;
+  const activeReciter = storedHasPlaylist
+    ? selectedReciter
+    : (initialReciter ?? (storedMatches ? selectedReciter : undefined));
 
   const playlistReady = Boolean(
     id &&

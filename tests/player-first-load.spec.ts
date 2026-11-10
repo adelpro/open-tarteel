@@ -31,6 +31,25 @@ test('a stored reciter opens the player from the home', async ({ page }) => {
   await expect(page.locator('#audio')).toHaveCount(1);
 });
 
+test('a stored reciter without a cached playlist still opens the player', async ({
+  page,
+}) => {
+  await page.addInitScript((reciter) => {
+    localStorage.setItem(
+      'selected-reciter',
+      JSON.stringify({
+        ...reciter,
+        moshaf: { ...reciter.moshaf, playlist: [] },
+      })
+    );
+  }, storedReciter);
+
+  await page.goto('/');
+
+  await expect(page).toHaveURL(/\/reciter\/mp3quran\.net-1\?moshafId=1$/);
+  await expect(page.locator('#audio')).toHaveCount(1);
+});
+
 test('the route cookie redirects on the server', async ({
   page,
   context,
