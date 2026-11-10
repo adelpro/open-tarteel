@@ -10,10 +10,15 @@ import LanguageSwitcher from '@/components/language-switcher';
 import ProviderBadges from '@/components/provider-badge';
 import ThemePicker from '@/components/theme-picker';
 import Row from '@/components/ui/row';
+import Segmented from '@/components/ui/segmented';
 import Switch from '@/components/ui/switch';
 import useDirection from '@/hooks/use-direction';
 import { useLocalePath } from '@/hooks/use-locale-path';
-import { enabledSourcesAtom, forcedOfflineAtom } from '@/jotai/atom';
+import {
+  enabledSourcesAtom,
+  forcedOfflineAtom,
+  visualizerModelAtom,
+} from '@/jotai/atom';
 import { isMp3QuranV4Enabled } from '@/services/reciters/flags';
 import { LinkSource } from '@/types';
 
@@ -71,6 +76,7 @@ export default function SettingsPage() {
   const localePath = useLocalePath();
   const [enabledSources, setEnabledSources] = useAtom(enabledSourcesAtom);
   const [forcedOffline, setForcedOffline] = useAtom(forcedOfflineAtom);
+  const [visualizerModel, setVisualizerModel] = useAtom(visualizerModelAtom);
 
   const toggleSource = (source: LinkSource) => {
     setEnabledSources((previous) => {
@@ -230,6 +236,52 @@ export default function SettingsPage() {
                 })}
               />
             </Row>
+          </Group>
+
+          <Group
+            title={formatMessage({
+              id: 'settings.spectrum',
+              defaultMessage: 'Spectrum',
+            })}
+            description={formatMessage({
+              id: 'settings.spectrumDescription',
+              defaultMessage:
+                'Choose the shape the spectrum takes while a recitation plays.',
+            })}
+          >
+            <div className="p-4">
+              <Segmented
+                value={visualizerModel}
+                onChange={setVisualizerModel}
+                label={formatMessage({
+                  id: 'player.visualizerStyle',
+                  defaultMessage: 'Spectrum style',
+                })}
+                options={[
+                  {
+                    value: 'bars',
+                    label: formatMessage({
+                      id: 'player.bars',
+                      defaultMessage: 'Bars',
+                    }),
+                  },
+                  {
+                    value: 'peaks',
+                    label: formatMessage({
+                      id: 'player.peaks',
+                      defaultMessage: 'Peaks',
+                    }),
+                  },
+                  {
+                    value: 'ribbon',
+                    label: formatMessage({
+                      id: 'player.waves',
+                      defaultMessage: 'Waves',
+                    }),
+                  },
+                ]}
+              />
+            </div>
           </Group>
 
           <Group

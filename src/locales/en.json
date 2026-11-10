@@ -178,6 +178,8 @@
   "playlist.aya": "Aya",
   "playlist.ayas": "Ayas",
   "settings.cacheManagement": "Offline downloads",
+  "settings.spectrum": "Spectrum",
+  "settings.spectrumDescription": "Choose the shape the spectrum takes while a recitation plays.",
   "settings.offlineMode": "Offline mode",
   "settings.offlineModeDescription": "Use downloaded content only and hide network-only actions.",
   "settings.offlineModeActive": "Offline mode is on. Only downloaded reciters and surahs are available.",

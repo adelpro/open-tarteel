@@ -178,6 +178,8 @@
   "playlist.aya": "Aya",
   "playlist.ayas": "Ayat",
   "settings.cacheManagement": "Offline-Downloads",
+  "settings.spectrum": "Spektrum",
+  "settings.spectrumDescription": "Wähle die Form des Spektrums während der Wiedergabe.",
   "settings.offlineMode": "Offline-Modus",
   "settings.offlineModeDescription": "Nur heruntergeladene Inhalte verwenden und reine Online-Aktionen ausblenden.",
   "settings.offlineModeActive": "Der Offline-Modus ist aktiv. Nur heruntergeladene Rezitatoren und Suren sind verfügbar.",

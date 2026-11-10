@@ -178,6 +178,8 @@
   "playlist.aya": "آية",
   "playlist.ayas": "آيات",
   "settings.cacheManagement": "التحميلات المحفوظة",
+  "settings.spectrum": "الطيف",
+  "settings.spectrumDescription": "اختر شكل الطيف أثناء تشغيل التلاوة.",
   "settings.offlineMode": "وضع عدم الاتصال",
   "settings.offlineModeDescription": "استخدم المحتوى المحمّل فقط وأخفِ الإجراءات التي تحتاج إلى الإنترنت.",
   "settings.offlineModeActive": "وضع عدم الاتصال مفعّل. تتوفر فقط القراءات والسور المحمّلة.",
