@@ -4,6 +4,35 @@ Netlify uses the OpenNext adapter. `netlify.toml` already sets the build
 command, Node version, publish directory, skew protection, and the `/sw.js`
 headers.
 
+## Branch policy (Netlify free quota)
+
+Netlify deploys are reserved for **production only**:
+
+- `main` → production (`tarteel.quran.us.kg`) and is the only branch that
+  should trigger a Netlify build.
+- `develop` and `staging` are tested **locally**. Do not push to `staging` to
+  deploy; the `open-tarteel-staging` site has no auto-publish budget for it.
+- While the Netlify quota is exhausted, turn **Auto publishing off** on the
+  `open-tarteel-staging` site (Site configuration → Build & deploy → Branches)
+  so a push cannot start a build. Re-enable it only when there is quota and a
+  real staging deploy is wanted.
+
+### Local runs
+
+```bash
+# develop: fast iteration
+corepack yarn dev            # http://localhost:3000
+
+# staging: production build, local
+corepack yarn build
+npx next start -p 3200       # http://localhost:3200
+```
+
+Use separate ports if both branches are checked out at once (e.g. a second
+worktree, or `git switch staging` in another shell). Audio, the reciter API and
+the service worker behave the same locally; only metadata origins follow
+`NEXT_PUBLIC_APP_URL`.
+
 ## One-time setup
 
 ```bash
