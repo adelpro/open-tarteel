@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { Provider, createStore } from 'jotai';
+import { createStore, Provider } from 'jotai';
 import React from 'react';
 import { IntlProvider } from 'react-intl';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

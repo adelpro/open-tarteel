@@ -45,7 +45,10 @@ const buildLocalPlaylist = (reciter: Reciter): Playlist | null => {
   return null;
 };
 
-const Player = dynamic(() => import('@/components/player'), { ssr: false });
+const Player = dynamic(() => import('@/components/player'), {
+  ssr: false,
+  loading: () => <PlayerSkeleton />,
+});
 
 function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
   const [selectedReciter, setSelectedReciter] = useAtom(selectedReciterAtom);
@@ -170,9 +173,9 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
 
   const reciterReady = Boolean(
     selectedReciter &&
-      selectedReciter.id === id &&
-      selectedReciter.moshaf.id === targetMoshafId &&
-      selectedReciter.moshaf.playlist.length > 0
+    selectedReciter.id === id &&
+    selectedReciter.moshaf.id === targetMoshafId &&
+    selectedReciter.moshaf.playlist.length > 0
   );
 
   return (
@@ -190,7 +193,8 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
             <p>
               {formatMessage({
                 id: 'reciter.loadError',
-                defaultMessage: 'Could not load this reciter. Please try again.',
+                defaultMessage:
+                  'Could not load this reciter. Please try again.',
               })}
             </p>
             <button

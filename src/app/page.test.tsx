@@ -48,9 +48,7 @@ describe('Home', () => {
     render(<Home />);
 
     await waitFor(() =>
-      expect(replace).toHaveBeenCalledWith(
-        '/reciter/mp3quran.net-1?moshafId=1'
-      )
+      expect(replace).toHaveBeenCalledWith('/reciter/mp3quran.net-1?moshafId=1')
     );
   });
 
