@@ -220,7 +220,7 @@ function ReciterContent({
     <div className="flex w-full items-center justify-center p-1 md:p-2">
       <div className="flex w-full flex-col items-center justify-center gap-4">
         {!isFullscreen && <NetworkStatusIndicator />}
-        {!isFullscreen && <ReciterSelector />}
+        {!isFullscreen && <ReciterSelector initialReciter={initialReciter} />}
         {isFullscreen && (
           <p className="mb-5 flex items-center justify-center gap-2 text-4xl font-bold text-gray-500">
             {activeReciter?.name}

@@ -28,11 +28,12 @@ export default function Hero() {
       <div className="group relative mb-6 transform transition-all duration-700 hover:scale-105">
         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-brand-CTA-blue-500/10 to-brand-CTA-blue-500/5 blur-lg transition-opacity duration-700 group-hover:opacity-80" />
         <Image
-          src="/images/logo.png"
+          src="/images/logo-384.webp"
           alt="القرآن الكريم Logo"
           width={160}
           height={160}
           priority
+          unoptimized
           itemProp="image"
           className="relative rounded-full transition-transform duration-700 group-hover:scale-105 md:h-48 md:w-48"
         />

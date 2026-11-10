@@ -8,7 +8,7 @@ describe('PlayerSkeleton', () => {
     render(<PlayerSkeleton />);
 
     const skeleton = screen.getByRole('status', { name: 'Loading player' });
-    expect(skeleton).toHaveStyle({ minHeight: '208px' });
+    expect(skeleton).toHaveStyle({ minHeight: '210px' });
     expect(skeleton.querySelectorAll('[class*="h-[72px]"]')).toHaveLength(1);
     expect(skeleton.querySelectorAll('[class*="h-8"]')).toHaveLength(1);
     expect(skeleton.querySelector('.size-11')).toBeNull();

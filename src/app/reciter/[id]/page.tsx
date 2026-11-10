@@ -16,8 +16,6 @@ import { getRequestLocale } from '@/utils/request-locale';
 
 import ReciterPage from './reciter-page';
 
-export const dynamic = 'force-dynamic';
-
 const COPY = { ar, en, de } as const;
 
 type Props = {
