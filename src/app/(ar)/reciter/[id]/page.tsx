@@ -12,7 +12,6 @@ import { getReciterPlaylistCached } from '@/services/reciters/cached';
 import type { Reciter } from '@/types';
 import { getAllReciters } from '@/utils/api';
 import { buildLocalPlaylist } from '@/utils/build-local-playlist';
-import { getRequestLocale } from '@/utils/request-locale';
 
 import ReciterPage from './reciter-page';
 
@@ -54,7 +53,7 @@ const descriptionFor = (
 export async function generateMetadata({ params, searchParams }: Props) {
   const { id } = await params;
   const query = await searchParams;
-  const locale = await getRequestLocale();
+  const locale = 'ar' as const;
   const result = await findVariants(id, locale);
   if (result.status === 'error') {
     return {
@@ -86,7 +85,7 @@ export async function generateMetadata({ params, searchParams }: Props) {
 export default async function Page({ params, searchParams }: Props) {
   const { id } = await params;
   const query = await searchParams;
-  const locale = await getRequestLocale();
+  const locale = 'ar' as const;
   const result = await findVariants(id, locale);
 
   if (result.status === 'error') {

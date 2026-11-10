@@ -1,6 +1,3 @@
-import './globals.css';
-
-import type { Metadata, Viewport } from 'next';
 import { Tajawal } from 'next/font/google';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
@@ -13,59 +10,7 @@ import PwaUpdater from '@/components/pwa-updater';
 import ReciterRouteCookie from '@/components/reciter-route-cookie';
 import StoragePersist from '@/components/storage-persist';
 import { websiteGraph } from '@/lib/seo/json-ld';
-import { SITE } from '@/lib/seo/site';
-import { clientConfig } from '@/utils';
-import { getRequestLocale } from '@/utils/request-locale';
-
-export const viewport: Viewport = {
-  colorScheme: 'light dark',
-  themeColor: '#000000',
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-};
-
-export const metadata: Metadata = {
-  metadataBase: new URL(clientConfig.APP_URL),
-  applicationName: clientConfig.APP_NAME,
-  manifest: '/manifest.webmanifest',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default',
-    title: clientConfig.APP_NAME,
-  },
-  formatDetection: {
-    telephone: false,
-  },
-  icons: {
-    icon: [
-      { url: '/icon.svg', type: 'image/svg+xml' },
-      { url: '/images/icon-192.png', sizes: '192x192', type: 'image/png' },
-    ],
-    apple: '/images/apple-touch-icon.png',
-  },
-  title: 'Open Tarteel — Quran Audio Player',
-  description:
-    'Listen to the Holy Quran recited by world-renowned reciters. Free, open-source Quran audio player with playlist support.',
-  alternates: { canonical: '/' },
-  openGraph: {
-    title: 'Open Tarteel — Quran Audio Player',
-    description:
-      'Listen to the Holy Quran recited by world-renowned reciters. Free and open-source.',
-    type: 'website',
-    siteName: 'Open Tarteel',
-    images: ['/images/logo-og.png'],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Open Tarteel — Quran Audio Player',
-    description:
-      'Listen to the Holy Quran recited by world-renowned reciters. Free and open-source.',
-    images: ['/images/logo-og.png'],
-  },
-  verification: SITE.verification ? { google: SITE.verification } : undefined,
-};
+import type { SeoLocale } from '@/lib/seo/routes';
 
 const tajawal = Tajawal({
   weight: ['400', '700', '900'],
@@ -73,16 +18,22 @@ const tajawal = Tajawal({
   preload: true,
 });
 
-export default async function RootLayout({
+/**
+ * The document shell shared by the three locale root layouts.
+ *
+ * The locale is a route-group constant, so this tree has no request-dependent
+ * API and each page can be prerendered.
+ */
+export function RootShell({
+  locale,
   children,
-}: Readonly<{
+}: {
+  locale: SeoLocale;
   children: React.ReactNode;
-}>) {
-  const resolvedLocale = await getRequestLocale();
-
+}) {
   return (
     <NuqsAdapter>
-      <IntlProviderWrapper initialLocale={resolvedLocale}>
+      <IntlProviderWrapper initialLocale={locale}>
         <HtmlWrapper>
           <body
             className={`${tajawal.className} min-h-full bg-background antialiased`}
@@ -96,9 +47,10 @@ export default async function RootLayout({
             <script
               type="application/ld+json"
               dangerouslySetInnerHTML={{
-                __html: JSON.stringify(
-                  websiteGraph({ locale: resolvedLocale })
-                ).replace(/</g, '\\u003c'),
+                __html: JSON.stringify(websiteGraph({ locale })).replace(
+                  /</g,
+                  '\\u003c'
+                ),
               }}
             />
             <main

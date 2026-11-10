@@ -1,3 +1,4 @@
+import AboutPage from '@/components/pages/about-page';
 import { breadcrumbTrail, faqPage } from '@/lib/seo/json-ld';
 import { buildPageMetadata } from '@/lib/seo/metadata';
 import { type SeoLocale, withLocale } from '@/lib/seo/routes';
@@ -5,9 +6,6 @@ import { SITE } from '@/lib/seo/site';
 import ar from '@/locales/ar.json';
 import de from '@/locales/de.json';
 import en from '@/locales/en.json';
-import { getRequestLocale } from '@/utils/request-locale';
-
-import AboutPage from './about-page';
 
 const COPY = { ar, en, de } as const;
 
@@ -19,8 +17,7 @@ const faqFor = (locale: SeoLocale) => {
   }));
 };
 
-export async function generateMetadata() {
-  const locale = await getRequestLocale();
+export const aboutMetadata = (locale: SeoLocale) => {
   const copy = COPY[locale];
 
   return buildPageMetadata({
@@ -29,10 +26,9 @@ export async function generateMetadata() {
     title: copy['about.title'],
     description: copy['about.description'],
   });
-}
+};
 
-export default async function Page() {
-  const locale = await getRequestLocale();
+export function AboutRoute({ locale }: { locale: SeoLocale }) {
   const copy = COPY[locale];
   const breadcrumb = breadcrumbTrail([
     {

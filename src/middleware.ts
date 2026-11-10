@@ -6,6 +6,13 @@ import { DEFAULT_LOCALE, localeFromPath, stripLocale } from '@/lib/seo/routes';
 const PUBLIC_FILE =
   /\.(?:png|jpe?g|gif|svg|ico|webp|avif|woff2?|ttf|otf|css|js|mjs|map|xml|txt|webmanifest)$/i;
 
+// These paths have a real /en or /de page tree. Serving it directly lets Next
+// prerender the page; every other prefixed path keeps the rewrite.
+const LOCALIZED_ROUTES = new Set(['/', '/about', '/contact', '/privacy']);
+
+const hasLocalizedRoute = (path: string): boolean =>
+  LOCALIZED_ROUTES.has(path) || path.startsWith('/reciter/');
+
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
@@ -50,11 +57,13 @@ export function middleware(request: NextRequest) {
   // Dynamic reciter routes are canonicalised Arabic documents. The explicit
   // /en and /de files redirect to the Arabic page; rewriting them into the bare
   // dynamic route made Next answer 404.
-  if (pathname.startsWith(`/${locale}/reciter/`)) {
+  const stripped = stripLocale(pathname);
+
+  if (hasLocalizedRoute(stripped)) {
+    request.headers.set('x-tarteel-locale', locale);
     return NextResponse.next();
   }
 
-  const stripped = stripLocale(pathname);
   // A protocol-relative path such as `/en//evil.example` would resolve against
   // the attacker's origin. Only same-origin paths may be rewritten.
   if (stripped.startsWith('//')) {

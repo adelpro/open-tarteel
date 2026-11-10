@@ -8,6 +8,20 @@
 - Reciter pages are Arabic documents. `/en/reciter/[id]` and `/de/reciter/[id]` redirect to the Arabic document, are excluded from the sitemap, and declare no `hreflang` pair. This follows the open-tilawa model: a translated reciter page is a thin twin of the Arabic document.
 - `?moshafId` and `?surah` are player state, not separate documents. Their canonical is `/reciter/[id]`.
 
+## Prerender and route groups
+
+Public pages are split into locale root layouts:
+
+- `src/app/(ar)` owns the bare Arabic paths.
+- `src/app/(en)/en` and `src/app/(de)/de` own the prefixed twins.
+
+Each root layout passes a constant locale to `RootShell`, so the document has no
+request-dependent API and `/`, `/en`, `/de`, `/about`, `/contact` and `/privacy`
+are prerendered at build time. `src/middleware.ts` only rewrites prefixed paths
+that have no real page tree (settings, offline, design-preview). Indexed paths
+are served directly. Reciter pages stay dynamic because they read the player
+query.
+
 ## Source of truth
 
 `src/lib/seo/routes.ts` owns the public paths, indexability, sitemap inclusion, and locale prefixing. Metadata, the sitemap, links, and tests read it. Do not build a canonical URL by string concatenation.

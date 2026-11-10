@@ -1,18 +1,15 @@
+import ContactPage from '@/components/pages/contact-page';
 import { breadcrumbTrail } from '@/lib/seo/json-ld';
 import { buildPageMetadata } from '@/lib/seo/metadata';
-import { withLocale } from '@/lib/seo/routes';
+import { type SeoLocale, withLocale } from '@/lib/seo/routes';
 import { SITE } from '@/lib/seo/site';
 import ar from '@/locales/ar.json';
 import de from '@/locales/de.json';
 import en from '@/locales/en.json';
-import { getRequestLocale } from '@/utils/request-locale';
-
-import ContactPage from './contact-page';
 
 const COPY = { ar, en, de } as const;
 
-export async function generateMetadata() {
-  const locale = await getRequestLocale();
+export const contactMetadata = (locale: SeoLocale) => {
   const copy = COPY[locale];
 
   return buildPageMetadata({
@@ -21,10 +18,9 @@ export async function generateMetadata() {
     title: `${copy['contact.contact_us']} — Open Tarteel`,
     description: copy['contact.contact_us'],
   });
-}
+};
 
-export default async function Page() {
-  const locale = await getRequestLocale();
+export function ContactRoute({ locale }: { locale: SeoLocale }) {
   const copy = COPY[locale];
   const breadcrumb = breadcrumbTrail([
     {

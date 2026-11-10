@@ -1,18 +1,15 @@
+import PrivacyPage from '@/components/pages/privacy-page';
 import { breadcrumbTrail } from '@/lib/seo/json-ld';
 import { buildPageMetadata } from '@/lib/seo/metadata';
-import { withLocale } from '@/lib/seo/routes';
+import { type SeoLocale, withLocale } from '@/lib/seo/routes';
 import { SITE } from '@/lib/seo/site';
 import ar from '@/locales/ar.json';
 import de from '@/locales/de.json';
 import en from '@/locales/en.json';
-import { getRequestLocale } from '@/utils/request-locale';
-
-import PrivacyPageAr from './privacy-page';
 
 const COPY = { ar, en, de } as const;
 
-export async function generateMetadata() {
-  const locale = await getRequestLocale();
+export const privacyMetadata = (locale: SeoLocale) => {
   const copy = COPY[locale];
 
   return buildPageMetadata({
@@ -21,10 +18,9 @@ export async function generateMetadata() {
     title: copy['privacy.title'],
     description: copy['privacy.section1.body'],
   });
-}
+};
 
-export default async function Page() {
-  const locale = await getRequestLocale();
+export function PrivacyRoute({ locale }: { locale: SeoLocale }) {
   const copy = COPY[locale];
   const breadcrumb = breadcrumbTrail([
     {
@@ -45,7 +41,7 @@ export default async function Page() {
           __html: JSON.stringify(breadcrumb).replace(/</g, '\\u003c'),
         }}
       />
-      <PrivacyPageAr />
+      <PrivacyPage />
     </>
   );
 }
