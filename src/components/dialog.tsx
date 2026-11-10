@@ -104,7 +104,7 @@ export default function Dialog({
       aria-labelledby={ariaLabelledBy}
     >
       {/* Apply overflow and rounded corners to the main content container */}
-      <main className="h-full w-full overflow-hidden rounded-2xl border border-gray-200/80 bg-background p-1 text-foreground shadow-2xl dark:border-gray-700 sm:p-2">
+      <div className="h-full w-full overflow-hidden rounded-2xl border border-gray-200/80 bg-background p-1 text-foreground shadow-2xl dark:border-gray-700 sm:p-2">
         <div className="h-full w-full overflow-y-auto rounded-xl">
           {!hideCloseButton && (
             <div className="m-2 flex items-center justify-end">
@@ -123,7 +123,7 @@ export default function Dialog({
             {children}
           </div>
         </div>
-      </main>
+      </div>
     </dialog>
   );
 }

@@ -94,7 +94,7 @@ export default function ContactPage() {
   );
 
   return (
-    <main className="flex min-h-[70vh] w-full flex-col items-center justify-center gap-6 p-4 md:p-8">
+    <div className="flex min-h-[70vh] w-full flex-col items-center justify-center gap-6 p-4 md:p-8">
       <h1 className="text-center text-2xl font-bold text-ink">
         {formatMessage({ id: 'contact.contact_us' })}
       </h1>
@@ -230,6 +230,6 @@ export default function ContactPage() {
           </div>
         </div>
       )}
-    </main>
+    </div>
   );
 }

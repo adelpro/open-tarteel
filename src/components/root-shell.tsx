@@ -55,6 +55,7 @@ export function RootShell({
             />
             <main
               id="main-content"
+              tabIndex={-1}
               className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background pb-20 text-foreground"
             >
               <div className="ambient-orbs pointer-events-none fixed inset-0 -z-10 overflow-hidden">

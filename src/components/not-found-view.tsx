@@ -26,7 +26,7 @@ export function NotFoundView({ locale }: { locale: SeoLocale }) {
   const copy = COPY[locale];
 
   return (
-    <main className="mt-4 flex min-h-screen items-center justify-center bg-gray-100 p-4">
+    <div className="mt-4 flex min-h-screen items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-md rounded-lg bg-white p-6 text-center shadow-lg">
         <h1 className="mt-4 text-2xl font-bold">{copy.title}</h1>
         <Image
@@ -47,6 +47,6 @@ export function NotFoundView({ locale }: { locale: SeoLocale }) {
           </LocalizedLink>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

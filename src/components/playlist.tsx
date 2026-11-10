@@ -87,7 +87,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
   const allCached = mounted ? isAllCached(playlist) : false;
 
   return (
-    <main className="animate-fade-up p-2 sm:p-4">
+    <div className="animate-fade-up p-2 sm:p-4">
       <div className="mb-4 flex items-center justify-between px-2">
         <h2 className="flex items-center gap-3 text-2xl font-black text-gray-800 dark:text-gray-100">
           <div className="dark:bg-brand-CTA-blue-400/10 dark:text-brand-CTA-blue-400 flex size-10 items-center justify-center rounded-xl bg-brand-CTA-blue-500/10 text-brand-CTA-blue-500">
@@ -302,6 +302,6 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
           })}
         </ul>
       )}
-    </main>
+    </div>
   );
 }

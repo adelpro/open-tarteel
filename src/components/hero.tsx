@@ -33,6 +33,7 @@ export default function Hero() {
           width={160}
           height={160}
           priority
+          fetchPriority="high"
           unoptimized
           itemProp="image"
           className="relative rounded-full transition-transform duration-700 group-hover:scale-105 md:h-48 md:w-48"

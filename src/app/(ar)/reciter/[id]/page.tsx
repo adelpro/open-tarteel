@@ -144,7 +144,7 @@ export default async function Page({ params, searchParams }: Props) {
     },
   ]);
   return (
-    <main className="flex w-full flex-col items-center justify-center bg-background text-foreground">
+    <div className="flex w-full flex-col items-center justify-center bg-background text-foreground">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -157,6 +157,6 @@ export default async function Page({ params, searchParams }: Props) {
         initialReciter={reciter}
         initialSurah={initialSurah}
       />
-    </main>
+    </div>
   );
 }
