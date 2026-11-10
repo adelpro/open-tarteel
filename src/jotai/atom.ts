@@ -60,10 +60,31 @@ export const volumeAtom = createAtomWithStorage<number>('volume-value', 1);
 export const recitersSortAtom = createAtomWithStorage<
   'popular' | 'alphabetical' | 'views'
 >('reciters-sort-atom', 'alphabetical');
+
+/** Reject a persisted reciter that predates the current shape. */
+const isSelectedReciter = (value: unknown): value is Reciter | null => {
+  if (value === null) return true;
+  if (typeof value !== 'object') return false;
+
+  const reciter = value as Partial<Reciter>;
+  const moshaf = reciter.moshaf;
+
+  return (
+    typeof reciter.id === 'string' &&
+    typeof reciter.name === 'string' &&
+    typeof reciter.source === 'string' &&
+    typeof moshaf === 'object' &&
+    moshaf !== null &&
+    typeof moshaf.id === 'string' &&
+    typeof moshaf.name === 'string' &&
+    Array.isArray(moshaf.playlist)
+  );
+};
+
 export const selectedReciterAtom = createAtomWithStorage<Reciter | null>(
   'selected-reciter',
   null,
-  { getOnInit: true }
+  { getOnInit: true, validate: isSelectedReciter }
 );
 
 export type Theme = 'light' | 'dark' | 'system';

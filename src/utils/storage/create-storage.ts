@@ -17,6 +17,21 @@ const storage = {
   },
 };
 
-export function createStorage<T>() {
-  return createJSONStorage<T>(() => storage);
+/**
+ * JSON storage with an optional shape guard. A persisted value that no longer
+ * matches the current type is treated as absent instead of crashing the
+ * components that read it.
+ */
+export function createStorage<T>(isValid?: (value: unknown) => value is T) {
+  const jsonStorage = createJSONStorage<T>(() => storage);
+
+  if (!isValid) return jsonStorage;
+
+  return {
+    ...jsonStorage,
+    getItem: (key: string, initialValue: T): T => {
+      const value = jsonStorage.getItem(key, initialValue);
+      return isValid(value) ? value : initialValue;
+    },
+  };
 }

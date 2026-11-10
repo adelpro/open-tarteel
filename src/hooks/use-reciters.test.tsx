@@ -82,4 +82,27 @@ describe('useReciters with a stored reciter', () => {
 
     await waitFor(() => expect(store.get(selectedReciterAtom)).toBeNull());
   });
+
+  it('does not clobber a selection made while the catalog was loading', async () => {
+    let release: (value: unknown) => void = () => {};
+    const pending = new Promise<unknown>((resolve) => {
+      release = resolve;
+    });
+    vi.mocked(getAllReciters).mockReturnValue(pending as never);
+    const store = createStore();
+    store.set(selectedReciterAtom, stored);
+    run(store);
+
+    const newer = {
+      ...(stored as Record<string, unknown>),
+      id: 'mp3quran.net-2',
+    } as never;
+    store.set(selectedReciterAtom, newer);
+
+    release([catalogEntry('1')]);
+    await waitFor(() => expect(getAllReciters).toHaveBeenCalled());
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    expect(store.get(selectedReciterAtom)?.id).toBe('mp3quran.net-2');
+  });
 });

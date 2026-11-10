@@ -23,29 +23,36 @@ export default function Home() {
     setIsClient(true);
   }, []);
 
-  // Validate selectedReciter exists in reciters list
-  useEffect(() => {
-    if (!isClient || loading || reciters.length === 0) return;
-
-    if (selectedReciter) {
-      const exists = reciters.some((r) => r.id === selectedReciter.id);
-      if (!exists) {
-        setSelectedReciter(null);
-        return;
-      }
-    }
-  }, [isClient, loading, reciters, selectedReciter, setSelectedReciter]);
-
   // Open the persisted selection immediately. The reciter route can rebuild
   // its playlist locally or fetch it, so the catalog is not a precondition.
+  // When the catalog happens to be available already, use it to drop a
+  // selection that no longer exists instead of opening a dead route.
   useEffect(() => {
     if (!isClient || !selectedReciter) return;
+
+    if (
+      !loading &&
+      reciters.length > 0 &&
+      !reciters.some((r) => r.id === selectedReciter.id)
+    ) {
+      setSelectedReciter(null);
+      return;
+    }
 
     const targetPath = `/reciter/${selectedReciter.id}?moshafId=${selectedReciter.moshaf.id}`;
     if (`${pathname}?${searchParams.toString()}` !== targetPath) {
       router.replace(targetPath);
     }
-  }, [isClient, selectedReciter, pathname, searchParams, router]);
+  }, [
+    isClient,
+    selectedReciter,
+    loading,
+    reciters,
+    setSelectedReciter,
+    pathname,
+    searchParams,
+    router,
+  ]);
 
   if (!isClient) {
     return (

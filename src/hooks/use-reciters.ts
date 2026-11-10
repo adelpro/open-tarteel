@@ -40,11 +40,18 @@ export function useReciters() {
           );
           if (matched) {
             // Do not throw away a lazily loaded playlist (or a persisted one)
-            // when the catalog refreshes with an empty playlist.
+            // when the catalog refreshes with an empty playlist. If the user
+            // picked another reciter while this request was in flight, leave
+            // the newer choice alone.
             setSelectedReciter((previous) => {
-              if (!previous) return matched;
               if (
-                previous.moshaf.id === matched.moshaf.id &&
+                !previous ||
+                previous.id !== selectedReciter.id ||
+                previous.moshaf.id !== selectedReciter.moshaf.id
+              ) {
+                return previous;
+              }
+              if (
                 matched.moshaf.playlist.length === 0 &&
                 previous.moshaf.playlist.length > 0
               ) {
@@ -60,7 +67,9 @@ export function useReciters() {
               return matched;
             });
           } else if (!data.some((r) => r.id === selectedReciter.id)) {
-            setSelectedReciter(null);
+            setSelectedReciter((previous) =>
+              previous?.id === selectedReciter.id ? null : previous
+            );
           }
         }
       } catch {

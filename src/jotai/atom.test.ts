@@ -35,6 +35,16 @@ describe('selectedReciterAtom', () => {
 
     expect(createStore().get(selectedReciterAtom)).toBeNull();
   });
+
+  it('drops a stored value that is missing required fields', async () => {
+    localStorage.setItem(
+      'selected-reciter',
+      JSON.stringify({ id: 'mp3quran.net-1', name: 'Broken' })
+    );
+    const { selectedReciterAtom } = await import('./atom');
+
+    expect(createStore().get(selectedReciterAtom)).toBeNull();
+  });
 });
 
 describe('currentTimeAtom', () => {
