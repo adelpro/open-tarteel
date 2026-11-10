@@ -125,6 +125,7 @@
   "player.previousTrack": "Previous Track",
   "player.enterFullscreen": "Enter Fullscreen",
   "player.exitFullscreen": "Exit Fullscreen",
+  "player.volumeHint": "Click for volume, hold to mute or unmute",
   "player.muteVolume": "Mute Volume",
   "player.unmuteVolume": "Unmute Volume",
   "player.shuffleEnabled": "Shuffle Mode",

@@ -125,6 +125,7 @@
   "player.previousTrack": "Vorheriger Titel",
   "player.enterFullscreen": "Vollbildmodus aktivieren",
   "player.exitFullscreen": "Vollbildmodus beenden",
+  "player.volumeHint": "Klicken für Lautstärke, gedrückt halten zum Stummschalten oder Aufheben",
   "player.muteVolume": "Stummschalten",
   "player.unmuteVolume": "Stummschaltung aufheben",
   "player.shuffleEnabled": "Zufallswiedergabe",

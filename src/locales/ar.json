@@ -125,6 +125,7 @@
   "player.previousTrack": "السابق",
   "player.enterFullscreen": "دخول وضع ملء الشاشة",
   "player.exitFullscreen": "خروج من وضع ملء الشاشة",
+  "player.volumeHint": "انقر لمستوى الصوت، واضغط مطولاً للكتم أو إلغائه",
   "player.muteVolume": "كتم الصوت",
   "player.unmuteVolume": "إلغاء كتم الصوت",
   "player.shuffleEnabled": "الوضع العشوائي",

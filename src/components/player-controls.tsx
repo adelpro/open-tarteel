@@ -93,6 +93,12 @@ export default function PlayerControls({
   const [showVisualizer, setShowVisualizer] = useAtom(showVisualizerAtom);
   const [visualizerModel, setVisualizerModel] = useAtom(visualizerModelAtom);
   const [volume, setVolume] = useAtom(volumeAtom);
+  // Long-press on the speaker toggles mute; a tap keeps the volume popover.
+  const volumeLongPressTimer = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
+  const volumeLongPressFired = useRef(false);
+  const lastVolume = useRef(volume > 0 ? volume : 1);
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackSpeed, setPlaybackSpeed] = useAtom(playbackSpeedAtom);
   const [playbackMode, setPlaybackMode] = useAtom(playbackModeAtom);
@@ -199,6 +205,19 @@ export default function PlayerControls({
   };
 
   // ── Effects ──────────────────────────────────────────
+  useEffect(() => {
+    if (volume > 0) lastVolume.current = volume;
+  }, [volume]);
+
+  useEffect(
+    () => () => {
+      if (volumeLongPressTimer.current) {
+        clearTimeout(volumeLongPressTimer.current);
+      }
+    },
+    []
+  );
+
   // Close menus on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -215,6 +234,42 @@ export default function PlayerControls({
   }, [showVolumeSlider, volumeRef]);
 
   // ── Handlers ─────────────────────────────────────────
+  const clearVolumeLongPress = () => {
+    if (volumeLongPressTimer.current) {
+      clearTimeout(volumeLongPressTimer.current);
+      volumeLongPressTimer.current = null;
+    }
+  };
+
+  const toggleMute = () => {
+    setVolume((current) => {
+      if (current > 0) {
+        lastVolume.current = current;
+        return 0;
+      }
+      return lastVolume.current || 1;
+    });
+  };
+
+  const handleVolumePointerDown = () => {
+    volumeLongPressFired.current = false;
+    clearVolumeLongPress();
+    volumeLongPressTimer.current = setTimeout(() => {
+      volumeLongPressTimer.current = null;
+      volumeLongPressFired.current = true;
+      toggleMute();
+    }, 500);
+  };
+
+  const handleVolumeClick = () => {
+    // The long press already toggled mute; swallow the click that follows.
+    if (volumeLongPressFired.current) {
+      volumeLongPressFired.current = false;
+      return;
+    }
+    setShowVolumeSlider((previous) => !previous);
+  };
+
   const togglePlaybackMode = () => {
     setPlaybackMode((previous) =>
       previous === 'off'
@@ -286,13 +341,9 @@ export default function PlayerControls({
       id: 'player.exitFullscreen',
       defaultMessage: 'Exit fullscreen',
     }),
-    muteVolume: formatMessage({
-      id: 'player.muteVolume',
-      defaultMessage: 'Mute volume',
-    }),
-    unmuteVolume: formatMessage({
-      id: 'player.unmuteVolume',
-      defaultMessage: 'Unmute volume',
+    volumeHint: formatMessage({
+      id: 'player.volumeHint',
+      defaultMessage: 'Click for volume, hold to mute or unmute',
     }),
     shuffleEnabled: formatMessage({
       id: 'player.shuffleEnabled',
@@ -432,15 +483,16 @@ export default function PlayerControls({
           ref={volumeRef}
           style={{ touchAction: 'none' }}
         >
-          <Tooltip
-            content={volume > 0 ? messages.muteVolume : messages.unmuteVolume}
-          >
+          <Tooltip content={messages.volumeHint}>
             <button
-              onClick={() => setShowVolumeSlider((previous) => !previous)}
-              className="flex size-11 items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken"
-              aria-label={
-                volume > 0 ? messages.muteVolume : messages.unmuteVolume
-              }
+              onClick={handleVolumeClick}
+              onPointerDown={handleVolumePointerDown}
+              onPointerUp={clearVolumeLongPress}
+              onPointerLeave={clearVolumeLongPress}
+              onPointerCancel={clearVolumeLongPress}
+              onContextMenu={(event) => event.preventDefault()}
+              className="flex size-11 select-none items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken"
+              aria-label={messages.volumeControl}
             >
               {volume > 0 ? (
                 <BiVolumeFull size={ICON_SIZE} className="text-ink-muted" />
