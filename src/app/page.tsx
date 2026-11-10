@@ -36,27 +36,16 @@ export default function Home() {
     }
   }, [isClient, loading, reciters, selectedReciter, setSelectedReciter]);
 
+  // Open the persisted selection immediately. The reciter route can rebuild
+  // its playlist locally or fetch it, so the catalog is not a precondition.
   useEffect(() => {
-    if (!isClient || !selectedReciter || loading) return;
+    if (!isClient || !selectedReciter) return;
 
-    // Verify reciter exists before redirecting
-    const exists = reciters.some((r) => r.id === selectedReciter.id);
-    if (!exists) return;
-
-    const currentPath = `${pathname}?${searchParams.toString()}`;
     const targetPath = `/reciter/${selectedReciter.id}?moshafId=${selectedReciter.moshaf.id}`;
-    if (currentPath !== targetPath) {
-      router.push(targetPath);
+    if (`${pathname}?${searchParams.toString()}` !== targetPath) {
+      router.replace(targetPath);
     }
-  }, [
-    selectedReciter,
-    pathname,
-    searchParams,
-    router,
-    isClient,
-    loading,
-    reciters,
-  ]);
+  }, [isClient, selectedReciter, pathname, searchParams, router]);
 
   if (!isClient) {
     return (
