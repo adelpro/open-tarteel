@@ -17,23 +17,18 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Extract release notes from CHANGELOG.md
-        id: changelog
         run: |
           TAG_NAME="${GITHUB_REF#refs/tags/}"
           echo "Extracting changelog for $TAG_NAME"
-          CONTENT=$(awk -v tag="$TAG_NAME" '
+          awk -v tag="$TAG_NAME" '
             index($0, "## [" tag "]") == 1 { found = 1; next }
             found && index($0, "## [") == 1 { exit }
             found
-          ' CHANGELOG.md)
-          CONTENT="${CONTENT//'%'/'%25'}"
-          CONTENT="${CONTENT//$'\n'/'%0A'}"
-          CONTENT="${CONTENT//$'\r'/'%0D'}"
-          echo "body=$CONTENT" >> "$GITHUB_OUTPUT"
+          ' CHANGELOG.md > release-notes.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          body: ${{ steps.changelog.outputs.body }}
+          body_path: release-notes.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
