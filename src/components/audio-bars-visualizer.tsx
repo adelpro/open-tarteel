@@ -258,21 +258,16 @@ export default function AudioBarsVisualizer({
     };
   }, [everPlayed, enabled, isPlaying, model, showVisualizer]);
 
-  if (!enabled) return null;
-  if (!everPlayed && !isPlaying) return null;
-
   return (
     <div
       className="mb-2 flex w-full max-w-md justify-center"
-      style={{
-        height: HEIGHT,
-        visibility: showVisualizer && isPlaying ? 'visible' : 'hidden',
-      }}
+      style={{ height: HEIGHT }}
+      aria-hidden="true"
     >
       <canvas
         ref={canvasRef}
-        aria-hidden="true"
-        className="block h-full w-full"
+        className="block h-full w-full transition-opacity duration-200"
+        style={{ opacity: enabled && isPlaying && showVisualizer ? 1 : 0 }}
       />
     </div>
   );

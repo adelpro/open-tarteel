@@ -4,21 +4,33 @@ import { describe, expect, it } from 'vitest';
 import AudioBarsVisualizer from './audio-bars-visualizer';
 
 describe('AudioBarsVisualizer', () => {
-  it('renders nothing for non-CORS providers', () => {
-    const { container } = render(
-      <AudioBarsVisualizer audioId="audio" isPlaying={true} enabled={false} />
-    );
-
-    expect(container.querySelectorAll('.spectrum-bar')).toHaveLength(0);
-    expect(container.firstElementChild).toBeNull();
-  });
-
-  it('renders nothing before the first play', () => {
+  it('reserves the spectrum slot before the first play', () => {
     const { container } = render(
       <AudioBarsVisualizer audioId="audio" isPlaying={false} enabled={true} />
     );
 
-    expect(container.querySelectorAll('.spectrum-bar')).toHaveLength(0);
-    expect(container.firstElementChild).toBeNull();
+    const slot = container.firstElementChild as HTMLElement;
+    expect(slot).not.toBeNull();
+    expect(slot.style.height).toBe('72px');
+    expect(container.querySelector('canvas')?.style.opacity).toBe('0');
+  });
+
+  it('reserves the slot for non-CORS providers without drawing', () => {
+    const { container } = render(
+      <AudioBarsVisualizer audioId="audio" isPlaying={true} enabled={false} />
+    );
+
+    expect((container.firstElementChild as HTMLElement).style.height).toBe(
+      '72px'
+    );
+    expect(container.querySelector('canvas')?.style.opacity).toBe('0');
+  });
+
+  it('shows the canvas while playing a CORS-capable source', () => {
+    const { container } = render(
+      <AudioBarsVisualizer audioId="audio" isPlaying={true} enabled={true} />
+    );
+
+    expect(container.querySelector('canvas')?.style.opacity).toBe('1');
   });
 });
