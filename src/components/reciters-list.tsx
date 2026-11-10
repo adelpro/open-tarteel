@@ -392,7 +392,6 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
       open={isOpen}
       onClose={() => {
         setIsOpen(false);
-        setPinned(false);
       }}
       toolbar={toolbar}
       pinned={pinned}

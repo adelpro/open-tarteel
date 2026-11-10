@@ -98,4 +98,8 @@ export const enabledSourcesAtom = createAtomWithStorage<LinkSource[]>(
 
 /** Desktop reciter panel state. It must survive a route change. */
 export const reciterListOpenAtom = atom(false);
-export const reciterListPinnedAtom = atom(false);
+// A pinned panel is a preference: remember it across reloads and sessions.
+export const reciterListPinnedAtom = createAtomWithStorage<boolean>(
+  'reciters-list-pinned',
+  false
+);

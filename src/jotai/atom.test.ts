@@ -75,3 +75,31 @@ describe('currentTimeAtom', () => {
     unsubscribe();
   });
 });
+
+describe('reciterListPinnedAtom', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    vi.resetModules();
+  });
+
+  it('hydrates the pinned preference from storage', async () => {
+    localStorage.setItem('reciters-list-pinned', 'true');
+    const { reciterListPinnedAtom } = await import('./atom');
+    const store = createStore();
+    const unsubscribe = store.sub(reciterListPinnedAtom, () => {});
+
+    expect(store.get(reciterListPinnedAtom)).toBe(true);
+    unsubscribe();
+  });
+
+  it('writes the preference when toggled', async () => {
+    const { reciterListPinnedAtom } = await import('./atom');
+    const store = createStore();
+    const unsubscribe = store.sub(reciterListPinnedAtom, () => {});
+
+    store.set(reciterListPinnedAtom, true);
+
+    expect(localStorage.getItem('reciters-list-pinned')).toBe('true');
+    unsubscribe();
+  });
+});
