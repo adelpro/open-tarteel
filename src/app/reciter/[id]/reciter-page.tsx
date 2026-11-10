@@ -7,8 +7,8 @@ import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import NetworkStatusIndicator from '@/components/network-status-indicator';
+import PlayerSkeleton from '@/components/player-skeleton';
 import ReciterSelector from '@/components/reciter-selector';
-import SimpleSkeleton from '@/components/simple-skeleton';
 import { fullscreenAtom, selectedReciterAtom } from '@/jotai/atom';
 import type { Playlist, Reciter } from '@/types';
 import { LinkSource } from '@/types';
@@ -165,7 +165,7 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
   ]);
 
   if (!mounted) {
-    return <SimpleSkeleton />;
+    return <PlayerSkeleton />;
   }
 
   const reciterReady = Boolean(
@@ -202,14 +202,14 @@ function ReciterContent({ id, moshafId }: { id: string; moshafId?: string }) {
             </button>
           </div>
         ) : reciterReady && selectedReciter ? (
-          <Suspense fallback={<SimpleSkeleton />}>
+          <Suspense fallback={<PlayerSkeleton />}>
             <Player
               key={`${selectedReciter.id}:${selectedReciter.moshaf.id}`}
               playlist={selectedReciter.moshaf.playlist}
             />
           </Suspense>
         ) : (
-          <SimpleSkeleton />
+          <PlayerSkeleton />
         )}
       </div>
     </div>
@@ -224,7 +224,7 @@ export default function ReciterPage({
   moshafId?: string;
 }) {
   return (
-    <Suspense fallback={<SimpleSkeleton />}>
+    <Suspense fallback={<PlayerSkeleton />}>
       <div className="flex w-full max-w-lg items-center justify-center p-1 md:p-4">
         <ReciterContent id={id} moshafId={moshafId} />
       </div>
