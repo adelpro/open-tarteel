@@ -36,3 +36,32 @@ describe('selectedReciterAtom', () => {
     expect(createStore().get(selectedReciterAtom)).toBeNull();
   });
 });
+
+describe('currentTimeAtom', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    vi.resetModules();
+  });
+
+  it('starts at zero even when a stored position exists', async () => {
+    localStorage.setItem('current-time', '42');
+    const { currentTimeAtom } = await import('./atom');
+    const store = createStore();
+    const unsubscribe = store.sub(currentTimeAtom, () => {});
+
+    expect(store.get(currentTimeAtom)).toBe(0);
+    unsubscribe();
+  });
+
+  it('does not write the position back to storage', async () => {
+    localStorage.setItem('current-time', '42');
+    const { currentTimeAtom } = await import('./atom');
+    const store = createStore();
+    const unsubscribe = store.sub(currentTimeAtom, () => {});
+
+    store.set(currentTimeAtom, 12);
+
+    expect(localStorage.getItem('current-time')).toBe('42');
+    unsubscribe();
+  });
+});

@@ -1,3 +1,5 @@
+import { atom } from 'jotai';
+
 import type { Language } from '@/constants/language';
 import { LinkSource, Reciter, Riwaya } from '@/types';
 import { getDefaultLocale } from '@/utils/get-default-locale';
@@ -37,7 +39,10 @@ export const localeAtom = createAtomWithStorage<Language>(
   getInitialLocale()
 );
 
-export const currentTimeAtom = createAtomWithStorage<number>('current-time', 0);
+// Playback position is per session: a reload starts from the beginning and
+// the audio element writes time on every `timeupdate`, so persisting it would
+// add a synchronous localStorage write four times a second.
+export const currentTimeAtom = atom(0);
 
 export const playbackSpeedAtom = createAtomWithStorage<number>(
   'playback-speed-value',

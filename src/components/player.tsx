@@ -112,6 +112,11 @@ export default function Player({ playlist }: Props) {
     }
   }, [playbackSpeed]);
 
+  // A remounted player (reciter switch, reload) always starts from the top.
+  useEffect(() => {
+    setCurrentTime(0);
+  }, [setCurrentTime]);
+
   // Generate shuffled indices
   const shufflePlaylist = useCallback(() => {
     const pool = [...availableIndices];
@@ -147,25 +152,6 @@ export default function Player({ playlist }: Props) {
       }
     }
   }, [currentTrack, isPlaying, setCurrentTime]);
-
-  // Mirror DOM audio events → React state so that external play/pause
-  // (e.g. tahfeez session, browser media buttons) keeps the icon in sync.
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const onPlay = () => {
-      setIsPlaying(true);
-    };
-    const onPause = () => {
-      setIsPlaying(false);
-    };
-    audio.addEventListener('play', onPlay);
-    audio.addEventListener('pause', onPause);
-    return () => {
-      audio.removeEventListener('play', onPlay);
-      audio.removeEventListener('pause', onPause);
-    };
-  }, []);
 
   // Mirror DOM audio events → React state so that external play/pause
   // (e.g. tahfeez session, browser media buttons) keeps the icon in sync.
