@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0-rc.6] - 2026-11-10
+
+### Added
+
+- server-rendered home and reciter pages with canonical URLs, hreflang and
+  localized metadata for crawlers
+
+### Changed
+
+- returning listeners are sent to their last reciter from the home page; the
+  redirect is cookie-based, so first-time visitors and crawlers still get the
+  server-rendered home
+- Tahfeez controls follow the active theme (palette and light/dark) instead of
+  hard-coded colours
+- develop and staging are tested locally; Netlify deploy budgets are reserved
+  for production (`main`)
+
+### Fixed
+
+- selected reciter: hydrated on first read, shape-validated, and a corrupt
+  `selected-reciter` value no longer breaks the app
+- player: no layout jump or empty control row while it mounts; the skeleton
+  mirrors the final card and the spectrum slot keeps its height
+- player: a stored reciter with an empty cached playlist no longer traps the
+  page on the loading skeleton
+- player: the playback position is session-only (no stale time, no writes four
+  times a second), and the audio play/pause listener is registered once
+- service worker: a first install no longer reloads the page
+- reciters: an in-flight catalog refresh cannot replace a newer selection or
+  switch the stored moshaf
+
 ## [0.5.0-rc.5] - 2026-11-08
 
 ### Fixed
