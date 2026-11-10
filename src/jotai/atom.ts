@@ -1,8 +1,6 @@
 import { atom } from 'jotai';
 
-import type { Language } from '@/constants/language';
 import { LinkSource, Reciter, Riwaya } from '@/types';
-import { getDefaultLocale } from '@/utils/get-default-locale';
 
 import { createAtomWithStorage } from './create-atom-with-storage';
 
@@ -25,18 +23,6 @@ export const showVisualizerAtom = createAtomWithStorage<boolean>(
 export const forcedOfflineAtom = createAtomWithStorage<boolean>(
   'forced-offline',
   false
-);
-
-const getInitialLocale = (): Language => {
-  if (typeof window !== 'undefined') {
-    return getDefaultLocale(navigator.language);
-  }
-  return 'ar';
-};
-
-export const localeAtom = createAtomWithStorage<Language>(
-  'locale',
-  getInitialLocale()
 );
 
 // Playback position is per session: a reload starts from the beginning and
@@ -109,3 +95,7 @@ export const enabledSourcesAtom = createAtomWithStorage<LinkSource[]>(
   'enabled-sources',
   [LinkSource.MP3QURAN, LinkSource.ITQAN]
 );
+
+/** Desktop reciter panel state. It must survive a route change. */
+export const reciterListOpenAtom = atom(false);
+export const reciterListPinnedAtom = atom(false);

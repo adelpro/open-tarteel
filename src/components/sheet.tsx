@@ -30,7 +30,12 @@ const sheetLayer = createSheetLayer({
 });
 
 function useMediaQuery(query: string) {
-  const [matches, setMatches] = useState(false);
+  // The sheet is rendered only after the client mounts, so the real match can
+  // be the initial value. Starting at `false` briefly acquired the mobile
+  // history layer on desktop and closed the panel on the first pin.
+  const [matches, setMatches] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(query).matches
+  );
 
   useEffect(() => {
     const media = window.matchMedia(query);

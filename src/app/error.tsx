@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 
+import LocalizedLink from '@/components/localized-link';
 import errorSVG from '@/svgs/error.svg';
 
 type Props = {
@@ -37,12 +37,12 @@ export default function Error({ error, reset }: Props): React.ReactElement {
         >
           Try again
         </button>
-        <Link
+        <LocalizedLink
           href="/"
           className="hover:from-brand-CTA-blue-700 mx-2 w-full rounded-md bg-gradient-to-r from-brand-CTA-blue-600 to-brand-CTA-blue-500 py-2 text-white transition-colors duration-300 ease-in-out hover:to-brand-CTA-blue-600 focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500 focus:ring-offset-2"
         >
           Return to the Home page
-        </Link>
+        </LocalizedLink>
       </div>
     </div>
   );

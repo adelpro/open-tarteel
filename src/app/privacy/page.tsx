@@ -1,20 +1,51 @@
-import React from 'react';
-
-import { clientConfig, normalizeAppUrl } from '@/utils';
+import { breadcrumbTrail } from '@/lib/seo/json-ld';
+import { buildPageMetadata } from '@/lib/seo/metadata';
+import { withLocale } from '@/lib/seo/routes';
+import { SITE } from '@/lib/seo/site';
+import ar from '@/locales/ar.json';
+import de from '@/locales/de.json';
+import en from '@/locales/en.json';
+import { getRequestLocale } from '@/utils/request-locale';
 
 import PrivacyPageAr from './privacy-page';
 
-export async function generateMetadata() {
-  const title = 'Privacy Policy - Arabic - ' + clientConfig.APP_NAME;
-  const description = 'Arabic Privacy page for ' + clientConfig.APP_NAME;
-  const appUrl = normalizeAppUrl(clientConfig.APP_URL) ?? '';
+const COPY = { ar, en, de } as const;
 
-  return {
-    title,
-    description,
-    alternates: { canonical: `${appUrl}/privacy` },
-  };
+export async function generateMetadata() {
+  const locale = await getRequestLocale();
+  const copy = COPY[locale];
+
+  return buildPageMetadata({
+    locale,
+    path: '/privacy',
+    title: copy['privacy.title'],
+    description: copy['privacy.section1.body'],
+  });
 }
-export default function Page() {
-  return <PrivacyPageAr />;
+
+export default async function Page() {
+  const locale = await getRequestLocale();
+  const copy = COPY[locale];
+  const breadcrumb = breadcrumbTrail([
+    {
+      name: locale === 'ar' ? 'الرئيسية' : 'Home',
+      url: `${SITE.url}${withLocale(locale, '/')}`,
+    },
+    {
+      name: copy['privacy.title'],
+      url: `${SITE.url}${withLocale(locale, '/privacy')}`,
+    },
+  ]);
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumb).replace(/</g, '\\u003c'),
+        }}
+      />
+      <PrivacyPageAr />
+    </>
+  );
 }

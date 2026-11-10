@@ -1,7 +1,11 @@
 import Image from 'next/image';
-import Link from 'next/link';
 
+import LocalizedLink from '@/components/localized-link';
 import failSVG from '@/svgs/fail.svg';
+
+export const metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default function NotFound() {
   return (
@@ -20,12 +24,12 @@ export default function NotFound() {
         </p>
 
         <div className="mt-6">
-          <Link
+          <LocalizedLink
             href="/"
             className="hover:from-brand-CTA-blue-700 inline-block w-full rounded-md bg-gradient-to-r from-brand-CTA-blue-600 to-brand-CTA-blue-500 px-4 py-2 font-medium text-white hover:to-brand-CTA-blue-600"
           >
             العودة إلى الصفحة الرئيسية
-          </Link>
+          </LocalizedLink>
         </div>
       </div>
     </main>

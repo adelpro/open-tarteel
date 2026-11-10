@@ -1,6 +1,6 @@
 'use client';
 
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import React, {
   useCallback,
@@ -27,11 +27,16 @@ import {
 } from '@/gun/view-rank';
 import { useFavorites } from '@/hooks/use-favorites';
 import { useFilterSort } from '@/hooks/use-filter-sort';
+import { useLocalePath } from '@/hooks/use-locale-path';
 import { useNetworkStatus } from '@/hooks/use-network-status';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { useRecentlyPlayed } from '@/hooks/use-recently-played';
 import { useReciters } from '@/hooks/use-reciters';
-import { enabledSourcesAtom, selectedReciterAtom } from '@/jotai/atom';
+import {
+  enabledSourcesAtom,
+  reciterListPinnedAtom,
+  selectedReciterAtom,
+} from '@/jotai/atom';
 import { canDownload } from '@/services/reciters/capabilities';
 import { Reciter } from '@/types';
 import { cn, generateFavId } from '@/utils';
@@ -50,19 +55,18 @@ const PAGE_SIZE = 80;
 
 export default function RecitersList({ isOpen, setIsOpen }: Props) {
   const router = useRouter();
+  const localePath = useLocalePath();
   const { formatMessage } = useIntl();
   const selectedReciter = useAtomValue(selectedReciterAtom);
   const setSelectedReciter = useSetAtom(selectedReciterAtom);
   // A reciter can appear once per moshaf/riwaya, so the reciter id alone is
   // not unique in this list. Match the same identity used for favourites.
-  const selectedFavId = selectedReciter
-    ? generateFavId(selectedReciter)
-    : null;
+  const selectedFavId = selectedReciter ? generateFavId(selectedReciter) : null;
   const { recentIds, addToRecent } = useRecentlyPlayed();
   const [showRecentOnly, setShowRecentOnly] = useState(false);
   const [showDownloadedOnly, setShowDownloadedOnly] = useState(false);
   const [showDownloadableOnly, setShowDownloadableOnly] = useState(false);
-  const [pinned, setPinned] = useState(false);
+  const [pinned, setPinned] = useAtom(reciterListPinnedAtom);
   const skipHistoryBack = useRef(false);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const sentinelRef = useRef<HTMLLIElement>(null);
@@ -204,7 +208,10 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
       addToRecent(favId);
       syncView(favId);
       setSelectedReciter(reciter);
-      if (!pinned) {
+      const isDesktop =
+        typeof window !== 'undefined' &&
+        window.matchMedia('(min-width: 1024px)').matches;
+      if (!pinned || !isDesktop) {
         skipHistoryBack.current = true;
         setIsOpen(false);
       }
@@ -217,9 +224,9 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
         ? `${moshafParameter}&${existingParameters}`
         : moshafParameter;
 
-      router.push(`/reciter/${reciter.id}?${queryString}`);
+      router.push(localePath(`/reciter/${reciter.id}?${queryString}`));
     },
-    [addToRecent, pinned, router, setIsOpen, setSelectedReciter]
+    [addToRecent, localePath, pinned, router, setIsOpen, setSelectedReciter]
   );
 
   const sortLabel =
@@ -383,7 +390,10 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
         defaultMessage: 'Select a Reciter',
       })}
       open={isOpen}
-      onClose={() => setIsOpen(false)}
+      onClose={() => {
+        setIsOpen(false);
+        setPinned(false);
+      }}
       toolbar={toolbar}
       pinned={pinned}
       onTogglePin={() => setPinned((value) => !value)}

@@ -18,27 +18,39 @@ const storedReciter = {
   },
 };
 
-test('a stored reciter opens its player without the catalog', async ({
-  page,
-}) => {
+const RECITER_PATH = '/reciter/mp3quran.net-1?moshafId=1';
+
+test('a stored reciter renders its player on a cold load', async ({ page }) => {
   await page.addInitScript((reciter) => {
-    localStorage.setItem('locale', JSON.stringify('en'));
     localStorage.setItem('selected-reciter', JSON.stringify(reciter));
   }, storedReciter);
-  await page.route(/\/api\/reciters\?/, (route) => route.abort());
+
+  await page.goto(RECITER_PATH);
+
+  await expect(page.locator('#audio')).toHaveCount(1);
+  await expect(page.getByRole('slider')).toBeVisible();
+});
+
+test('a corrupt stored reciter does not break the home page', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'selected-reciter',
+      JSON.stringify({ id: 'mp3quran.net-1', name: 'Broken' })
+    );
+  });
 
   await page.goto('/');
 
-  await expect(page).toHaveURL(/\/reciter\/mp3quran\.net-1\?moshafId=1$/);
-  await expect(page.locator('#audio')).toHaveCount(1);
   await expect(
-    page.getByRole('button', { name: 'Play', exact: true })
+    page.getByRole('button', { name: 'Open reciter selector' })
   ).toBeVisible();
+  await expect(page.locator('body')).not.toContainText('Application error');
 });
 
 test('the player mount does not shift the layout', async ({ page }) => {
   await page.addInitScript((reciter) => {
-    localStorage.setItem('locale', JSON.stringify('en'));
     localStorage.setItem('selected-reciter', JSON.stringify(reciter));
     localStorage.setItem('show-visualizer', JSON.stringify(true));
   }, storedReciter);
@@ -55,7 +67,7 @@ test('the player mount does not shift the layout', async ({ page }) => {
     }).observe({ type: 'layout-shift', buffered: true });
   });
 
-  await page.goto('/');
+  await page.goto(RECITER_PATH);
   await expect(page.locator('#audio')).toHaveCount(1);
   await page.waitForTimeout(1000);
 

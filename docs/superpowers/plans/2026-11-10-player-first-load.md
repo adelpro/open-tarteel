@@ -31,6 +31,7 @@
 ### Task 1: Hydrate the selected reciter synchronously
 
 **Files:**
+
 - Modify: `src/jotai/create-atom-with-storage.ts`
 - Modify: `src/jotai/atom.ts:58-61`
 - Modify: `src/hooks/use-reciters.ts:31-76`
@@ -38,6 +39,7 @@
 - Test: `src/hooks/use-reciters.test.tsx` (create)
 
 **Interfaces:**
+
 - Consumes: nothing new.
 - Produces: `createAtomWithStorage<T>(key: string, initialValue: T, options?: { getOnInit?: boolean })`; `selectedReciterAtom` hydrates from `localStorage` before its first read.
 
@@ -143,8 +145,12 @@ const stored = {
   name: 'Ibrahim Al-Akdar',
   source: 'mp3quran.net',
   moshaf: {
-    id: '1', name: 'Hafs', riwaya: 'حفص',
-    server: 'https://cdn.example/', surah_total: '1', surahIds: '1',
+    id: '1',
+    name: 'Hafs',
+    riwaya: 'حفص',
+    server: 'https://cdn.example/',
+    surah_total: '1',
+    surahIds: '1',
     playlist: [{ surahId: '1', link: 'https://cdn.example/001.mp3' }],
   },
 } as never;
@@ -154,8 +160,12 @@ const catalogEntry = (moshafId: string, playlist: unknown[] = []) => ({
   name: 'Ibrahim Al-Akdar',
   source: 'mp3quran.net',
   moshaf: {
-    id: moshafId, name: 'Hafs', riwaya: 'حفص',
-    server: 'https://cdn.example/', surah_total: '1', surahIds: '1',
+    id: moshafId,
+    name: 'Hafs',
+    riwaya: 'حفص',
+    server: 'https://cdn.example/',
+    surah_total: '1',
+    surahIds: '1',
     playlist,
   },
 });
@@ -216,8 +226,7 @@ Replace the `matched` lookup so a different moshaf never replaces the selection:
 ```ts
 const matched = data.find(
   (r) =>
-    r.id === selectedReciter.id &&
-    r.moshaf.id === selectedReciter.moshaf.id
+    r.id === selectedReciter.id && r.moshaf.id === selectedReciter.moshaf.id
 );
 if (matched) {
   // Do not throw away a lazily loaded playlist (or a persisted one)
@@ -266,10 +275,12 @@ git commit -m "fix(jotai): hydrate the selected reciter on first read"
 ### Task 2: Open the stored reciter without the catalog
 
 **Files:**
+
 - Modify: `src/app/page.tsx:26-59`
 - Test: `src/app/page.test.tsx` (create)
 
 **Interfaces:**
+
 - Consumes: `selectedReciterAtom` from Task 1 (non-null on the first client render).
 - Produces: nothing consumed by later tasks.
 
@@ -293,7 +304,9 @@ vi.mock('@/hooks/use-reciters', () => ({
   useReciters: () => ({ reciters: [], loading: true, error: null }),
 }));
 vi.mock('@/components/reciter-selector', () => ({ default: () => null }));
-vi.mock('@/components/network-status-indicator', () => ({ default: () => null }));
+vi.mock('@/components/network-status-indicator', () => ({
+  default: () => null,
+}));
 vi.mock('../components/hero', () => ({ default: () => null }));
 
 const storedReciter = {
@@ -301,8 +314,11 @@ const storedReciter = {
   name: 'Ibrahim Al-Akdar',
   source: 'mp3quran.net',
   moshaf: {
-    id: '1', name: 'Hafs', riwaya: 'حفص',
-    server: 'https://cdn.example/', surah_total: '1',
+    id: '1',
+    name: 'Hafs',
+    riwaya: 'حفص',
+    server: 'https://cdn.example/',
+    surah_total: '1',
     playlist: [{ surahId: '1', link: 'https://cdn.example/001.mp3' }],
   },
 };
@@ -322,9 +338,7 @@ describe('Home', () => {
     render(<Home />);
 
     await waitFor(() =>
-      expect(replace).toHaveBeenCalledWith(
-        '/reciter/mp3quran.net-1?moshafId=1'
-      )
+      expect(replace).toHaveBeenCalledWith('/reciter/mp3quran.net-1?moshafId=1')
     );
   });
 
@@ -386,10 +400,12 @@ git commit -m "fix(home): open the stored reciter without the catalog"
 ### Task 3: Reserve the visualizer slot
 
 **Files:**
+
 - Modify: `src/components/audio-bars-visualizer.tsx:260-278`
 - Test: `src/components/audio-bars-visualizer.test.tsx`
 
 **Interfaces:**
+
 - Consumes: existing props `audioId`, `isPlaying`, `enabled`, `model`.
 - Produces: the component always renders a `height: 72px` container while mounted; the canvas carries `opacity: 1 | 0`.
 
@@ -412,7 +428,9 @@ it('reserves the slot for non-CORS providers without drawing', () => {
     <AudioBarsVisualizer audioId="audio" isPlaying={true} enabled={false} />
   );
 
-  expect((container.firstElementChild as HTMLElement).style.height).toBe('72px');
+  expect((container.firstElementChild as HTMLElement).style.height).toBe(
+    '72px'
+  );
   expect(container.querySelector('canvas')?.style.opacity).toBe('0');
 });
 
@@ -467,11 +485,13 @@ git commit -m "fix(player): reserve the visualizer slot"
 ### Task 4: Player-shaped loading skeleton
 
 **Files:**
+
 - Create: `src/components/player-skeleton.tsx`
 - Modify: `src/app/reciter/[id]/reciter-page.tsx:167-176,204-213`
 - Test: `src/components/player-skeleton.test.tsx` (create)
 
 **Interfaces:**
+
 - Consumes: nothing.
 - Produces: `<PlayerSkeleton />` — `role="status"`, `aria-label="Loading player"`, minimum height 194px, one 72px visualizer slot and seven 44px control slots.
 
@@ -517,7 +537,10 @@ export default function PlayerSkeleton() {
       <div className="mb-2 h-[72px] w-full max-w-md rounded-lg bg-surface-sunken" />
       <div className="flex w-full items-center justify-between gap-2 md:gap-3">
         {Array.from({ length: 7 }).map((_, index) => (
-          <div key={index} className="size-11 rounded-[10px] bg-surface-sunken" />
+          <div
+            key={index}
+            className="size-11 rounded-[10px] bg-surface-sunken"
+          />
         ))}
       </div>
       <div className="my-3 h-1 w-full rounded-full bg-surface-sunken" />
@@ -550,10 +573,12 @@ git commit -m "feat(player): match the loading skeleton to the player card"
 ### Task 5: Drop the controls' client-only skeleton
 
 **Files:**
+
 - Modify: `src/components/player-controls.tsx:91,203-205,402-416`
 - Test: `src/components/player-controls.test.tsx` (create)
 
 **Interfaces:**
+
 - Consumes: existing props of `PlayerControls`.
 - Produces: the controls render the transport on the first render; no `h-9 w-9` placeholder row exists.
 
@@ -640,11 +665,13 @@ git commit -m "fix(player): render the controls on the first client render"
 ### Task 6: Keep the playback position session-only
 
 **Files:**
+
 - Modify: `src/jotai/atom.ts:1,40`
 - Modify: `src/components/player.tsx:151-187,189-203`
 - Test: `src/jotai/atom.test.ts`
 
 **Interfaces:**
+
 - Consumes: nothing.
 - Produces: `currentTimeAtom` is a plain Jotai atom initialised to `0`; it never reads or writes `localStorage`.
 
@@ -724,9 +751,11 @@ git commit -m "fix(player): keep the playback position session-only"
 ### Task 7: Browser regression for the stored reciter first load
 
 **Files:**
+
 - Test: `tests/player-first-load.spec.ts` (create)
 
 **Interfaces:**
+
 - Consumes: the behaviour from Tasks 1–6.
 - Produces: the acceptance test referenced by the spec.
 
@@ -753,34 +782,28 @@ const storedReciter = {
   },
 };
 
-test('a stored reciter opens its player without the catalog', async ({ page }) => {
-  await page.addInitScript(
-    (reciter) => {
-      localStorage.setItem('locale', JSON.stringify('en'));
-      localStorage.setItem('selected-reciter', JSON.stringify(reciter));
-    },
-    storedReciter
-  );
+test('a stored reciter opens its player without the catalog', async ({
+  page,
+}) => {
+  await page.addInitScript((reciter) => {
+    localStorage.setItem('locale', JSON.stringify('en'));
+    localStorage.setItem('selected-reciter', JSON.stringify(reciter));
+  }, storedReciter);
   await page.route(/\/api\/reciters\?/, (route) => route.abort());
 
   await page.goto('/');
 
-  await expect(page).toHaveURL(
-    /\/reciter\/mp3quran\.net-1\?moshafId=1$/
-  );
+  await expect(page).toHaveURL(/\/reciter\/mp3quran\.net-1\?moshafId=1$/);
   await expect(page.locator('#audio')).toHaveCount(1);
   await expect(page.getByRole('button', { name: 'Play' })).toBeVisible();
 });
 
 test('the player mount does not shift the layout', async ({ page }) => {
-  await page.addInitScript(
-    (reciter) => {
-      localStorage.setItem('locale', JSON.stringify('en'));
-      localStorage.setItem('selected-reciter', JSON.stringify(reciter));
-      localStorage.setItem('show-visualizer', JSON.stringify(true));
-    },
-    storedReciter
-  );
+  await page.addInitScript((reciter) => {
+    localStorage.setItem('locale', JSON.stringify('en'));
+    localStorage.setItem('selected-reciter', JSON.stringify(reciter));
+    localStorage.setItem('show-visualizer', JSON.stringify(true));
+  }, storedReciter);
   await page.addInitScript(() => {
     const win = window as unknown as { __cls: number };
     win.__cls = 0;

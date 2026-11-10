@@ -51,21 +51,21 @@
 .dark {
   color-scheme: dark;
 
-  /* Backgrounds */
-  --background: #0f1117; /* near-black with blue tint */
-  --surface: #1a1f2e; /* deep navy card */
-  --surface-raised: #222a3b;
-  --surface-sunken: #0b0d12;
-  --card: #1a1f2e;
+  /* Backgrounds — neutral zinc, not navy */
+  --background: #101012;
+  --surface: #18181b;
+  --surface-raised: #222225;
+  --surface-sunken: #0b0b0d;
+  --card: #18181b;
 
   /* Text */
-  --foreground: #f1f5f9; /* slate-100 */
-  --muted: #94a3b8; /* slate-400 — was 500, below contrast */
-  --foreground-subtle: #64748b; /* slate-500 */
+  --foreground: #fafafa;
+  --muted: #a1a1aa;
+  --foreground-subtle: #71717a;
 
   /* Borders */
-  --border: #1e293b; /* slate-800 */
-  --border-strong: #334155; /* slate-700 */
+  --border: #27272a;
+  --border-strong: #3f3f46;
 
   /* Accent */
   --accent: #38bdf8; /* sky-400 (brighter on dark) */
@@ -246,7 +246,9 @@ body {
     );
 }
 
-/* The warm and night palettes are flat: no decorative wash, no colour orbs. */
+/* The warm, night and classic palettes are flat: no decorative wash, no colour orbs. */
+[data-theme='classic'],
+[data-theme='classic'] body,
 [data-theme='warm'],
 [data-theme='warm'] body,
 [data-theme='night'],
@@ -254,6 +256,7 @@ body {
   background-image: none;
 }
 
+[data-theme='classic'] .ambient-orbs,
 [data-theme='warm'] .ambient-orbs,
 [data-theme='night'] .ambient-orbs {
   display: none;

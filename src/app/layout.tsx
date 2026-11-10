@@ -2,7 +2,6 @@ import './globals.css';
 
 import type { Metadata, Viewport } from 'next';
 import { Tajawal } from 'next/font/google';
-import { cookies, headers } from 'next/headers';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import { EnabledSourcesCookieSync } from '@/components/enabled-sources-cookie-sync';
@@ -12,8 +11,10 @@ import IntlProviderWrapper from '@/components/intl-provider-wrapper';
 import OfflineRedirect from '@/components/offline-redirect';
 import PwaUpdater from '@/components/pwa-updater';
 import StoragePersist from '@/components/storage-persist';
-import type { Language } from '@/constants/language';
-import { clientConfig, getDefaultLocale } from '@/utils';
+import { websiteGraph } from '@/lib/seo/json-ld';
+import { SITE } from '@/lib/seo/site';
+import { clientConfig } from '@/utils';
+import { getRequestLocale } from '@/utils/request-locale';
 
 export const viewport: Viewport = {
   colorScheme: 'light dark',
@@ -62,6 +63,7 @@ export const metadata: Metadata = {
       'Listen to the Holy Quran recited by world-renowned reciters. Free and open-source.',
     images: ['/images/logo-og.png'],
   },
+  verification: SITE.verification ? { google: SITE.verification } : undefined,
 };
 
 const tajawal = Tajawal({
@@ -70,48 +72,12 @@ const tajawal = Tajawal({
   preload: true,
 });
 
-const siteJsonLd = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'WebApplication',
-      name: clientConfig.APP_NAME,
-      url: clientConfig.APP_URL,
-      description:
-        'Listen to the Holy Quran recited by world-renowned reciters. Free and open-source.',
-      applicationCategory: 'MultimediaApplication',
-      operatingSystem: 'Any',
-      inLanguage: ['ar', 'en', 'de'],
-      offers: {
-        '@type': 'Offer',
-        price: '0',
-        priceCurrency: 'USD',
-      },
-    },
-    {
-      '@type': 'Organization',
-      name: clientConfig.APP_NAME,
-      url: clientConfig.APP_URL,
-      logo: `${clientConfig.APP_URL}/images/192x192.png`,
-    },
-  ],
-};
-
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const headerStore = await headers();
-
-  const cookieLocale = cookieStore.get('locale')?.value;
-  const acceptLanguage = headerStore.get('accept-language');
-
-  const resolvedLocale: Language =
-    cookieLocale === 'ar' || cookieLocale === 'en' || cookieLocale === 'de'
-      ? cookieLocale
-      : getDefaultLocale(acceptLanguage);
+  const resolvedLocale = await getRequestLocale();
 
   return (
     <NuqsAdapter>
@@ -128,11 +94,15 @@ export default async function RootLayout({
             </a>
             <script
               type="application/ld+json"
-              dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify(
+                  websiteGraph({ locale: resolvedLocale })
+                ).replace(/</g, '\\u003c'),
+              }}
             />
             <main
               id="main-content"
-              className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background text-foreground"
+              className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background pb-20 text-foreground"
             >
               <div className="ambient-orbs pointer-events-none fixed inset-0 -z-10 overflow-hidden">
                 <div className="absolute -left-[10%] -top-[15%] h-[520px] w-[520px] rounded-full bg-sky-500/[0.06] blur-[80px] dark:bg-sky-400/[0.07]" />

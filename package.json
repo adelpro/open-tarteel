@@ -38,7 +38,7 @@
     "build": "next build",
     "analyze": "ANALYZE=true next build",
     "start": "next start",
-    "start:standalone": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",
+    "start:standalone": "rm -rf .next/standalone/.next/static .next/standalone/public && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",
     "knip": "knip --no-config-hints",
     "lint": "eslint . --cache --concurrency=auto --max-warnings=0",
     "lint:fix": "eslint . --fix --cache --concurrency=auto",
@@ -53,6 +53,7 @@
     "test:contract": "vitest --run src/services/reciters/contracts.test.ts",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --run --coverage",
+    "seo:audit": "node scripts/seo-audit.mjs",
     "clean": "rimraf .next node_modules"
   },
   "lint-staged": {

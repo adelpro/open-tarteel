@@ -10,21 +10,23 @@ import { useRouter } from 'next/navigation';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { FormattedMessage } from 'react-intl';
 
+import { useLocalePath } from '@/hooks/use-locale-path';
 import { selectedReciterAtom } from '@/jotai/atom';
 
 import { FooterLink } from './footer-link';
 
 export default function Footer() {
   const router = useRouter();
+  const localePath = useLocalePath();
   const setSelectedReciter = useSetAtom(selectedReciterAtom);
   const handleHomeClick = (event: React.MouseEvent) => {
     event.preventDefault();
     setSelectedReciter(null);
-    router.push('/');
+    router.push(localePath('/'));
   };
 
   return (
-    <footer className="fixed bottom-0 left-0 z-50 mt-0 flex w-full flex-row items-center justify-between gap-0 border-t border-zinc-200/80 bg-background p-2 text-sm backdrop-blur-md dark:border-slate-800/80 sm:static sm:mt-5 sm:flex-col sm:justify-center sm:gap-3 sm:border-0 sm:bg-transparent sm:p-4 sm:backdrop-blur-none">
+    <footer className="bg-background/95 fixed inset-x-0 bottom-0 z-50 flex w-full flex-row items-center justify-center gap-6 border-t border-border px-4 py-2 text-sm backdrop-blur-md">
       <div className="flex w-full max-w-2xl flex-row justify-center gap-8 sm:gap-8">
         <FooterLink href="/" onClick={handleHomeClick}>
           <div className="relative flex h-5 w-5 items-center justify-center transition-transform duration-200 group-hover:scale-110">

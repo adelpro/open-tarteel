@@ -31,15 +31,15 @@ on compile time.
 
 ## Root causes
 
-| # | Cause | Location |
-| - | ----- | -------- |
-| 1 | Selected reciter is not readable until a post-paint storage effect | `src/jotai/create-atom-with-storage.ts`, `src/jotai/atom.ts` |
-| 2 | Home redirect gated on the catalog request | `src/app/page.tsx` |
-| 3 | Loading fallback height ≠ player card height | `src/app/reciter/[id]/reciter-page.tsx`, `src/components/simple-skeleton.tsx` |
-| 4 | Controls render an empty skeleton on the first client render | `src/components/player-controls.tsx` |
-| 5 | Visualizer renders `null`, then a 72px block | `src/components/audio-bars-visualizer.tsx` |
-| 6 | Playback position persisted and written at 4 Hz | `src/jotai/atom.ts`, `src/components/player.tsx` |
-| 7 | Duplicate audio listener effect | `src/components/player.tsx` |
+| #   | Cause                                                              | Location                                                                      |
+| --- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| 1   | Selected reciter is not readable until a post-paint storage effect | `src/jotai/create-atom-with-storage.ts`, `src/jotai/atom.ts`                  |
+| 2   | Home redirect gated on the catalog request                         | `src/app/page.tsx`                                                            |
+| 3   | Loading fallback height ≠ player card height                       | `src/app/reciter/[id]/reciter-page.tsx`, `src/components/simple-skeleton.tsx` |
+| 4   | Controls render an empty skeleton on the first client render       | `src/components/player-controls.tsx`                                          |
+| 5   | Visualizer renders `null`, then a 72px block                       | `src/components/audio-bars-visualizer.tsx`                                    |
+| 6   | Playback position persisted and written at 4 Hz                    | `src/jotai/atom.ts`, `src/components/player.tsx`                              |
+| 7   | Duplicate audio listener effect                                    | `src/components/player.tsx`                                                   |
 
 ## Required behaviour
 
