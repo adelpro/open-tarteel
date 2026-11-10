@@ -96,7 +96,7 @@ export default function Dialog({
       }}
       onKeyDown={handleKeyDown}
       className={cn(
-        'top-50 left-50 -translate-x-50 -translate-y-50 fixed z-10 mx-auto w-[98%] max-w-4xl origin-top animate-slideInWithFade p-2 backdrop:bg-zinc-500/50 dark:backdrop:bg-zinc-900/50',
+        'top-50 left-50 -translate-x-50 -translate-y-50 fixed z-[60] mx-auto w-[98%] max-w-4xl origin-top animate-slideInWithFade p-2 backdrop:bg-zinc-500/50 dark:backdrop:bg-zinc-900/50',
         className
       )}
       aria-modal="true"

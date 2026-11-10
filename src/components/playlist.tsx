@@ -182,25 +182,22 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
             return (
               <li
                 key={item.link}
-                ref={(element) => {
-                  reciterRefs.current[index] = element;
-                }}
-                onClick={() => handlePlaylistItemClick(item.originalIndex)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    handlePlaylistItemClick(item.originalIndex);
-                  }
-                }}
-                tabIndex={focusedIndex === index ? 0 : -1}
-                className={`group w-full cursor-pointer rounded-[12px] border border-border bg-surface p-3 transition-colors duration-120 hover:bg-surface-sunken ${
+                className={`group w-full rounded-[12px] border border-border bg-surface p-3 transition-colors duration-120 hover:bg-surface-sunken ${
                   focusedIndex === index ? 'ring-2 ring-primary' : ''
                 }`}
               >
                 <div className="flex items-center gap-4">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-surface-sunken text-[13px] font-bold text-ink-muted transition-colors duration-120 group-hover:text-primary">
-                    {surahNumber || index + 1}
-                  </span>
+                  <button
+                    type="button"
+                    ref={(element) => {
+                      reciterRefs.current[index] = element;
+                    }}
+                    onClick={() => handlePlaylistItemClick(item.originalIndex)}
+                    className="flex min-w-0 flex-1 items-center gap-4 rounded-[10px] text-start"
+                  >
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-surface-sunken text-[13px] font-bold text-ink-muted transition-colors duration-120 group-hover:text-primary">
+                      {surahNumber || index + 1}
+                    </span>
 
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
@@ -232,6 +229,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                       )}
                     </div>
                   </div>
+                  </button>
 
                   {/* Per-track download/remove button */}
                   <button

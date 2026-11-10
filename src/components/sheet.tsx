@@ -343,7 +343,7 @@ export default function Sheet({
       <aside
         aria-label={title}
         className={cn(
-          'fixed inset-y-0 start-0 top-14 z-30 w-[360px] flex-col border-e border-border bg-surface text-foreground',
+          'fixed inset-y-0 start-0 top-14 z-[60] w-[360px] flex-col border-e border-border bg-surface text-foreground',
           open ? 'flex' : 'hidden'
         )}
       >

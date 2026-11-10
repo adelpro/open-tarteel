@@ -27,6 +27,9 @@ export default function HomeClient() {
   // upgrade (localStorage only) and client-side navigation back home.
   useEffect(() => {
     if (!mounted || !selectedReciter || redirectedRef.current) return;
+    // Only the Arabic home resumes a player. /en and /de must stay on their
+    // localized home instead of landing on an Arabic reciter document.
+    if (window.location.pathname !== '/') return;
 
     if (
       !loading &&

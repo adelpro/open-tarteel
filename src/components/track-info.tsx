@@ -40,6 +40,7 @@ export default function TrackInfo({
         {surah ? getSurahDisplayName(surah, locale) : currentTrack.surahId}
       </span>
       <span
+        dir="ltr"
         className="tabular-nums text-ink-muted"
         aria-label={formatMessage({
           id: 'player.time',
