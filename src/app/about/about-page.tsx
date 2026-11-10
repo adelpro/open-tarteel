@@ -42,6 +42,12 @@ export default function AboutPage() {
             </li>
             <li className="ps-2">
               <FormattedMessage
+                defaultMessage="تلاوات من عدة مصادر مع عرض مصدر كل قارئ"
+                id="about.feature.providers"
+              />
+            </li>
+            <li className="ps-2">
+              <FormattedMessage
                 defaultMessage="تحديثات وتطوير مستمر من المجتمع المفتوح"
                 id="about.feature.community"
               />
@@ -57,21 +63,21 @@ export default function AboutPage() {
 
           <h2 className="mb-2 mt-6 text-2xl font-semibold">
             <FormattedMessage
-              defaultMessage="خوادم mp3quran"
-              id="about.servers.title"
+              defaultMessage="مصادر تلاوة متعددة"
+              id="about.providers.title"
             />
           </h2>
 
           <p>
             <FormattedMessage
-              defaultMessage="يستخدم التطبيق ملفات الصوت عالية الجودة للقرآن الكريم التي توفرها خدمة mp3quran، وهي خدمة طرف ثالث مستقلة. هذه الخدمة تضمن استقرار وسرعة في تحميل الملفات، مما يتيح للمستخدمين الاستماع إلى التلاوات دون انقطاع أو تأخير."
-              id="about.servers.description1"
+              defaultMessage="يجمع التطبيق التلاوات من عدة مزودين مستقلين، منهم MP3Quran وItqan وQurani.ai ومؤسسة القرآن. يظهر مصدر كل قارئ في القائمة، ويمكنك التحكم في المصادر المفعّلة من الإعدادات."
+              id="about.providers.description1"
             />
           </p>
           <p>
             <FormattedMessage
-              defaultMessage="نود التأكيد على أن mp3quran ليست جزءًا من خدماتنا، بل هي مزود خارجي يدعم ملايين المستخدمين حول العالم من خلال مكتبة صوتية واسعة ومتنوعة."
-              id="about.servers.description2"
+              defaultMessage="هؤلاء المزودون خدمات خارجية مستقلة وليسوا جزءاً من التطبيق. قد تختلف جودة الصوت والتوقيتات وإمكانية التحميل من مصدر لآخر، ويعرض التطبيق ما يدعمه كل مصدر."
+              id="about.providers.description2"
             />
           </p>
         </div>
