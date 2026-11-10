@@ -100,6 +100,7 @@ git push origin --delete b0.2.2 better-ui better-ux \
 | D14 | Tahfeez presets / one-ayah repeat / 2×2 grid | ROADMAP Stage 10d | **Already done** — `tahfeez-mode-controls.tsx` | **IGNORE (stale)** | — |
 | D15 | Redesign phases 0–5 | `redesign-plan.md` | **Already done** — primitives, action sheet, offline strip, settings, 39 screenshots | **IGNORE (stale status line)** | — |
 | D16 | SEO + player implementation code | Both plans | **Already shipped and green** | **IGNORE (done)** | — |
+| D17 | Run the Modern Web Guidance audit across the UI | user request | Never run (`modern-web-guidance` skill not used in this repo) | **KEEP** — audit-only, findings before fixes | 2–4 h |
 
 ---
 
@@ -158,6 +159,71 @@ Only after Netlify's build-minute quota resets and the dashboard steps in
 - [ ] Update `docs/redesign-plan.md` status to `complete (2026-11-10)` and remove the "awaiting validation" line.
 - [ ] Commit: `docs(design): close the redesign plan`
 
+### Task 7: Run the Modern Web Guidance audit (D17)
+
+**Goal:** map every user-facing surface to Google's Modern Web Guidance
+(`modern-web-guidance` skill) and produce one findings document. **Audit only —
+no code changes in this task**; each P0/P1 gap becomes its own follow-up task.
+
+**Files:** create `docs/reviews/2026-11-10-modern-web-guidance.md`.
+
+**Interfaces:** consumes the running app (`yarn dev` or the standalone build);
+produces a table of `Surface | Guide id | Requirement | Current code | Gap |
+Priority | Effort`, plus a list of follow-up tasks for the P0/P1 rows.
+
+- [ ] Inventory the surfaces to audit: home/hero, reciter picker sheet (mobile +
+      desktop dock), player card, playback controls, volume/mute, Tahfeez
+      controls, settings page + palette picker, language switcher, offline strip,
+      action sheet, error/404, PWA install/update prompts.
+- [ ] Run **one search per capability** (2–5 words, no `React`/`Tailwind`/app
+      nouns) and keep the exact query in the report:
+
+  | Surface | Query |
+  | --- | --- |
+  | Reciter sheet, action sheet | `light dismiss dialog` |
+  | `⋯` menu, language menu | `native popover menu` |
+  | Settings form | `accessible form validation` |
+  | Theme + palettes | `dark mode color scheme` |
+  | Player motion | `reduced motion animation` |
+  | Route changes | `view transitions navigation` |
+  | Audio playback | `media session controls` |
+  | PWA install/update | `pwa install prompt` |
+  | Offline behaviour | `background sync offline` |
+  | Long reciter list | `virtualize long list` |
+  | Touch devices | `sticky hover touch` |
+  | Keyboard users | `focus visible styles` |
+  | Reciter artwork | `responsive images` |
+  | Arabic/English layout | `rtl logical properties` |
+
+  ```bash
+  npx -y modern-web-guidance@latest search "<query>" --skill-version 2026_10_30-58d055df
+  ```
+
+- [ ] If a search returns nothing relevant, run `list` once; if the topic is
+      truly absent, record `not covered` and move on — do not force unrelated
+      guides.
+- [ ] `retrieve` every matched id **plus** the discipline guide that applies
+      (`accessibility`, `color`, `css`, `forms`, `html`, `performance`,
+      `security`). If `retrieve` writes a temp file (>9.5 KB), read it in full.
+- [ ] For each guide, record the requirement, the current implementation
+      (`file:line`), the gap, and a priority:
+      **P0** broken for users (a11y/security/data), **P1** Baseline violation,
+      **P2** missing modern API with a working fallback, **P3** polish.
+- [ ] Mark compliant items `compliant` with the `file:line` evidence — do not
+      invent gaps to make the report look useful.
+- [ ] Note the browser-support assumption used for fallback decisions
+      (default: Baseline Widely available; the offline/PWA path is the hard
+      requirement).
+- [ ] Add a "Follow-up tasks" section: one line per P0/P1, each with the guide
+      id and the file it touches. Do not implement them here.
+- [ ] Run `npx tsc --noemit` and `npx vitest --run` to confirm the audit changed
+      nothing.
+- [ ] Commit: `docs(review): add the modern web guidance audit`
+
+**Done when:** the report exists, every audited surface is either `compliant`
+with evidence or listed as a gap with a priority, and the follow-up list is
+ready to be scheduled.
+
 ---
 
 ## Deliberately ignored (with reasons)
@@ -179,3 +245,4 @@ Only after Netlify's build-minute quota resets and the dashboard steps in
 3. Run **D7** (redesign Phase 6) or accept the current UI as final?
 4. Anything in **D9** (provider perf) worth measuring before the next release?
 5. Who does the two external items (**D10** Cloudflare CNAME, **D11** Search Console)?
+6. Should **D17** (Modern Web Guidance audit) run before the release, or right after it? Any surface to leave out?
