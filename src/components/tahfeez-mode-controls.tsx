@@ -31,8 +31,8 @@ interface Segment {
 }
 
 const INPUT_CLASS =
-  'w-20 rounded-lg border border-gray-300 bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100';
-const LABEL_CLASS = 'text-xs text-gray-500 dark:text-gray-400';
+  'w-20 rounded-lg border border-border bg-surface px-3 py-1.5 text-sm font-medium text-ink focus:outline-none focus:ring-2 focus:ring-primary';
+const LABEL_CLASS = 'text-xs text-ink-muted';
 
 // Tahfeez Mode Controls Component
 export default function TahfeezModeControls({
@@ -314,8 +314,8 @@ export default function TahfeezModeControls({
             }
             className={`rounded-md border px-2 py-0.5 font-medium transition-colors ${
               tahfeezSettings.repeat === value
-                ? 'border-blue-600 bg-blue-600 text-white'
-                : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                ? 'border-primary bg-primary text-on-primary'
+                : 'border-border bg-surface text-ink-muted hover:bg-surface-sunken hover:text-ink'
             }`}
           >
             {value}×
@@ -337,8 +337,8 @@ export default function TahfeezModeControls({
             }
             className={`rounded-md border px-2 py-0.5 font-medium transition-colors ${
               tahfeezSettings.delay === value
-                ? 'border-blue-600 bg-blue-600 text-white'
-                : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                ? 'border-primary bg-primary text-on-primary'
+                : 'border-border bg-surface text-ink-muted hover:bg-surface-sunken hover:text-ink'
             }`}
           >
             {value}s
@@ -351,7 +351,7 @@ export default function TahfeezModeControls({
         <div
           role="radiogroup"
           aria-label={formatMessage({ id: 'tahfeez.strategy' })}
-          className="flex rounded-lg bg-gray-200 p-1 dark:bg-gray-800"
+          className="flex rounded-lg bg-surface-sunken p-1"
         >
           <button
             type="button"
@@ -363,10 +363,10 @@ export default function TahfeezModeControls({
                 strategy: 'per_ayah',
               }));
             }}
-            className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
+            className={`rounded-[8px] border px-4 py-1.5 text-sm font-bold transition-colors duration-120 ${
               tahfeezSettings.strategy === 'per_ayah'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-600 hover:bg-gray-300 dark:text-gray-400 dark:hover:bg-gray-600'
+                ? 'border-border bg-surface text-ink'
+                : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
             {formatMessage({ id: 'tahfeez.perAyah' })}
@@ -381,10 +381,10 @@ export default function TahfeezModeControls({
                 strategy: 'whole_range',
               }));
             }}
-            className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
+            className={`rounded-[8px] border px-4 py-1.5 text-sm font-bold transition-colors duration-120 ${
               tahfeezSettings.strategy === 'whole_range'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-600 hover:bg-gray-300 dark:text-gray-400 dark:hover:bg-gray-600'
+                ? 'border-border bg-surface text-ink'
+                : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
             {formatMessage({ id: 'tahfeez.wholeRange' })}
@@ -395,24 +395,18 @@ export default function TahfeezModeControls({
       {/* Loading / error feedback */}
       <div aria-live="polite">
         {isLoadingTimestamps && (
-          <div className="mb-4 text-center text-sm text-gray-500 dark:text-gray-400">
+          <div className="mb-4 text-center text-sm text-ink-muted">
             {formatMessage({ id: 'tahfeez.loading' })}
           </div>
         )}
       </div>
       {invalidRange && (
-        <div
-          role="alert"
-          className="mb-4 text-center text-sm text-red-600 dark:text-red-400"
-        >
+        <div role="alert" className="mb-4 text-center text-sm text-danger">
           {formatMessage({ id: 'tahfeez.invalidRange' })}
         </div>
       )}
       {error && !isLoadingTimestamps && (
-        <div
-          role="alert"
-          className="mb-4 text-center text-sm text-red-600 dark:text-red-400"
-        >
+        <div role="alert" className="mb-4 text-center text-sm text-danger">
           {error}
         </div>
       )}
@@ -420,17 +414,17 @@ export default function TahfeezModeControls({
       {/* Range indicator */}
       {segments.length > 0 && (
         <div className="relative inset-0 my-3 flex h-1 w-full items-center justify-between">
-          <div className="absolute h-1 w-full rounded-full bg-gray-200 dark:bg-gray-700" />
+          <div className="absolute h-1 w-full rounded-full bg-surface-sunken" />
         </div>
       )}
 
       {/* Status summary */}
       {segments.length > 0 && !error && !invalidRange && (
         <div className="mt-3 flex flex-col items-center justify-center gap-1">
-          <div className="text-sm font-medium text-green-600 dark:text-green-400">
+          <div className="text-sm font-medium text-success">
             {formatMessage({ id: 'tahfeez.readyToStart' })}
           </div>
-          <div className="flex items-center gap-2 font-bold text-gray-500">
+          <div className="flex items-center gap-2 font-bold text-ink-muted">
             <span aria-live="polite">
               {formatMessage(
                 { id: 'tahfeez.statusSummary' },

@@ -546,7 +546,7 @@ export default function PlayerControls({
         {/* Sleep timer indicator (all sizes; set from the More menu) */}
         {remainingTime !== null && remainingTime > 0 && (
           <div className="flex h-9 w-9 items-center justify-center">
-            <span className="flex items-center text-xs font-bold text-blue-500 dark:text-blue-400">
+            <span className="flex items-center text-xs font-bold text-primary">
               <Image
                 src={sleepSVG}
                 alt=""
