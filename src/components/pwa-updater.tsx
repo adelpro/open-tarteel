@@ -31,7 +31,13 @@ const PwaUpdater = () => {
       setIsOpen(true);
     };
 
+    // A first install claims the page mid-session. Reloading for that event
+    // would throw away the page the visitor is already using; only reload when
+    // an existing controller is replaced by an accepted update.
+    const hadController = Boolean(navigator.serviceWorker.controller);
+
     const onControllerChange = () => {
+      if (!hadController) return;
       globalThis.location.reload();
     };
 

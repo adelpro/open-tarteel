@@ -4,12 +4,14 @@ import { describe, expect, it } from 'vitest';
 import PlayerSkeleton from './player-skeleton';
 
 describe('PlayerSkeleton', () => {
-  it('reserves the player card geometry', () => {
+  it('reserves the player card geometry with two slabs', () => {
     render(<PlayerSkeleton />);
 
     const skeleton = screen.getByRole('status', { name: 'Loading player' });
-    expect(skeleton).toHaveStyle({ minHeight: '194px' });
-    expect(skeleton.querySelector('[class*="h-[72px]"]')).not.toBeNull();
-    expect(skeleton.querySelectorAll('.size-11')).toHaveLength(7);
+    expect(skeleton).toHaveStyle({ minHeight: '208px' });
+    expect(skeleton.querySelectorAll('[class*="h-[72px]"]')).toHaveLength(1);
+    expect(skeleton.querySelectorAll('[class*="h-8"]')).toHaveLength(1);
+    expect(skeleton.querySelector('.size-11')).toBeNull();
+    expect(skeleton.querySelector('[class*="h-1 "]')).toBeNull();
   });
 });

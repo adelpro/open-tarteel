@@ -79,6 +79,23 @@ test('a corrupt stored reciter does not break the home page', async ({
   await expect(page.locator('body')).not.toContainText('Application error');
 });
 
+test('the first visit does not reload after the service worker claims', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    sessionStorage.setItem(
+      'loads',
+      String(Number(sessionStorage.getItem('loads') ?? 0) + 1)
+    );
+  });
+
+  await page.goto(RECITER_PATH);
+  await expect(page.locator('#audio')).toHaveCount(1);
+  await page.waitForTimeout(3000);
+
+  expect(await page.evaluate(() => sessionStorage.getItem('loads'))).toBe('1');
+});
+
 test('the player mount does not shift the layout', async ({ page }) => {
   await page.addInitScript((reciter) => {
     localStorage.setItem('selected-reciter', JSON.stringify(reciter));
