@@ -88,7 +88,6 @@ export default function PlayerControls({
   spectrumSupported = true,
 }: Props) {
   // ── State ───────────────────────────────────────────
-  const [isClient, setIsClient] = useState(false);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showVisualizer, setShowVisualizer] = useAtom(showVisualizerAtom);
@@ -200,10 +199,6 @@ export default function PlayerControls({
   };
 
   // ── Effects ──────────────────────────────────────────
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
   // Close menus on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -399,22 +394,6 @@ export default function PlayerControls({
   };
 
   // ── Render ───────────────────────────────────────────
-  if (!isClient) {
-    return (
-      <div className="flex w-full flex-col">
-        {/* Controls Skeleton */}
-        <div
-          className="relative flex w-full items-center justify-between gap-2 md:gap-3"
-          dir={isRTL ? 'rtl' : 'ltr'}
-        >
-          {Array.from({ length: 7 }).map((_, index) => (
-            <div key={index} className="h-9 w-9" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex w-full flex-col">
       {activeMode === 'tahfeez' ? (
