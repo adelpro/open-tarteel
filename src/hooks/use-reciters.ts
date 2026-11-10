@@ -30,14 +30,14 @@ export function useReciters() {
         setReciters(data);
 
         if (selectedReciter) {
-          // A reciter can have several moshaf/riwayah entries. Keep the one
-          // that is currently selected instead of falling back to the first.
-          const matched =
-            data.find(
-              (r) =>
-                r.id === selectedReciter.id &&
-                r.moshaf.id === selectedReciter.moshaf.id
-            ) ?? data.find((r) => r.id === selectedReciter.id);
+          // A reciter can have several moshaf/riwayah entries. Only the exact
+          // selected moshaf may refresh it; any other entry for the same
+          // reciter must not replace the user's persisted choice.
+          const matched = data.find(
+            (r) =>
+              r.id === selectedReciter.id &&
+              r.moshaf.id === selectedReciter.moshaf.id
+          );
           if (matched) {
             // Do not throw away a lazily loaded playlist (or a persisted one)
             // when the catalog refreshes with an empty playlist.
@@ -59,7 +59,7 @@ export function useReciters() {
               }
               return matched;
             });
-          } else {
+          } else if (!data.some((r) => r.id === selectedReciter.id)) {
             setSelectedReciter(null);
           }
         }

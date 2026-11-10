@@ -57,7 +57,8 @@ export const recitersSortAtom = createAtomWithStorage<
 >('reciters-sort-atom', 'alphabetical');
 export const selectedReciterAtom = createAtomWithStorage<Reciter | null>(
   'selected-reciter',
-  null
+  null,
+  { getOnInit: true }
 );
 
 export type Theme = 'light' | 'dark' | 'system';
