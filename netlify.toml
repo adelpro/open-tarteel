@@ -1,6 +1,13 @@
 [build]
   command = "corepack yarn build"
   publish = ".next"
+  # Build guard (docs/DEPLOY.md → "Branch policy"): only production context may
+  # build. Pushes to develop, staging or a feature branch, and pull-request
+  # deploy previews, exit 0 here and are skipped before install/build runs, so
+  # they consume no build minutes. Exit 0 = skip, exit 1 = build.
+  # `$CONTEXT` is production | deploy-preview | branch-deploy | dev.
+  # TOML literal string: the shell needs the double quotes to expand $CONTEXT.
+  ignore = '[ "$CONTEXT" != "production" ] && exit 0; exit 1'
 
 [build.environment]
   NODE_VERSION = "22"

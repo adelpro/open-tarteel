@@ -17,6 +17,27 @@ Netlify deploys are reserved for **production only**:
   so a push cannot start a build. Re-enable it only when there is quota and a
   real staging deploy is wanted.
 
+### Build guard
+
+`netlify.toml` sets an `ignore` command, so every non-production context exits
+`0` before install and build run:
+
+```toml
+ignore = '[ "$CONTEXT" != "production" ] && exit 0; exit 1'
+```
+
+`$CONTEXT` is `production`, `branch-deploy`, `deploy-preview` or `dev`. Pushes to
+`develop`, `staging` or any feature branch, and every pull request, now end as a
+skipped deploy in seconds instead of a full Next.js build. Production keeps
+building on both sites: `main` on `open-tarteel`, `staging` on
+`open-tarteel-staging`, because each is that site's production branch.
+
+The guard is a safety net, not the policy. It still creates a skipped deploy
+record, so the quota-saving setting is **Branch deploys: None** for
+`open-tarteel` (Site configuration → Build & deploy → Branches and deploy
+contexts). With that in place Netlify does not start the build at all; keep the
+guard so a settings reset cannot start burning minutes again.
+
 ### Local runs
 
 ```bash
