@@ -1,4 +1,4 @@
-import { homeMetadata,HomeRoute } from '@/app/_seo/home';
+import { homeMetadata, HomeRoute } from '@/app/_seo/home';
 
 export const generateMetadata = () => homeMetadata('ar');
 

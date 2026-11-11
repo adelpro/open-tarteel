@@ -4,6 +4,7 @@ coverage
 .next
 out
 dist
+.gstack
 
 # Ignore all node_modules directories
 node_modules

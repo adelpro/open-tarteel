@@ -1,4 +1,4 @@
-import { aboutMetadata,AboutRoute } from '@/app/_seo/about';
+import { aboutMetadata, AboutRoute } from '@/app/_seo/about';
 
 export const generateMetadata = () => aboutMetadata('en');
 

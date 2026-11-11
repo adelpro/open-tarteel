@@ -5,7 +5,7 @@ import de from '@/locales/de.json';
 import en from '@/locales/en.json';
 import { clientConfig } from '@/utils';
 
-import { type SeoLocale,withLocale } from './routes';
+import { type SeoLocale, withLocale } from './routes';
 import { SITE } from './site';
 
 const COPY = { ar, en, de } as const;

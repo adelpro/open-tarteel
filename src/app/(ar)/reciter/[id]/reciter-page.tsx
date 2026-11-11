@@ -218,39 +218,38 @@ function ReciterContent({
 
   return (
     <>
-        {isFullscreen && (
-          <p className="mb-5 flex items-center justify-center gap-2 text-4xl font-bold text-gray-500">
-            {activeReciter?.name}
+      {isFullscreen && (
+        <p className="mb-5 flex items-center justify-center gap-2 text-4xl font-bold text-gray-500">
+          {activeReciter?.name}
+        </p>
+      )}
+      {detailError ? (
+        <div className="flex flex-col items-center gap-3 p-6 text-center text-sm text-gray-500">
+          <p>
+            {formatMessage({
+              id: 'reciter.loadError',
+              defaultMessage: 'Could not load this reciter. Please try again.',
+            })}
           </p>
-        )}
-        {detailError ? (
-          <div className="flex flex-col items-center gap-3 p-6 text-center text-sm text-gray-500">
-            <p>
-              {formatMessage({
-                id: 'reciter.loadError',
-                defaultMessage:
-                  'Could not load this reciter. Please try again.',
-              })}
-            </p>
-            <button
-              type="button"
-              onClick={() => setRetryKey((key) => key + 1)}
-              className="h-11 rounded-[10px] bg-primary px-4 text-[13px] font-bold text-on-primary transition-colors duration-120 hover:bg-primary-hover"
-            >
-              {formatMessage({ id: 'reciter.retry', defaultMessage: 'Retry' })}
-            </button>
-          </div>
-        ) : reciterReady && activeReciter ? (
-          <Suspense fallback={<PlayerSkeleton />}>
-            <Player
-              key={`${activeReciter.id}:${activeReciter.moshaf.id}:${initialTrackIndex}`}
-              playlist={activeReciter.moshaf.playlist}
-              initialTrackIndex={initialTrackIndex}
-            />
-          </Suspense>
-        ) : (
-          <PlayerSkeleton />
-        )}
+          <button
+            type="button"
+            onClick={() => setRetryKey((key) => key + 1)}
+            className="h-11 rounded-[10px] bg-primary px-4 text-[13px] font-bold text-on-primary transition-colors duration-120 hover:bg-primary-hover"
+          >
+            {formatMessage({ id: 'reciter.retry', defaultMessage: 'Retry' })}
+          </button>
+        </div>
+      ) : reciterReady && activeReciter ? (
+        <Suspense fallback={<PlayerSkeleton />}>
+          <Player
+            key={`${activeReciter.id}:${activeReciter.moshaf.id}:${initialTrackIndex}`}
+            playlist={activeReciter.moshaf.playlist}
+            initialTrackIndex={initialTrackIndex}
+          />
+        </Suspense>
+      ) : (
+        <PlayerSkeleton />
+      )}
     </>
   );
 }

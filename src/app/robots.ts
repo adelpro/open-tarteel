@@ -27,8 +27,6 @@ export default function robots(): MetadataRoute.Robots {
     },
     // A relative `Sitemap:` is ignored by crawlers, and an empty `Host:` is
     // invalid. Only emit both when the configured origin is absolute.
-    ...(hasOrigin
-      ? { sitemap: `${appUrl}/sitemap.xml`, host: appUrl }
-      : {}),
+    ...(hasOrigin ? { sitemap: `${appUrl}/sitemap.xml`, host: appUrl } : {}),
   };
 }

@@ -300,7 +300,7 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
         'flex w-full max-w-xl flex-col items-center justify-start',
         isFullscreen
           ? 'w-full max-w-xl bg-background text-foreground'
-          : 'max-w-xl min-h-[210px] rounded-[16px] border border-border bg-surface p-3'
+          : 'min-h-[210px] max-w-xl rounded-[16px] border border-border bg-surface p-3'
       )}
     >
       {typeof currentTrack === 'number' && (

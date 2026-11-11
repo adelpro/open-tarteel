@@ -1,4 +1,4 @@
-import { contactMetadata,ContactRoute } from '@/app/_seo/contact';
+import { contactMetadata, ContactRoute } from '@/app/_seo/contact';
 
 export const generateMetadata = () => contactMetadata('en');
 

@@ -208,36 +208,36 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                       {surahNumber || index + 1}
                     </span>
 
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[15px] font-bold text-ink">
-                        {!isArabic
-                          ? surah?.englishName
-                          : removeTashkeel(surah?.name)}
-                      </span>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[15px] font-bold text-ink">
+                          {!isArabic
+                            ? surah?.englishName
+                            : removeTashkeel(surah?.name)}
+                        </span>
 
-                      <Tag variant="static" size="xs">
-                        {surah?.ayahCount}{' '}
-                        {surah?.ayahCount === 1 ? (
-                          <FormattedMessage id="playlist.aya" />
-                        ) : (
-                          <FormattedMessage id="playlist.ayas" />
+                        <Tag variant="static" size="xs">
+                          {surah?.ayahCount}{' '}
+                          {surah?.ayahCount === 1 ? (
+                            <FormattedMessage id="playlist.aya" />
+                          ) : (
+                            <FormattedMessage id="playlist.ayas" />
+                          )}
+                        </Tag>
+                      </div>
+
+                      {/* Per-track download progress: reserve the row height */}
+                      <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-transparent">
+                        {(isCurrentlyDownloading || isSingleLoading) && (
+                          <div
+                            className="h-full rounded-full bg-primary transition-[width] duration-200"
+                            style={{
+                              width: `${trackProgress ?? 0}%`,
+                            }}
+                          />
                         )}
-                      </Tag>
+                      </div>
                     </div>
-
-                    {/* Per-track download progress: reserve the row height */}
-                    <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-transparent">
-                      {(isCurrentlyDownloading || isSingleLoading) && (
-                        <div
-                          className="h-full rounded-full bg-primary transition-[width] duration-200"
-                          style={{
-                            width: `${trackProgress ?? 0}%`,
-                          }}
-                        />
-                      )}
-                    </div>
-                  </div>
                   </button>
 
                   {/* Per-track download/remove button */}

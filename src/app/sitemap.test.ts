@@ -59,8 +59,8 @@ describe('sitemap', () => {
 
   it('keeps every URL absolute on the configured origin', async () => {
     const urls = (await sitemap()).map((entry) => entry.url);
-    expect(
-      urls.every((url) => url.startsWith('https://tarteel.example'))
-    ).toBe(true);
+    expect(urls.every((url) => url.startsWith('https://tarteel.example'))).toBe(
+      true
+    );
   });
 });
