@@ -21,7 +21,7 @@ export const revalidate = 86400;
 const CONTENT_LAST_MODIFIED = new Date('2026-11-09T00:00:00.000Z');
 
 const absolute = (origin: string, path: string): string =>
-  `${origin}${path === '/' ? '/' : path}`;
+  `${origin}${path === '/' ? '' : path}`;
 
 const languagesFor = (origin: string, path: string): Record<string, string> => {
   const alternates = alternatesFor(path);

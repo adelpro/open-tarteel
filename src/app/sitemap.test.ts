@@ -26,7 +26,7 @@ describe('sitemap', () => {
 
     expect(urls).toEqual(
       expect.arrayContaining([
-        'https://tarteel.example/',
+        'https://tarteel.example',
         'https://tarteel.example/en',
         'https://tarteel.example/de',
         'https://tarteel.example/about',
