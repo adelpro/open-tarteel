@@ -41,7 +41,21 @@ export const playbackModeAtom = createAtomWithStorage<PlaybackMode>(
   'off'
 );
 
-export const volumeAtom = createAtomWithStorage<number>('volume-value', 1);
+const isVolume = (value: unknown): value is number =>
+  typeof value === 'number' && value >= 0 && value <= 1;
+
+export const volumeAtom = createAtomWithStorage<number>('volume-value', 1, {
+  validate: isVolume,
+});
+
+/** The level a long press restores after unmuting; persisted so it survives a reload. */
+export const lastVolumeAtom = createAtomWithStorage<number>(
+  'last-volume-value',
+  1,
+  {
+    validate: (value): value is number => isVolume(value) && value > 0,
+  }
+);
 
 export const recitersSortAtom = createAtomWithStorage<
   'popular' | 'alphabetical' | 'views'

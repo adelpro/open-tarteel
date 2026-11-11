@@ -109,12 +109,13 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
   const tahfeezActiveRef = useRef(false);
   const volumeValue = useAtomValue(volumeAtom);
   const playbackSpeed = useAtomValue(playbackSpeedAtom);
-  // Sync volume
+  // Sync volume. The element mounts after the first render, so re-apply the
+  // stored level when it appears instead of waiting for the next volume change.
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volumeValue;
     }
-  }, [volumeValue]);
+  }, [volumeValue, audioElement]);
 
   // Sync playback speed
   useEffect(() => {

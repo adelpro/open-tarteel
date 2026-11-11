@@ -113,6 +113,37 @@ describe('PlayerControls', () => {
     expect(store.get(volumeAtom)).toBeCloseTo(0.8);
   });
 
+  it('persists the last audible level when muting', () => {
+    vi.useFakeTimers();
+    localStorage.setItem('volume-value', '0.8');
+    const { getByRole } = renderControls();
+    const button = getByRole('button', { name: 'Volume control' });
+
+    fireEvent.pointerDown(button);
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+    fireEvent.pointerUp(button);
+
+    expect(localStorage.getItem('last-volume-value')).toBe('0.8');
+  });
+
+  it('restores the persisted level after a reload while muted', () => {
+    vi.useFakeTimers();
+    localStorage.setItem('volume-value', '0');
+    localStorage.setItem('last-volume-value', '0.8');
+    const { store, getByRole } = renderControls();
+    const button = getByRole('button', { name: 'Volume control' });
+
+    fireEvent.pointerDown(button);
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+    fireEvent.pointerUp(button);
+
+    expect(store.get(volumeAtom)).toBeCloseTo(0.8);
+  });
+
   it('keeps a tap for the volume slider', () => {
     const { getByRole } = renderControls();
     const button = getByRole('button', { name: 'Volume control' });

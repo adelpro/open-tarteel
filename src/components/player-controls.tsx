@@ -34,6 +34,7 @@ import { useSleepTimer } from '@/hooks/use-sleep-timer';
 import { TimeRange, useTahfeezSession } from '@/hooks/use-tahfeez-session';
 import {
   fullscreenAtom,
+  lastVolumeAtom,
   playbackModeAtom,
   playbackSpeedAtom,
   selectedReciterAtom,
@@ -98,7 +99,7 @@ export default function PlayerControls({
     null
   );
   const volumeLongPressFired = useRef(false);
-  const lastVolume = useRef(volume > 0 ? volume : 1);
+  const [lastVolume, setLastVolume] = useAtom(lastVolumeAtom);
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackSpeed, setPlaybackSpeed] = useAtom(playbackSpeedAtom);
   const [playbackMode, setPlaybackMode] = useAtom(playbackModeAtom);
@@ -206,8 +207,8 @@ export default function PlayerControls({
 
   // ── Effects ──────────────────────────────────────────
   useEffect(() => {
-    if (volume > 0) lastVolume.current = volume;
-  }, [volume]);
+    if (volume > 0 && volume !== lastVolume) setLastVolume(volume);
+  }, [volume, lastVolume, setLastVolume]);
 
   useEffect(
     () => () => {
@@ -242,13 +243,12 @@ export default function PlayerControls({
   };
 
   const toggleMute = () => {
-    setVolume((current) => {
-      if (current > 0) {
-        lastVolume.current = current;
-        return 0;
-      }
-      return lastVolume.current || 1;
-    });
+    if (volume > 0) {
+      setLastVolume(volume);
+      setVolume(0);
+      return;
+    }
+    setVolume(lastVolume > 0 ? lastVolume : 1);
   };
 
   const handleVolumePointerDown = () => {
