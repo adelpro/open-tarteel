@@ -119,7 +119,7 @@ export default function ReciterFilters({
           </button>
         </div>
 
-        <div className="max-h-[60dvh] overflow-y-auto overscroll-contain px-2 py-2 lg:max-h-[calc(80dvh-7rem)]">
+        <div className="max-h-[60dvh] overflow-y-auto overflow-x-hidden overscroll-contain px-2 py-2 lg:max-h-[calc(80dvh-7rem)]">
           <FilterSection
             title={formatMessage({
               id: 'filters.sources',

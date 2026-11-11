@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* The app never scrolls sideways. Absolutely positioned tooltips and the
+   visually hidden skip link would otherwise widen the layout viewport on a
+   phone, which also stretches fixed bottom sheets past the screen edge.
+   `clip` avoids creating a scroll container, so fixed and sticky layers keep
+   their viewport positioning. */
+@layer base {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-x: clip;
+  }
+}
+
 /* ─── Design Tokens ───
    Three palettes (`data-theme`) × two modes (`light`/`dark` class).
    `classic` is the default so the app renders correctly before hydration.
