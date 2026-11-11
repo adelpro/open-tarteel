@@ -9,7 +9,11 @@ import { useIntl } from 'react-intl';
 
 import { useFavorites } from '@/hooks/use-favorites';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
-import { reciterListOpenAtom, reciterListPinnedAtom, selectedReciterAtom } from '@/jotai/atom';
+import {
+  reciterListOpenAtom,
+  reciterListPinnedAtom,
+  selectedReciterAtom,
+} from '@/jotai/atom';
 import type { Reciter } from '@/types';
 import { generateFavId } from '@/utils';
 import { useShareReciter } from '@/utils/share';
