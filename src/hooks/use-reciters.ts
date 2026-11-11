@@ -6,8 +6,35 @@ import { useIntl } from 'react-intl';
 
 import { Language } from '@/constants/language';
 import { enabledSourcesAtom, selectedReciterAtom } from '@/jotai/atom';
-import type { Reciter } from '@/types';
+import type { LinkSource, Reciter } from '@/types';
 import { getAllReciters } from '@/utils/api';
+
+type InFlightRequest = {
+  key: string;
+  promise: Promise<Reciter[]>;
+};
+
+// HomeClient and RecitersList both call this hook, and the selector dialog is
+// mounted even while closed. Share one request per locale/sources combination
+// so the catalog is fetched once instead of twice.
+let inFlightReciters: InFlightRequest | null = null;
+
+const requestKey = (locale: Language, sources: readonly string[]) =>
+  `${locale}:${[...sources].sort().join(',')}`;
+
+const loadReciters = (
+  locale: Language,
+  sources: readonly LinkSource[]
+): Promise<Reciter[]> => {
+  const key = requestKey(locale, sources);
+  if (inFlightReciters?.key === key) return inFlightReciters.promise;
+
+  const promise = getAllReciters(locale, [...sources]).finally(() => {
+    if (inFlightReciters?.promise === promise) inFlightReciters = null;
+  });
+  inFlightReciters = { key, promise };
+  return promise;
+};
 
 export function useReciters() {
   const locale = useIntl().locale as Language;
@@ -24,7 +51,7 @@ export function useReciters() {
     const fetchReciters = async () => {
       try {
         setLoading(true);
-        const data = await getAllReciters(locale, enabledSources);
+        const data = await loadReciters(locale, enabledSources);
         if (!isMounted) return;
 
         setReciters(data);

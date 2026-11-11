@@ -105,4 +105,16 @@ describe('useReciters with a stored reciter', () => {
 
     expect(store.get(selectedReciterAtom)?.id).toBe('mp3quran.net-2');
   });
+
+  it('shares one catalog request between concurrent consumers', async () => {
+    vi.mocked(getAllReciters).mockResolvedValue([catalogEntry('1')] as never);
+    const store = createStore();
+    const first = run(store);
+    const second = run(store);
+
+    await waitFor(() => expect(getAllReciters).toHaveBeenCalledTimes(1));
+
+    first.unmount();
+    second.unmount();
+  });
 });
