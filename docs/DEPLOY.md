@@ -145,7 +145,9 @@ and bypass cache for `/sw.js`, `/api/*`, and `/.netlify/*`.
 - Custom domain `staging-tarteel.quran.us.kg` added on the site.
 - Env: provider secrets, `NEXT_PUBLIC_APP_URL=https://staging-tarteel.quran.us.kg`,
   `NEXT_PUBLIC_ENABLE_MP3QURAN_V4=true`.
-- Build hook: `https://api.netlify.com/build_hooks/6aed9bb06ddd4a8f48a6eab6`.
+- Build hook: create a new hook in Netlify → Site configuration → Build &
+  deploy → Build hooks. The previous hook was committed in this file and must
+  be rotated; never commit the new URL.
 
 ### Verify
 

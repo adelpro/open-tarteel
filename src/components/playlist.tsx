@@ -99,7 +99,10 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
         <Tag variant="static" size="md">
           {displayPlaylist.length}{' '}
           <span className="font-normal">
-            <FormattedMessage id="playlist.surahs" />
+            <FormattedMessage
+              id="playlist.surahs"
+              values={{ count: displayPlaylist.length }}
+            />
           </span>
         </Tag>
       </div>
