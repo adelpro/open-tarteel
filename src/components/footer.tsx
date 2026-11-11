@@ -27,7 +27,7 @@ export default function Footer() {
 
   return (
     <footer className="fixed inset-x-0 bottom-0 z-50 flex w-full flex-row items-center justify-center gap-6 border-t border-border bg-background px-4 py-2 text-sm backdrop-blur-md">
-      <div className="flex w-full max-w-2xl flex-row justify-center gap-8 sm:gap-8">
+      <div className="flex w-full max-w-3xl flex-row justify-center gap-6">
         <FooterLink href="/" onClick={handleHomeClick}>
           <div className="relative flex h-5 w-5 items-center justify-center transition-transform duration-200 group-hover:scale-110">
             <Image
@@ -37,7 +37,7 @@ export default function Footer() {
               className="object-contain"
             />
           </div>
-          <span className="sr-only sm:not-sr-only sm:block">
+          <span className="sr-only md:not-sr-only md:block">
             <FormattedMessage id="footer.home" defaultMessage="Home" />
           </span>
         </FooterLink>
@@ -50,7 +50,7 @@ export default function Footer() {
               className="object-contain"
             />
           </div>
-          <span className="sr-only sm:not-sr-only sm:block">
+          <span className="sr-only md:not-sr-only md:block">
             <FormattedMessage id="footer.about" defaultMessage="About" />
           </span>
         </FooterLink>
@@ -63,7 +63,7 @@ export default function Footer() {
               className="object-contain"
             />
           </div>
-          <span className="sr-only sm:not-sr-only sm:block">
+          <span className="sr-only md:not-sr-only md:block">
             <FormattedMessage id="footer.privacy" defaultMessage="Privacy" />
           </span>
         </FooterLink>
@@ -76,7 +76,7 @@ export default function Footer() {
               className="object-contain"
             />
           </div>
-          <span className="sr-only sm:not-sr-only sm:block">
+          <span className="sr-only md:not-sr-only md:block">
             <FormattedMessage id="footer.contact" defaultMessage="contact us" />
           </span>
         </FooterLink>
@@ -84,7 +84,7 @@ export default function Footer() {
           <div className="relative flex h-5 w-5 items-center justify-center transition-transform duration-200 group-hover:scale-110">
             <IoSettingsOutline className="size-6 text-current" />
           </div>
-          <span className="sr-only sm:not-sr-only sm:block">
+          <span className="sr-only md:not-sr-only md:block">
             <FormattedMessage id="footer.settings" defaultMessage="Settings" />
           </span>
         </FooterLink>

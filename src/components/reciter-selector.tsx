@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl';
 
 import { useFavorites } from '@/hooks/use-favorites';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
-import { reciterListOpenAtom, selectedReciterAtom } from '@/jotai/atom';
+import { reciterListOpenAtom, reciterListPinnedAtom, selectedReciterAtom } from '@/jotai/atom';
 import type { Reciter } from '@/types';
 import { generateFavId } from '@/utils';
 import { useShareReciter } from '@/utils/share';
@@ -27,6 +27,7 @@ export default function ReciterSelector({ initialReciter }: Props) {
   const autoOpenedRef = useRef(false);
 
   const selectedReciter = useAtomValue(selectedReciterAtom);
+  const pinned = useAtomValue(reciterListPinnedAtom);
   const { toggleFavorite, favoriteReciters } = useFavorites();
   const { formatMessage } = useIntl();
   const { shareReciter } = useShareReciter();
@@ -46,6 +47,15 @@ export default function ReciterSelector({ initialReciter }: Props) {
       autoOpenedRef.current = true;
     }
   }, [setIsOpen]);
+
+  // A pinned panel is a preference. Reopen it after a reload on desktop, but
+  // let the user close it during the session without forcing it back.
+  useEffect(() => {
+    if (!pinned) return;
+    if (window.matchMedia('(min-width: 1024px)').matches) {
+      setIsOpen(true);
+    }
+  }, [pinned, setIsOpen]);
 
   const displayedReciter = selectedReciter ?? initialReciter;
   const playlist = displayedReciter?.moshaf?.playlist ?? null;
