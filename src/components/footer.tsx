@@ -26,7 +26,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-background/95 fixed inset-x-0 bottom-0 z-50 flex w-full flex-row items-center justify-center gap-6 border-t border-border px-4 py-2 text-sm backdrop-blur-md">
+    <footer className="bg-background fixed inset-x-0 bottom-0 z-50 flex w-full flex-row items-center justify-center gap-6 border-t border-border px-4 py-2 text-sm backdrop-blur-md">
       <div className="flex w-full max-w-2xl flex-row justify-center gap-8 sm:gap-8">
         <FooterLink href="/" onClick={handleHomeClick}>
           <div className="relative flex h-5 w-5 items-center justify-center transition-transform duration-200 group-hover:scale-110">

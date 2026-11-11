@@ -14,6 +14,18 @@ test('server HTML declares the URL language', async ({ request }) => {
   }
 });
 
+test('an unknown path gets the localized 404', async ({ request }) => {
+  for (const [path, text] of [
+    ['/does-not-exist', 'صفحة غير موجودة'],
+    ['/en/does-not-exist', 'Page not found'],
+    ['/de/does-not-exist', 'Seite nicht gefunden'],
+  ] as const) {
+    const response = await request.get(path);
+    expect(response.status()).toBe(404);
+    expect(await response.text()).toContain(text);
+  }
+});
+
 test('home has a canonical and JSON-LD', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(

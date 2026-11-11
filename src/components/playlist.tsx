@@ -193,6 +193,12 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
                       reciterRefs.current[index] = element;
                     }}
                     onClick={() => handlePlaylistItemClick(item.originalIndex)}
+                    tabIndex={
+                      focusedIndex === index ||
+                      (focusedIndex === null && index === 0)
+                        ? 0
+                        : -1
+                    }
                     className="flex min-w-0 flex-1 items-center gap-4 rounded-[10px] text-start"
                   >
                     <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-surface-sunken text-[13px] font-bold text-ink-muted transition-colors duration-120 group-hover:text-primary">

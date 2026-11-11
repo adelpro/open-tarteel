@@ -6,12 +6,10 @@ import { DEFAULT_LOCALE, localeFromPath, stripLocale } from '@/lib/seo/routes';
 const PUBLIC_FILE =
   /\.(?:png|jpe?g|gif|svg|ico|webp|avif|woff2?|ttf|otf|css|js|mjs|map|xml|txt|webmanifest)$/i;
 
-// These paths have a real /en or /de page tree. Serving it directly lets Next
-// prerender the page; every other prefixed path keeps the rewrite.
-const LOCALIZED_ROUTES = new Set(['/', '/about', '/contact', '/privacy']);
-
-const hasLocalizedRoute = (path: string): boolean =>
-  LOCALIZED_ROUTES.has(path) || path.startsWith('/reciter/');
+// Paths that keep the rewrite into the Arabic tree. Everything else under /en
+// and /de has a real page tree, including the catch-all 404, so it can be
+// served directly and prerendered.
+const REWRITTEN_ROUTES = new Set(['/settings', '/offline', '/design-preview']);
 
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
@@ -43,14 +41,8 @@ export function middleware(request: NextRequest) {
   }
 
   const locale = localeFromPath(pathname);
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-tarteel-locale', locale);
 
   if (locale === DEFAULT_LOCALE) {
-    // Passing a cloned header bag through `NextResponse.next` loses the
-    // downstream 404 status in Next 15.5, so mutate the request headers in
-    // place for the bare (Arabic) tree.
-    request.headers.set('x-tarteel-locale', locale);
     return NextResponse.next();
   }
 
@@ -59,14 +51,15 @@ export function middleware(request: NextRequest) {
   // dynamic route made Next answer 404.
   const stripped = stripLocale(pathname);
 
-  if (hasLocalizedRoute(stripped)) {
-    request.headers.set('x-tarteel-locale', locale);
-    return NextResponse.next();
-  }
-
   // A protocol-relative path such as `/en//evil.example` would resolve against
   // the attacker's origin. Only same-origin paths may be rewritten.
   if (stripped.startsWith('//')) {
+    return NextResponse.next();
+  }
+
+  // Prefixed paths without a dedicated page keep the rewrite. Unknown paths
+  // fall through to the locale catch-all so /en/foo gets the English 404.
+  if (!REWRITTEN_ROUTES.has(stripped)) {
     return NextResponse.next();
   }
 
@@ -74,9 +67,7 @@ export function middleware(request: NextRequest) {
   target.pathname = stripped;
   target.search = search;
 
-  return NextResponse.rewrite(target, {
-    request: { headers: requestHeaders },
-  });
+  return NextResponse.rewrite(target);
 }
 
 export const config = {
