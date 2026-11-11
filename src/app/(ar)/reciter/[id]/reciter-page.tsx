@@ -1,6 +1,6 @@
 'use client';
 
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect, useRef, useState } from 'react';
@@ -217,10 +217,7 @@ function ReciterContent({
       : 0;
 
   return (
-    <div className="flex w-full items-center justify-center p-1 md:p-2">
-      <div className="flex w-full flex-col items-center justify-center gap-4">
-        {!isFullscreen && <NetworkStatusIndicator />}
-        {!isFullscreen && <ReciterSelector initialReciter={initialReciter} />}
+    <>
         {isFullscreen && (
           <p className="mb-5 flex items-center justify-center gap-2 text-4xl font-bold text-gray-500">
             {activeReciter?.name}
@@ -254,8 +251,7 @@ function ReciterContent({
         ) : (
           <PlayerSkeleton />
         )}
-      </div>
-    </div>
+    </>
   );
 }
 
@@ -270,16 +266,22 @@ export default function ReciterPage({
   initialReciter?: Reciter;
   initialSurah?: number;
 }) {
+  const isFullscreen = useAtomValue(fullscreenAtom);
+
   return (
-    <Suspense fallback={<PlayerSkeleton />}>
-      <div className="flex w-full max-w-lg items-center justify-center p-1 md:p-4">
-        <ReciterContent
-          id={id}
-          moshafId={moshafId}
-          initialReciter={initialReciter}
-          initialSurah={initialSurah}
-        />
+    <div className="flex w-full max-w-lg items-center justify-center p-1 md:p-4">
+      <div className="flex w-full flex-col items-center justify-center gap-4">
+        {!isFullscreen && <NetworkStatusIndicator />}
+        {!isFullscreen && <ReciterSelector initialReciter={initialReciter} />}
+        <Suspense fallback={<PlayerSkeleton />}>
+          <ReciterContent
+            id={id}
+            moshafId={moshafId}
+            initialReciter={initialReciter}
+            initialSurah={initialSurah}
+          />
+        </Suspense>
       </div>
-    </Suspense>
+    </div>
   );
 }

@@ -26,7 +26,15 @@ import TrackInfo from './track-info';
 
 const AudioBarsVisualizer = dynamic(
   () => import('@/components/audio-bars-visualizer'),
-  { ssr: false }
+  {
+    ssr: false,
+    // Reserve the canvas slot while the chunk loads. Without it the player
+    // content grows by 80px when the visualizer mounts and pushes the controls
+    // down.
+    loading: () => (
+      <div className="mb-2 h-[72px] w-full max-w-md" aria-hidden="true" />
+    ),
+  }
 );
 
 const PlaylistDialog = dynamic(
@@ -289,14 +297,14 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
   return (
     <div
       className={cn(
-        'flex w-full max-w-xl flex-col items-center justify-center',
+        'flex w-full max-w-xl flex-col items-center justify-start',
         isFullscreen
           ? 'w-full max-w-xl bg-background text-foreground'
           : 'max-w-xl min-h-[210px] rounded-[16px] border border-border bg-surface p-3'
       )}
     >
       {typeof currentTrack === 'number' && (
-        <div className="flex w-full flex-col items-center justify-center">
+        <div className="flex min-h-[232px] w-full flex-col items-center justify-center">
           {!isOnline && availableIndices.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-4 text-center text-[13px] font-medium text-ink-muted">
               <FormattedMessage

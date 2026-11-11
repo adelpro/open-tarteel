@@ -1,7 +1,6 @@
 'use client';
 
 import { useAtom, useAtomValue } from 'jotai';
-import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
 import { FaRegShareFromSquare } from 'react-icons/fa6';
@@ -32,18 +31,21 @@ export default function ReciterSelector({ initialReciter }: Props) {
   const { formatMessage } = useIntl();
   const { shareReciter } = useShareReciter();
   const { isAllCached } = useOfflineDownload();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     setMounted(true);
 
-    // Auto-open dialog if there's a search query in URL (only once)
-    const searchQuery = searchParams.get('query');
+    // Auto-open dialog if there's a search query in URL (only once). Reading
+    // the URL here instead of useSearchParams keeps the selector out of a
+    // Suspense boundary, so it is present on the server and cannot shift in.
+    const searchQuery = new URLSearchParams(window.location.search).get(
+      'query'
+    );
     if (searchQuery && searchQuery.trim() !== '' && !autoOpenedRef.current) {
       setIsOpen(true);
       autoOpenedRef.current = true;
     }
-  }, [searchParams, setIsOpen]);
+  }, [setIsOpen]);
 
   const displayedReciter = selectedReciter ?? initialReciter;
   const playlist = displayedReciter?.moshaf?.playlist ?? null;
