@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { selectedReciterAtom } from '@/jotai/atom';
 import { getAllReciters } from '@/utils/api';
 
-import { useReciters } from './use-reciters';
+import { resetRecitersCache, useReciters } from './use-reciters';
 
 vi.mock('@/utils/api', () => ({ getAllReciters: vi.fn() }));
 
@@ -51,7 +51,10 @@ const run = (store: ReturnType<typeof createStore>) =>
   });
 
 describe('useReciters with a stored reciter', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetRecitersCache();
+  });
 
   it('does not replace the stored moshaf with another one from the catalog', async () => {
     vi.mocked(getAllReciters).mockResolvedValue([catalogEntry('9')] as never);
@@ -115,6 +118,21 @@ describe('useReciters with a stored reciter', () => {
     await waitFor(() => expect(getAllReciters).toHaveBeenCalledTimes(1));
 
     first.unmount();
+    second.unmount();
+  });
+
+  it('reuses the resolved catalog across remounts', async () => {
+    vi.mocked(getAllReciters).mockResolvedValue([catalogEntry('1')] as never);
+    const store = createStore();
+    const first = run(store);
+
+    await waitFor(() => expect(getAllReciters).toHaveBeenCalledTimes(1));
+    first.unmount();
+
+    const second = run(store);
+    await waitFor(() => expect(second.result.current.reciters).toHaveLength(1));
+    expect(getAllReciters).toHaveBeenCalledTimes(1);
+
     second.unmount();
   });
 });

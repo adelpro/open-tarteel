@@ -14,10 +14,25 @@ type InFlightRequest = {
   promise: Promise<Reciter[]>;
 };
 
+type ResolvedRequest = {
+  key: string;
+  data: Reciter[];
+  at: number;
+};
+
 // HomeClient and RecitersList both call this hook, and the selector dialog is
 // mounted even while closed. Share one request per locale/sources combination
-// so the catalog is fetched once instead of twice.
+// so the catalog is fetched once, and keep the resolved data briefly so a
+// remount does not refetch it.
+const RESOLVED_TTL_MS = 60_000;
+
 let inFlightReciters: InFlightRequest | null = null;
+let resolvedReciters: ResolvedRequest | null = null;
+
+export const resetRecitersCache = () => {
+  inFlightReciters = null;
+  resolvedReciters = null;
+};
 
 const requestKey = (locale: Language, sources: readonly string[]) =>
   `${locale}:${[...sources].sort().join(',')}`;
@@ -27,11 +42,24 @@ const loadReciters = (
   sources: readonly LinkSource[]
 ): Promise<Reciter[]> => {
   const key = requestKey(locale, sources);
+
+  if (
+    resolvedReciters?.key === key &&
+    Date.now() - resolvedReciters.at < RESOLVED_TTL_MS
+  ) {
+    return Promise.resolve(resolvedReciters.data);
+  }
+
   if (inFlightReciters?.key === key) return inFlightReciters.promise;
 
-  const promise = getAllReciters(locale, [...sources]).finally(() => {
-    if (inFlightReciters?.promise === promise) inFlightReciters = null;
-  });
+  const promise = getAllReciters(locale, [...sources])
+    .then((data) => {
+      resolvedReciters = { key, data, at: Date.now() };
+      return data;
+    })
+    .finally(() => {
+      if (inFlightReciters?.promise === promise) inFlightReciters = null;
+    });
   inFlightReciters = { key, promise };
   return promise;
 };
