@@ -92,7 +92,7 @@ curl -fsS https://tarteel.quran.us.kg/sitemap.xml | head
 
 Only push a tag after the deploy is verified; the `Release from Tag` workflow
 creates the GitHub release from the changelog section matching the tag
-(`0.5.0-rc.6`, no `v` prefix).
+(`0.5.0`, no `v` prefix).
 
 ## One-time setup
 

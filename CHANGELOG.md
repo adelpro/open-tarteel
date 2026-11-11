@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2026-11-11
+
+### Added
+
+- static prerendering for the localized home, about, contact and privacy pages,
+  with a root layout per locale and localized 404s
+- spectrum mode in settings and a persisted pinned reciter panel
+- localized reciter hints and ICU pluralization for the surah count
+
+### Changed
+
+- `/en` and `/de` declare their language and direction on the server; reciter
+  pages remain Arabic documents
+- the hero logo is a static 384px WebP with a high-priority preload
+- the reciter catalog is deduped, gzipped and cached for five minutes
+- non-production Netlify builds are skipped to protect the build budget
+
+### Fixed
+
+- unmatched URLs return the localized 404 instead of the generic Next page
+- the reciter selector and player reserve their geometry, so the page no
+  longer shifts as they mount
+- playlist rows are native buttons, reachable by keyboard and screen readers
+- dialogs and the wide sheet sit above the footer; footer contrast and tap
+  targets are corrected
+- page zoom is allowed and each page exposes one main landmark
+- middleware rejects protocol-relative rewrites and robots.txt requires an
+  absolute origin
+- playback time reads left to right inside RTL pages
+- `/api/health` reports the release version instead of the stale 0.4.0 value
+
 ## [0.5.0-rc.6] - 2026-11-10
 
 ### Added
