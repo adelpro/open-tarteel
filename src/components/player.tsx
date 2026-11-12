@@ -58,6 +58,10 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
   const [playbackMode] = useAtom(playbackModeAtom);
   const visualizerModel = useAtomValue(visualizerModelAtom);
   const previousTrackRef = useRef<number | undefined>(undefined);
+  // Browsers fire `pause` before `ended`, so `isPlaying` is already false when
+  // the next source mounts. This carries the intent to keep playing across
+  // that natural transition.
+  const autoplayNextRef = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useAtom(currentTimeAtom);
   const [duration, setDuration] = useState(0);
@@ -159,7 +163,9 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
     setDuration(0);
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
-      if (isPlaying) {
+      const shouldPlay = isPlaying || autoplayNextRef.current;
+      autoplayNextRef.current = false;
+      if (shouldPlay) {
         void audioRef.current.play();
       }
     }
@@ -243,6 +249,7 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
 
   const handleNextTrack = useCallback(() => {
     if (typeof currentTrack !== 'number') return;
+    autoplayNextRef.current = false;
     setCurrentTrack(getNextTrackIndex(currentTrack));
   }, [currentTrack, getNextTrackIndex]);
 
@@ -255,17 +262,25 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
     // Don't auto-advance while a tahfeez session is still repeating
     if (tahfeezActiveRef.current) return;
 
+    const audio = audioRef.current;
+
     if (playbackMode === 'repeat-one') {
       setCurrentTime(0);
-      if (audioRef.current) {
-        audioRef.current.currentTime = 0;
-        if (isPlaying) {
-          void audioRef.current.play();
-        }
+      if (audio) {
+        audio.currentTime = 0;
+        // `ended` means playback reached the end, so restart unconditionally.
+        // `isPlaying` is already false here (the browser pauses first).
+        void audio.play();
       }
-    } else {
-      handleNextTrack();
+      return;
     }
+
+    if (typeof currentTrack !== 'number') return;
+    const nextTrack = getNextTrackIndex(currentTrack);
+    // Same reason: remember that this track change came from a finished
+    // surah, otherwise the next one would load paused.
+    autoplayNextRef.current = nextTrack !== currentTrack;
+    setCurrentTrack(nextTrack);
   };
 
   const togglePlaylistOpen = () => {
