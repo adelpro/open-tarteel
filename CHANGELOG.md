@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0-rc.8] - 2026-11-12
+
+### Fixed
+
+- repeat-one keeps looping the surah after it ends, and normal playback
+  continues to the next surah instead of stopping
+- player tooltips dismiss themselves after a short delay instead of staying on
+  screen after a click or tap
+
 ## [0.5.0-rc.7] - 2026-11-11
 
 ### Added
