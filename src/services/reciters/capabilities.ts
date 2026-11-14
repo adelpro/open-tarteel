@@ -179,17 +179,37 @@ export const FOLLOW_ALONG_EXCLUDED_IDS: ReadonlySet<string> = new Set([
  * (`canUseAudioAnalyser`), because the text line and the graph have different
  * requirements.
  */
+export type FollowAlongBlock =
+  'offline' | 'provider' | 'not-hafs' | 'no-timings' | 'unaudited' | null;
+
+/**
+ * Why the mode cannot run, or null when it can. Ordered so the most basic
+ * reason wins: connectivity, then the provider, then the riwayah, then the
+ * specific recording.
+ */
+export const followAlongBlockReason = (
+  source?: LinkSource | null,
+  moshaf?: Pick<Moshaf, 'id' | 'riwaya' | 'hasTimings'> | null,
+  online = true
+): FollowAlongBlock => {
+  if (!online) return 'offline';
+  if (!source || !moshaf) return 'provider';
+  if (getCapabilities(source).timing !== 'word') return 'provider';
+  if (moshaf.riwaya !== Riwaya.Hafs) return 'not-hafs';
+  if (moshaf.hasTimings === false) return 'no-timings';
+  if (FOLLOW_ALONG_EXCLUDED_IDS.has(`${source}:${moshaf.id}`)) {
+    return 'unaudited';
+  }
+  if (
+    source === LinkSource.MP3QURAN_V4 &&
+    !FOLLOW_ALONG_V4_RECITER_IDS.has(moshaf.id)
+  ) {
+    return 'unaudited';
+  }
+  return null;
+};
+
 export const canUseFollowAlong = (
   source?: LinkSource | null,
   moshaf?: Pick<Moshaf, 'id' | 'riwaya' | 'hasTimings'> | null
-): boolean => {
-  if (!source || !moshaf) return false;
-  if (FOLLOW_ALONG_EXCLUDED_IDS.has(`${source}:${moshaf.id}`)) return false;
-  if (getCapabilities(source).timing !== 'word') return false;
-  if (moshaf.riwaya !== Riwaya.Hafs) return false;
-  if (moshaf.hasTimings === false) return false;
-  if (source === LinkSource.MP3QURAN_V4) {
-    return FOLLOW_ALONG_V4_RECITER_IDS.has(moshaf.id);
-  }
-  return true;
-};
+): boolean => followAlongBlockReason(source, moshaf, true) === null;
