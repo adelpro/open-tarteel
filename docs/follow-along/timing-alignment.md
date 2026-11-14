@@ -17,7 +17,7 @@ Only the first two carry word indices, so only they can drive the mode.
 Provider output is not one interval per word. Measured shapes:
 
 - exact: one segment per word
-- marker: one extra segment (ayah end, or a finer split) — ignore out-of-range
+- marker: one extra segment (ayah end, or a finer split): ignore out-of-range
 - replay: the same index again, e.g. `1…15, 12…15, 16…18`
 - gap: a word index is never timed, e.g. `2…16`
 
@@ -79,7 +79,7 @@ offline, no word timings, not Hafs, recitation not audited, audio not analysable
 
 ## Percentage definition
 
-Coverage is a count, not a claim about timing accuracy — there is no ground truth
+Coverage is a count, not a claim about timing accuracy, there is no ground truth
 for that.
 
 ```

@@ -30,7 +30,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     id: LinkSource.MP3QURAN,
     label: { ar: 'MP3 Quran', en: 'MP3 Quran' },
     beta: false,
-    // https://www.mp3quran.net/eng/timing-api — 115 timing reads for 299 moshafs.
+    // https://www.mp3quran.net/eng/timing-api, 115 timing reads for 299 moshafs.
     timing: 'ayah',
     timingCoverage: 'partial',
     timingIntegration: 'implemented',

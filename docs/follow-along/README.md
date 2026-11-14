@@ -17,7 +17,7 @@ a recitation, score it, or detect mistakes.
 
 "Pitch" was rejected as the mode name: it is audio-engineering vocabulary, and in
 Arabic it sits next to نغمة / تلحين, which reads as musicalising recitation. The
-technical term stays where it is accurate — on the graph.
+technical term stays where it is accurate, on the graph.
 
 ## Scope
 
@@ -48,12 +48,12 @@ Hashes, URLs and licences: [data-sources.md](data-sources.md).
 
 ## Documents
 
-- [decisions.md](decisions.md) — what was decided and why.
-- [data-sources.md](data-sources.md) — provenance, hashes, licences.
-- [reference-index.md](reference-index.md) — ayah and word identity.
-- [timing-alignment.md](timing-alignment.md) — provider payloads and the repair.
-- [audit-results.md](audit-results.md) — every measured number.
-- [implementation-plan.md](implementation-plan.md) — phases and exit criteria.
+- [decisions.md](decisions.md): what was decided and why.
+- [data-sources.md](data-sources.md): provenance, hashes, licences.
+- [reference-index.md](reference-index.md): ayah and word identity.
+- [timing-alignment.md](timing-alignment.md): provider payloads and the repair.
+- [audit-results.md](audit-results.md): every measured number.
+- [implementation-plan.md](implementation-plan.md): phases and exit criteria.
 
 ## Honest accuracy
 

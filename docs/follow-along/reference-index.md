@@ -2,7 +2,7 @@
 
 Tanzil has no word numbers. It has 6,236 ayah strings and nothing else. The
 index below is therefore _ours_, derived from the verbatim text, and everything
-else — tajweed, providers, translation — is mapped onto it.
+else, tajweed, providers, translation, is mapped onto it.
 
 ## Identifiers
 
@@ -36,7 +36,7 @@ trailing; spans are ordered, non-overlapping and trim to non-empty. 0 violations
 `wordId` is the running prefix sum of per-ayah word counts, so storing counts is
 enough to reproduce the ids.
 
-## Basmala — three cases
+## Basmala: three cases
 
 | Case                    | Surahs    | Stored text                  | `basmalaWords` | providerIndex                           |
 | ----------------------- | --------- | ---------------------------- | -------------- | --------------------------------------- |
@@ -71,14 +71,14 @@ Note: Quran.com's _word list_ merges `إِلْ يَاسِينَ` into one entry 
 37:130), but its _segments_ use 4, like Tanzil. Do not join it.
 
 Independent check: Quran Foundation segment counts equal Tanzil tokens in 52 of
-52 audited cases (14 reciters × 4 ayahs), except one anomaly — al-Shatri 8:6
-returns 12 for 11 tokens — which the 85% fallback absorbs.
+52 audited cases (14 reciters × 4 ayahs), except one anomaly, al-Shatri 8:6
+returns 12 for 11 tokens, which the 85% fallback absorbs.
 
 ## Storage shape
 
 Per ayah: verbatim `text`, `annotations`, `wordCount`, `basmalaWords`. Spans and
 `wordId`s are computed at load; a manifest records `totalWords`, per-surah word
-counts and the corpus hash. The alternative — writing every span — adds roughly
+counts and the corpus hash. The alternative, writing every span, adds roughly
 1.5–2 MB for values that are derivable and now verified.
 
 ## Invariants to test

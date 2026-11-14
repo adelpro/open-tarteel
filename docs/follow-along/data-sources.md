@@ -3,7 +3,7 @@
 Everything the mode reads is pinned by identity and hash. A build that cannot
 reproduce these digests must fail, not warn.
 
-## 1. Arabic text — Tanzil Uthmani v1.0.2
+## 1. Arabic text: Tanzil Uthmani v1.0.2
 
 | Field       | Value                                                              |
 | ----------- | ------------------------------------------------------------------ |
@@ -20,7 +20,7 @@ basmala stays inside ayah 1 exactly as Tanzil stores it.
 
 Verified: all 6,236 stored ayah strings are byte-identical to this copy.
 
-## 2. Tajweed — cpfair/quran-tajweed
+## 2. Tajweed: cpfair/quran-tajweed
 
 | Field   | Value                                                              |
 | ------- | ------------------------------------------------------------------ |
@@ -41,7 +41,7 @@ Two rule ids differ from the historical consumer map:
 `idghaam_mutajaanisain`, `idghaam_mutaqaaribain`), leaving 71 annotations
 unstyled until the map is fixed.
 
-## 3. English — Itqan CMS asset 9
+## 3. English: Itqan CMS asset 9
 
 | Field            | Value                                                                            |
 | ---------------- | -------------------------------------------------------------------------------- |
@@ -52,9 +52,9 @@ unstyled until the map is fixed.
 | Internal version | `english_hilali_khan`, `v1.1.1-csv.1`, updated 2025-01-15                        |
 | Rows             | 6,236, `id` 1..6236, all ayahs present                                           |
 | Publisher field  | IslamHouse (distributor); text: Al-Hilali & Khan, Darussalam                     |
-| Licence          | **CC BY-ND** — not verifiable through the API, recorded from the gallery page    |
+| Licence          | **CC BY-ND**, not verifiable through the API, recorded from the gallery page     |
 
-Real CSV header is `id,sura,aya,translation,footnotes` — not the
+Real CSV header is `id,sura,aya,translation,footnotes`, not the
 `surah,ayah,text` the package metadata declares. Validate the header, never the
 manifest.
 
@@ -69,7 +69,7 @@ manifest.
 So: one file, unmodified, hash-pinned, header intact. Parsing happens in memory;
 the leading `N. ` prefix and `[n]` markers are hidden at render time only.
 
-## 4. Word timings — Quran Foundation
+## 4. Word timings: Quran Foundation
 
 | Field    | Value                                                                    |
 | -------- | ------------------------------------------------------------------------ |
@@ -82,12 +82,12 @@ OAuth responses return segment times as floats and a negative `duration` field;
 never trust `duration`. The public API (`api.quran.com/api/v4`) returns the same
 content with integer times.
 
-## 5. Word timings — MP3Quran v4
+## 5. Word timings: MP3Quran v4
 
 | Field     | Value                                                                      |
 | --------- | -------------------------------------------------------------------------- |
 | Endpoint  | `/v4/recitations/{id}/surahs/{n}/word-timings`                             |
-| Host      | `api-staging.mp3quran.net` — **no production host exists**                 |
+| Host      | `api-staging.mp3quran.net`, **no production host exists**                  |
 | Flag      | `NEXT_PUBLIC_ENABLE_MP3QURAN_V4`, beta in the capability registry          |
 | Catalogue | 297 recitations, 235 Hafs                                                  |
 | Shape     | `data.words = [[ayah, position, start, end, flag]]`, `data.estimated = []` |
@@ -98,10 +98,10 @@ undocumented, so neither is relied upon.
 
 ## Attribution block (About page)
 
-- Tanzil Quran Text (Uthmani v1.0.2) — CC BY 3.0 + Tanzil terms.
-- quran-tajweed @ `6689c33` — CC BY 4.0.
-- English: _The Noble Qur'an_, Al-Hilali & Khan (Darussalam), via QuranEnc —
+- Tanzil Quran Text (Uthmani v1.0.2): CC BY 3.0 + Tanzil terms.
+- quran-tajweed @ `6689c33`: CC BY 4.0.
+- English: _The Noble Qur'an_, Al-Hilali & Khan (Darussalam), via QuranEnc -
   CC BY-ND, unmodified.
-- Quran.com / Quran Foundation and MP3Quran — provider terms.
+- Quran.com / Quran Foundation and MP3Quran: provider terms.
 - pitchy (0BSD) implementing McLeod & Wyvill, _A Smarter Way to Find Pitch_
   (ICMC 2005).
