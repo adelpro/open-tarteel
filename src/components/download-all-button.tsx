@@ -166,7 +166,7 @@ export default function DownloadAllButton({
         return (
           <FormattedMessage
             id="download.offlineUnavailable"
-            defaultMessage="Offline — downloads unavailable"
+            defaultMessage="Offline: downloads unavailable"
           />
         );
       case 'error':

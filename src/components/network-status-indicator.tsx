@@ -47,8 +47,8 @@ export default function NetworkStatusIndicator() {
             id={forcedOffline ? 'offline.forcedStatus' : 'offline.status'}
             defaultMessage={
               forcedOffline
-                ? 'Offline — downloads only'
-                : 'Offline — showing downloads'
+                ? 'Offline: downloads only'
+                : 'Offline: showing downloads'
             }
           />
         </span>

@@ -69,7 +69,7 @@ describe('DownloadAllButton', () => {
     renderButton({ cachedCount: 1, isOnline: false });
 
     expect(
-      screen.getByText('Offline — downloads unavailable')
+      screen.getByText('Offline: downloads unavailable')
     ).toBeInTheDocument();
     expect(screen.getByText('1 of 2 surahs saved')).toBeInTheDocument();
     expect(

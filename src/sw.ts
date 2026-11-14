@@ -216,7 +216,7 @@ const runtimeCaching = [
 ];
 
 // App shell URLs to pre-cache on install for offline cold-start support.
-// Cached into 'pages' — the same cache Serwist's defaultCache navigation
+// Cached into 'pages', the same cache Serwist's defaultCache navigation
 // handler (NetworkFirst) checks when offline.
 const APP_SHELL_URLS = ['/', '/offline', '/about', '/settings'];
 

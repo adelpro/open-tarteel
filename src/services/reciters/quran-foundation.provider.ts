@@ -62,7 +62,7 @@ function toSegment(
     ayah: Number(ayahString),
     audioSource,
     startMs: t.timestamp_from,
-    endMs: t.timestamp_to, // مش duration — راجع الشرح اللي فات
+    endMs: t.timestamp_to, // مش duration، راجع الشرح اللي فات
   };
 }
 

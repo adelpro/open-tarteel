@@ -16,7 +16,7 @@ const COPY = { ar, en, de } as const;
  */
 export const rootMetadata = (locale: SeoLocale): Metadata => {
   const copy = COPY[locale];
-  const title = `${copy.appName} — Open Tarteel`;
+  const title = `${copy.appName} | Open Tarteel`;
 
   return {
     metadataBase: new URL(clientConfig.APP_URL),

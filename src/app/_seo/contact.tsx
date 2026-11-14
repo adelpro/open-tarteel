@@ -15,7 +15,7 @@ export const contactMetadata = (locale: SeoLocale) => {
   return buildPageMetadata({
     locale,
     path: '/contact',
-    title: `${copy['contact.contact_us']} — Open Tarteel`,
+    title: `${copy['contact.contact_us']} | Open Tarteel`,
     description: copy['contact.contact_us'],
   });
 };

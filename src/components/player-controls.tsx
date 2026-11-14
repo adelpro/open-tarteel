@@ -131,7 +131,7 @@ export default function PlayerControls({
     delay: 2,
     strategy: 'whole_range',
   });
-  // Latest ranges emitted by TahfeezModeControls — used when the play button starts a session
+  // Latest ranges emitted by TahfeezModeControls, used when the play button starts a session
   const currentRangesRef = useRef<TimeRange[]>([]);
 
   const session = useTahfeezSession(audioElement, (active) => {
