@@ -204,6 +204,7 @@
   "provider.badge.timing": "Zeitangaben",
   "provider.badge.timingPartial": "Teilweise Timings",
   "provider.badge.word": "Wort für Wort",
+  "provider.badge.wordAudio": "Wort-Audio",
   "provider.badge.noDownload": "Kein Download",
   "provider.badge.more": "+{count}",
   "tahfeez.noTimings": "Für diese Sure sind keine Zeitangaben verfügbar.",

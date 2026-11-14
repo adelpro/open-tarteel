@@ -225,6 +225,7 @@
   "provider.badge.timing": "توقيت",
   "provider.badge.timingPartial": "توقيت لبعض السور",
   "provider.badge.word": "كلمة بكلمة",
+  "provider.badge.wordAudio": "صوت لكل كلمة",
   "provider.badge.noDownload": "لا يدعم التحميل",
   "provider.badge.more": "+{count}",
   "tahfeez.noTimings": "لا تتوفر توقيتات الآيات لهذه السورة.",

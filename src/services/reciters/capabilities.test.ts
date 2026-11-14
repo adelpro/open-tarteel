@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { LinkSource } from '@/types';
+import { LinkSource, Riwaya } from '@/types';
 
 import {
   canDownload,
+  canUseFollowAlong,
   canUseRangeMode,
+  FOLLOW_ALONG_V4_RECITER_IDS,
   getCapabilities,
   hasTiming,
   PROVIDER_CAPABILITIES,
@@ -65,5 +67,59 @@ describe('provider capabilities', () => {
     expect(canDownload(LinkSource.MP3QURAN_V4)).toBe(true);
     expect(canDownload(LinkSource.QURANAI)).toBe(true);
     expect(canDownload(LinkSource.QURAN_FOUNDATION)).toBe(true);
+  });
+});
+
+describe('canUseFollowAlong', () => {
+  const moshaf = (
+    id = '1',
+    riwaya: Riwaya = Riwaya.Hafs,
+    hasTimings = true
+  ): { id: string; riwaya: Riwaya; hasTimings: boolean } => ({
+    id,
+    riwaya,
+    hasTimings,
+  });
+
+  it('accepts both providers that publish word timings', () => {
+    expect(canUseFollowAlong(LinkSource.QURAN_FOUNDATION, moshaf())).toBe(true);
+    expect(canUseFollowAlong(LinkSource.MP3QURAN_V4, moshaf('118'))).toBe(true);
+  });
+
+  it('rejects providers without word timings', () => {
+    expect(canUseFollowAlong(LinkSource.MP3QURAN, moshaf())).toBe(false);
+    expect(canUseFollowAlong(LinkSource.ITQAN, moshaf())).toBe(false);
+    expect(canUseFollowAlong(LinkSource.QURANAI, moshaf())).toBe(false);
+  });
+
+  it('rejects riwayat other than Hafs', () => {
+    expect(
+      canUseFollowAlong(LinkSource.QURAN_FOUNDATION, moshaf('1', Riwaya.Warsh))
+    ).toBe(false);
+    expect(
+      canUseFollowAlong(LinkSource.MP3QURAN_V4, moshaf('118', Riwaya.Qaloon))
+    ).toBe(false);
+  });
+
+  it('rejects MP3Quran v4 recitations outside the audited set', () => {
+    expect(canUseFollowAlong(LinkSource.MP3QURAN_V4, moshaf('999'))).toBe(
+      false
+    );
+  });
+
+  it('rejects flagged-without-timings recitations and missing input', () => {
+    expect(
+      canUseFollowAlong(
+        LinkSource.QURAN_FOUNDATION,
+        moshaf('1', Riwaya.Hafs, false)
+      )
+    ).toBe(false);
+    expect(canUseFollowAlong(undefined, moshaf())).toBe(false);
+    expect(canUseFollowAlong(LinkSource.QURAN_FOUNDATION, null)).toBe(false);
+  });
+
+  it('keeps the audited v4 set explicit', () => {
+    expect(FOLLOW_ALONG_V4_RECITER_IDS.size).toBe(12);
+    expect([...FOLLOW_ALONG_V4_RECITER_IDS]).toContain('118');
   });
 });
