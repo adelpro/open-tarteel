@@ -1,0 +1,712 @@
+{
+  "schema": 1,
+  "dataVersion": "1.0.2+cpfair.6689c33",
+  "text": {
+    "name": "Tanzil Quran Text (Uthmani)",
+    "version": "1.0.2",
+    "url": "https://github.com/cpfair/quran-tajweed/files/7281388/quran-uthmani.txt",
+    "sha256": "abe6447a5d29bb126383ba9120628060cf96dc9ef5b402a506fc251f6ed0b9a2",
+    "ayahs": 6236,
+    "license": "CC-BY-3.0 with Tanzil terms"
+  },
+  "tajweed": {
+    "repo": "https://github.com/cpfair/quran-tajweed",
+    "commit": "6689c33bf3d903d1ef75bef62a83750e0a5a7737",
+    "path": "output/tajweed.hafs.uthmani-pause-sajdah.json",
+    "sha256": "151d616ad37a4cc21a80f20d5e1104c5b408375107ddd4d71247dea4c05ebf67",
+    "license": "CC-BY-4.0"
+  },
+  "totals": {
+    "ayahs": 6236,
+    "words": 77878,
+    "basmalaWords": 448,
+    "providerWords": 77430
+  },
+  "corpusSha256": "379fc74a2312d28a3331b07cadd96843f3871bbcb43c1310275dc8d2ac75ac9e",
+  "files": [
+    {
+      "surah": 1,
+      "ayahs": 7,
+      "words": 29,
+      "sha256": "f643be31bc055405556394472c7b9f6a86b4d98e3c2e30d18c5a789a538064b2"
+    },
+    {
+      "surah": 2,
+      "ayahs": 286,
+      "words": 6120,
+      "sha256": "04ab872a01d8906a46f967fb4b2881285c7cbc75cedb3bcae02ea11ce5b274ea"
+    },
+    {
+      "surah": 3,
+      "ayahs": 200,
+      "words": 3485,
+      "sha256": "2423a0015ccbbcb14d068766b00df72626e3307ce609fce8957a615860b987bb"
+    },
+    {
+      "surah": 4,
+      "ayahs": 176,
+      "words": 3751,
+      "sha256": "4a3ea15de4debe6a477a21e214ccb0a0a4bc13a97c5b734e205af43471dc24bf"
+    },
+    {
+      "surah": 5,
+      "ayahs": 120,
+      "words": 2808,
+      "sha256": "2f2f8445da7ec6b7972c0eabac5ade0bbe03d4925fc3554f47220d9ff37a221a"
+    },
+    {
+      "surah": 6,
+      "ayahs": 165,
+      "words": 3054,
+      "sha256": "7161fceb8d3d37e5e18c8783d007e2a222de673a63e22522b7a37646e7ca9169"
+    },
+    {
+      "surah": 7,
+      "ayahs": 206,
+      "words": 3324,
+      "sha256": "1964a92ab99544724b749ee94c1e7d46b823c72bad3c81cba06854800c2266eb"
+    },
+    {
+      "surah": 8,
+      "ayahs": 75,
+      "words": 1237,
+      "sha256": "41769886d2c565146e5ee4217ccb9b732c6117d1b098b0a8c92dbd6465c47766"
+    },
+    {
+      "surah": 9,
+      "ayahs": 129,
+      "words": 2498,
+      "sha256": "b5ffaed4833cb024911ad3f9a3e9666588795b022f5bdb04ce780d92dfd8abd2"
+    },
+    {
+      "surah": 10,
+      "ayahs": 109,
+      "words": 1837,
+      "sha256": "1167d82cbfae7270d337810d8ce58ed9049d87531c577aebff30e478875124a0"
+    },
+    {
+      "surah": 11,
+      "ayahs": 123,
+      "words": 1921,
+      "sha256": "335c7a1a2becc0abaf4cca32be54a84c8e22b27063d1ac881c030dcfd0e047bb"
+    },
+    {
+      "surah": 12,
+      "ayahs": 111,
+      "words": 1781,
+      "sha256": "8c69cb267a4e4cc780ed70b3de6094125b54cddb238b6f294ebe4b5c3a44daa1"
+    },
+    {
+      "surah": 13,
+      "ayahs": 43,
+      "words": 857,
+      "sha256": "4ae4817af458a30419cde5d905586712420dda9743f2e790ed994dbdaa9e4f46"
+    },
+    {
+      "surah": 14,
+      "ayahs": 52,
+      "words": 834,
+      "sha256": "500892acab9aa9c8e641fc74d2037cedc3ca7cb0d74863b58c6f734c59a76db5"
+    },
+    {
+      "surah": 15,
+      "ayahs": 99,
+      "words": 659,
+      "sha256": "894624e1f52f91db6a32bf327722d8bf93262cd3ed0d726468a2aac80f24cafd"
+    },
+    {
+      "surah": 16,
+      "ayahs": 128,
+      "words": 1848,
+      "sha256": "9a5269ec1ff7f5587261a70f2750087d804770090ab655a14b40237e6b541ea0"
+    },
+    {
+      "surah": 17,
+      "ayahs": 111,
+      "words": 1560,
+      "sha256": "f3148053dc5144b949528ff72e5b100c164afd980d66a953ca332f39229b1124"
+    },
+    {
+      "surah": 18,
+      "ayahs": 110,
+      "words": 1583,
+      "sha256": "63494f7c6a08a09f3cc458f80c34b50a5afcb272391f882b16729895ed5d58ec"
+    },
+    {
+      "surah": 19,
+      "ayahs": 98,
+      "words": 965,
+      "sha256": "a4e42924016ade41f832bdcab7b45f5874985fb6bb871d0979167ff341c8114b"
+    },
+    {
+      "surah": 20,
+      "ayahs": 135,
+      "words": 1339,
+      "sha256": "a3604fd8b5d460172bdf1fab3afca23d0e6ad3921d738ba4bce548c4db75c7ad"
+    },
+    {
+      "surah": 21,
+      "ayahs": 112,
+      "words": 1173,
+      "sha256": "693a8babfb92165d48bbc69fd2a9c1327bc65908b34a7399ac4e1175a6371702"
+    },
+    {
+      "surah": 22,
+      "ayahs": 78,
+      "words": 1278,
+      "sha256": "8fffefc3ee55250bcfcb0199d521c1d0484058a4e1f8a5f670f4035cb847532d"
+    },
+    {
+      "surah": 23,
+      "ayahs": 118,
+      "words": 1054,
+      "sha256": "c0c48d698f05c2356b730629a780e1b1caea149c210e728c8b3b3b7178aaa240"
+    },
+    {
+      "surah": 24,
+      "ayahs": 64,
+      "words": 1320,
+      "sha256": "20500ca0859627c4abdf4d20f3318608851efc3423f606007440c1677e8eaec6"
+    },
+    {
+      "surah": 25,
+      "ayahs": 77,
+      "words": 897,
+      "sha256": "c8304631e66ed17ff98e835b0a6d2276a11dcc61b2cacf9fc4a89b634e357a4b"
+    },
+    {
+      "surah": 26,
+      "ayahs": 227,
+      "words": 1322,
+      "sha256": "812911d899fc310f3f72ec122fc79e637be638c5d718c4dd2ad84a6accb1980d"
+    },
+    {
+      "surah": 27,
+      "ayahs": 93,
+      "words": 1155,
+      "sha256": "170065795f31ea01320f1b9654894544c11bd5c4c3e1e760791336dfb339e3f1"
+    },
+    {
+      "surah": 28,
+      "ayahs": 88,
+      "words": 1434,
+      "sha256": "331071078dbf1dcf0a884447e70f58f8253c0f955c0c0ab3b9596c5c72c00091"
+    },
+    {
+      "surah": 29,
+      "ayahs": 69,
+      "words": 980,
+      "sha256": "12ad03aa959793b710f333bbe99845ca9363761b628e63d03f3b97fbe90eecd7"
+    },
+    {
+      "surah": 30,
+      "ayahs": 60,
+      "words": 821,
+      "sha256": "714c2c6f0606580433ce21985cd1bdbffa8ddb355a16579db91e300a01b01485"
+    },
+    {
+      "surah": 31,
+      "ayahs": 34,
+      "words": 550,
+      "sha256": "4becfc027d51bab0d517e1f1dfe2f8fddc761f4ec049c52d6c89b1752c868de7"
+    },
+    {
+      "surah": 32,
+      "ayahs": 30,
+      "words": 376,
+      "sha256": "519cdf3daa2f623a60d5ca1399321cdd6a7980deb691f3de4af29048c864900d"
+    },
+    {
+      "surah": 33,
+      "ayahs": 73,
+      "words": 1291,
+      "sha256": "c993d3f2e6f73fc7aa7f2ec43e6e632b1d068259da7bdc1d56b88935572b260f"
+    },
+    {
+      "surah": 34,
+      "ayahs": 54,
+      "words": 887,
+      "sha256": "6fedfe3a4c874847b5e0c763f94200f8a74863a225b0cc80a3b4d9a9593bfdaa"
+    },
+    {
+      "surah": 35,
+      "ayahs": 45,
+      "words": 779,
+      "sha256": "da589c51a2e50def465a5d8503194b02c372dfcaab18670c39757c2483690701"
+    },
+    {
+      "surah": 36,
+      "ayahs": 83,
+      "words": 729,
+      "sha256": "ac0f1ff150d82d47d794bc05d65a0796f7164a9ec21e13775e28bcf14524de2b"
+    },
+    {
+      "surah": 37,
+      "ayahs": 182,
+      "words": 865,
+      "sha256": "14b5184b194d890386d0ae56286d4c9f8679afe87382a18c63dfba6186e1fc71"
+    },
+    {
+      "surah": 38,
+      "ayahs": 88,
+      "words": 737,
+      "sha256": "f4b2ae81f13e337d943bf9d57c759b7a7fe1b6c0b8411c2a54116723c37a2615"
+    },
+    {
+      "surah": 39,
+      "ayahs": 75,
+      "words": 1176,
+      "sha256": "444710e17f6b47b61dce2f62ed06acca50e3163c2bbbe46ed6ed2eae5cd48156"
+    },
+    {
+      "surah": 40,
+      "ayahs": 85,
+      "words": 1223,
+      "sha256": "fe3f5e6a52139f78e4c2fa4d97d888201f9597de560cec3709cd8e0b45347d7f"
+    },
+    {
+      "surah": 41,
+      "ayahs": 54,
+      "words": 798,
+      "sha256": "a011a778930d4408196c77f9910223a21c46740b54c67db46f3bc886c8b09d65"
+    },
+    {
+      "surah": 42,
+      "ayahs": 53,
+      "words": 864,
+      "sha256": "a3511fc4a4c16fc2c673e5668acb28dbd61c926df8623ea0f33c2c86f363602a"
+    },
+    {
+      "surah": 43,
+      "ayahs": 89,
+      "words": 834,
+      "sha256": "6c7959905bc0113968ad5fea0c0e065265125267777aa0f0cdfc2883e7206b95"
+    },
+    {
+      "surah": 44,
+      "ayahs": 59,
+      "words": 350,
+      "sha256": "3b4116343247a9a29391f60c218f458abe2418e23ee3d095a8fb5304cf3cfb96"
+    },
+    {
+      "surah": 45,
+      "ayahs": 37,
+      "words": 492,
+      "sha256": "759c9a01555006aeadbaa90946d8a50417053af19e2f78b39bb3febea3b47eda"
+    },
+    {
+      "surah": 46,
+      "ayahs": 35,
+      "words": 647,
+      "sha256": "b8f733d7363ca2484ceb195e7c3494d3f671605ffcd762c16496be07b4f320ff"
+    },
+    {
+      "surah": 47,
+      "ayahs": 38,
+      "words": 543,
+      "sha256": "01b118369b8729e91a55a13a9ec7718ca0dfec5e8550a278fce23372a5b06483"
+    },
+    {
+      "surah": 48,
+      "ayahs": 29,
+      "words": 564,
+      "sha256": "d76dfb3e281bfeb3b5b6185802a2c1e250cbc02f080e921b96ea5e3936e74d6f"
+    },
+    {
+      "surah": 49,
+      "ayahs": 18,
+      "words": 351,
+      "sha256": "55344d04c5db03c1184d186388da88f71f0642e94eed08efc73f2f0d93325b45"
+    },
+    {
+      "surah": 50,
+      "ayahs": 45,
+      "words": 377,
+      "sha256": "13eefa4bcbd36f0fddc13cadb38ab14f176c273c8275e0baaa496120c1d70b40"
+    },
+    {
+      "surah": 51,
+      "ayahs": 60,
+      "words": 364,
+      "sha256": "6be238afe392f09cdeb3039f8dbb6ddddf026a67466d559c3413bd0ee3e19b89"
+    },
+    {
+      "surah": 52,
+      "ayahs": 49,
+      "words": 316,
+      "sha256": "f9e4065b4e44b80ef3b62174482608ac39ce62df1963a6a9c76094dbe6154507"
+    },
+    {
+      "surah": 53,
+      "ayahs": 62,
+      "words": 364,
+      "sha256": "6634c8207a01e4e1787bb4583c1363c9b27f0d2130a89deed1ec7833612b49bc"
+    },
+    {
+      "surah": 54,
+      "ayahs": 55,
+      "words": 346,
+      "sha256": "7df71721cb35f5d25981c697052efd4260db1a6ce51bc72159d32622929dc28b"
+    },
+    {
+      "surah": 55,
+      "ayahs": 78,
+      "words": 355,
+      "sha256": "326afbb2050fe6d357673db5081541a50d2b335f8259042f90373d31ce4dfa87"
+    },
+    {
+      "surah": 56,
+      "ayahs": 96,
+      "words": 383,
+      "sha256": "eed65c589451b7486551fa993574944b2a1894af45c279a121053f106e9f0095"
+    },
+    {
+      "surah": 57,
+      "ayahs": 29,
+      "words": 578,
+      "sha256": "dafe62555222b61003a2747fd3627567027b1bc3ae400b4341db098d588e43ac"
+    },
+    {
+      "surah": 58,
+      "ayahs": 22,
+      "words": 476,
+      "sha256": "3a1dbef29d72d89fc995de025880ccbbf50a3b6d12d09b6c145331ba707c953b"
+    },
+    {
+      "surah": 59,
+      "ayahs": 24,
+      "words": 449,
+      "sha256": "b9a4a6a5756e8f7b72802299449ac0fffa8c91fe0a6443895e57c79c24e173a7"
+    },
+    {
+      "surah": 60,
+      "ayahs": 13,
+      "words": 352,
+      "sha256": "5095374e321e18eb3dfb6b8264c3fca20cb4ab81b76f400a0a3e8b676d0c9fc7"
+    },
+    {
+      "surah": 61,
+      "ayahs": 14,
+      "words": 225,
+      "sha256": "436ad56aefef7d2f97d1a8b629809e1c17da20daf8a533863d0365e96553c069"
+    },
+    {
+      "surah": 62,
+      "ayahs": 11,
+      "words": 179,
+      "sha256": "2f5677eb519911ea7ef1728436f1a6d65566ae9b9a64a969bc411d2b62d9f58f"
+    },
+    {
+      "surah": 63,
+      "ayahs": 11,
+      "words": 184,
+      "sha256": "d81270812ce44279b911bb4549e1c26c737ef144c11639d11a40138d71e35989"
+    },
+    {
+      "surah": 64,
+      "ayahs": 18,
+      "words": 245,
+      "sha256": "d85c0c62622dd3fc21ab54684d35db33ba940dc935529a047a4aff5e7d52f003"
+    },
+    {
+      "surah": 65,
+      "ayahs": 12,
+      "words": 291,
+      "sha256": "89623490acd71265993ac9e932cc631cc73a1dd18a1a9f6f00227e8525f7519a"
+    },
+    {
+      "surah": 66,
+      "ayahs": 12,
+      "words": 253,
+      "sha256": "c3dbce2b7b01f3e73ed6ff225e27043dedf8162351e87dc7c2bc2f1cc8a69d61"
+    },
+    {
+      "surah": 67,
+      "ayahs": 30,
+      "words": 337,
+      "sha256": "967ecb118e9402ebc5ed94ae6196c7d6088e59b6a0efc9ca1a1ca46913648095"
+    },
+    {
+      "surah": 68,
+      "ayahs": 52,
+      "words": 304,
+      "sha256": "5b873644c76f2f7b6afebcffbfe71e2d273e18f9cf85400beada0bca6ca50b9e"
+    },
+    {
+      "surah": 69,
+      "ayahs": 52,
+      "words": 262,
+      "sha256": "aa95a8cdb2962f10510f13f9cc37dd515d3dc4fa2b98d3b2d6e185b9ebe16717"
+    },
+    {
+      "surah": 70,
+      "ayahs": 44,
+      "words": 221,
+      "sha256": "39d4e38576da6bd95dc6bba3329c652ebe219d8ffc48cd50f793d114c1aa8dce"
+    },
+    {
+      "surah": 71,
+      "ayahs": 28,
+      "words": 230,
+      "sha256": "70803b113df059c47464dd829a86ded9f450d537424a1cf4eff7e08ff21b95be"
+    },
+    {
+      "surah": 72,
+      "ayahs": 28,
+      "words": 289,
+      "sha256": "014c446dcb3b25a7b8f9f68045028e98f53b921fc36785b03cac963cb9219cde"
+    },
+    {
+      "surah": 73,
+      "ayahs": 20,
+      "words": 203,
+      "sha256": "766bce6f97406e60ccdf192ee7ae3c52e174ea8653ea1d9b93e22a61d0ab4470"
+    },
+    {
+      "surah": 74,
+      "ayahs": 56,
+      "words": 259,
+      "sha256": "36b1aa6b43e3f20f22b47009cf0377de6a649567dfec2a54be1c6fff57505ec9"
+    },
+    {
+      "surah": 75,
+      "ayahs": 40,
+      "words": 168,
+      "sha256": "da4604d1a55e3dd8fecf897a4c511e2c1db9fabc23fce9d44ff9db3566e60d71"
+    },
+    {
+      "surah": 76,
+      "ayahs": 31,
+      "words": 247,
+      "sha256": "e9f7465137ddb1f37a607d268aaf81748eea4c44007f962a8e79d9466ab84823"
+    },
+    {
+      "surah": 77,
+      "ayahs": 50,
+      "words": 185,
+      "sha256": "fab023b51ea629ec034d42f6a6831038eed0d4c39244c5d07bb8023d7b9f72b2"
+    },
+    {
+      "surah": 78,
+      "ayahs": 40,
+      "words": 177,
+      "sha256": "c43124602f1428825cf5902b7b11a464d57b1506b107262f20d04c636340cfe6"
+    },
+    {
+      "surah": 79,
+      "ayahs": 46,
+      "words": 183,
+      "sha256": "7030985d5ef50f13b9ca788f75a1c212a905ee1ed90310ae92f3d88dc4ac0f77"
+    },
+    {
+      "surah": 80,
+      "ayahs": 42,
+      "words": 137,
+      "sha256": "f9b50c6c5ea0d026f17b9ae28632add4f20c4cd375aa897d138ce1aef72c70e4"
+    },
+    {
+      "surah": 81,
+      "ayahs": 29,
+      "words": 108,
+      "sha256": "a61634116c4eee092f3a8f216491b31575fedff56a12b0586556d2f4c2518cd9"
+    },
+    {
+      "surah": 82,
+      "ayahs": 19,
+      "words": 84,
+      "sha256": "2a4794e38d5531f753336f56886874bd756e33deca31433e4891acf6872a043c"
+    },
+    {
+      "surah": 83,
+      "ayahs": 36,
+      "words": 173,
+      "sha256": "b1682bd6ee6a36d8e4583d6df84ed56d2431fd21e308b9b14d64afeaeb2bd54f"
+    },
+    {
+      "surah": 84,
+      "ayahs": 25,
+      "words": 111,
+      "sha256": "10b3756224079d4dc2571977f84f9df0537fb7d7196d903c834c6f36ebf4c529"
+    },
+    {
+      "surah": 85,
+      "ayahs": 22,
+      "words": 113,
+      "sha256": "bd847760ae5f8168ba9c50ce4e0499cb7a1e9dfb05aca0e4dec1d100b44f3bb3"
+    },
+    {
+      "surah": 86,
+      "ayahs": 17,
+      "words": 65,
+      "sha256": "0c70f1b65a2e9567b085a6779326a7dcd8ae6e19a2f0cc179a114753541c9b65"
+    },
+    {
+      "surah": 87,
+      "ayahs": 19,
+      "words": 76,
+      "sha256": "389db1fe33bc528938bbadd6c5fa67c7ef8dcb2cc8bf274c33389f484f81c397"
+    },
+    {
+      "surah": 88,
+      "ayahs": 26,
+      "words": 96,
+      "sha256": "fc6878b8e063aa0f32bcad1308ec752d4f1583bad7d1134c89c87627837476ae"
+    },
+    {
+      "surah": 89,
+      "ayahs": 30,
+      "words": 141,
+      "sha256": "ffa13953d5ad73a9846cfc7fc764f5a6c418e0663eaddd0a63856e90fd2c40ee"
+    },
+    {
+      "surah": 90,
+      "ayahs": 20,
+      "words": 86,
+      "sha256": "7df7d5c6509d61441d4fc98222fbb50fafae250e316beb5c29eaa4462c5bee0b"
+    },
+    {
+      "surah": 91,
+      "ayahs": 15,
+      "words": 58,
+      "sha256": "9d4db48e9809850e65ac956544ac5d7b94ec8853ba7274123aa034fcf4e2b658"
+    },
+    {
+      "surah": 92,
+      "ayahs": 21,
+      "words": 75,
+      "sha256": "adedb8628c32d869fddb8f4d799f3f99af0ebd60fef90949bdf47991e4aac52d"
+    },
+    {
+      "surah": 93,
+      "ayahs": 11,
+      "words": 44,
+      "sha256": "db676c1f262caa819135fd329441f8392f3b8d656c9f97b44d43ea7b30940e9d"
+    },
+    {
+      "surah": 94,
+      "ayahs": 8,
+      "words": 31,
+      "sha256": "f0a2962082891990f8765c2583594d423542ea40ae8eacf2ebc97672d8f9826d"
+    },
+    {
+      "surah": 95,
+      "ayahs": 8,
+      "words": 38,
+      "sha256": "a77eac52f34e70db0e5d35ff560dc84869fb27d79755089bbb44589ce9981834"
+    },
+    {
+      "surah": 96,
+      "ayahs": 19,
+      "words": 76,
+      "sha256": "816c29619414845ebe0443fbdeef212f088acfe204d5deda4fb78577b62a979d"
+    },
+    {
+      "surah": 97,
+      "ayahs": 5,
+      "words": 34,
+      "sha256": "c0246fc17573d4d5f3e2435c4bc877b96b8d7992ad058b6ab78545ba892f07b2"
+    },
+    {
+      "surah": 98,
+      "ayahs": 8,
+      "words": 98,
+      "sha256": "1e4fc3fbc0eb80577bc41a1114afd2f18e570efdb203ff8aa5ebab239f52e6ab"
+    },
+    {
+      "surah": 99,
+      "ayahs": 8,
+      "words": 40,
+      "sha256": "40fbe8f3864a9cf2ff4ea039d55deaeff4440c4cdef09563de2b569cbb87864f"
+    },
+    {
+      "surah": 100,
+      "ayahs": 11,
+      "words": 44,
+      "sha256": "6cbcf11ca1aa52ae9c063754538a5142974d45802e72d996b0f519c81c634c92"
+    },
+    {
+      "surah": 101,
+      "ayahs": 11,
+      "words": 40,
+      "sha256": "592159f6347d62a757f5356e75c0b75303626dbad5ba2b951108a938df57c6dd"
+    },
+    {
+      "surah": 102,
+      "ayahs": 8,
+      "words": 32,
+      "sha256": "33b12029951162a5f1bcd8f9cf94455f7032960bb46f1e0dd928aaae00b93a1f"
+    },
+    {
+      "surah": 103,
+      "ayahs": 3,
+      "words": 18,
+      "sha256": "4ba88640755df27f44b6abeb1e2d045e0450a0c6a844bec090ff69179d39f433"
+    },
+    {
+      "surah": 104,
+      "ayahs": 9,
+      "words": 37,
+      "sha256": "0987bb306f119c5378be4dc3e7c8a0efa360d80895703bbd92875f9c6c946379"
+    },
+    {
+      "surah": 105,
+      "ayahs": 5,
+      "words": 27,
+      "sha256": "4b77c7f935e754d5cd011c1c0d30b49b573bda6ccd3d67e1557728513d0793b2"
+    },
+    {
+      "surah": 106,
+      "ayahs": 4,
+      "words": 21,
+      "sha256": "82615663480d531c8df652621e1d442df814154056da21e356ab9ab5fbcb20af"
+    },
+    {
+      "surah": 107,
+      "ayahs": 7,
+      "words": 29,
+      "sha256": "ed23cf1964fe5c1f35bab530078c722138ee5333b8630a21c29c6f1e2cc8dd48"
+    },
+    {
+      "surah": 108,
+      "ayahs": 3,
+      "words": 14,
+      "sha256": "22d7532d8d789ccf09d901ebe7d658581d8b105f2e889a178c1b0f5b0da52722"
+    },
+    {
+      "surah": 109,
+      "ayahs": 6,
+      "words": 30,
+      "sha256": "ad4c6f3d4254df94f0cc75dfcf8d61bcb2a7ced0000bd87973fee36e190a91a1"
+    },
+    {
+      "surah": 110,
+      "ayahs": 3,
+      "words": 23,
+      "sha256": "19c2d88ac2a95797128f6bba3d62031803064b7679c3e4266102711e308c9af7"
+    },
+    {
+      "surah": 111,
+      "ayahs": 5,
+      "words": 27,
+      "sha256": "2a199ee4e6af298da2c34f9987b046973080bfcfb33f40433c536d9218236c04"
+    },
+    {
+      "surah": 112,
+      "ayahs": 4,
+      "words": 19,
+      "sha256": "de9d9d0cc27e8260bc76e30bb7e622eee455ba8c847694abe0047e08f0f366cd"
+    },
+    {
+      "surah": 113,
+      "ayahs": 5,
+      "words": 27,
+      "sha256": "6b3e88db0fec2955fbe0e39b08951c0d89529bd6dba0735e1c089c1053b2e771"
+    },
+    {
+      "surah": 114,
+      "ayahs": 6,
+      "words": 24,
+      "sha256": "970d9764e45701c0f22295b96adfbef478e752730c670d4d9184daae20eb1396"
+    }
+  ]
+}

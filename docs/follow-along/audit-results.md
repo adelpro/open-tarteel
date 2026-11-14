@@ -26,11 +26,11 @@ check is the only thing that catches that.
 14 chapter reciters × 114 surahs = 1,596 requests, 0 failures. Id 168 excluded
 (repeats for children: 95.94%, 5,516 malformed rows).
 
-Locked set: 13 reciters, 81,068 verses, 1,006,577 words.
+Locked set: 13 reciters, 81,068 verses, 1,006,590 words.
 
 | Metric                    | Value                 |
 | ------------------------- | --------------------- |
-| Words with a timing       | 1,001,076, **99.45%** |
+| Words with a timing       | 1,001,089, **99.45%** |
 | Verses below 85% coverage | 564, **0.70%**        |
 | Malformed rows discarded  | 107                   |
 | Per-reciter range         | 97.63% – 100.00%      |
@@ -61,15 +61,18 @@ Full audit: 12 recitations × 114 surahs = 1,368 requests, 0 failures.
 
 | Metric                              | Value                         |
 | ----------------------------------- | ----------------------------- |
-| Words                               | 929,148                       |
+| Words                               | 929,160                       |
 | Timed                               | **99.99%**                    |
 | Verses below 85% coverage           | 5                             |
 | Malformed rows                      | 0                             |
 | Repeat segments (kept as intervals) | 36,585                        |
-| Out-of-range segments               | 48 = 4 ayahs × 12 recitations |
+| Out-of-range segments               | 36 = 3 ayahs × 12 recitations |
 
-The 48 are the segmentation divergence documented in
-[reference-index.md](reference-index.md), not data errors.
+The 36 are the segmentation divergence documented in
+[reference-index.md](reference-index.md), not data errors. Earlier runs counted
+48 because 37:130 was measured with the basmala join applied; the corrected
+index keeps four words there, so that verse no longer produces an out-of-range
+row. Coverage percentages are unchanged.
 
 ## What is not proven
 

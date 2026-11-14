@@ -18,7 +18,7 @@ this folder.
 - `src/services/quran-text/index.ts`: typed loader, no React, no fetching
   policy: takes the surah number, returns words with absolute spans.
 
-Exit: regeneration is byte-identical; 77,877 words; 448 basmala words; corpus
+Exit: regeneration is byte-identical; 77,878 words; 448 basmala words; corpus
 hash `379fc74a…`; CI red on drift.
 
 ## Phase 2: word timings pipeline (server)

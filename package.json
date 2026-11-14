@@ -54,6 +54,9 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --run --coverage",
     "seo:audit": "node scripts/seo-audit.mjs",
+    "data:fetch": "node scripts/quran-data/fetch-sources.mjs",
+    "data:build": "node scripts/quran-data/build.mjs",
+    "data:verify": "node scripts/quran-data/verify.mjs",
     "clean": "rimraf .next node_modules"
   },
   "lint-staged": {

@@ -9,12 +9,12 @@ else, tajweed, providers, translation, is mapped onto it.
 | Id              | Range         | Definition                                       |
 | --------------- | ------------- | ------------------------------------------------ |
 | `ayahId`        | 1..6,236      | mushaf order; equals the English CSV `id` column |
-| `wordId`        | 1..77,877     | every whitespace span, basmala included          |
+| `wordId`        | 1..77,878     | every whitespace span, basmala included          |
 | `storedIndex`   | 1..N per ayah | the word's ordinal inside the verbatim string    |
 | `providerIndex` | 1..N−basmala  | what timing providers call the word              |
 
-Totals: 6,236 ayahs, 77,877 words, 448 basmala words (112 surahs × 4), leaving
-**77,429 provider-addressable words**.
+Totals: 6,236 ayahs, 77,878 words, 448 basmala words (112 surahs × 4), leaving
+**77,430 provider-addressable words**.
 
 Corpus fingerprint over all ayah strings: `379fc74a2312d28a3331b07cadd96843f3871bbcb43c1310275dc8d2ac75ac9e`.
 
@@ -91,7 +91,7 @@ counts and the corpus hash. The alternative, writing every span, adds roughly
 
 1. 6,236 ayah ids, no gaps, equal to the CSV `id` and `(surah, ayah)`.
 2. Exactly 112 surahs carry a basmala prefix; 1 and 9 do not.
-3. Word counts reproduce Quran Foundation segment counts except the documented
-   four ayahs.
+3. Word counts reproduce Quran Foundation segment counts except the three
+   ayahs where MP3Quran v4 splits `بَعْدَمَا`, and 37:130 which is kept at four.
 4. Every annotation lies inside its ayah; every word span is ordered.
 5. Regenerating from the pinned inputs yields the same digests.
