@@ -162,6 +162,15 @@ export const FOLLOW_ALONG_V4_RECITER_IDS: ReadonlySet<string> = new Set([
 ]);
 
 /**
+ * Recitations excluded from follow-along even though the provider numbers
+ * words. Quran Foundation id 168 repeats every phrase for children: 95.94% of
+ * words timed, 5,516 malformed rows, 51 verses with no timing at all.
+ */
+export const FOLLOW_ALONG_EXCLUDED_IDS: ReadonlySet<string> = new Set([
+  'quran.foundation:168',
+]);
+
+/**
  * Whether the follow-along mode can promise a word for every position.
  *
  * Word timings are the only data that can drive a per-word highlight, so the
@@ -175,6 +184,7 @@ export const canUseFollowAlong = (
   moshaf?: Pick<Moshaf, 'id' | 'riwaya' | 'hasTimings'> | null
 ): boolean => {
   if (!source || !moshaf) return false;
+  if (FOLLOW_ALONG_EXCLUDED_IDS.has(`${source}:${moshaf.id}`)) return false;
   if (getCapabilities(source).timing !== 'word') return false;
   if (moshaf.riwaya !== Riwaya.Hafs) return false;
   if (moshaf.hasTimings === false) return false;

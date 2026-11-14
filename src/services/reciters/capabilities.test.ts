@@ -118,6 +118,15 @@ describe('canUseFollowAlong', () => {
     expect(canUseFollowAlong(LinkSource.QURAN_FOUNDATION, null)).toBe(false);
   });
 
+  it('excludes the repeats-for-children Quran Foundation recitation', () => {
+    expect(canUseFollowAlong(LinkSource.QURAN_FOUNDATION, moshaf('168'))).toBe(
+      false
+    );
+    expect(canUseFollowAlong(LinkSource.QURAN_FOUNDATION, moshaf('2'))).toBe(
+      true
+    );
+  });
+
   it('keeps the audited v4 set explicit', () => {
     expect(FOLLOW_ALONG_V4_RECITER_IDS.size).toBe(12);
     expect([...FOLLOW_ALONG_V4_RECITER_IDS]).toContain('118');
