@@ -59,13 +59,19 @@ uses printed mushaf words.
 | 13:37  | 19            | 19               | 20          |
 | 37:130 | 4             | 4                | 4           |
 
-v4 splits `بَعْدَمَا` into two words in the first three. Mapping for v4 only:
+MP3Quran v4 splits `بَعْدَمَا` into two words; Quran Foundation and Tanzil keep it
+whole. The split position is not the same in every ayah, so the mapping is a
+table, not one formula:
 
-```
-p ≤ 2      → p
-p ∈ {3,4}  → 3      (both halves highlight بَعْدَمَا)
-p ≥ 5      → p − 1
-```
+| Ayah  | Split after our word `k` | Mapping from MP3Quran v4 index `p`           |
+| ----- | ------------------------ | -------------------------------------------- |
+| 2:181 | 3                        | `p < 3` → p, `p` 3 or 4 → 3, `p > 4` → p − 1 |
+| 8:6   | 4                        | `p < 4` → p, `p` 4 or 5 → 4, `p > 5` → p − 1 |
+| 13:37 | 8                        | `p < 8` → p, `p` 8 or 9 → 8, `p > 9` → p − 1 |
+
+In general, with the split after word `k`: `p < k → p`, `k ≤ p ≤ k+1 → k`,
+`p > k+1 → p − 1`. The extra index always appears at the end of the verse,
+because the split shifts every later word by one.
 
 Note: Quran.com's _word list_ merges `إِلْ يَاسِينَ` into one entry (3 words for
 37:130), but its _segments_ use 4, like Tanzil. Do not join it.

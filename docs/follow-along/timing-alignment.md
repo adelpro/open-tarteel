@@ -44,13 +44,20 @@ Two rules matter:
 Reciter-level exclusions are separate: an entire recitation is dropped when it
 cannot be repaired at all (id 168), not merged into the per-verse path.
 
-## v4 exception table
+## MP3Quran v4 exception table
 
-For 2:181, 8:6 and 13:37, v4 splits `بَعْدَمَا` into two words:
+MP3Quran v4 splits `بَعْدَمَا` into two timed words. Quran Foundation returns it
+as one. The split position differs per ayah, so this is data, not a formula:
 
-```
-stored = p <= 2 ? p : p <= 4 ? 3 : p - 1
-```
+| Ayah  | Split after our word | Words the split covers                   |
+| ----- | -------------------- | ---------------------------------------- |
+| 2:181 | 3                    | `بَعْدَمَا` is MP3Quran v4 words 3 and 4 |
+| 8:6   | 4                    | `بَعْدَمَا` is MP3Quran v4 words 4 and 5 |
+| 13:37 | 8                    | `بَعْدَمَا` is MP3Quran v4 words 8 and 9 |
+
+Implementation: `stored(p) = p < k ? p : p <= k + 1 ? k : p - 1`, with `k` read
+from the table. Both halves map to one stored word, so it highlights twice, which
+is what the audio does. Tested against the audited set; harmless elsewhere.
 
 Implemented as data (`FOLLOW_ALONG_V4_SHIFTS`), tested against the audited
 set, and harmless for every other ayah.
