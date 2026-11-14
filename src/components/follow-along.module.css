@@ -1,0 +1,84 @@
+.line {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.35em;
+  width: 100%;
+  direction: rtl;
+  color: var(--follow-along-ink, currentColor);
+  font-family: 'Amiri Quran', 'Scheherazade New', 'Noto Naskh Arabic', serif;
+  font-size: 21px;
+  line-height: 2;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.word {
+  transition: opacity 140ms linear;
+}
+
+.word[data-state='spoken'] {
+  opacity: 0.42;
+}
+
+.word[data-state='upcoming'] {
+  opacity: 0.16;
+}
+
+.word[data-state='current'] {
+  opacity: 1;
+}
+
+.marker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4em;
+  height: 1.4em;
+  vertical-align: middle;
+}
+
+.markerGlyph {
+  position: absolute;
+  inset: 0;
+  background-color: currentColor;
+  -webkit-mask: url('/ayah-marker.svg') center / contain no-repeat;
+  mask: url('/ayah-marker.svg') center / contain no-repeat;
+}
+
+.markerNumber {
+  position: relative;
+  font-family: system-ui, sans-serif;
+  font-size: 0.4em;
+  line-height: 1;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  direction: rtl;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 11px;
+  color: inherit;
+  opacity: 0.85;
+}
+
+.swatch {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 9999px;
+  background-color: currentColor;
+}
+
+.contour {
+  display: block;
+  width: 100%;
+  direction: ltr;
+}

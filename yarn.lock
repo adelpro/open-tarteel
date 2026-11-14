@@ -4292,6 +4292,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fft.js@npm:^4.0.4":
+  version: 4.0.4
+  resolution: "fft.js@npm:4.0.4"
+  checksum: 10c0/ea9bf9df38204281078629e32e0176035e8121410bb8db67b5544520faa6f567734774afb87eafc31cb43339995295d3d72202917b4f43942be4eca8dd54b226
+  languageName: node
+  linkType: hard
+
 "figures@npm:^3.0.0":
   version: 3.2.0
   resolution: "figures@npm:3.2.0"
@@ -6632,6 +6639,7 @@ __metadata:
     next: "npm:^15.4.2"
     nodemailer: "npm:^6.10.0"
     nuqs: "npm:^2.8.8"
+    pitchy: "npm:^4.1.0"
     postcss: "npm:^8"
     postcss-load-config: "npm:^6.0.1"
     prettier: "npm:^3.4.2"
@@ -7062,6 +7070,15 @@ __metadata:
   version: 4.0.7
   resolution: "pirates@npm:4.0.7"
   checksum: 10c0/a51f108dd811beb779d58a76864bbd49e239fa40c7984cd11596c75a121a8cc789f1c8971d8bb15f0dbf9d48b76c05bb62fcbce840f89b688c0fa64b37e8478a
+  languageName: node
+  linkType: hard
+
+"pitchy@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "pitchy@npm:4.1.0"
+  dependencies:
+    fft.js: "npm:^4.0.4"
+  checksum: 10c0/e3c3b2774a0885cb0c51d15508f5e11b8f0d294175385fe5db2c1311757a6d7ca0e4b6742012d25ba25e674e9549e06a92e7d61231d74ea9804b5e8b1ed4db03
   languageName: node
   linkType: hard
 
