@@ -241,9 +241,9 @@
   "tahfeez.invalidRange": "The start ayah must be before the end ayah.",
   "tahfeez.strategy": "Range strategy",
   "about.followAlong.title": "Follow-along and pitch contour",
-  "about.followAlong.description": "This mode highlights the word being recited, colours where tajweed rules apply, and draws the pitch from the same recording. A listening and teaching aid; it does not judge a recitation.",
+  "about.followAlong.description": "This mode highlights the word being recited, colours where tajweed rules apply, and draws the pitch from the same recording. A listening and learning aid only: it is not for correcting recitation and does not use artificial intelligence.",
   "about.followAlong.hafs": "It works with recitations that publish word-level timings, and with Hafs an Asim only. Other recitations stay in the list but are disabled, with the reason shown.",
-  "about.followAlong.accuracy": "Accuracy is not total: word timings cover 99.45% of words in the supported Quran Foundation recitations and 99.99% in the twelve audited MP3Quran v4 recitations. In 0.70% of ayat the timing is insufficient and highlighting falls back to the whole ayah. These are measured from the data, not a promise about timing precision.",
+  "about.followAlong.accuracy": "Accuracy is not total: word timings cover 99.45% of words in the supported Quran Foundation recitations and 99.99% in the twelve audited MP3Quran v4 recitations. In 0.70% of ayat the timing is insufficient and highlighting falls back to the whole ayah. The app only synchronises the interface; the figures are computed from the published data.",
   "about.followAlong.method": "The contour is an estimate from compressed audio, computed with pitchy, which implements the McLeod Pitch Method from McLeod and Wyvill, A Smarter Way to Find Pitch (ICMC 2005). Colours mark where a rule applies, not whether it was applied correctly.",
   "about.followAlong.sources": "Sources and digests",
   "about.followAlong.licenseNote": "Text under CC BY 3.0 with Tanzil terms, tajweed under CC BY 4.0, ayah markers under OFL."

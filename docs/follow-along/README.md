@@ -4,8 +4,9 @@ Status: implemented on `feat/follow-along`, behind `NEXT_PUBLIC_ENABLE_FOLLOW_AL
 
 A player mode that follows a recitation: the word being recited is highlighted,
 tajweed rules are coloured on those same glyphs, and a live pitch contour is
-drawn from the same audio. It is a listening and teaching aid. It does not judge
-a recitation, score it, or detect mistakes.
+drawn from the same audio. It is a listening and learning aid only: not for
+correcting a recitation, and it does not use artificial intelligence. It does not
+score a recitation or detect mistakes.
 
 ## Naming
 
