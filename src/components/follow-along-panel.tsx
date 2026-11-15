@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
+import { AyahMarker } from '@/components/ayah-marker';
 import { PitchContour } from '@/components/pitch-contour';
 import { QuranLine, type QuranLineWord } from '@/components/quran-line';
 import { TajweedLegend } from '@/components/tajweed-legend';
@@ -183,11 +184,6 @@ export function FollowAlongPanel({
       state: states[index],
     }));
 
-    rendered.push({
-      id: `marker-${active.ayah}`,
-      chars: [],
-      markerNumber: active.ayah,
-    });
     return rendered;
   }, [active, data]);
 
@@ -196,13 +192,16 @@ export function FollowAlongPanel({
       dir="rtl"
       className={cn('flex w-full flex-col gap-2 px-3 pb-2', className)}
     >
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-xs font-semibold">
-          {formatMessage({
-            id: 'followAlong.mode',
-            defaultMessage: 'Follow-along',
-          })}
-        </p>
+      <div className="flex h-7 items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5">
+          <AyahMarker number={active.ayah} />
+          <p className="text-xs font-semibold">
+            {formatMessage({
+              id: 'followAlong.mode',
+              defaultMessage: 'Follow-along',
+            })}
+          </p>
+        </div>
         {onClose ? (
           <button
             type="button"
@@ -239,6 +238,8 @@ export function FollowAlongPanel({
         <>
           <QuranLine
             words={line}
+            maxFontSize={20}
+            minFontSize={16}
             ariaLabel={formatMessage(
               { id: 'followAlong.ayah', defaultMessage: 'Ayah {ayah}' },
               { ayah: active.ayah }

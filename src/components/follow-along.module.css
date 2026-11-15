@@ -79,15 +79,15 @@
 .legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem 0.9rem;
+  gap: 0.3rem 0.7rem;
   direction: rtl;
 }
 
 .legendItem {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 11px;
+  gap: 0.3rem;
+  font-size: 10px;
   color: inherit;
   opacity: 0.85;
 }
