@@ -10,6 +10,7 @@ import {
   ayahAt,
   buildLineStates,
   providerWordToStored,
+  WORD_ANTICIPATION_MS,
   wordAt,
 } from '@/services/follow-along';
 import { loadSurah, type SurahData } from '@/services/quran-text';
@@ -117,7 +118,6 @@ export function FollowAlongPanel({
     if (!audio || !data || repaired.size === 0) return;
 
     let frame = 0;
-    let signature = '';
 
     const tick = () => {
       frame = requestAnimationFrame(tick);
@@ -130,7 +130,9 @@ export function FollowAlongPanel({
       const repairedAyah = repaired.get(ayah);
       const fallback = repairedAyah?.fallback ?? true;
       const providerWord =
-        repairedAyah && !fallback ? wordAt(repairedAyah.words, timeMs) : null;
+        repairedAyah && !fallback
+          ? wordAt(repairedAyah.words, timeMs + WORD_ANTICIPATION_MS)
+          : null;
       const stored =
         providerWord == null
           ? null
@@ -141,16 +143,28 @@ export function FollowAlongPanel({
               providerWord
             );
 
-      const next = `${ayah}:${stored ?? ''}:${fallback}`;
-      if (next !== signature) {
-        signature = next;
-        setActive({ ayah, stored, fallback });
-      }
+      setActive((current) => {
+        const held =
+          stored == null && current.ayah === ayah ? current.stored : stored;
+        if (
+          current.ayah === ayah &&
+          current.stored === held &&
+          current.fallback === fallback
+        ) {
+          return current;
+        }
+        return { ayah, stored: held, fallback };
+      });
     };
 
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
   }, [audio, data, repaired, source, surah]);
+
+  const marks = useMemo(
+    () => (data ? data.timings.map((timing) => timing.startMs / 1000) : []),
+    [data]
+  );
 
   const line = useMemo<QuranLineWord[]>(() => {
     const ayah = data?.surah.ayahs[active.ayah - 1];
@@ -230,7 +244,7 @@ export function FollowAlongPanel({
               { ayah: active.ayah }
             )}
           />
-          <PitchContour audio={audio} />
+          <PitchContour audio={audio} marks={marks} />
           <TajweedLegend locale={locale === 'ar' ? 'ar' : 'en'} />
         </>
       )}

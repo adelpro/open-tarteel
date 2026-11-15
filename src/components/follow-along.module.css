@@ -1,8 +1,10 @@
 .line {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: center;
-  gap: 0.35em;
+  column-gap: 0.35em;
+  row-gap: 0.1em;
   width: 100%;
   min-width: 0;
   padding-inline: 0.5rem;
@@ -10,13 +12,18 @@
   color: var(--follow-along-ink, currentColor);
   font-family: 'Amiri Quran', 'Scheherazade New', 'Noto Naskh Arabic', serif;
   font-size: 21px;
-  line-height: 2;
-  white-space: nowrap;
-  overflow: clip;
+  line-height: 1.9;
+  white-space: normal;
 }
 
 .word {
-  transition: opacity 140ms linear;
+  display: inline-block;
+  padding-inline: 0.06em;
+  border-radius: 0.35em;
+  transition:
+    opacity 140ms linear,
+    transform 160ms ease,
+    background-color 160ms ease;
 }
 
 .word[data-state='spoken'] {
@@ -29,6 +36,9 @@
 
 .word[data-state='current'] {
   opacity: 1;
+  transform: scale(1.06);
+  background: rgba(127, 127, 127, 0.18);
+  background: color-mix(in srgb, currentColor 14%, transparent);
 }
 
 .word[data-marker='true'] {

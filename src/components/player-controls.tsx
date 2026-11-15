@@ -8,8 +8,6 @@ import playlistSVG from '@svgs/music-playlist.svg';
 import shuffleSVG from '@svgs/music-shuffle.svg';
 import shuffleDisabledSVG from '@svgs/music-shuffle-disabled.svg';
 import sleepSVG from '@svgs/sleep.svg';
-import spectrumSVG from '@svgs/spectrum.svg';
-import spectrumDisabledSVG from '@svgs/spectrum-disabled.svg';
 import { useAtom, useAtomValue } from 'jotai';
 import Image from 'next/image';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
@@ -38,8 +36,6 @@ import {
   playbackModeAtom,
   playbackSpeedAtom,
   selectedReciterAtom,
-  showVisualizerAtom,
-  visualizerModelAtom,
   volumeAtom,
 } from '@/jotai/atom';
 import {
@@ -53,8 +49,6 @@ import DownloadAllButton from './download-all-button';
 import { FollowAlongPanel } from './follow-along-panel';
 import TahfeezModeControls, { TahfeezSettings } from './tahfeez-mode-controls';
 import ActionSheet from './ui/action-sheet';
-import Segmented from './ui/segmented';
-import Switch from './ui/switch';
 // ─── Helpers ─────────────────────────────────────────
 const getCurrentMinute = (seconds: number): number => Math.ceil(seconds / 60);
 
@@ -77,8 +71,6 @@ type Props = {
   audioElement: HTMLAudioElement | null;
   currentTrackId: number | undefined;
   tahfeezActiveRef: React.RefObject<boolean>;
-  /** False when the current source has no CORS/WebAudio spectrum data. */
-  spectrumSupported?: boolean;
 };
 
 export default function PlayerControls({
@@ -91,13 +83,10 @@ export default function PlayerControls({
   audioElement,
   currentTrackId,
   tahfeezActiveRef,
-  spectrumSupported = true,
 }: Props) {
   // ── State ───────────────────────────────────────────
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const [showVisualizer, setShowVisualizer] = useAtom(showVisualizerAtom);
-  const [visualizerModel, setVisualizerModel] = useAtom(visualizerModelAtom);
   const [volume, setVolume] = useAtom(volumeAtom);
   // Long-press on the speaker toggles mute; a tap keeps the volume popover.
   const volumeLongPressTimer = useRef<ReturnType<typeof setTimeout> | null>(
@@ -813,39 +802,6 @@ export default function PlayerControls({
         </MenuGroup>
 
         <MenuGroup label={messages.playerSettings}>
-          <div className="flex min-h-12 items-center gap-3 rounded-[8px] px-2">
-            <span className="flex size-5 shrink-0 items-center justify-center text-ink-muted">
-              <Image
-                src={showVisualizer ? spectrumSVG : spectrumDisabledSVG}
-                alt=""
-                width={18}
-                height={18}
-              />
-            </span>
-            <span className="min-w-0 flex-1 truncate text-[14px] text-ink">
-              {messages.visualizer}
-            </span>
-            <Switch
-              checked={showVisualizer}
-              onCheckedChange={setShowVisualizer}
-              disabled={!spectrumSupported}
-              label={messages.visualizer}
-            />
-          </div>
-          {showVisualizer && spectrumSupported ? (
-            <div className="px-2 pb-2">
-              <Segmented
-                value={visualizerModel}
-                onChange={setVisualizerModel}
-                label={messages.visualizerStyle}
-                options={[
-                  { value: 'bars', label: messages.bars },
-                  { value: 'peaks', label: messages.peaks },
-                  { value: 'ribbon', label: messages.waves },
-                ]}
-              />
-            </div>
-          ) : null}
           <MenuRow
             icon={<MdSpeed size={18} aria-hidden="true" />}
             label={messages.playbackSpeedLabel}
