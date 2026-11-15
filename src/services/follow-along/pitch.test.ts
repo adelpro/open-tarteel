@@ -2,11 +2,13 @@ import { describe, expect, it } from 'vitest';
 
 import {
   clampMidi,
+  correctOctave,
   decibelsFromRms,
   hzFromMidi,
   median,
   midiFromHz,
   noteName,
+  OneEuroFilter,
   rms,
 } from './pitch';
 
@@ -42,5 +44,54 @@ describe('pitch helpers', () => {
     expect(clampMidi(40, 45, 62)).toBe(45);
     expect(clampMidi(70, 45, 62)).toBe(62);
     expect(clampMidi(50, 45, 62)).toBe(50);
+  });
+});
+
+describe('OneEuroFilter', () => {
+  it('passes the first value through', () => {
+    const filter = new OneEuroFilter();
+    expect(filter.smooth(55, 0)).toBe(55);
+  });
+
+  it('smooths a steady signal toward the value', () => {
+    const filter = new OneEuroFilter();
+    filter.smooth(55, 0);
+    const next = filter.smooth(56, 0.016);
+    expect(next).toBeGreaterThan(55);
+    expect(next).toBeLessThan(56);
+  });
+
+  it('follows a sustained move', () => {
+    const filter = new OneEuroFilter();
+    filter.smooth(55, 0);
+    let value = 55;
+    for (let step = 1; step <= 40; step++) {
+      value = filter.smooth(59, step * 0.016);
+    }
+    expect(value).toBeGreaterThan(58.5);
+    expect(value).toBeLessThanOrEqual(59.01);
+  });
+
+  it('resets cleanly', () => {
+    const filter = new OneEuroFilter();
+    filter.smooth(55, 0);
+    filter.reset();
+    expect(filter.smooth(40, 1)).toBe(40);
+  });
+});
+
+describe('correctOctave', () => {
+  it('pulls a doubled octave back when clarity is low', () => {
+    expect(correctOctave(55, 67, 0.8)).toBe(55);
+    expect(correctOctave(55, 43, 0.8)).toBe(55);
+  });
+
+  it('keeps clear octave jumps', () => {
+    expect(correctOctave(55, 67, 0.99)).toBe(67);
+  });
+
+  it('keeps ordinary movement', () => {
+    expect(correctOctave(55, 57, 0.7)).toBe(57);
+    expect(correctOctave(null, 60, 0.5)).toBe(60);
   });
 });

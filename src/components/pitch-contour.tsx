@@ -5,11 +5,13 @@ import { useEffect, useRef } from 'react';
 
 import {
   clampMidi,
+  correctOctave,
   decibelsFromRms,
   hzFromMidi,
   median,
   midiFromHz,
   noteName,
+  OneEuroFilter,
   rms,
 } from '@/services/follow-along/pitch';
 import { cn } from '@/utils';
@@ -33,30 +35,39 @@ export interface PitchContourProps {
   className?: string;
 }
 
-const SMOOTHING_SAMPLES = 5;
-const GRID_SEMITONES = 3;
+const SMOOTHING_SAMPLES = 3;
 const STABLE_SEMITONES = 0.6;
 const STABLE_SECONDS = 0.22;
 const SILENCE_SECONDS = 0.3;
 const STRONG_CLARITY = 0.93;
+const LOUD_RMS = 0.12;
+const TICK_COUNT = 4;
 
-const GRID_COLOR = 'rgba(148, 163, 184, 0.35)';
-const MARK_COLOR = 'rgba(210, 220, 250, 0.28)';
-const WANDER_COLOR = '#c9a91c';
-const SUSTAINED_COLOR = '#4a63e6';
-const LINE_SOFT = '#dfe4f2';
-const LINE_STRONG = '#f5c518';
-const SILENCE_FILL = 'rgba(148, 158, 180, 0.10)';
-const SILENCE_STROKE = 'rgba(148, 158, 180, 0.45)';
+const GRID_COLOR = 'rgba(148, 163, 184, 0.18)';
+const LABEL_COLOR = 'rgba(148, 163, 184, 0.75)';
+const MARK_COLOR = 'rgba(210, 220, 250, 0.22)';
+const SILENCE_FILL = 'rgba(148, 158, 180, 0.07)';
+const PILL_SUSTAINED_FILL = 'rgba(74, 99, 230, 0.10)';
+const PILL_SUSTAINED_STROKE = 'rgba(74, 99, 230, 0.45)';
+const PILL_WANDER_FILL = 'rgba(245, 197, 24, 0.08)';
+const PILL_WANDER_STROKE = 'rgba(201, 169, 28, 0.45)';
 
-type Sample = { time: number; midi: number | null; strong: boolean };
-
+type Sample = { time: number; midi: number | null; strong: boolean; level: number };
 type Box = { start: number; end: number; midi: number; kind: 'sustained' | 'wander' };
 
+const withAlpha = (base: string, alpha: number): string =>
+  `rgba(${base}, ${alpha})`;
+
+const BRASS = '245, 197, 24';
+const SLATE = '226, 232, 240';
+
 /**
- * Rolling pitch contour from the shared AudioContext. Mirrors the original
- * pitch-contour view: gold for strong frames, boxes over sustained notes, gray
- * bands over pauses, faint marks at ayah starts, and a gold playhead.
+ * Rolling pitch ribbon from the shared AudioContext.
+ *
+ * Direction A: one flowing band, thick and bright where the frame is strong,
+ * fading toward the left so motion is visible, four hairlines instead of a
+ * full grid, and a glowing playhead. Octave errors are corrected before the
+ * one-euro filter so the band does not spike.
  *
  * It never creates its own context and never closes one: the player owns it.
  */
@@ -90,6 +101,8 @@ export function PitchContour({
     let sampleRate = 48000;
     const history: Sample[] = [];
     const recent: number[] = [];
+    const smoother = new OneEuroFilter();
+    let lastMidi: number | null = null;
 
     if (audio) {
       analyser = ensurePitchAnalyser(audio);
@@ -111,7 +124,9 @@ export function PitchContour({
     resize();
 
     const observer =
-      typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(resize);
+      typeof ResizeObserver === 'undefined'
+        ? null
+        : new ResizeObserver(resize);
     observer?.observe(canvas);
 
     const yFor = (midi: number): number => {
@@ -122,67 +137,101 @@ export function PitchContour({
     };
 
     const xFor = (now: number, time: number): number => {
-      const usable = Math.max(1, canvas.clientWidth - 34);
+      const usable = Math.max(1, canvas.clientWidth - 30);
       const pxPerSecond = usable / windowSec;
       return canvas.clientWidth - 1 - Math.max(0, now - time) * pxPerSecond;
+    };
+
+    const tickValues = (): number[] => {
+      const span = Math.max(1, maxMidi - minMidi);
+      return Array.from({ length: TICK_COUNT }, (_, index) =>
+        Math.round(minMidi + (span * index) / (TICK_COUNT - 1))
+      );
     };
 
     const collectBoxes = (): Box[] => {
       const boxes: Box[] = [];
       let run: Sample[] = [];
       const flush = () => {
-        if (run.length < 2) {
-          run = [];
-          return;
-        }
-        const values = run.map((sample) => sample.midi as number);
-        const low = Math.min(...values);
-        const high = Math.max(...values);
-        const duration = run[run.length - 1].time - run[0].time;
-        if (duration >= STABLE_SECONDS && high - low <= STABLE_SEMITONES) {
-          boxes.push({
-            start: run[0].time,
-            end: run[run.length - 1].time,
-            midi: median(values) ?? values[0],
-            kind: 'sustained',
-          });
-        } else if (duration >= STABLE_SECONDS * 1.5 && high - low <= 2) {
-          boxes.push({
-            start: run[0].time,
-            end: run[run.length - 1].time,
-            midi: median(values) ?? values[0],
-            kind: 'wander',
-          });
+        if (run.length >= 2) {
+          const values = run.map((sample) => sample.midi as number);
+          const low = Math.min(...values);
+          const high = Math.max(...values);
+          const duration = run[run.length - 1].time - run[0].time;
+          if (duration >= STABLE_SECONDS && high - low <= STABLE_SEMITONES) {
+            boxes.push({
+              start: run[0].time,
+              end: run[run.length - 1].time,
+              midi: median(values) ?? values[0],
+              kind: 'sustained',
+            });
+          } else if (duration >= STABLE_SECONDS * 1.5 && high - low <= 2) {
+            boxes.push({
+              start: run[0].time,
+              end: run[run.length - 1].time,
+              midi: median(values) ?? values[0],
+              kind: 'wander',
+            });
+          }
         }
         run = [];
       };
 
       for (const sample of history) {
-        if (sample.midi == null) {
-          flush();
-        } else {
-          run.push(sample);
-        }
+        if (sample.midi == null) flush();
+        else run.push(sample);
       }
       flush();
       return boxes;
     };
 
+    /** Stroke contiguous voiced runs. */
+    const strokeRuns = (
+      now: number,
+      point: (sample: Sample) => boolean,
+      gradient: CanvasGradient,
+      width: number
+    ) => {
+      context.strokeStyle = gradient;
+      context.lineWidth = width;
+      context.lineCap = 'round';
+      context.lineJoin = 'round';
+      context.beginPath();
+      let drawing = false;
+
+      for (const sample of history) {
+        if (sample.midi == null || !point(sample)) {
+          drawing = false;
+          continue;
+        }
+        const x = xFor(now, sample.time);
+        const y = yFor(sample.midi);
+        if (!drawing) {
+          context.moveTo(x, y);
+          drawing = true;
+        } else {
+          context.lineTo(x, y);
+        }
+      }
+      context.stroke();
+    };
+
     const draw = (now: number) => {
       const width = canvas.clientWidth;
+      const baseline = height - 10;
       context.clearRect(0, 0, width, height);
 
-      // grid + note labels
-      context.strokeStyle = GRID_COLOR;
-      context.fillStyle = GRID_COLOR;
+      // four hairlines, labels inside the plot
       context.lineWidth = 1;
-      context.font = '10px system-ui, sans-serif';
-      for (let midi = minMidi; midi <= maxMidi; midi += GRID_SEMITONES) {
+      context.font = '9px system-ui, sans-serif';
+      for (const midi of tickValues()) {
         const y = yFor(midi);
+        context.strokeStyle = GRID_COLOR;
         context.beginPath();
-        context.moveTo(34, y);
+        context.moveTo(28, y);
         context.lineTo(width, y);
         context.stroke();
+        context.fillStyle = LABEL_COLOR;
         context.fillText(noteName(midi), 2, y + 3);
       }
 
@@ -199,75 +248,87 @@ export function PitchContour({
       }
       context.setLineDash([]);
 
-      // pause bands: quiet stretches between voiced runs
+      // pauses: quiet stretches, dimmed rather than boxed
       let silenceStart: number | null = null;
-      const drawSilence = (end: number) => {
+      const paintSilence = (end: number) => {
         if (silenceStart == null) return;
         if (end - silenceStart >= SILENCE_SECONDS) {
           const x1 = xFor(now, silenceStart);
           const x2 = xFor(now, end);
           context.fillStyle = SILENCE_FILL;
-          context.strokeStyle = SILENCE_STROKE;
-          context.fillRect(x1, 6, x2 - x1, height - 12);
-          context.strokeRect(x1, 6, x2 - x1, height - 12);
+          context.fillRect(x1, 6, Math.max(1, x2 - x1), height - 12);
         }
         silenceStart = null;
       };
       for (const sample of history) {
-        if (sample.midi == null) {
-          silenceStart ??= sample.time;
-        } else {
-          drawSilence(sample.time);
-        }
+        if (sample.midi == null) silenceStart ??= sample.time;
+        else paintSilence(sample.time);
       }
 
-      // sustained and wandering note boxes
+      // sustained and wandering notes as pills
       for (const box of collectBoxes()) {
         const x1 = xFor(now, box.start);
         const x2 = xFor(now, box.end);
         const y = yFor(box.midi);
         context.fillStyle =
-          box.kind === 'sustained' ? 'rgba(79,107,255,0.12)' : 'rgba(245,197,24,0.10)';
+          box.kind === 'sustained' ? PILL_SUSTAINED_FILL : PILL_WANDER_FILL;
         context.strokeStyle =
-          box.kind === 'sustained' ? SUSTAINED_COLOR : WANDER_COLOR;
+          box.kind === 'sustained'
+            ? PILL_SUSTAINED_STROKE
+            : PILL_WANDER_STROKE;
         context.lineWidth = 1;
         context.beginPath();
-        context.roundRect(x1, y - 7, Math.max(3, x2 - x1 + 4), 14, 4);
+        context.roundRect(x1, y - 6, Math.max(4, x2 - x1 + 4), 12, 6);
         context.fill();
         context.stroke();
       }
 
-      // the contour itself, gold where the frame was strong
-      context.lineWidth = 2;
+      // ribbon: fill under the band, brightening toward the playhead
+      const fill = context.createLinearGradient(0, 0, width, 0);
+      fill.addColorStop(0, withAlpha(BRASS, 0));
+      fill.addColorStop(0.65, withAlpha(BRASS, 0.08));
+      fill.addColorStop(1, withAlpha(BRASS, 0.22));
+
+      context.beginPath();
       let started = false;
-      let color = '';
       for (const sample of history) {
-        if (sample.midi == null) {
-          started = false;
-          continue;
-        }
-        const next = sample.strong ? LINE_STRONG : LINE_SOFT;
-        if (next !== color) {
-          context.strokeStyle = next;
-          color = next;
-        }
+        if (sample.midi == null) continue;
         const x = xFor(now, sample.time);
         const y = yFor(sample.midi);
         if (!started) {
-          context.beginPath();
-          context.moveTo(x, y);
+          context.moveTo(x, baseline);
+          context.lineTo(x, y);
           started = true;
         } else {
           context.lineTo(x, y);
         }
-        context.stroke();
-        context.beginPath();
-        context.moveTo(x, y);
+      }
+      if (started) {
+        const lastVoiced = [...history].reverse().find((s) => s.midi != null);
+        if (lastVoiced?.midi != null) {
+          context.lineTo(xFor(now, lastVoiced.time), baseline);
+        }
+        context.closePath();
+        context.fillStyle = fill;
+        context.fill();
       }
 
-      // playhead: vertical bar and gold dot
+      // trail: slate line for soft frames, brass over strong ones
+      const soft = context.createLinearGradient(0, 0, width, 0);
+      soft.addColorStop(0, withAlpha(SLATE, 0.05));
+      soft.addColorStop(0.7, withAlpha(SLATE, 0.45));
+      soft.addColorStop(1, withAlpha(SLATE, 0.9));
+      strokeRuns(now, () => true, soft, 2);
+
+      const strong = context.createLinearGradient(0, 0, width, 0);
+      strong.addColorStop(0, withAlpha(BRASS, 0));
+      strong.addColorStop(0.6, withAlpha(BRASS, 0.35));
+      strong.addColorStop(1, withAlpha(BRASS, 1));
+      strokeRuns(now, (sample) => sample.strong, strong, 2.4);
+
+      // playhead: hairline, glow, breathing dot
       const last = [...history].reverse().find((sample) => sample.midi != null);
-      context.strokeStyle = 'rgba(245,197,24,0.55)';
+      context.strokeStyle = withAlpha(BRASS, 0.45);
       context.lineWidth = 1;
       context.beginPath();
       context.moveTo(width - 1, 6);
@@ -276,14 +337,25 @@ export function PitchContour({
 
       if (last?.midi != null) {
         const y = yFor(last.midi);
-        context.fillStyle = LINE_STRONG;
+        const glow = context.createRadialGradient(
+          width - 1,
+          y,
+          0,
+          width - 1,
+          y,
+          18
+        );
+        glow.addColorStop(0, withAlpha(BRASS, 0.45));
+        glow.addColorStop(1, withAlpha(BRASS, 0));
+        context.fillStyle = glow;
         context.beginPath();
-        context.arc(width - 1, y, 4.5, 0, Math.PI * 2);
+        context.arc(width - 1, y, 18, 0, Math.PI * 2);
         context.fill();
-        context.strokeStyle = 'rgba(245,197,24,0.5)';
+
+        context.fillStyle = withAlpha(BRASS, 1);
         context.beginPath();
-        context.arc(width - 1, y, 9, 0, Math.PI * 2);
-        context.stroke();
+        context.arc(width - 1, y, 3 + 3 * last.level, 0, Math.PI * 2);
+        context.fill();
       }
     };
 
@@ -299,21 +371,25 @@ export function PitchContour({
           const [hz, clarity] = detector.findPitch(buffer, sampleRate);
 
           if (clarity >= minClarity && level >= silenceRms && hz > 0) {
-            recent.push(midiFromHz(hz));
+            const corrected = correctOctave(lastMidi, midiFromHz(hz), clarity);
+            const smoothed = smoother.smooth(corrected, now);
+            lastMidi = smoothed;
+            recent.push(smoothed);
             if (recent.length > SMOOTHING_SAMPLES) recent.shift();
             history.push({
               time: now,
-              midi: median(recent),
+              midi: smoothed,
               strong: clarity >= STRONG_CLARITY,
+              level: Math.min(1, level / LOUD_RMS),
             });
           } else {
             recent.length = 0;
-            history.push({ time: now, midi: null, strong: false });
+            history.push({ time: now, midi: null, strong: false, level: 0 });
           }
 
-          const smoothed = median(recent);
+          const current = median(recent);
           statsRef.current?.({
-            hz: smoothed == null ? null : hzFromMidi(smoothed),
+            hz: current == null ? null : hzFromMidi(current),
             db: decibelsFromRms(level),
           });
         }

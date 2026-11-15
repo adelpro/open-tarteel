@@ -55,3 +55,71 @@ export const decibelsFromRms = (value: number): number =>
 /** Clamp a MIDI value into the visible range. */
 export const clampMidi = (midi: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, midi));
+
+/**
+ * One-euro filter: adaptive low-pass for noisy interactive signals.
+ * Slow when the value is steady, fast when it moves, so a glide is followed
+ * without the stair-steps a median filter leaves behind.
+ * Casiez, Roussel, Vogel, CHI 2012.
+ */
+export class OneEuroFilter {
+  private previousValue: number | null = null;
+  private previousSlope = 0;
+  private previousTime: number | null = null;
+
+  constructor(
+    private readonly minCutoff = 1.5,
+    private readonly beta = 0.01,
+    private readonly slopeCutoff = 1
+  ) {}
+
+  private static alpha(cutoff: number, deltaSeconds: number): number {
+    const tau = 1 / (2 * Math.PI * cutoff);
+    return 1 / (1 + tau / Math.max(1e-3, deltaSeconds));
+  }
+
+  smooth(value: number, timeSeconds: number): number {
+    if (this.previousValue == null || this.previousTime == null) {
+      this.previousValue = value;
+      this.previousTime = timeSeconds;
+      return value;
+    }
+
+    const delta = Math.max(1e-3, timeSeconds - this.previousTime);
+    const slope = (value - this.previousValue) / delta;
+    const slopeAlpha = OneEuroFilter.alpha(this.slopeCutoff, delta);
+    this.previousSlope =
+      slopeAlpha * slope + (1 - slopeAlpha) * this.previousSlope;
+
+    const cutoff = this.minCutoff + this.beta * Math.abs(this.previousSlope);
+    const alpha = OneEuroFilter.alpha(cutoff, delta);
+    const smoothed = alpha * value + (1 - alpha) * this.previousValue;
+
+    this.previousValue = smoothed;
+    this.previousTime = timeSeconds;
+    return smoothed;
+  }
+
+  reset(): void {
+    this.previousValue = null;
+    this.previousSlope = 0;
+    this.previousTime = null;
+  }
+}
+
+/**
+ * MPM occasionally reports double or half the real frequency. When the jump is
+ * close to an octave and the frame is not very clear, keep the previous octave
+ * instead of drawing a spike.
+ */
+export function correctOctave(
+  previousMidi: number | null,
+  midi: number,
+  clarity: number
+): number {
+  if (previousMidi == null || clarity >= 0.95) return midi;
+  const delta = midi - previousMidi;
+  if (delta >= 10 && delta <= 14) return midi - 12;
+  if (delta <= -10 && delta >= -14) return midi + 12;
+  return midi;
+}
