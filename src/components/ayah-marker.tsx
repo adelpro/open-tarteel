@@ -13,14 +13,14 @@ export interface AyahMarkerProps {
 }
 
 /**
- * Design 012 from quranpedia/ayah-markers, tinted through a CSS mask so it
- * follows the line colour in every theme. Decorative: the ayah number is
- * already in the text flow for screen readers.
+ * Design 012 from quranpedia/ayah-markers. Rendered as the original SVG, so
+ * the cream disc and its two tones survive, with a dark ayah number on top.
+ * Decorative: the number is already in the text flow for screen readers.
  */
 export function AyahMarker({ number, className }: AyahMarkerProps) {
   return (
     <span className={cn(styles.marker, className)} aria-hidden="true">
-      <span className={styles.markerGlyph} />
+      <span className={styles.markerArt} />
       <span className={styles.markerNumber}>{toArabicDigits(number)}</span>
     </span>
   );

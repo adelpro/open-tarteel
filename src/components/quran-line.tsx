@@ -97,6 +97,7 @@ export function QuranLine({
           key={word.id}
           className={styles.word}
           data-state={word.state ?? 'upcoming'}
+          data-marker={word.markerNumber != null ? 'true' : undefined}
           aria-current={word.state === 'current' ? 'true' : undefined}
         >
           {word.markerNumber != null ? (

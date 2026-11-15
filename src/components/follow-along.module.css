@@ -4,13 +4,15 @@
   justify-content: center;
   gap: 0.35em;
   width: 100%;
+  min-width: 0;
+  padding-inline: 0.5rem;
   direction: rtl;
   color: var(--follow-along-ink, currentColor);
   font-family: 'Amiri Quran', 'Scheherazade New', 'Noto Naskh Arabic', serif;
   font-size: 21px;
   line-height: 2;
   white-space: nowrap;
-  overflow: hidden;
+  overflow: clip;
 }
 
 .word {
@@ -29,28 +31,38 @@
   opacity: 1;
 }
 
+.word[data-marker='true'] {
+  opacity: 1;
+}
+
 .marker {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.4em;
-  height: 1.4em;
+  width: 1.5em;
+  height: 1.5em;
   vertical-align: middle;
 }
 
-.markerGlyph {
+.markerArt {
   position: absolute;
   inset: 0;
-  background-color: currentColor;
-  -webkit-mask: url('/ayah-marker.svg') center / contain no-repeat;
-  mask: url('/ayah-marker.svg') center / contain no-repeat;
+  background-image: url('/ayah-marker.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 .markerNumber {
-  position: relative;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #332a18;
   font-family: system-ui, sans-serif;
-  font-size: 0.4em;
+  font-size: 0.45em;
+  font-weight: 600;
   line-height: 1;
 }
 

@@ -26,6 +26,8 @@ export interface FollowAlongPanelProps {
   moshafId: string;
   /** 1-based surah number. */
   surah: number;
+  /** Returns the player to listening mode. */
+  onClose?: () => void;
   className?: string;
 }
 
@@ -46,6 +48,7 @@ export function FollowAlongPanel({
   source,
   moshafId,
   surah,
+  onClose,
   className,
 }: FollowAlongPanelProps) {
   const { formatMessage, locale } = useIntl();
@@ -179,6 +182,27 @@ export function FollowAlongPanel({
       dir="rtl"
       className={cn('flex w-full flex-col gap-2 px-3 pb-2', className)}
     >
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs font-semibold">
+          {formatMessage({
+            id: 'followAlong.mode',
+            defaultMessage: 'Follow-along',
+          })}
+        </p>
+        {onClose ? (
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full px-2 py-1 text-xs text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink"
+          >
+            {formatMessage({
+              id: 'followAlong.close',
+              defaultMessage: 'Turn off',
+            })}
+          </button>
+        ) : null}
+      </div>
+
       {status === 'loading' && (
         <p className="text-xs text-ink-muted">
           {formatMessage({

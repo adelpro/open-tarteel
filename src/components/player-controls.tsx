@@ -495,6 +495,7 @@ export default function PlayerControls({
             source={selectedReciter.source}
             moshafId={selectedReciter.moshaf.id}
             surah={chapterNumber}
+            onClose={() => setActiveMode('listening')}
           />
         )}
       {activeMode === 'tahfeez' ? (
@@ -827,7 +828,7 @@ export default function PlayerControls({
             <Switch
               checked={showVisualizer}
               onCheckedChange={setShowVisualizer}
-              disabled={isPlaying || !spectrumSupported}
+              disabled={!spectrumSupported}
               label={messages.visualizer}
             />
           </div>

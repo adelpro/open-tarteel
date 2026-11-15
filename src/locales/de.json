@@ -228,5 +228,6 @@
   "about.followAlong.accuracy": "Die Genauigkeit ist nicht vollständig: Wort-Timings decken 99,45% der Wörter der unterstützten Quran-Foundation-Rezitationen und 99,99% der zwölf geprüften MP3Quran-v4-Rezitationen ab. Bei 0,70% der Verse sind weniger als 85% der Wörter mit Timing versehen, daher stoppt die Wortverfolgung für diesen Vers und der ganze Vers wird hervorgehoben, bis der nächste beginnt, statt ein falsches Wort zu markieren. Die App synchronisiert nur die Oberfläche; die Zahlen sind aus den veröffentlichten Daten berechnet.",
   "about.followAlong.method": "Die Kurve ist eine Schätzung aus komprimiertem Audio, berechnet mit pitchy (McLeod Pitch Method, McLeod und Wyvill, A Smarter Way to Find Pitch, ICMC 2005). Farben zeigen, wo eine Regel gilt, nicht ob sie korrekt angewendet wurde.",
   "about.followAlong.sources": "Quellen und Prüfsummen",
-  "about.followAlong.licenseNote": "Text unter CC BY 3.0 mit Tanzil-Bedingungen, Tajwid unter CC BY 4.0, Versmarker unter OFL."
+  "about.followAlong.licenseNote": "Text unter CC BY 3.0 mit Tanzil-Bedingungen, Tajwid unter CC BY 4.0, Versmarker unter OFL.",
+  "followAlong.close": "Ausschalten"
 }

@@ -48,7 +48,7 @@ export function PitchContour({
   windowSec = 12,
   minMidi = 45,
   maxMidi = 62,
-  minClarity = 0.9,
+  minClarity = 0.8,
   silenceRms = 0.008,
   onStats,
   className,
@@ -148,6 +148,12 @@ export function PitchContour({
       context.stroke();
     };
 
+    const resume = () => {
+      void (analyser?.context as AudioContext | undefined)?.resume?.();
+    };
+    audio?.addEventListener('play', resume);
+    audio?.addEventListener('playing', resume);
+
     const tick = () => {
       frame = requestAnimationFrame(tick);
 
@@ -177,7 +183,10 @@ export function PitchContour({
       }
 
       const now = audio?.currentTime ?? 0;
-      while (history.length > 0 && now - history[0].time > windowSec) {
+      while (
+        history.length > 0 &&
+        (now - history[0].time > windowSec || history[0].time > now + 0.5)
+      ) {
         history.shift();
       }
       drawGrid(now);
@@ -188,6 +197,8 @@ export function PitchContour({
     return () => {
       cancelAnimationFrame(frame);
       observer?.disconnect();
+      audio?.removeEventListener('play', resume);
+      audio?.removeEventListener('playing', resume);
     };
   }, [audio, height, windowSec, minMidi, maxMidi, minClarity, silenceRms]);
 
