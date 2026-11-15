@@ -4,7 +4,7 @@
  * Root cause: `useNetworkStatus` seeded its state from `navigator.onLine`
  * during render. On the server `navigator.onLine` is `undefined` (falsy), so
  * the offline banner was server-rendered, while an online client rendered
- * nothing — React then threw "server rendered HTML didn't match the client".
+ * nothing, React then threw "server rendered HTML didn't match the client".
  *
  * The invariant guarded here: the SSR pass and the first client pass must
  * produce the same HTML, so the first render must not depend on browser state.
@@ -17,7 +17,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import NetworkStatusIndicator from '@/components/network-status-indicator';
 
 const messages = {
-  'offline.status': 'Offline Mode — Showing downloaded content',
+  'offline.status': 'Offline Mode: Showing downloaded content',
 };
 
 function setOnLine(value: boolean | undefined) {

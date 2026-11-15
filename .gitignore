@@ -65,3 +65,6 @@ testsprite_tests/tmp/config.json
 
 # Local screenshots
 /screenshots/
+
+# Pinned Quran sources (fetched, never committed)
+data/sources/

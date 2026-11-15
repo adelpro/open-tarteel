@@ -57,7 +57,7 @@ export async function generateMetadata({ params, searchParams }: Props) {
   const result = await findVariants(id, locale);
   if (result.status === 'error') {
     return {
-      title: 'Reciter temporarily unavailable — Open Tarteel',
+      title: 'Reciter temporarily unavailable | Open Tarteel',
       robots: { index: false, follow: false },
     };
   }
@@ -68,7 +68,7 @@ export async function generateMetadata({ params, searchParams }: Props) {
 
   if (!reciter) {
     return {
-      title: 'Reciter not found — Open Tarteel',
+      title: 'Reciter not found | Open Tarteel',
       robots: { index: false, follow: false },
     };
   }
@@ -76,7 +76,7 @@ export async function generateMetadata({ params, searchParams }: Props) {
   return buildPageMetadata({
     locale,
     path: `/reciter/${id}`,
-    title: `${reciter.name} — ${reciter.moshaf.name} | Open Tarteel`,
+    title: `${reciter.name} · ${reciter.moshaf.name} | Open Tarteel`,
     description: descriptionFor(locale, reciter, reciter.moshaf.name),
     omitLanguages: true,
   });

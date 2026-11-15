@@ -2,6 +2,12 @@ import type { TahfeezSegment } from '@/types/tahfeez';
 
 import { qfFetch } from './quran-foundation.client';
 
+/** Raw word segments, shape varies by endpoint; parsed by the caller. */
+export interface QfWordTimestamp {
+  verse_key: string;
+  segments?: unknown;
+}
+
 export interface QfChapterReciter {
   id: number;
   name: string;
@@ -62,7 +68,7 @@ function toSegment(
     ayah: Number(ayahString),
     audioSource,
     startMs: t.timestamp_from,
-    endMs: t.timestamp_to, // مش duration — راجع الشرح اللي فات
+    endMs: t.timestamp_to, // مش duration، راجع الشرح اللي فات
   };
 }
 
@@ -81,4 +87,20 @@ export async function getSurahTahfeezSegments(
   return audioFile.timestamps.map((t) =>
     toSegment(t, chapterNumber, audioFile.audio_url)
   );
+}
+
+/**
+ * Raw per-verse word segments, untouched. Follow-along needs the `segments`
+ * arrays that {@link getSurahTahfeezSegments} discards when it flattens to
+ * ayah bounds; parsing and validation happen in `parseQuranFoundationWords`.
+ */
+export async function getSurahWordTimestamps(
+  chapterReciterId: number,
+  chapterNumber: number
+): Promise<QfWordTimestamp[]> {
+  const audioFile = await getChapterAudioFile(chapterReciterId, chapterNumber);
+  return (audioFile.timestamps ?? []).map(({ verse_key, segments }) => ({
+    verse_key,
+    segments,
+  }));
 }

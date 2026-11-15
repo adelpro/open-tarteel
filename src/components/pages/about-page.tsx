@@ -4,6 +4,7 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import packageJson from '@/../package.json';
+import { FollowAlongAbout } from '@/components/follow-along-about';
 
 export default function AboutPage() {
   const currentYear = new Date().getFullYear();
@@ -60,6 +61,8 @@ export default function AboutPage() {
               id="about.mission"
             />
           </p>
+
+          <FollowAlongAbout />
 
           <h2 className="mb-2 mt-6 text-2xl font-semibold">
             <FormattedMessage

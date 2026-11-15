@@ -2,8 +2,8 @@
  * Spectrum helpers shared by the bars, peaks, and ribbon models.
  *
  * The catalogue is mostly low-bitrate mono audio that is low-passed around
- * 4.5 kHz. A linear frequency axis spends half the strip on silence — which is
- * what made the far end of the row look dead — so every model reads log-spaced
+ * 4.5 kHz. A linear frequency axis spends half the strip on silence, which is
+ * what made the far end of the row look dead, so every model reads log-spaced
  * bands inside the voice range instead.
  */
 export const VISUALISER_MODELS = ['bars', 'peaks', 'ribbon'] as const;

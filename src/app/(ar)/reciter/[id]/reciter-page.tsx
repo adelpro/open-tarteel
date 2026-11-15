@@ -49,7 +49,7 @@ function ReciterContent({
   // The server page already resolved this reciter and playlist. Seed the atom so
   // the selector and the player share the same identity immediately. A stored
   // entry can have an empty playlist (the catalog only carries hints), so also
-  // fill that in — otherwise the empty selection masks the server playlist.
+  // fill that in, otherwise the empty selection masks the server playlist.
   useEffect(() => {
     if (!initialReciter) return;
     const sameReciter =
