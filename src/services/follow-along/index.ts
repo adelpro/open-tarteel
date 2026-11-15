@@ -5,7 +5,7 @@ import type { WordInterval } from '@/services/timings/word-timings';
 import { LinkSource } from '@/types';
 
 /** Highlight a word slightly before its timing starts, so it is ready to read. */
-export const WORD_ANTICIPATION_MS = 180;
+export const WORD_ANTICIPATION_MS = 300;
 
 /** What a word is doing at this instant. */
 export type WordState = 'spoken' | 'current' | 'upcoming';

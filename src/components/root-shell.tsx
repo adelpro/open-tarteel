@@ -36,6 +36,7 @@ export function RootShell({
       <IntlProviderWrapper initialLocale={locale}>
         <HtmlWrapper>
           <body
+            suppressHydrationWarning
             className={`${tajawal.className} min-h-full bg-background antialiased`}
           >
             <a

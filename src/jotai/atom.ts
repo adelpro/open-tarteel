@@ -125,3 +125,6 @@ export const reciterListPinnedAtom = createAtomWithStorage<boolean>(
   'reciters-list-pinned',
   false
 );
+
+/** Set while the follow-along mode is open, so the spectrum can stand aside. */
+export const followAlongActiveAtom = atom(false);

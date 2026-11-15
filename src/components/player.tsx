@@ -10,6 +10,7 @@ import { useNetworkStatus } from '@/hooks/use-network-status';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
 import {
   currentTimeAtom,
+  followAlongActiveAtom,
   fullscreenAtom,
   playbackModeAtom,
   playbackSpeedAtom,
@@ -57,6 +58,7 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackMode] = useAtom(playbackModeAtom);
   const visualizerModel = useAtomValue(visualizerModelAtom);
+  const followAlongActive = useAtomValue(followAlongActiveAtom);
   const previousTrackRef = useRef<number | undefined>(undefined);
   // Browsers fire `pause` before `ended`, so `isPlaying` is already false when
   // the next source mounts. This carries the intent to keep playing across
@@ -343,14 +345,16 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
             />
           )}
 
-          <div className="w-full">
-            <AudioBarsVisualizer
-              audioId="audio"
-              isPlaying={isPlaying}
-              enabled={canAnalyse}
-              model={visualizerModel}
-            />
-          </div>
+          {followAlongActive ? null : (
+            <div className="w-full">
+              <AudioBarsVisualizer
+                audioId="audio"
+                isPlaying={isPlaying}
+                enabled={canAnalyse}
+                model={visualizerModel}
+              />
+            </div>
+          )}
 
           {isFullscreen ? (
             <>

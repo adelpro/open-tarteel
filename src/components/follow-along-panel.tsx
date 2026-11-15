@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { FiX } from 'react-icons/fi';
 import { useIntl } from 'react-intl';
 
-import { AyahMarker } from '@/components/ayah-marker';
 import { PitchContour } from '@/components/pitch-contour';
 import { QuranLine, type QuranLineWord } from '@/components/quran-line';
 import { TajweedLegend } from '@/components/tajweed-legend';
@@ -184,6 +184,12 @@ export function FollowAlongPanel({
       state: states[index],
     }));
 
+    rendered.push({
+      id: `marker-${active.ayah}`,
+      chars: [],
+      markerNumber: active.ayah,
+    });
+
     return rendered;
   }, [active, data]);
 
@@ -194,7 +200,6 @@ export function FollowAlongPanel({
     >
       <div className="flex h-7 items-center justify-between gap-2">
         <div className="flex items-center gap-1.5">
-          <AyahMarker number={active.ayah} />
           <p className="text-xs font-semibold">
             {formatMessage({
               id: 'followAlong.mode',
@@ -206,8 +211,13 @@ export function FollowAlongPanel({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full px-2 py-1 text-xs text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink"
+            aria-label={formatMessage({
+              id: 'followAlong.close',
+              defaultMessage: 'Turn off',
+            })}
+            className="flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink"
           >
+            <FiX size={12} aria-hidden="true" />
             {formatMessage({
               id: 'followAlong.close',
               defaultMessage: 'Turn off',
