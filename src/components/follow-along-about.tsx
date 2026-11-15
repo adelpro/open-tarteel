@@ -1,0 +1,101 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { FormattedMessage } from 'react-intl';
+
+import type { QuranManifest } from '@/services/quran-text';
+
+/**
+ * The mode's about block. Digests come from the shipped manifest, so they can
+ * never drift from the data; the coverage figures are the audited results and
+ * carry the data version beside them for the same reason.
+ */
+export function FollowAlongAbout() {
+  const [manifest, setManifest] = useState<QuranManifest | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/data/quran/manifest.json')
+      .then((response) => (response.ok ? response.json() : null))
+      .then((value: QuranManifest | null) => {
+        if (!cancelled && value) setManifest(value);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return (
+    <section className="mt-6 space-y-3">
+      <h2 className="mb-2 text-2xl font-semibold">
+        <FormattedMessage
+          defaultMessage="تتبّع التلاوة ومنحنى الصوت"
+          id="about.followAlong.title"
+        />
+      </h2>
+
+      <p>
+        <FormattedMessage
+          defaultMessage="يُبرز هذا الوضع الكلمة التي تُتلى الآن، ويلوّن مواضع أحكام التجويد، ويرسم منحنى الصوت من التسجيل نفسه. أداة للاستماع والتعليم، ولا تحكم على صحة التلاوة."
+          id="about.followAlong.description"
+        />
+      </p>
+
+      <p>
+        <FormattedMessage
+          defaultMessage="يعمل مع التلاوات التي توفّر توقيتًا على مستوى الكلمة، وبرواية حفص عن عاصم فقط. التلاوات الأخرى تبقى في القائمة لكنها معطّلة مع بيان السبب."
+          id="about.followAlong.hafs"
+        />
+      </p>
+
+      <p>
+        <FormattedMessage
+          defaultMessage="الدقة ليست كاملة: توقيت الكلمات متاح لـ 99.45% من كلمات التلاوات المدعومة من مؤسسة القرآن، و99.99% في التلاوات الاثنتي عشرة المدققة من MP3Quran v4. وفي 0.70% من الآيات لا يكفي التوقيت فتعود الإضاءة إلى الآية كاملة. الأرقام مقاسة من البيانات نفسها، وليست وعدًا بدقة التوقيت."
+          id="about.followAlong.accuracy"
+        />
+      </p>
+
+      <p>
+        <FormattedMessage
+          defaultMessage="المنحنى تقديري، محسوب من صوت مضغوط بمكتبة pitchy التي تطبّق McLeod Pitch Method كما ورد في بحث McLeod وWyvill، A Smarter Way to Find Pitch (ICMC 2005). التلوين يبيّن موضع الحكم لا صحة تطبيقه."
+          id="about.followAlong.method"
+        />
+      </p>
+
+      <details className="text-sm">
+        <summary className="cursor-pointer">
+          <FormattedMessage
+            defaultMessage="المصادر والبصمات"
+            id="about.followAlong.sources"
+          />
+        </summary>
+
+        <p dir="ltr" className="mt-2 break-all font-mono text-xs">
+          {manifest
+            ? `data ${manifest.dataVersion} · corpus ${manifest.corpusSha256}`
+            : 'manifest…'}
+        </p>
+
+        {manifest ? (
+          <ul dir="ltr" className="mt-2 space-y-2 font-mono text-xs">
+            <li className="break-all">
+              Tanzil Uthmani {manifest.text.version}: {manifest.text.sha256}
+            </li>
+            <li className="break-all">
+              quran-tajweed {manifest.tajweed.commit.slice(0, 7)}:{' '}
+              {manifest.tajweed.sha256}
+            </li>
+          </ul>
+        ) : null}
+
+        <p className="mt-2 text-xs">
+          <FormattedMessage
+            defaultMessage="النص بترخيص CC BY 3.0 وشروط تنزيل، والتجويد بترخيص CC BY 4.0، وعلامات الآيات بترخيص OFL."
+            id="about.followAlong.licenseNote"
+          />
+        </p>
+      </details>
+    </section>
+  );
+}

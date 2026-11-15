@@ -94,3 +94,11 @@ mode cancels rAF and disconnects only the pitch node.
 - Conventional commits, scope `follow-along` or `providers`.
 - Every percentage and hash in the UI comes from the manifest.
 - No Arabic text edits, ever: the pinned text is read-only input.
+
+## Not done
+
+- Optional English line: the CC BY-ND transport decision (bundle verbatim vs
+  proxy on demand) is still open.
+- Archiving the pitch-contour prototype repo.
+- Coverage figures in the About block are typed; move them into the manifest
+  once the build can compute them.

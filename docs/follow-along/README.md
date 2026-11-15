@@ -1,6 +1,6 @@
 # Follow-along (تتبّع التلاوة)
 
-Status: design locked, implementation started on `feat/follow-along`.
+Status: implemented on `feat/follow-along`, behind `NEXT_PUBLIC_ENABLE_FOLLOW_ALONG`.
 
 A player mode that follows a recitation: the word being recited is highlighted,
 tajweed rules are coloured on those same glyphs, and a live pitch contour is

@@ -221,5 +221,12 @@
   "tahfeez.modeDisabledNoTimings": "Diese Rezitation hat keine Ayah-Timings",
   "settings.source.mp3quranv4": "MP3 Quran v4 (Beta)",
   "tahfeez.invalidRange": "Die Start-Aya muss vor der End-Aya liegen.",
-  "tahfeez.strategy": "Wiederholungsmodus"
+  "tahfeez.strategy": "Wiederholungsmodus",
+  "about.followAlong.title": "Mitlesen und Tonhöhenkurve",
+  "about.followAlong.description": "Dieser Modus hebt das gerade rezitierte Wort hervor, färbt die Stellen der Tajwid-Regeln und zeichnet die Tonhöhe aus derselben Aufnahme. Ein Hör- und Lernwerkzeug; er beurteilt keine Rezitation.",
+  "about.followAlong.hafs": "Er funktioniert mit Rezitationen, die Wort-Timings bereitstellen, und nur mit Hafs an Asim. Andere Rezitationen bleiben in der Liste, sind aber mit Begründung deaktiviert.",
+  "about.followAlong.accuracy": "Die Genauigkeit ist nicht vollständig: Wort-Timings decken 99,45% der Wörter der unterstützten Quran-Foundation-Rezitationen und 99,99% der zwölf geprüften MP3Quran-v4-Rezitationen ab. Bei 0,70% der Verse reicht das Timing nicht und die Hervorhebung fällt auf den ganzen Vers zurück. Diese Zahlen sind aus den Daten gemessen, kein Versprechen über die Timing-Genauigkeit.",
+  "about.followAlong.method": "Die Kurve ist eine Schätzung aus komprimiertem Audio, berechnet mit pitchy (McLeod Pitch Method, McLeod und Wyvill, A Smarter Way to Find Pitch, ICMC 2005). Farben zeigen, wo eine Regel gilt, nicht ob sie korrekt angewendet wurde.",
+  "about.followAlong.sources": "Quellen und Prüfsummen",
+  "about.followAlong.licenseNote": "Text unter CC BY 3.0 mit Tanzil-Bedingungen, Tajwid unter CC BY 4.0, Versmarker unter OFL."
 }
