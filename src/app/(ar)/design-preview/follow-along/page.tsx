@@ -2,15 +2,18 @@
 
 import { useEffect, useState } from 'react';
 
+import { AhkamRail } from '@/components/ahkam-rail';
 import { PitchContour } from '@/components/pitch-contour';
 import { QuranLine, type QuranLineWord } from '@/components/quran-line';
 import { TajweedLegend } from '@/components/tajweed-legend';
+import { ayahAhkam } from '@/services/follow-along/ahkam';
 import type { SurahData } from '@/services/quran-text';
 import { ayahWordChars } from '@/services/quran-text/rules';
 
 /**
- * Internal visual harness: the line, legend and contour with no player, no
- * providers and no network beyond the bundled surah. Never linked publicly.
+ * Internal visual harness: the line, legend, ahkam rail and contour with no
+ * player, no providers and no network beyond the bundled surah. Never linked
+ * publicly.
  */
 export default function FollowAlongPreviewPage() {
   const [surah, setSurah] = useState<SurahData | null>(null);
@@ -44,18 +47,15 @@ export default function FollowAlongPreviewPage() {
       <TajweedLegend />
 
       {surah?.ayahs.map((ayah, index) => {
-        const words: QuranLineWord[] = ayahWordChars(ayah)
-          .filter((word) => word.storedIndex > ayah.b)
-          .map((word, position) => ({
-            id: `${index}-${word.storedIndex}`,
-            chars: word.chars,
-            state:
-              position === 0
-                ? 'spoken'
-                : position === 1
-                  ? 'current'
-                  : 'upcoming',
-          }));
+        const stored = ayahWordChars(ayah).filter(
+          (word) => word.storedIndex > ayah.b
+        );
+        const words: QuranLineWord[] = stored.map((word, position) => ({
+          id: `${index}-${word.storedIndex}`,
+          chars: word.chars,
+          state:
+            position === 0 ? 'spoken' : position === 1 ? 'current' : 'upcoming',
+        }));
 
         words.push({
           id: `marker-${index}`,
@@ -64,11 +64,14 @@ export default function FollowAlongPreviewPage() {
         });
 
         return (
-          <QuranLine
-            key={index}
-            words={words}
-            ariaLabel={`الآية ${index + 1}`}
-          />
+          <div key={index} className="flex flex-col gap-2">
+            <QuranLine words={words} ariaLabel={`الآية ${index + 1}`} />
+            {/* First ayah shows a followed word, the rest show the idle rail. */}
+            <AhkamRail
+              rules={ayahAhkam(ayah)}
+              activeWord={index === 0 ? (stored[1]?.storedIndex ?? null) : null}
+            />
+          </div>
         );
       })}
 

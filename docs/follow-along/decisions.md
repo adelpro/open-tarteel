@@ -22,3 +22,5 @@ Numbered so later discussions can cite them. Each is a call, not a preference.
 | D16 | New analyser node for pitch, same AudioContext                           | The shared analyser is tuned for the bars (1024/0.75)             |
 | D17 | Mode is behind `NEXT_PUBLIC_ENABLE_FOLLOW_ALONG`                         | Kill switch, on in staging first                                  |
 | D18 | Badge "Word-by-word" only for word _timings_                             | Qurani.ai has word audio, not word timings                        |
+| D19 | Ahkam rail is word-granularity, sound rules only                         | Rule position inside a word is unknown; text facts, not voice     |
+| D20 | No durations or harakat counts are displayed                             | Both are scoring inputs; the mode is explicitly not judgement     |
