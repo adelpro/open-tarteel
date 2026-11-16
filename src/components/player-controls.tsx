@@ -8,7 +8,7 @@ import playlistSVG from '@svgs/music-playlist.svg';
 import shuffleSVG from '@svgs/music-shuffle.svg';
 import shuffleDisabledSVG from '@svgs/music-shuffle-disabled.svg';
 import sleepSVG from '@svgs/sleep.svg';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import Image from 'next/image';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { BiVolumeFull, BiVolumeMute } from 'react-icons/bi';
@@ -31,7 +31,7 @@ import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { useSleepTimer } from '@/hooks/use-sleep-timer';
 import { TimeRange, useTahfeezSession } from '@/hooks/use-tahfeez-session';
 import {
-  followAlongActiveAtom,
+  followAlongLineAtom,
   fullscreenAtom,
   lastVolumeAtom,
   playbackModeAtom,
@@ -176,8 +176,10 @@ export default function PlayerControls({
     canUseRangeMode(selectedReciter?.source, selectedReciter?.moshaf) &&
     isOnline;
 
-  const setFollowAlongActive = useSetAtom(followAlongActiveAtom);
-  const showFollowAlong = isFollowAlongEnabled();
+  const [showFollowAlongLine] = useAtom(followAlongLineAtom);
+  // The line is the mode. With it switched off there is nothing the mode adds
+  // beyond the spectrum, so the row disappears instead of opening an empty panel.
+  const showFollowAlong = isFollowAlongEnabled() && showFollowAlongLine;
   const followAlongReason = followAlongBlockReason(
     selectedReciter?.source,
     selectedReciter?.moshaf,
@@ -193,11 +195,6 @@ export default function PlayerControls({
       setActiveMode('listening');
     }
   }, [isTahfeezSupported, isFollowAlongSupported, activeMode]);
-
-  useEffect(() => {
-    setFollowAlongActive(activeMode === 'follow-along');
-    return () => setFollowAlongActive(false);
-  }, [activeMode, setFollowAlongActive]);
 
   const { formatMessage } = useIntl();
   const { isRTL } = useDirection();

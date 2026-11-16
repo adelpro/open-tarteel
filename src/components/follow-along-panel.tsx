@@ -4,8 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { FiX } from 'react-icons/fi';
 import { useIntl } from 'react-intl';
 
-import { AhkamRail } from '@/components/ahkam-rail';
-import { PitchContour } from '@/components/pitch-contour';
 import { QuranLine, type QuranLineWord } from '@/components/quran-line';
 import { TajweedLegend } from '@/components/tajweed-legend';
 import {
@@ -15,7 +13,6 @@ import {
   WORD_ANTICIPATION_MS,
   wordAt,
 } from '@/services/follow-along';
-import { ayahAhkam } from '@/services/follow-along/ahkam';
 import { loadSurah, type SurahData } from '@/services/quran-text';
 import { ayahWordChars } from '@/services/quran-text/rules';
 import type { AyahTiming, WordTiming } from '@/services/timings';
@@ -164,20 +161,6 @@ export function FollowAlongPanel({
     return () => cancelAnimationFrame(frame);
   }, [audio, data, repaired, source, surah]);
 
-  const marks = useMemo(
-    () => (data ? data.timings.map((timing) => timing.startMs / 1000) : []),
-    [data]
-  );
-
-  /**
-   * Only the ayah on screen is walked, so the cost stays flat on long ayat and
-   * the rail never runs ahead of the line it belongs to.
-   */
-  const ahkam = useMemo(() => {
-    const ayah = data?.surah.ayahs[active.ayah - 1];
-    return ayah ? ayahAhkam(ayah) : [];
-  }, [data, active.ayah]);
-
   const line = useMemo<QuranLineWord[]>(() => {
     const ayah = data?.surah.ayahs[active.ayah - 1];
     if (!ayah) return [];
@@ -265,13 +248,6 @@ export function FollowAlongPanel({
               { id: 'followAlong.ayah', defaultMessage: 'Ayah {ayah}' },
               { ayah: active.ayah }
             )}
-          />
-          {/* Graph sits between the line and the rules it belongs to. */}
-          <PitchContour audio={audio} marks={marks} />
-          <AhkamRail
-            rules={ahkam}
-            activeWord={active.fallback ? null : active.stored}
-            locale={locale === 'ar' ? 'ar' : 'en'}
           />
           <TajweedLegend locale={locale === 'ar' ? 'ar' : 'en'} />
         </>

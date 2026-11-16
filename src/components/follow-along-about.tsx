@@ -30,14 +30,14 @@ export function FollowAlongAbout() {
     <section className="mt-6 space-y-3">
       <h2 className="mb-2 text-2xl font-semibold">
         <FormattedMessage
-          defaultMessage="تتبّع التلاوة ومنحنى الصوت"
+          defaultMessage="تتبّع التلاوة"
           id="about.followAlong.title"
         />
       </h2>
 
       <p>
         <FormattedMessage
-          defaultMessage="يُبرز هذا الوضع الكلمة التي تُتلى الآن، ويلوّن مواضع أحكام التجويد، ويرسم منحنى الصوت من التسجيل نفسه. الأداة للاستماع والتعلّم فقط، وليست لتصحيح التلاوة، ولا تستعمل الذكاء الاصطناعي."
+          defaultMessage="يُبرز هذا الوضع الكلمة التي تُتلى الآن، ويلوّن مواضع أحكام التجويد. الأداة للاستماع والتعلّم فقط، وليست لتصحيح التلاوة، ولا تستعمل الذكاء الاصطناعي، ولا تقيس الأداء."
           id="about.followAlong.description"
         />
       </p>
@@ -58,7 +58,7 @@ export function FollowAlongAbout() {
 
       <p>
         <FormattedMessage
-          defaultMessage="المنحنى تقديري، محسوب من صوت مضغوط بمكتبة pitchy التي تطبّق McLeod Pitch Method كما ورد في بحث McLeod وWyvill، A Smarter Way to Find Pitch (ICMC 2005). التلوين يبيّن موضع الحكم لا صحة تطبيقه."
+          defaultMessage="التلوين يبيّن موضع الحكم في النص، لا صحة تطبيقه في التلاوة. الوضع لا يسجّل صوتك ولا يقارنه ولا يصدر تقييمًا."
           id="about.followAlong.method"
         />
       </p>

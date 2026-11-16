@@ -16,6 +16,7 @@ import useDirection from '@/hooks/use-direction';
 import { useLocalePath } from '@/hooks/use-locale-path';
 import {
   enabledSourcesAtom,
+  followAlongLineAtom,
   forcedOfflineAtom,
   visualizerModelAtom,
 } from '@/jotai/atom';
@@ -77,6 +78,7 @@ export default function SettingsPage() {
   const [enabledSources, setEnabledSources] = useAtom(enabledSourcesAtom);
   const [forcedOffline, setForcedOffline] = useAtom(forcedOfflineAtom);
   const [visualizerModel, setVisualizerModel] = useAtom(visualizerModelAtom);
+  const [followAlongLine, setFollowAlongLine] = useAtom(followAlongLineAtom);
 
   const toggleSource = (source: LinkSource) => {
     setEnabledSources((previous) => {
@@ -282,6 +284,47 @@ export default function SettingsPage() {
                 ]}
               />
             </div>
+          </Group>
+
+          <Group
+            title={formatMessage({
+              id: 'settings.followAlong',
+              defaultMessage: 'Follow-along',
+            })}
+            description={formatMessage({
+              id: 'settings.followAlongDescription',
+              defaultMessage:
+                'The word-by-word line shown under the spectrum while a recitation with word timings plays. Turn it off to keep the player to the spectrum alone.',
+            })}
+          >
+            <Row
+              label={formatMessage({
+                id: 'settings.followAlongLine',
+                defaultMessage: 'Text line',
+              })}
+              description={
+                followAlongLine
+                  ? formatMessage({
+                      id: 'settings.followAlongLineOn',
+                      defaultMessage:
+                        'The mode is available and the line follows the reciter word by word.',
+                    })
+                  : formatMessage({
+                      id: 'settings.followAlongLineOff',
+                      defaultMessage:
+                        'Hidden. The follow-along mode is not offered.',
+                    })
+              }
+            >
+              <Switch
+                checked={followAlongLine}
+                onCheckedChange={setFollowAlongLine}
+                label={formatMessage({
+                  id: 'settings.followAlongLine',
+                  defaultMessage: 'Text line',
+                })}
+              />
+            </Row>
           </Group>
 
           <Group
