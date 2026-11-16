@@ -57,6 +57,32 @@ export const clampMidi = (midi: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, midi));
 
 /**
+ * Split a frame history into runs of consecutive voiced frames.
+ *
+ * Silence is a gap, not a link: joining the last note before a pause to the
+ * first note after it would draw a note the reciter never made. Unvoiced
+ * frames are the separators and are not returned.
+ */
+export function voicedRuns<T extends { midi: number | null }>(
+  samples: readonly T[]
+): T[][] {
+  const runs: T[][] = [];
+  let run: T[] = [];
+
+  for (const sample of samples) {
+    if (sample.midi == null) {
+      if (run.length > 0) runs.push(run);
+      run = [];
+    } else {
+      run.push(sample);
+    }
+  }
+  if (run.length > 0) runs.push(run);
+
+  return runs;
+}
+
+/**
  * One-euro filter: adaptive low-pass for noisy interactive signals.
  * Slow when the value is steady, fast when it moves, so a glide is followed
  * without the stair-steps a median filter leaves behind.

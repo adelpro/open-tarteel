@@ -266,12 +266,13 @@ export function FollowAlongPanel({
               { ayah: active.ayah }
             )}
           />
+          {/* Graph sits between the line and the rules it belongs to. */}
+          <PitchContour audio={audio} marks={marks} />
           <AhkamRail
             rules={ahkam}
             activeWord={active.fallback ? null : active.stored}
             locale={locale === 'ar' ? 'ar' : 'en'}
           />
-          <PitchContour audio={audio} marks={marks} />
           <TajweedLegend locale={locale === 'ar' ? 'ar' : 'en'} />
         </>
       )}

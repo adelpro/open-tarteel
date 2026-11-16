@@ -13,6 +13,7 @@ import {
   noteName,
   OneEuroFilter,
   rms,
+  voicedRuns,
 } from '@/services/follow-along/pitch';
 import { cn } from '@/utils';
 import { ensurePitchAnalyser } from '@/utils/audio-analyser';
@@ -52,8 +53,18 @@ const PILL_SUSTAINED_STROKE = 'rgba(74, 99, 230, 0.45)';
 const PILL_WANDER_FILL = 'rgba(245, 197, 24, 0.08)';
 const PILL_WANDER_STROKE = 'rgba(201, 169, 28, 0.45)';
 
-type Sample = { time: number; midi: number | null; strong: boolean; level: number };
-type Box = { start: number; end: number; midi: number; kind: 'sustained' | 'wander' };
+type Sample = {
+  time: number;
+  midi: number | null;
+  strong: boolean;
+  level: number;
+};
+type Box = {
+  start: number;
+  end: number;
+  midi: number;
+  kind: 'sustained' | 'wander';
+};
 
 const withAlpha = (base: string, alpha: number): string =>
   `rgba(${base}, ${alpha})`;
@@ -124,9 +135,7 @@ export function PitchContour({
     resize();
 
     const observer =
-      typeof ResizeObserver === 'undefined'
-        ? null
-        : new ResizeObserver(resize);
+      typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(resize);
     observer?.observe(canvas);
 
     const yFor = (midi: number): number => {
@@ -273,9 +282,7 @@ export function PitchContour({
         context.fillStyle =
           box.kind === 'sustained' ? PILL_SUSTAINED_FILL : PILL_WANDER_FILL;
         context.strokeStyle =
-          box.kind === 'sustained'
-            ? PILL_SUSTAINED_STROKE
-            : PILL_WANDER_STROKE;
+          box.kind === 'sustained' ? PILL_SUSTAINED_STROKE : PILL_WANDER_STROKE;
         context.lineWidth = 1;
         context.beginPath();
         context.roundRect(x1, y - 6, Math.max(4, x2 - x1 + 4), 12, 6);
@@ -283,33 +290,23 @@ export function PitchContour({
         context.stroke();
       }
 
-      // ribbon: fill under the band, brightening toward the playhead
+      // ribbon: one polygon per voiced run, so a pause is a real gap instead of
+      // a line joining the last note before it to the first note after it
       const fill = context.createLinearGradient(0, 0, width, 0);
       fill.addColorStop(0, withAlpha(BRASS, 0));
       fill.addColorStop(0.65, withAlpha(BRASS, 0.08));
       fill.addColorStop(1, withAlpha(BRASS, 0.22));
+      context.fillStyle = fill;
 
-      context.beginPath();
-      let started = false;
-      for (const sample of history) {
-        if (sample.midi == null) continue;
-        const x = xFor(now, sample.time);
-        const y = yFor(sample.midi);
-        if (!started) {
-          context.moveTo(x, baseline);
-          context.lineTo(x, y);
-          started = true;
-        } else {
-          context.lineTo(x, y);
+      for (const run of voicedRuns(history)) {
+        if (run.length < 2) continue;
+        context.beginPath();
+        context.moveTo(xFor(now, run[0].time), baseline);
+        for (const sample of run) {
+          context.lineTo(xFor(now, sample.time), yFor(sample.midi as number));
         }
-      }
-      if (started) {
-        const lastVoiced = [...history].reverse().find((s) => s.midi != null);
-        if (lastVoiced?.midi != null) {
-          context.lineTo(xFor(now, lastVoiced.time), baseline);
-        }
+        context.lineTo(xFor(now, run[run.length - 1].time), baseline);
         context.closePath();
-        context.fillStyle = fill;
         context.fill();
       }
 
@@ -326,17 +323,25 @@ export function PitchContour({
       strong.addColorStop(1, withAlpha(BRASS, 1));
       strokeRuns(now, (sample) => sample.strong, strong, 2.4);
 
-      // playhead: hairline, glow, breathing dot
-      const last = [...history].reverse().find((sample) => sample.midi != null);
-      context.strokeStyle = withAlpha(BRASS, 0.45);
+      // playhead: a hairline in the rail's muted ink, and a dot only while the
+      // voice is actually sounding — a dot left sitting in a pause reads as a
+      // note the reciter never made
+      const newest = history[history.length - 1];
+      const sounding =
+        audio != null &&
+        !audio.paused &&
+        newest?.midi != null &&
+        now - newest.time < 0.5;
+
+      context.strokeStyle = withAlpha(SLATE, 0.7);
       context.lineWidth = 1;
       context.beginPath();
       context.moveTo(width - 1, 6);
       context.lineTo(width - 1, height - 6);
       context.stroke();
 
-      if (last?.midi != null) {
-        const y = yFor(last.midi);
+      if (sounding && newest?.midi != null) {
+        const y = yFor(newest.midi);
         const glow = context.createRadialGradient(
           width - 1,
           y,
@@ -354,7 +359,7 @@ export function PitchContour({
 
         context.fillStyle = withAlpha(BRASS, 1);
         context.beginPath();
-        context.arc(width - 1, y, 3 + 3 * last.level, 0, Math.PI * 2);
+        context.arc(width - 1, y, 3 + 3 * newest.level, 0, Math.PI * 2);
         context.fill();
       }
     };

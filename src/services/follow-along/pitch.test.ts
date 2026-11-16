@@ -10,6 +10,7 @@ import {
   noteName,
   OneEuroFilter,
   rms,
+  voicedRuns,
 } from './pitch';
 
 describe('pitch helpers', () => {
@@ -93,5 +94,41 @@ describe('correctOctave', () => {
   it('keeps ordinary movement', () => {
     expect(correctOctave(55, 57, 0.7)).toBe(57);
     expect(correctOctave(null, 60, 0.5)).toBe(60);
+  });
+});
+
+describe('voicedRuns', () => {
+  const frame = (time: number, midi: number | null) => ({ time, midi });
+
+  it('keeps one run when the voice never stops', () => {
+    const runs = voicedRuns([frame(0, 55), frame(0.1, 56), frame(0.2, 57)]);
+    expect(runs).toHaveLength(1);
+    expect(runs[0].map((sample) => sample.midi)).toEqual([55, 56, 57]);
+  });
+
+  it('splits a pause into two runs so nothing is drawn across it', () => {
+    const runs = voicedRuns([
+      frame(0, 55),
+      frame(0.1, 56),
+      frame(0.2, null),
+      frame(0.3, null),
+      frame(0.4, 50),
+      frame(0.5, 51),
+    ]);
+
+    expect(runs).toHaveLength(2);
+    expect(runs[0].map((sample) => sample.time)).toEqual([0, 0.1]);
+    expect(runs[1].map((sample) => sample.time)).toEqual([0.4, 0.5]);
+  });
+
+  it('drops runs that never sound', () => {
+    const runs = voicedRuns([frame(0, null), frame(0.1, null)]);
+    expect(runs).toEqual([]);
+  });
+
+  it('keeps a lone voiced frame so the caller can decide about it', () => {
+    const runs = voicedRuns([frame(0, null), frame(0.1, 55), frame(0.2, null)]);
+    expect(runs).toHaveLength(1);
+    expect(runs[0]).toHaveLength(1);
   });
 });
