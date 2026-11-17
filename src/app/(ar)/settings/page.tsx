@@ -419,7 +419,13 @@ export default function SettingsPage() {
                 <p>
                   <FormattedMessage
                     id="settings.followAlongAvailabilityText"
-                    defaultMessage="Text is Tanzil Uthmani verbatim; the ahkam come from the quran-tajweed dataset (CC BY 4.0)."
+                    defaultMessage="Quran text in the Uthmani script from Tanzil, verbatim."
+                  />
+                </p>
+                <p>
+                  <FormattedMessage
+                    id="settings.followAlongAvailabilityDataset"
+                    defaultMessage="Ahkam data from quran-tajweed, under CC BY 4.0."
                   />
                 </p>
                 <Link
