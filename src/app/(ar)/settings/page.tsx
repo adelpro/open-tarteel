@@ -1,7 +1,10 @@
 'use client';
 
 import { useAtom } from 'jotai';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { FiInfo } from 'react-icons/fi';
 import { MdArrowBack } from 'react-icons/md';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -84,6 +87,7 @@ export default function SettingsPage() {
   const [followAlongLine, setFollowAlongLine] = useAtom(followAlongLineAtom);
   const [spectrumEnabled, setSpectrumEnabled] = useAtom(spectrumEnabledAtom);
   const [ahkamTags, setAhkamTags] = useAtom(ahkamTagsAtom);
+  const [showAvailability, setShowAvailability] = useState(false);
 
   const toggleSource = (source: LinkSource) => {
     setEnabledSources((previous) => {
@@ -100,11 +104,10 @@ export default function SettingsPage() {
   };
 
   const handleBack = () => {
-    if (typeof window !== 'undefined' && window.history.length > 1) {
-      router.back();
-    } else {
-      router.push(localePath('/'));
-    }
+    // Home in the language you are reading. `router.back()` landed on this same
+    // page in the previous language whenever the language had just been
+    // switched, which read as a reset rather than a back.
+    router.replace(localePath('/'));
   };
 
   return (
@@ -321,7 +324,56 @@ export default function SettingsPage() {
               defaultMessage:
                 'The word-by-word line shown above the spectrum while a recitation with word timings plays. Independent of the spectrum.',
             })}
+            action={
+              <button
+                type="button"
+                onClick={() => setShowAvailability((open) => !open)}
+                aria-expanded={showAvailability}
+                aria-controls="follow-along-availability"
+                aria-label={formatMessage({
+                  id: 'settings.followAlongAvailability',
+                  defaultMessage: 'Where the line is available',
+                })}
+                className="flex size-6 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink"
+              >
+                <FiInfo size={14} aria-hidden="true" />
+              </button>
+            }
           >
+            {showAvailability ? (
+              <div
+                id="follow-along-availability"
+                className="space-y-1.5 px-4 py-3 text-[12px] leading-5 text-ink-muted"
+              >
+                <p>
+                  <FormattedMessage
+                    id="settings.followAlongAvailabilityHafs"
+                    defaultMessage="Hafs an Asim only, for now."
+                  />
+                </p>
+                <p>
+                  <FormattedMessage
+                    id="settings.followAlongAvailabilityProviders"
+                    defaultMessage="Quran Foundation and the twelve audited MP3Quran v4 recitations. Everything else plays without the line."
+                  />
+                </p>
+                <p>
+                  <FormattedMessage
+                    id="settings.followAlongAvailabilityText"
+                    defaultMessage="Text is Tanzil Uthmani verbatim; the ahkam come from the quran-tajweed dataset (CC BY 4.0)."
+                  />
+                </p>
+                <Link
+                  href={localePath('/about')}
+                  className="inline-block font-bold text-primary underline-offset-2 hover:underline"
+                >
+                  <FormattedMessage
+                    id="settings.followAlongAvailabilityMore"
+                    defaultMessage="About this feature"
+                  />
+                </Link>
+              </div>
+            ) : null}
             <Row
               label={formatMessage({
                 id: 'settings.followAlongLine',
