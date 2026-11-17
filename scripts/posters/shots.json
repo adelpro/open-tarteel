@@ -1,0 +1,41 @@
+{
+  "app": "Open Tarteel",
+  "template": "noor",
+  "languages": ["ar-SA"],
+  "sizes": ["ios-6.9", "ipad-13", "play-phone", "play-tablet-10"],
+  "slides": [
+    {
+      "templateSlide": 0,
+      "headline": "تابع *التلاوة* كلمة بكلمة",
+      "subtitle": "الكلمة تُضاء مع صوت القارئ، وأحكام التجويد ملوّنة في مواضعها.",
+      "captures": {
+        "iphone": "captures/iphone-01.png",
+        "ipad": "captures/ipad-01.png",
+        "android-phone": "captures/android-phone-01.png",
+        "android-tablet": "captures/android-tablet-01.png"
+      }
+    },
+    {
+      "templateSlide": 1,
+      "headline": "اختر *ما* تراه",
+      "subtitle": "الطيف، والسطر القرآني، ووسوم الأحكام: ثلاثة مفاتيح مستقلة.",
+      "captures": {
+        "iphone": "captures/iphone-02.png",
+        "ipad": "captures/ipad-02.png",
+        "android-phone": "captures/android-phone-02.png",
+        "android-tablet": "captures/android-tablet-02.png"
+      }
+    },
+    {
+      "templateSlide": 3,
+      "headline": "حفص *عن* عاصم",
+      "subtitle": "مؤسسة القرآن، والتلاوات الاثنتا عشرة المدققة من MP3Quran v4.",
+      "captures": {
+        "iphone": "captures/iphone-03.png",
+        "ipad": "captures/ipad-03.png",
+        "android-phone": "captures/android-phone-03.png",
+        "android-tablet": "captures/android-tablet-03.png"
+      }
+    }
+  ]
+}
