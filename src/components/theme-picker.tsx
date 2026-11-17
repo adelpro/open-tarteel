@@ -12,7 +12,9 @@ import Segmented from './ui/segmented';
 
 type PaletteOption = {
   value: Palette;
+  labelId: string;
   label: string;
+  descriptionId: string;
   description: string;
   swatches: [string, string, string];
 };
@@ -20,19 +22,25 @@ type PaletteOption = {
 const PALETTES: PaletteOption[] = [
   {
     value: 'warm',
+    labelId: 'theme.warm',
     label: 'Warm',
+    descriptionId: 'theme.warmDescription',
     description: 'Paper, emerald, brass',
     swatches: ['#f6f2e9', '#0c6b53', '#8a6420'],
   },
   {
     value: 'classic',
+    labelId: 'theme.classic',
     label: 'Classic',
+    descriptionId: 'theme.classicDescription',
     description: 'Sky blue on zinc',
     swatches: ['#f4f4f5', '#0ea5e9', '#18181b'],
   },
   {
     value: 'night',
+    labelId: 'theme.night',
     label: 'Night',
+    descriptionId: 'theme.nightDescription',
     description: 'Green-black and mint',
     swatches: ['#0a0d0c', '#6fe3b8', '#e3c27e'],
   },
@@ -111,10 +119,16 @@ export default function ThemePicker({ className }: { className?: string }) {
               </span>
               <span className="min-w-0">
                 <span className="block text-[13px] font-bold leading-tight text-ink">
-                  {option.label}
+                  {formatMessage({
+                    id: option.labelId,
+                    defaultMessage: option.label,
+                  })}
                 </span>
                 <span className="mt-0.5 block text-[11px] leading-tight text-ink-muted">
-                  {option.description}
+                  {formatMessage({
+                    id: option.descriptionId,
+                    defaultMessage: option.description,
+                  })}
                 </span>
               </span>
             </button>
