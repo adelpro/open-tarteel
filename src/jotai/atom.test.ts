@@ -1,6 +1,8 @@
 import { createStore } from 'jotai';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { SETTINGS_EVENT, STORAGE_KEYS } from '@/utils/storage/storage-keys';
+
 const storedReciter = {
   id: 'mp3quran.net-1',
   name: 'Ibrahim Al-Akdar',
@@ -101,5 +103,76 @@ describe('reciterListPinnedAtom', () => {
 
     expect(localStorage.getItem('reciters-list-pinned')).toBe('true');
     unsubscribe();
+  });
+});
+
+describe('synced settings atoms', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    vi.resetModules();
+  });
+
+  it('stamps a change made on this device and tells the account sync', async () => {
+    const { themeAtom } = await import('./atom');
+    const store = createStore();
+    const unsubscribe = store.sub(themeAtom, () => {});
+    const heard = vi.fn();
+    window.addEventListener(SETTINGS_EVENT, heard);
+
+    store.set(themeAtom, 'dark');
+
+    expect(store.get(themeAtom)).toBe('dark');
+    expect(localStorage.getItem('theme-preference')).toBe('"dark"');
+    expect(
+      Number(localStorage.getItem(STORAGE_KEYS.settingsUpdatedAt))
+    ).toBeGreaterThan(0);
+    expect(heard).toHaveBeenCalledTimes(1);
+
+    window.removeEventListener(SETTINGS_EVENT, heard);
+    unsubscribe();
+  });
+
+  it('adopts a value from the ring without stamping or echoing it', async () => {
+    const { themeAtom, themeStoredAtom } = await import('./atom');
+    const store = createStore();
+    const unsubscribe = store.sub(themeAtom, () => {});
+    const heard = vi.fn();
+    window.addEventListener(SETTINGS_EVENT, heard);
+
+    store.set(themeStoredAtom, 'light');
+
+    // Same storage key, so the component atom reads the adopted value.
+    expect(store.get(themeAtom)).toBe('light');
+    expect(localStorage.getItem(STORAGE_KEYS.settingsUpdatedAt)).toBeNull();
+    expect(heard).not.toHaveBeenCalled();
+
+    window.removeEventListener(SETTINGS_EVENT, heard);
+    unsubscribe();
+  });
+
+  it('keeps functional updates working through the wrapper', async () => {
+    const { playbackSpeedAtom } = await import('./atom');
+    const store = createStore();
+    const unsubscribe = store.sub(playbackSpeedAtom, () => {});
+
+    store.set(playbackSpeedAtom, (previous) => (previous === 1 ? 1.5 : 1));
+
+    expect(store.get(playbackSpeedAtom)).toBe(1.5);
+    unsubscribe();
+  });
+
+  it('leaves device-local settings unstamped', async () => {
+    const { volumeAtom, playbackModeAtom } = await import('./atom');
+    const store = createStore();
+    const unsubscribe = [
+      store.sub(volumeAtom, () => {}),
+      store.sub(playbackModeAtom, () => {}),
+    ];
+
+    store.set(volumeAtom, 0.5);
+    store.set(playbackModeAtom, 'shuffle');
+
+    expect(localStorage.getItem(STORAGE_KEYS.settingsUpdatedAt)).toBeNull();
+    for (const stop of unsubscribe) stop();
   });
 });

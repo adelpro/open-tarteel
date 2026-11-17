@@ -1,6 +1,7 @@
 import { Tajawal } from 'next/font/google';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
+import AccountSync from '@/components/account/account-sync';
 import { EnabledSourcesCookieSync } from '@/components/enabled-sources-cookie-sync';
 import FullscreenController from '@/components/fullscreen-controller';
 import HtmlWrapper from '@/components/html-wrapper';
@@ -64,6 +65,7 @@ export function RootShell({
                 <div className="absolute bottom-[-10%] left-[35%] h-[340px] w-[340px] rounded-full bg-violet-500/[0.04] blur-[70px] dark:bg-violet-400/[0.06]" />
               </div>
               <EnabledSourcesCookieSync />
+              <AccountSync />
               <ReciterRouteCookie />
               <StoragePersist />
               <OfflineRedirect />

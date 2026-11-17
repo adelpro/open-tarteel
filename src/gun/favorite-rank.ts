@@ -1,9 +1,7 @@
 'use client';
-import Gun from 'gun/gun';
+import { FAVORITE_COUNTS_KEY } from '@/constants';
 
-import { FAVORITE_COUNTS_KEY, GUNCONFIG } from '@/constants';
-
-const gun = Gun(GUNCONFIG);
+import { gun } from './index';
 
 const favoriteCountsNode = gun.get(FAVORITE_COUNTS_KEY);
 

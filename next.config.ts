@@ -54,7 +54,9 @@ const securityHeaders = [
   },
   {
     key: 'Permissions-Policy',
-    value: 'camera=(), microphone=(), geolocation=(), payment=()',
+    // `self`, not `()`: the account ring scans its pairing code with the
+    // camera. `()` blocks it even after the listener allows it in the browser.
+    value: 'camera=(self), microphone=(), geolocation=(), payment=()',
   },
   ...(noindex ? [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] : []),
   ...(isProduction
@@ -83,7 +85,7 @@ const nextConfig: NextConfig = {
   },
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
-  allowedDevOrigins: ['localhost'],
+  allowedDevOrigins: ['localhost', '*.trycloudflare.com'],
   compiler: {
     removeConsole: isProduction && { exclude: ['error'] },
   },

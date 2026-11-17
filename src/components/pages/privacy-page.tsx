@@ -150,6 +150,41 @@ export default function PrivacyPage() {
             </p>
           </section>
 
+          <section className="space-y-4" id="account-ring">
+            <h2 className="text-2xl font-semibold">
+              <FormattedMessage
+                defaultMessage="حلقة الحساب (اختيارية)"
+                id="privacy.ring.title"
+              />
+            </h2>
+            <p>
+              <FormattedMessage
+                defaultMessage="الاستماع لا يحتاج إلى حساب. إن أنشأت حلقة لمزامنة أجهزتك، فهذا ما يحدث:"
+                id="privacy.ring.body"
+              />
+            </p>
+            <ul className="list-disc space-y-3 ps-4">
+              <li>
+                <FormattedMessage
+                  defaultMessage="تُحفظ مفضّلتك والإعدادات المتزامنة وأسماء أجهزتك على خادم المزامنة العام. هي موقَّعة لكنها غير مشفَّرة."
+                  id="privacy.ring.point1"
+                />
+              </li>
+              <li>
+                <FormattedMessage
+                  defaultMessage="رمز الربط هو الحلقة نفسها طوال دقيقتين، ويُحذف من الخادم فور أن يقرأه جهاز."
+                  id="privacy.ring.point2"
+                />
+              </li>
+              <li>
+                <FormattedMessage
+                  defaultMessage="تسجيل الخروج يمحو المفتاح من ذلك المتصفح فقط، ولا توجد استعادة."
+                  id="privacy.ring.point3"
+                />
+              </li>
+            </ul>
+          </section>
+
           <section className="space-y-4 border-t pt-6">
             <h2 className="text-2xl font-semibold">
               <FormattedMessage

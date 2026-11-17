@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { MdArrowBack } from 'react-icons/md';
 import { FormattedMessage, useIntl } from 'react-intl';
 
+import AccountPanel from '@/components/account/account-panel';
+import { messages as accountMessages } from '@/components/account/messages';
 import CacheManagement from '@/components/cache-management';
 import LanguageSwitcher from '@/components/language-switcher';
 import ProviderBadges from '@/components/provider-badge';
@@ -298,6 +300,13 @@ export default function SettingsPage() {
             <div className="p-4">
               <CacheManagement />
             </div>
+          </Group>
+
+          <Group
+            title={formatMessage(accountMessages.title)}
+            description={formatMessage(accountMessages.description)}
+          >
+            <AccountPanel />
           </Group>
         </div>
       </div>
