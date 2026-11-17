@@ -76,7 +76,7 @@ describe('FollowAlongPanel', () => {
     expect(screen.getByRole('list', { name: 'أحكام التجويد' })).toBeTruthy();
   });
 
-  it('adds the ahkam tags as a second line when the preference is on', async () => {
+  it('adds the ahkam marks when the preference is on', async () => {
     stubTimings(4);
     renderPanel(true);
 
@@ -85,7 +85,7 @@ describe('FollowAlongPanel', () => {
     expect(rail.textContent).toBe('غنة');
   });
 
-  it('leaves the ahkam line out when the preference is off', async () => {
+  it('leaves the ahkam marks out when the preference is off', async () => {
     stubTimings(4);
     renderPanel(false);
 

@@ -354,15 +354,25 @@ export default function SettingsPage() {
                 id: 'settings.followAlongAhkam',
                 defaultMessage: 'Ahkam tags',
               })}
-              description={formatMessage({
-                id: 'settings.followAlongAhkamDescription',
-                defaultMessage:
-                  'A second line under the ayah naming the rule that applies to each word: madd, ghunnah, qalqalah, idgham, ikhfa or iqlab. Only rules the bundled dataset annotates.',
-              })}
+              description={
+                followAlongLine
+                  ? formatMessage({
+                      id: 'settings.followAlongAhkamDescription',
+                      defaultMessage:
+                        'Marks the rule that applies to each word of the ayah: madd, ghunnah, qalqalah, idgham, ikhfa or iqlab. Only rules the bundled dataset annotates.',
+                    })
+                  : formatMessage({
+                      id: 'settings.followAlongAhkamDisabled',
+                      defaultMessage:
+                        'Turn the Quran line on first: the marks annotate it.',
+                    })
+              }
             >
+              {/* The marks annotate the line, so they cannot outlive it. */}
               <Switch
                 checked={ahkamTags}
                 onCheckedChange={setAhkamTags}
+                disabled={!followAlongLine}
                 label={formatMessage({
                   id: 'settings.followAlongAhkam',
                   defaultMessage: 'Ahkam tags',

@@ -71,14 +71,21 @@ isFollowAlongEnabled() &&
 The gate matters: without it, an unsupported reciter would sit under a permanent
 "No word timings" line.
 
-### The ahkam second line
+### The ahkam marks
 
 `AhkamRail` is back, mounted inside the panel under the ayah line behind
-`ahkamTagsAtom`. It reads rules from the bundled text, not from timings, so it
-appears even when the provider's timings fell back to the ayah. Only the six
-sound groups are listed (`AHKAM_GROUPS`); `hamzat_wasl`, `lam_shamsiyyah` and
-`silent` stay as glyph styling, because they describe the writing rather than a
-sound.
+`ahkamTagsAtom`. It draws one mark per word that carries a rule, in word order,
+scaled up for the word being recited. Rule names are not repeated under every
+word: the colour key maps colour to rule, and the name stays in the markup for
+screen readers.
+
+It reads rules from the bundled text, not from timings, so it appears even when
+the provider's timings fell back to the ayah. Only the six sound groups are
+listed (`AHKAM_GROUPS`); `hamzat_wasl`, `lam_shamsiyyah` and `silent` stay as
+glyph styling, because they describe the writing rather than a sound.
+
+The switch is disabled while the Quran line is off, because the marks annotate
+that line and have nothing to sit under without it.
 
 Removed from the panel:
 

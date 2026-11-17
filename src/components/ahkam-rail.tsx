@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-
 import type { WordState } from '@/services/follow-along';
 import { buildLineStates } from '@/services/follow-along';
 import type { AyahAhkam } from '@/services/follow-along/ahkam';
@@ -17,25 +15,31 @@ export interface AhkamRailProps {
   className?: string;
 }
 
-const CHIP =
-  'flex shrink-0 items-center gap-1 rounded-full border px-2 py-px text-[10px] font-medium transition-opacity duration-150';
+const MARK =
+  'h-2.5 min-w-0 flex-1 origin-bottom rounded-full transition-[transform,opacity] duration-180 ease-[cubic-bezier(0.23,1,0.32,1)]';
 
+/**
+ * Height is a scale on a fixed box, so nothing reflows when the active rule
+ * moves along the row.
+ */
 const STATE_CLASS: Record<WordState | 'idle', string> = {
-  current: 'border-border bg-surface-sunken text-ink opacity-100',
-  spoken: 'border-transparent text-ink-muted opacity-45',
-  upcoming: 'border-transparent text-ink-muted opacity-30',
-  /** Nothing to track: the rules are listed, no word is being followed. */
-  idle: 'border-transparent text-ink-muted opacity-75',
+  current: 'scale-y-100 opacity-100',
+  spoken: 'scale-y-40 opacity-45',
+  upcoming: 'scale-y-40 opacity-25',
+  /** Nothing to follow: the rules are listed, none is emphasised. */
+  idle: 'scale-y-60 opacity-75',
 };
 
 /**
- * The ahkam of the ayah being recited, one chip per word.
+ * The ahkam of the ayah, one mark per word that carries one, in word order.
  *
- * A rail, not a timeline: a word's rule is known from the text, while where the
- * rule starts inside the word is not. Placing chips in word order and lighting
- * the one being recited shows what is happening without measuring how it is
- * performed. One row, scrolled to the active chip, so a long ayah cannot change
- * the panel's height.
+ * A strip rather than a row of labels: the same rule repeats across a line, so
+ * names under every word said nothing the colours did not, and the chips read
+ * as a widget instead of a layer of the text. The name is still there for a
+ * screen reader, and the colour key below the line maps colour to rule.
+ *
+ * A word's rule is known from the text; where the rule starts inside the word
+ * is not, so marks are word-granularity and never timed.
  */
 export function AhkamRail({
   rules,
@@ -43,25 +47,15 @@ export function AhkamRail({
   locale = 'ar',
   className,
 }: AhkamRailProps) {
-  const activeRef = useRef<HTMLLIElement>(null);
   // A null word means "not following a word", which is the honest state before
-  // playback and for an ayah whose provider timings fell back. Everything stays
-  // legible instead of being dimmed as if it were all still ahead.
+  // playback and for an ayah whose provider timings fell back.
   const states = activeWord == null ? null : buildLineStates(rules, activeWord);
-
-  useEffect(() => {
-    // Optional call: jsdom and older browsers have no scrollIntoView.
-    activeRef.current?.scrollIntoView?.({ block: 'nearest', inline: 'center' });
-  }, [activeWord]);
 
   if (rules.length === 0) return null;
 
   return (
-    <ul
-      className={cn(
-        'flex w-full items-center gap-1 overflow-x-auto py-0.5',
-        className
-      )}
+    <ol
+      className={cn('flex w-full items-end gap-1 py-px', className)}
       aria-label={locale === 'ar' ? 'أحكام الآية' : 'Rules in this ayah'}
     >
       {rules.map((rule, index) => {
@@ -69,19 +63,16 @@ export function AhkamRail({
         return (
           <li
             key={`${rule.storedIndex}-${rule.group}`}
-            ref={state === 'current' ? activeRef : undefined}
-            className={cn(CHIP, STATE_CLASS[state])}
+            className={cn(MARK, STATE_CLASS[state])}
+            style={{ backgroundColor: TAJWEED_COLORS[rule.group] }}
             aria-current={state === 'current' ? 'true' : undefined}
           >
-            <span
-              className="size-1.5 shrink-0 rounded-full"
-              style={{ backgroundColor: TAJWEED_COLORS[rule.group] }}
-              aria-hidden="true"
-            />
-            {TAJWEED_LABELS[rule.group][locale]}
+            <span className="sr-only">
+              {TAJWEED_LABELS[rule.group][locale]}
+            </span>
           </li>
         );
       })}
-    </ul>
+    </ol>
   );
 }

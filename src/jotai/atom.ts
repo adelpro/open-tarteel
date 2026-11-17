@@ -116,8 +116,8 @@ export const spectrumEnabledAtom = createAtomWithStorage<boolean>(
 );
 
 /**
- * Show the ahkam tags as a second line under the ayah. Opt-out rather than
- * opt-in: the tags are the reason many people open the mode at all.
+ * Show the ahkam marks under the ayah line. Opt-out rather than opt-in: the
+ * marks are the reason many people use the line at all.
  */
 export const ahkamTagsAtom = createAtomWithStorage<boolean>('ahkam-tags', true);
 
