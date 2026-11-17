@@ -1,12 +1,14 @@
 # Cleanup: delete the pitch contour
 
+**Status: executed.** The contour is gone from the tree, along with `pitchy` and
+the second analyser node. `knip` reports nothing unused. This page stays as the
+record of what was removed and how it was verified, so a fork that still carries
+the graph can follow the same steps.
+
 The pitch contour is no longer rendered anywhere. It was hidden in the line-only
 migration and its files are dead. This page is the removal list, verified against
 the tree rather than remembered, plus the doc and dependency changes that go with
 it.
-
-Do this only when you are sure the graph is not coming back. Until then the
-files cost nothing at runtime: nothing imports them, so bundlers drop them.
 
 ## Verify it is still dead
 

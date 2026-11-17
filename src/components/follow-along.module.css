@@ -98,9 +98,3 @@
   border-radius: 9999px;
   background-color: currentColor;
 }
-
-.contour {
-  display: block;
-  width: 100%;
-  direction: ltr;
-}

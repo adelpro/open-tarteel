@@ -49,6 +49,17 @@ const showFollowAlong = isFollowAlongEnabled() && showFollowAlongLine;
 `audio`, because the word clock reads `audio.currentTime`; it no longer needs the
 element for analysis.
 
+It now mounts in `player.tsx`, above the spectrum, not inside `player-controls`.
+That is why the mode lives in a shared atom:
+
+```ts
+export type PlayerMode = 'listening' | 'tahfeez' | 'follow-along';
+export const playerModeAtom = atom<PlayerMode>('listening');
+```
+
+`PlayerControls` sets it from the mode switcher; `Player` reads it to decide
+whether to render the line above the graph.
+
 Removed from the panel:
 
 - `<PitchContour audio={audio} marks={marks} />` and the `marks` memo that fed it.
@@ -68,8 +79,16 @@ stays as the tuning knob for a provider whose timings land late.
 
 ### Settings
 
-New group in `src/app/(ar)/settings/page.tsx`, after Spectrum:
+Two switches, deliberately separate, both `createAtomWithStorage`:
 
+| Switch        | Atom                  | Storage key         | Group        |
+| ------------- | --------------------- | ------------------- | ------------ |
+| Show spectrum | `spectrumEnabledAtom` | `spectrum-enabled`  | Spectrum     |
+| Quran line    | `followAlongLineAtom` | `follow-along-line` | Follow-along |
+
+New message ids in `src/app/(ar)/settings/page.tsx`:
+
+- `settings.spectrumShow`, `settings.spectrumShowDescription`
 - `settings.followAlong`, `settings.followAlongDescription`
 - `settings.followAlongLine`, `settings.followAlongLineOn`,
   `settings.followAlongLineOff`
@@ -110,7 +129,8 @@ npx vitest --run
 
 Then check by hand, in a word-timing recitation (e.g. Quran Foundation moshaf 4):
 
-1. The spectrum keeps playing while the line is visible.
+1. The line renders above the spectrum, and the spectrum keeps playing.
 2. The word lights at the start of its own audio, not before it.
-3. Settings → Follow-along → Text line off removes the mode row after a reload.
-4. The About page no longer claims a pitch contour.
+3. Settings → Follow-along → Quran line off removes the mode row after a reload.
+4. Settings → Spectrum → Show spectrum off removes the graph and keeps the line.
+5. The About page no longer claims a pitch contour.

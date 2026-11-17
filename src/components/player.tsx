@@ -13,6 +13,9 @@ import {
   fullscreenAtom,
   playbackModeAtom,
   playbackSpeedAtom,
+  playerModeAtom,
+  selectedReciterAtom,
+  spectrumEnabledAtom,
   visualizerModelAtom,
   volumeAtom,
 } from '@/jotai/atom';
@@ -20,6 +23,7 @@ import { Playlist } from '@/types';
 import { cn } from '@/utils';
 import { canUseAudioAnalyser } from '@/utils/audio-cors';
 
+import { FollowAlongPanel } from './follow-along-panel';
 import PlayerControls from './player-controls';
 import Range from './range';
 import TrackInfo from './track-info';
@@ -57,6 +61,9 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackMode] = useAtom(playbackModeAtom);
   const visualizerModel = useAtomValue(visualizerModelAtom);
+  const spectrumEnabled = useAtomValue(spectrumEnabledAtom);
+  const [activeMode, setActiveMode] = useAtom(playerModeAtom);
+  const selectedReciter = useAtomValue(selectedReciterAtom);
   const previousTrackRef = useRef<number | undefined>(undefined);
   // Browsers fire `pause` before `ended`, so `isPlaying` is already false when
   // the next source mounts. This carries the intent to keep playing across
@@ -343,14 +350,29 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
             />
           )}
 
-          <div className="w-full">
-            <AudioBarsVisualizer
-              audioId="audio"
-              isPlaying={isPlaying}
-              enabled={canAnalyse}
-              model={visualizerModel}
-            />
-          </div>
+          {/* The line belongs above the spectrum it accompanies. */}
+          {activeMode === 'follow-along' &&
+            selectedReciter &&
+            currentTrack !== undefined && (
+              <FollowAlongPanel
+                audio={audioElement}
+                source={selectedReciter.source}
+                moshafId={selectedReciter.moshaf.id}
+                surah={currentTrack + 1}
+                onClose={() => setActiveMode('listening')}
+              />
+            )}
+
+          {spectrumEnabled ? (
+            <div className="w-full">
+              <AudioBarsVisualizer
+                audioId="audio"
+                isPlaying={isPlaying}
+                enabled={canAnalyse}
+                model={visualizerModel}
+              />
+            </div>
+          ) : null}
 
           {isFullscreen ? (
             <>

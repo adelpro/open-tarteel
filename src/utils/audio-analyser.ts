@@ -3,15 +3,14 @@
  * without CORS is never connected: the browser would hand out zeroes and mute
  * the element, so the caller gates on `canUseAudioAnalyser`.
  *
- * Two analysers share the same source: the spectrum uses 1024 bins with
- * smoothing, the pitch contour uses 2048 bins without smoothing because 1024
- * gives roughly 43 Hz per bin at 44.1 kHz, too coarse for a voice.
+ * One analyser serves the spectrum: 1024 bins with smoothing, which is what the
+ * bars want. This used to carry a second 2048-bin analyser for the pitch
+ * contour; that graph is gone.
  */
 type AudioContextCtor = typeof AudioContext;
 
 let context: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
-let pitchAnalyser: AnalyserNode | null = null;
 const connected = new WeakSet<HTMLMediaElement>();
 
 function ensureContext(): AudioContext | null {
@@ -31,11 +30,6 @@ function ensureNodes(audioContext: AudioContext): void {
     analyser.fftSize = 1024;
     analyser.smoothingTimeConstant = 0.75;
   }
-  if (!pitchAnalyser) {
-    pitchAnalyser = audioContext.createAnalyser();
-    pitchAnalyser.fftSize = 2048;
-    pitchAnalyser.smoothingTimeConstant = 0;
-  }
 }
 
 function connectSource(
@@ -46,7 +40,6 @@ function connectSource(
   // One MediaElementSource per element is all the platform allows.
   const source = audioContext.createMediaElementSource(audio);
   source.connect(analyser as AnalyserNode);
-  source.connect(pitchAnalyser as AnalyserNode);
   source.connect(audioContext.destination);
   connected.add(audio);
 }
@@ -65,27 +58,6 @@ export function ensureAnalyser(audio: HTMLAudioElement): AnalyserNode | null {
   }
 }
 
-/** Higher resolution, no smoothing: for pitch detection, not for drawing bars. */
-export function ensurePitchAnalyser(
-  audio: HTMLAudioElement
-): AnalyserNode | null {
-  try {
-    const audioContext = ensureContext();
-    if (!audioContext) return null;
-    ensureNodes(audioContext);
-    connectSource(audio, audioContext);
-    void audioContext.resume?.();
-    return pitchAnalyser;
-  } catch (error) {
-    console.warn('pitch analyser unavailable', error);
-    return null;
-  }
-}
-
 export function getAnalyser(): AnalyserNode | null {
   return analyser;
-}
-
-export function getPitchAnalyser(): AnalyserNode | null {
-  return pitchAnalyser;
 }

@@ -49,11 +49,9 @@ Exit: unit tests with hand-built intervals, including a replay and a gap.
 - `src/components/quran-line.tsx`: words with `chars[{ch, rule}]`, one measure
   then scale, theme tokens, `aria-current`.
 - `src/components/ayah-marker.tsx`: design 012, tinted by `currentColor`.
-- `src/components/pitch-contour.tsx`: canvas, rolling window, clarity gate,
-  median of 5, silence by RMS.
 - `src/components/tajweed-legend.tsx`: colour plus pattern.
-- `src/utils/audio-analyser.ts`: add a second analyser node (fft 2048,
-  smoothing 0) on the existing context; never close the context.
+- `src/utils/audio-analyser.ts`: one analyser node on the existing context;
+  never close the context.
 - `/design-preview`: render the four in isolation.
 
 Exit: components render without the player; no provider or fetching imports.
@@ -71,7 +69,7 @@ Exit: components render without the player; no provider or fetching imports.
   toggle.
 
 Exit: mode disabled with the right reason for every failing term; leaving the
-mode cancels rAF and disconnects only the pitch node.
+mode cancels its clock.
 
 ## Phase 6: ship
 
@@ -80,7 +78,6 @@ mode cancels rAF and disconnects only the pitch node.
 - Badge fix (done here): "Word-by-word" only for word timings; "Word audio" for
   Qurani.ai.
 - `NEXT_PUBLIC_ENABLE_FOLLOW_ALONG`, off in production until staging passes.
-- Archive the pitch-contour Vite repo as a reference demo.
 
 ## Done in this branch (phase 0)
 
@@ -99,6 +96,5 @@ mode cancels rAF and disconnects only the pitch node.
 
 - Optional English line: the CC BY-ND transport decision (bundle verbatim vs
   proxy on demand) is still open.
-- Archiving the pitch-contour prototype repo.
 - Coverage figures in the About block are typed; move them into the manifest
   once the build can compute them.

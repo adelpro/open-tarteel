@@ -103,5 +103,4 @@ undocumented, so neither is relied upon.
 - English: _The Noble Qur'an_, Al-Hilali & Khan (Darussalam), via QuranEnc -
   CC BY-ND, unmodified.
 - Quran.com / Quran Foundation and MP3Quran: provider terms.
-- pitchy (0BSD) implementing McLeod & Wyvill, _A Smarter Way to Find Pitch_
   (ICMC 2005).

@@ -105,6 +105,24 @@ export const visualizerModelAtom = createAtomWithStorage<VisualiserModel>(
   'visualizer-model',
   'ribbon'
 );
+
+/**
+ * Show the spectrum. A display preference, so it persists; turning it off
+ * leaves the follow-along line alone, and the other way round.
+ */
+export const spectrumEnabledAtom = createAtomWithStorage<boolean>(
+  'spectrum-enabled',
+  true
+);
+
+export type PlayerMode = 'listening' | 'tahfeez' | 'follow-along';
+
+/**
+ * The active playback mode. Shared because the player renders the follow-along
+ * line above the spectrum, while the switcher that sets the mode lives in the
+ * controls below it.
+ */
+export const playerModeAtom = atom<PlayerMode>('listening');
 /**
  * Sources shown in the reciter list by default.
  *

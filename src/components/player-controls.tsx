@@ -36,6 +36,7 @@ import {
   lastVolumeAtom,
   playbackModeAtom,
   playbackSpeedAtom,
+  playerModeAtom,
   selectedReciterAtom,
   volumeAtom,
 } from '@/jotai/atom';
@@ -47,7 +48,6 @@ import { isFollowAlongEnabled } from '@/services/reciters/flags';
 import { cn } from '@/utils';
 
 import DownloadAllButton from './download-all-button';
-import { FollowAlongPanel } from './follow-along-panel';
 import TahfeezModeControls, { TahfeezSettings } from './tahfeez-mode-controls';
 import ActionSheet from './ui/action-sheet';
 // ─── Helpers ─────────────────────────────────────────
@@ -98,9 +98,7 @@ export default function PlayerControls({
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackSpeed, setPlaybackSpeed] = useAtom(playbackSpeedAtom);
   const [playbackMode, setPlaybackMode] = useAtom(playbackModeAtom);
-  const [activeMode, setActiveMode] = useState<
-    'listening' | 'tahfeez' | 'follow-along'
-  >('listening');
+  const [activeMode, setActiveMode] = useAtom(playerModeAtom);
   const selectedReciter = useAtomValue(selectedReciterAtom);
   const isOnline = useNetworkStatus();
   const {
@@ -194,7 +192,7 @@ export default function PlayerControls({
     if (!isFollowAlongSupported && activeMode === 'follow-along') {
       setActiveMode('listening');
     }
-  }, [isTahfeezSupported, isFollowAlongSupported, activeMode]);
+  }, [isTahfeezSupported, isFollowAlongSupported, activeMode, setActiveMode]);
 
   const { formatMessage } = useIntl();
   const { isRTL } = useDirection();
@@ -480,17 +478,6 @@ export default function PlayerControls({
   // ── Render ───────────────────────────────────────────
   return (
     <div className="flex w-full flex-col">
-      {activeMode === 'follow-along' &&
-        selectedReciter &&
-        chapterNumber !== undefined && (
-          <FollowAlongPanel
-            audio={audioElement}
-            source={selectedReciter.source}
-            moshafId={selectedReciter.moshaf.id}
-            surah={chapterNumber}
-            onClose={() => setActiveMode('listening')}
-          />
-        )}
       {activeMode === 'tahfeez' ? (
         <TahfeezModeControls
           tahfeezSettings={tahfeezSettings}

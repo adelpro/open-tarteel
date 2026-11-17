@@ -18,6 +18,7 @@ import {
   enabledSourcesAtom,
   followAlongLineAtom,
   forcedOfflineAtom,
+  spectrumEnabledAtom,
   visualizerModelAtom,
 } from '@/jotai/atom';
 import { isMp3QuranV4Enabled } from '@/services/reciters/flags';
@@ -79,6 +80,7 @@ export default function SettingsPage() {
   const [forcedOffline, setForcedOffline] = useAtom(forcedOfflineAtom);
   const [visualizerModel, setVisualizerModel] = useAtom(visualizerModelAtom);
   const [followAlongLine, setFollowAlongLine] = useAtom(followAlongLineAtom);
+  const [spectrumEnabled, setSpectrumEnabled] = useAtom(spectrumEnabledAtom);
 
   const toggleSource = (source: LinkSource) => {
     setEnabledSources((previous) => {
@@ -251,6 +253,26 @@ export default function SettingsPage() {
                 'Choose the shape the spectrum takes while a recitation plays.',
             })}
           >
+            <Row
+              label={formatMessage({
+                id: 'settings.spectrumShow',
+                defaultMessage: 'Show spectrum',
+              })}
+              description={formatMessage({
+                id: 'settings.spectrumShowDescription',
+                defaultMessage:
+                  'Draw the bars, peaks or ribbon while audio plays. Separate from the Quran line.',
+              })}
+            >
+              <Switch
+                checked={spectrumEnabled}
+                onCheckedChange={setSpectrumEnabled}
+                label={formatMessage({
+                  id: 'settings.spectrumShow',
+                  defaultMessage: 'Show spectrum',
+                })}
+              />
+            </Row>
             <div className="p-4">
               <Segmented
                 value={visualizerModel}

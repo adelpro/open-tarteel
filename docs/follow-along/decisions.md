@@ -6,7 +6,6 @@ Numbered so later discussions can cite them. Each is a call, not a preference.
 | --- | ------------------------------------------------------------------------ | ------------------------------------------------------------------ |
 | D1  | Ship inside Open Tarteel as a player mode, not a separate package        | One codebase, one release; the provider layer already exists here  |
 | D2  | Mode name is تتبّع التلاوة / Follow-along                                | Describes the task; avoids musical framing                         |
-| D3  | Keep "Pitch contour" for the graph panel only                            | Accurate where it belongs                                          |
 | D4  | Store Tanzil text verbatim, never edit it                                | Tanzil terms allow verbatim copies; no modification                |
 | D5  | Word index is derived from the verbatim text, not stored as text         | One coordinate space with tajweed offsets                          |
 | D6  | Only word-timing providers can serve the mode                            | Ayah-only providers cannot follow a word                           |
@@ -18,14 +17,12 @@ Numbered so later discussions can cite them. Each is a call, not a preference.
 | D12 | Hafs only, enforced by `moshaf.riwaya`                                   | No other riwayah has word timings today                            |
 | D13 | English translation is served unmodified                                 | CC BY-ND: no edits, no derived corpus                              |
 | D14 | Percentages are computed at build time and shipped                       | Typed numbers rot; derived ones cannot                             |
-| D15 | Pitch detection uses pitchy (McLeod Pitch Method)                        | Fast in JS, clarity score per frame, 0BSD                          |
-| D16 | New analyser node for pitch, same AudioContext                           | The shared analyser is tuned for the bars (1024/0.75)              |
 | D17 | Mode is behind `NEXT_PUBLIC_ENABLE_FOLLOW_ALONG`                         | Kill switch, on in staging first                                   |
 | D18 | Badge "Word-by-word" only for word _timings_                             | Qurani.ai has word audio, not word timings                         |
-| D19 | Ahkam rail is word-granularity, sound rules only                         | Rule position inside a word is unknown; text facts, not voice      |
 | D20 | No durations or harakat counts are displayed                             | Both are scoring inputs; the mode is explicitly not judgement      |
 | D21 | The mode is the line; the spectrum is never hidden                       | Pitch drawn on the voice read as judging it; the line is the claim |
 | D22 | The line preference is stored (`follow-along-line`), default on          | A reading preference must survive reloads; off hides the mode      |
 
-D19 (the ahkam rail) and D3 (the graph panel) are superseded by D21. D20 still
-applies: nothing in the mode displays durations, harakat counts, or a verdict.
+D20 still applies after D21: nothing in the mode displays durations, harakat
+counts, or a verdict. The pitch contour and the ahkam rail are deleted, not
+parked; see [cleanup-pitch-contour.md](cleanup-pitch-contour.md).
