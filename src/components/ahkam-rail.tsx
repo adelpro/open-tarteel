@@ -15,8 +15,12 @@ export interface AhkamRailProps {
   className?: string;
 }
 
+/**
+ * Marks share the row but never grow past a mark: an ayah with two rules would
+ * otherwise draw two half-width bars and read as a progress track.
+ */
 const MARK =
-  'h-2.5 min-w-0 flex-1 origin-bottom rounded-full transition-[transform,opacity] duration-180 ease-[cubic-bezier(0.23,1,0.32,1)]';
+  'h-2.5 min-w-0 max-w-6 flex-1 origin-bottom rounded-full transition-[transform,opacity] duration-180 ease-[cubic-bezier(0.23,1,0.32,1)]';
 
 /**
  * Height is a scale on a fixed box, so nothing reflows when the active rule
