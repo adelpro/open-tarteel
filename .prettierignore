@@ -5,9 +5,15 @@ coverage
 out
 dist
 .gstack
+.opencode
 
 # Ignore all node_modules directories
 node_modules
+
+# Generated Quran corpus. The build script writes compact JSON on purpose:
+# prettier would expand 1.4 MB of text into hundreds of thousands of lines and
+# the next `yarn data:build` would undo it. Format is owned by the script.
+public/data/quran
 
 # Ignore logs
 *.log
