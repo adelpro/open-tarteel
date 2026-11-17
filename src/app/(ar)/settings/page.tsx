@@ -26,9 +26,7 @@ import { isMp3QuranV4Enabled } from '@/services/reciters/flags';
 import { LinkSource } from '@/types';
 
 const AVAILABLE_SOURCES: { source: LinkSource; id: string }[] = [
-  { source: LinkSource.MP3QURAN, id: 'settings.source.mp3quran' },
-  { source: LinkSource.ITQAN, id: 'settings.source.itqan' },
-  { source: LinkSource.QURANAI, id: 'settings.source.quranai' },
+  // The two word-timing providers are the defaults, so they come first.
   {
     source: LinkSource.QURAN_FOUNDATION,
     id: 'settings.source.quranfoundation',
@@ -41,6 +39,9 @@ const AVAILABLE_SOURCES: { source: LinkSource; id: string }[] = [
         },
       ]
     : []),
+  { source: LinkSource.MP3QURAN, id: 'settings.source.mp3quran' },
+  { source: LinkSource.ITQAN, id: 'settings.source.itqan' },
+  { source: LinkSource.QURANAI, id: 'settings.source.quranai' },
 ];
 
 function Group({

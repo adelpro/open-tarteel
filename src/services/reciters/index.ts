@@ -10,12 +10,16 @@ import { QuranAiAdapter } from './quranai.adapter';
 import { QuranFoundationAdapter } from './quranfoundation.adapter';
 import type { ReciterSource } from './reciter-source';
 
+/**
+ * Order matters: the first adapter supplies the reciters at the top of the
+ * list. The two word-timing providers lead, because they are the defaults.
+ */
 const adapters: ReciterSource[] = [
-  Mp3QuranAdapter,
+  QuranFoundationAdapter,
   ...(isMp3QuranV4Enabled() ? [Mp3QuranV4Adapter] : []),
+  Mp3QuranAdapter,
   ItqanAdapter,
   QuranAiAdapter,
-  QuranFoundationAdapter,
 ];
 
 const VALID_SOURCES = new Set<string>(Object.values(LinkSource));

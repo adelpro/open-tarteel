@@ -130,16 +130,17 @@ export type PlayerMode = 'listening' | 'tahfeez';
  */
 export const playerModeAtom = atom<PlayerMode>('listening');
 /**
- * Sources shown in the reciter list by default.
+ * Sources shown in the reciter list by default: the two word-timing providers,
+ * because word timings are what the Quran line needs.
  *
- * Word-timing providers come first because they unlock the follow-along mode:
- * Quran Foundation and MP3Quran v4. MP3Quran v3 follows as the broadest
- * fallback. Itqan and Qurani.ai stay opt-in: one has no downloads, the other
- * only ships word audio.
+ * Quran Foundation is the broad catalogue; MP3Quran v4 is the audited set and
+ * needs `NEXT_PUBLIC_ENABLE_MP3QURAN_V4` to appear at all. MP3Quran v3 is ayah
+ * timings only, so it is no longer on by default — a user who wants it turns it
+ * back on in settings. Itqan and Qurani.ai stay opt-in as before.
  */
 export const enabledSourcesAtom = createAtomWithStorage<LinkSource[]>(
   'enabled-sources',
-  [LinkSource.QURAN_FOUNDATION, LinkSource.MP3QURAN_V4, LinkSource.MP3QURAN]
+  [LinkSource.QURAN_FOUNDATION, LinkSource.MP3QURAN_V4]
 );
 
 /** Desktop reciter panel state. It must survive a route change. */

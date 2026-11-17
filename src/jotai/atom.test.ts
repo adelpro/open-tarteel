@@ -103,3 +103,19 @@ describe('reciterListPinnedAtom', () => {
     unsubscribe();
   });
 });
+
+describe('enabledSourcesAtom', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    vi.resetModules();
+  });
+
+  it('defaults to the two word-timing providers', async () => {
+    const { enabledSourcesAtom } = await import('./atom');
+
+    expect(createStore().get(enabledSourcesAtom)).toEqual([
+      'quran.foundation',
+      'mp3quran.v4',
+    ]);
+  });
+});
