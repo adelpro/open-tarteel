@@ -55,6 +55,8 @@ jobs:
         run: yarn install --immutable
       - name: Check code formatting
         run: yarn format:check
+      - name: Verify pinned Quran data
+        run: yarn data:verify
       - name: Run linter
         run: yarn lint
       - name: Check dead code

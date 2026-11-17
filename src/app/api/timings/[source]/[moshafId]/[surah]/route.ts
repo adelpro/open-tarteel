@@ -5,6 +5,7 @@ import { LANGUAGES } from '@/constants/language';
 import {
   getAllRecitersCached,
   getSurahTimingsCached,
+  getSurahWordTimingsCached,
 } from '@/services/reciters/cached';
 import { HttpStatusError } from '@/services/reciters/shared-fetch';
 import { LinkSource } from '@/types';
@@ -46,14 +47,13 @@ export async function GET(
       return NextResponse.json({ error: 'Reciter not found' }, { status: 404 });
     }
 
-    const timings = await getSurahTimingsCached(
-      source as LinkSource,
-      reciter.moshaf,
-      surah
-    );
+    const [timings, words] = await Promise.all([
+      getSurahTimingsCached(source as LinkSource, reciter.moshaf, surah),
+      getSurahWordTimingsCached(source as LinkSource, reciter.moshaf, surah),
+    ]);
 
     return NextResponse.json(
-      { timings },
+      { timings, words },
       {
         headers: {
           'Cache-Control': 'private, no-store, max-age=0',

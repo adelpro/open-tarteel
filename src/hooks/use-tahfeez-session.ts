@@ -262,7 +262,7 @@ export function useTahfeezSession(
     if (audioPlaying) {
       audio.pause();
     } else if (isActive()) {
-      // Session wired but paused — resume at current position
+      // Session wired but paused, resume at current position
       void audio.play();
     } else {
       start(ranges, repeat, delay);

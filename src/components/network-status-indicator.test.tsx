@@ -10,7 +10,7 @@ function renderWithIntl(ui: React.ReactElement) {
     <IntlProvider
       locale="en"
       messages={{
-        'offline.status': 'Offline Mode — Showing downloaded content',
+        'offline.status': 'Offline Mode: Showing downloaded content',
       }}
     >
       {ui}
@@ -57,7 +57,7 @@ describe('NetworkStatusIndicator', () => {
     const statusElement = screen.getByRole('status');
     expect(statusElement).toBeInTheDocument();
     expect(
-      screen.getByText('Offline Mode — Showing downloaded content')
+      screen.getByText('Offline Mode: Showing downloaded content')
     ).toBeInTheDocument();
   });
 });

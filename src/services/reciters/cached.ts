@@ -1,7 +1,12 @@
 import { unstable_cache } from 'next/cache';
 
 import type { Language } from '@/constants/language';
-import { type AyahTiming, getSurahTimings } from '@/services/timings';
+import {
+  type AyahTiming,
+  getSurahTimings,
+  getSurahWordTimings,
+  type WordTiming,
+} from '@/services/timings';
 import type { LinkSource, Moshaf, Playlist, Reciter } from '@/types';
 
 import { getAllRecitersFromAdapters, getReciterPlaylist } from './index';
@@ -20,7 +25,8 @@ import { getAllRecitersFromAdapters, getReciterPlaylist } from './index';
 // Bump when the adapter shape, language handling, or pagination changes so a
 // deploy never serves data cached by the previous code.
 // v6 adds the per-track `hasTimings` flag to cached Itqan playlists.
-const CACHE_VERSION = 'v6-timings';
+// v7 adds per-word timings for the follow-along mode.
+const CACHE_VERSION = 'v7-word-timings';
 
 const getCachedReciters = unstable_cache(
   (language: Language, sources: LinkSource[] | null) =>
@@ -65,3 +71,17 @@ export const getSurahTimingsCached = (
   moshaf: Moshaf,
   surah: number
 ): Promise<AyahTiming[]> => getCachedSurahTimings(source, moshaf, surah);
+
+/** Word timings change as rarely as ayah timings; cache them the same way. */
+const getCachedSurahWordTimings = unstable_cache(
+  (source: LinkSource, moshaf: Moshaf, surah: number) =>
+    getSurahWordTimings(source, moshaf, surah),
+  ['surah-word-timings', CACHE_VERSION],
+  { revalidate: 86400 }
+);
+
+export const getSurahWordTimingsCached = (
+  source: LinkSource,
+  moshaf: Moshaf,
+  surah: number
+): Promise<WordTiming[]> => getCachedSurahWordTimings(source, moshaf, surah);

@@ -4,7 +4,7 @@ import OfflinePlayer from './offline-player';
 import OfflineRetryButton from './retry-button';
 
 export const metadata = {
-  title: 'Offline — Open Tarteel',
+  title: 'Offline | Open Tarteel',
   alternates: { canonical: '/offline' },
   robots: { index: false, follow: false },
 };

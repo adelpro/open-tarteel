@@ -284,7 +284,7 @@ describe('removeDefiniteArticle', () => {
 });
 
 // ──────────────────────────────────────────
-// fuzzySearch — Core functionality
+// fuzzySearch: Core functionality
 // ──────────────────────────────────────────
 
 describe('fuzzySearch', () => {

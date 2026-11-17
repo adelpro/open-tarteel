@@ -51,13 +51,24 @@ const TIMING = (coverage: 'all' | 'partial' | 'none') =>
     'primary'
   );
 
-const WORD = () =>
+/** Word *timings*: the provider can say which word is playing. */
+const WORD_TIMING = () =>
   badge(
     'word',
     'provider.badge.word',
     'Word-by-word',
     <FiType size={11} aria-hidden="true" />,
     'primary'
+  );
+
+/** Word *audio*: one clip per word, but no timings to follow. */
+const WORD_AUDIO = () =>
+  badge(
+    'word-audio',
+    'provider.badge.wordAudio',
+    'Word audio',
+    <FiType size={11} aria-hidden="true" />,
+    'neutral'
   );
 
 const NO_DOWNLOAD = () =>
@@ -82,10 +93,11 @@ export const getProviderBadges = (
   if (
     capabilities.timing === 'word' ||
     capabilities.timing === 'letter' ||
-    capabilities.timing === 'phoneme' ||
-    capabilities.wordAudio
+    capabilities.timing === 'phoneme'
   ) {
-    badges.push(WORD());
+    badges.push(WORD_TIMING());
+  } else if (capabilities.wordAudio) {
+    badges.push(WORD_AUDIO());
   }
 
   return badges;

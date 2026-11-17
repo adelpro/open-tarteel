@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default function DesignPreviewPage() {
-  // Internal visual harness — never shipped in production.
+  // Internal visual harness, never shipped in production.
   if (process.env.NODE_ENV === 'production') notFound();
 
   return <DesignPreview />;

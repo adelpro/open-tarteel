@@ -127,6 +127,22 @@ export const [visualizerModelAtom, visualizerModelStoredAtom] =
 export const [enabledSourcesAtom, enabledSourcesStoredAtom] = syncedSetting<
   LinkSource[]
 >('enabled-sources', [LinkSource.MP3QURAN, LinkSource.ITQAN]);
+export const visualizerModelAtom = createAtomWithStorage<VisualiserModel>(
+  'visualizer-model',
+  'ribbon'
+);
+/**
+ * Sources shown in the reciter list by default.
+ *
+ * Word-timing providers come first because they unlock the follow-along mode:
+ * Quran Foundation and MP3Quran v4. MP3Quran v3 follows as the broadest
+ * fallback. Itqan and Qurani.ai stay opt-in: one has no downloads, the other
+ * only ships word audio.
+ */
+export const enabledSourcesAtom = createAtomWithStorage<LinkSource[]>(
+  'enabled-sources',
+  [LinkSource.QURAN_FOUNDATION, LinkSource.MP3QURAN_V4, LinkSource.MP3QURAN]
+);
 
 /** Desktop reciter panel state. It must survive a route change. */
 export const reciterListOpenAtom = atom(false);
@@ -135,3 +151,6 @@ export const reciterListPinnedAtom = createAtomWithStorage<boolean>(
   'reciters-list-pinned',
   false
 );
+
+/** Set while the follow-along mode is open, so the spectrum can stand aside. */
+export const followAlongActiveAtom = atom(false);

@@ -64,7 +64,7 @@ export default function ActionSheet({
           <MdClose className="size-5" aria-hidden="true" />
         </button>
       </div>
-      <div className="max-h-[70dvh] overflow-y-auto overflow-x-hidden overscroll-contain p-2 pb-[max(12px,env(safe-area-inset-bottom))] lg:max-h-[calc(85dvh-3.5rem)]">
+      <div className="max-h-[70dvh] overflow-y-auto overflow-x-hidden overscroll-contain p-2 pb-[max(12px,env(safe-area-inset-bottom))] [-ms-overflow-style:none] [scrollbar-width:none] lg:max-h-[calc(85dvh-3.5rem)] [&::-webkit-scrollbar]:hidden">
         {children}
       </div>
     </dialog>

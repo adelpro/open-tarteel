@@ -26,7 +26,18 @@ describe('getProviderBadges', () => {
     ).toEqual(['timing']);
     expect(
       getProviderBadges(getCapabilities(LinkSource.QURANAI)).map((b) => b.key)
-    ).toEqual(['timing', 'word']);
+    ).toEqual(['timing', 'word-audio']);
+  });
+
+  it('reserves word-by-word for providers that publish word timings', () => {
+    expect(
+      getProviderBadges(getCapabilities(LinkSource.QURANAI)).map((b) => b.key)
+    ).not.toContain('word');
+    expect(
+      getProviderBadges(getCapabilities(LinkSource.QURAN_FOUNDATION)).map(
+        (b) => b.key
+      )
+    ).toContain('word');
   });
 
   it('puts the beta badge first for MP3Quran v4', () => {

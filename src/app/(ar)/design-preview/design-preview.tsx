@@ -309,7 +309,7 @@ export default function DesignPreview() {
               </p>
             </div>
             <div className="flex min-h-11 items-center gap-2 rounded-row border border-primary-line bg-primary-soft px-3 text-[13px] font-bold text-primary">
-              Offline strip — forced mode
+              Offline strip: forced mode
             </div>
           </div>
         </Section>

@@ -17,7 +17,7 @@ export const homeMetadata = (locale: SeoLocale) => {
   return buildPageMetadata({
     locale,
     path: '/',
-    title: `${copy.appName} — Open Tarteel`,
+    title: `${copy.appName} | Open Tarteel`,
     description: copy.appDescription,
   });
 };

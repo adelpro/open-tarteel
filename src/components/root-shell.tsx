@@ -9,6 +9,7 @@ import IntlProviderWrapper from '@/components/intl-provider-wrapper';
 import OfflineRedirect from '@/components/offline-redirect';
 import PwaUpdater from '@/components/pwa-updater';
 import ReciterRouteCookie from '@/components/reciter-route-cookie';
+import { ServiceWorkerRefresh } from '@/components/service-worker-refresh';
 import StoragePersist from '@/components/storage-persist';
 import { websiteGraph } from '@/lib/seo/json-ld';
 import type { SeoLocale } from '@/lib/seo/routes';
@@ -37,6 +38,7 @@ export function RootShell({
       <IntlProviderWrapper initialLocale={locale}>
         <HtmlWrapper>
           <body
+            suppressHydrationWarning
             className={`${tajawal.className} min-h-full bg-background antialiased`}
           >
             <a
@@ -69,7 +71,11 @@ export function RootShell({
               <ReciterRouteCookie />
               <StoragePersist />
               <OfflineRedirect />
-              {process.env.NEXT_PUBLIC_IS_PREVIEW !== 'true' && <PwaUpdater />}
+              {process.env.NEXT_PUBLIC_IS_PREVIEW === 'true' ? (
+                <ServiceWorkerRefresh />
+              ) : (
+                <PwaUpdater />
+              )}
               <FullscreenController>{children}</FullscreenController>
             </main>
           </body>

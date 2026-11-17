@@ -1,5 +1,5 @@
 import type { Moshaf } from '@/types';
-import { LinkSource } from '@/types';
+import { LinkSource, Riwaya } from '@/types';
 
 export type TimingLevel = 'none' | 'ayah' | 'word' | 'letter' | 'phoneme';
 
@@ -30,7 +30,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     id: LinkSource.MP3QURAN,
     label: { ar: 'MP3 Quran', en: 'MP3 Quran' },
     beta: false,
-    // https://www.mp3quran.net/eng/timing-api — 115 timing reads for 299 moshafs.
+    // https://www.mp3quran.net/eng/timing-api, 115 timing reads for 299 moshafs.
     timing: 'ayah',
     timingCoverage: 'partial',
     timingIntegration: 'implemented',
@@ -138,3 +138,78 @@ export const canUseRangeMode = (
 
 export const canDownload = (source?: LinkSource | null): boolean =>
   Boolean(source && getCapabilities(source).download);
+
+/**
+ * MP3Quran v4 recitations audited end to end for word timings: all 114 surahs,
+ * 929,148 words, 99.99% of words timed, 0 malformed rows. The v4 catalogue
+ * carries no word-timing flag, so availability can only be established by
+ * probing; everything outside this set stays out of the follow-along mode.
+ * See docs/follow-along/audit-results.md.
+ */
+export const FOLLOW_ALONG_V4_RECITER_IDS: ReadonlySet<string> = new Set([
+  '4', // أبو بكر الشاطري
+  '5', // أحمد بن علي العجمي
+  '24', // خليفة الطنيجي
+  '29', // سعد الغامدي
+  '30', // سعود الشريم
+  '49', // عبدالباسط عبدالصمد
+  '52', // عبدالرحمن السديس
+  '86', // هاني الرفاعي
+  '89', // ياسر الدوسري
+  '107', // محمد صديق المنشاوي
+  '113', // محمود خليل الحصري
+  '118', // مشاري العفاسي
+]);
+
+/**
+ * Recitations excluded from follow-along even though the provider numbers
+ * words. Quran Foundation id 168 repeats every phrase for children: 95.94% of
+ * words timed, 5,516 malformed rows, 51 verses with no timing at all.
+ */
+export const FOLLOW_ALONG_EXCLUDED_IDS: ReadonlySet<string> = new Set([
+  'quran.foundation:168',
+]);
+
+/**
+ * Whether the follow-along mode can promise a word for every position.
+ *
+ * Word timings are the only data that can drive a per-word highlight, so the
+ * provider has to publish them; Hafs is the only riwayah that has them today.
+ * Audio analysability is checked separately by the UI
+ * (`canUseAudioAnalyser`), because the text line and the graph have different
+ * requirements.
+ */
+export type FollowAlongBlock =
+  'offline' | 'provider' | 'not-hafs' | 'no-timings' | 'unaudited' | null;
+
+/**
+ * Why the mode cannot run, or null when it can. Ordered so the most basic
+ * reason wins: connectivity, then the provider, then the riwayah, then the
+ * specific recording.
+ */
+export const followAlongBlockReason = (
+  source?: LinkSource | null,
+  moshaf?: Pick<Moshaf, 'id' | 'riwaya' | 'hasTimings'> | null,
+  online = true
+): FollowAlongBlock => {
+  if (!online) return 'offline';
+  if (!source || !moshaf) return 'provider';
+  if (getCapabilities(source).timing !== 'word') return 'provider';
+  if (moshaf.riwaya !== Riwaya.Hafs) return 'not-hafs';
+  if (moshaf.hasTimings === false) return 'no-timings';
+  if (FOLLOW_ALONG_EXCLUDED_IDS.has(`${source}:${moshaf.id}`)) {
+    return 'unaudited';
+  }
+  if (
+    source === LinkSource.MP3QURAN_V4 &&
+    !FOLLOW_ALONG_V4_RECITER_IDS.has(moshaf.id)
+  ) {
+    return 'unaudited';
+  }
+  return null;
+};
+
+export const canUseFollowAlong = (
+  source?: LinkSource | null,
+  moshaf?: Pick<Moshaf, 'id' | 'riwaya' | 'hasTimings'> | null
+): boolean => followAlongBlockReason(source, moshaf, true) === null;
