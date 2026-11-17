@@ -1,7 +1,9 @@
 import { render, screen } from '@testing-library/react';
+import { createStore, Provider } from 'jotai';
 import { IntlProvider } from 'react-intl';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { ahkamTagsAtom } from '@/jotai/atom';
 import type { AyahData, SurahData } from '@/services/quran-text/types';
 
 import { FollowAlongPanel } from './follow-along-panel';
@@ -25,17 +27,22 @@ vi.mock('@/services/quran-text', () => ({
   loadSurah: vi.fn(() => Promise.resolve(surah)),
 }));
 
-const renderPanel = () =>
-  render(
+const renderPanel = (ahkamTags = true) => {
+  const store = createStore();
+  store.set(ahkamTagsAtom, ahkamTags);
+  return render(
     <IntlProvider locale="ar" messages={{}}>
-      <FollowAlongPanel
-        audio={null}
-        source={'quran-foundation' as never}
-        moshafId="1"
-        surah={112}
-      />
+      <Provider store={store}>
+        <FollowAlongPanel
+          audio={null}
+          source={'quran-foundation' as never}
+          moshafId="1"
+          surah={112}
+        />
+      </Provider>
     </IntlProvider>
   );
+};
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -67,6 +74,23 @@ describe('FollowAlongPanel', () => {
     expect(line.textContent).toContain('قُلْ');
     expect(line.textContent).toContain('أَحَدٌ');
     expect(screen.getByRole('list', { name: 'أحكام التجويد' })).toBeTruthy();
+  });
+
+  it('adds the ahkam tags as a second line when the preference is on', async () => {
+    stubTimings(4);
+    renderPanel(true);
+
+    const rail = await screen.findByRole('list', { name: 'أحكام الآية' });
+    // The dataset has a ghunnah on the last word of this ayah, and nothing else.
+    expect(rail.textContent).toBe('غنة');
+  });
+
+  it('leaves the ahkam line out when the preference is off', async () => {
+    stubTimings(4);
+    renderPanel(false);
+
+    await screen.findByLabelText('Ayah 1');
+    expect(screen.queryByRole('list', { name: 'أحكام الآية' })).toBeNull();
   });
 
   it('draws nothing but the line', async () => {

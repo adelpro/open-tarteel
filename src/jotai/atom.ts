@@ -115,7 +115,13 @@ export const spectrumEnabledAtom = createAtomWithStorage<boolean>(
   true
 );
 
-export type PlayerMode = 'listening' | 'tahfeez' | 'follow-along';
+/**
+ * Show the ahkam tags as a second line under the ayah. Opt-out rather than
+ * opt-in: the tags are the reason many people open the mode at all.
+ */
+export const ahkamTagsAtom = createAtomWithStorage<boolean>('ahkam-tags', true);
+
+export type PlayerMode = 'listening' | 'tahfeez';
 
 /**
  * The active playback mode. Shared because the player renders the follow-along

@@ -1,11 +1,13 @@
 'use client';
 
+import { useAtomValue } from 'jotai';
 import { useEffect, useMemo, useState } from 'react';
-import { FiX } from 'react-icons/fi';
 import { useIntl } from 'react-intl';
 
+import { AhkamRail } from '@/components/ahkam-rail';
 import { QuranLine, type QuranLineWord } from '@/components/quran-line';
 import { TajweedLegend } from '@/components/tajweed-legend';
+import { ahkamTagsAtom } from '@/jotai/atom';
 import {
   ayahAt,
   buildLineStates,
@@ -13,6 +15,7 @@ import {
   WORD_ANTICIPATION_MS,
   wordAt,
 } from '@/services/follow-along';
+import { ayahAhkam } from '@/services/follow-along/ahkam';
 import { loadSurah, type SurahData } from '@/services/quran-text';
 import { ayahWordChars } from '@/services/quran-text/rules';
 import type { AyahTiming, WordTiming } from '@/services/timings';
@@ -21,14 +24,12 @@ import type { LinkSource } from '@/types';
 import { cn } from '@/utils';
 
 export interface FollowAlongPanelProps {
-  /** The player's audio element. Used for time and for the pitch analyser. */
+  /** The player's audio element, read only for its clock. */
   audio: HTMLAudioElement | null;
   source: LinkSource;
   moshafId: string;
   /** 1-based surah number. */
   surah: number;
-  /** Returns the player to listening mode. */
-  onClose?: () => void;
   className?: string;
 }
 
@@ -49,10 +50,10 @@ export function FollowAlongPanel({
   source,
   moshafId,
   surah,
-  onClose,
   className,
 }: FollowAlongPanelProps) {
   const { formatMessage, locale } = useIntl();
+  const showAhkam = useAtomValue(ahkamTagsAtom);
   const [status, setStatus] = useState<Status>('loading');
   const [data, setData] = useState<{
     surah: SurahData;
@@ -161,6 +162,15 @@ export function FollowAlongPanel({
     return () => cancelAnimationFrame(frame);
   }, [audio, data, repaired, source, surah]);
 
+  /**
+   * Only the ayah on screen is walked. The rules come from the bundled text, so
+   * this needs no timings: it survives the ayah-level fallback.
+   */
+  const ahkam = useMemo(() => {
+    const ayah = data?.surah.ayahs[active.ayah - 1];
+    return ayah ? ayahAhkam(ayah) : [];
+  }, [data, active.ayah]);
+
   const line = useMemo<QuranLineWord[]>(() => {
     const ayah = data?.surah.ayahs[active.ayah - 1];
     if (!ayah) return [];
@@ -192,34 +202,6 @@ export function FollowAlongPanel({
       dir="rtl"
       className={cn('flex w-full flex-col gap-2 px-3 pb-2', className)}
     >
-      <div className="flex h-7 items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5">
-          <p className="text-xs font-semibold">
-            {formatMessage({
-              id: 'followAlong.mode',
-              defaultMessage: 'Follow-along',
-            })}
-          </p>
-        </div>
-        {onClose ? (
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={formatMessage({
-              id: 'followAlong.close',
-              defaultMessage: 'Turn off',
-            })}
-            className="flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink"
-          >
-            <FiX size={12} aria-hidden="true" />
-            {formatMessage({
-              id: 'followAlong.close',
-              defaultMessage: 'Turn off',
-            })}
-          </button>
-        ) : null}
-      </div>
-
       {status === 'loading' && (
         <p className="text-xs text-ink-muted">
           {formatMessage({
@@ -249,6 +231,13 @@ export function FollowAlongPanel({
               { ayah: active.ayah }
             )}
           />
+          {showAhkam ? (
+            <AhkamRail
+              rules={ahkam}
+              activeWord={active.fallback ? null : active.stored}
+              locale={locale === 'ar' ? 'ar' : 'en'}
+            />
+          ) : null}
           <TajweedLegend locale={locale === 'ar' ? 'ar' : 'en'} />
         </>
       )}

@@ -15,6 +15,7 @@ import Switch from '@/components/ui/switch';
 import useDirection from '@/hooks/use-direction';
 import { useLocalePath } from '@/hooks/use-locale-path';
 import {
+  ahkamTagsAtom,
   enabledSourcesAtom,
   followAlongLineAtom,
   forcedOfflineAtom,
@@ -81,6 +82,7 @@ export default function SettingsPage() {
   const [visualizerModel, setVisualizerModel] = useAtom(visualizerModelAtom);
   const [followAlongLine, setFollowAlongLine] = useAtom(followAlongLineAtom);
   const [spectrumEnabled, setSpectrumEnabled] = useAtom(spectrumEnabledAtom);
+  const [ahkamTags, setAhkamTags] = useAtom(ahkamTagsAtom);
 
   const toggleSource = (source: LinkSource) => {
     setEnabledSources((previous) => {
@@ -316,13 +318,13 @@ export default function SettingsPage() {
             description={formatMessage({
               id: 'settings.followAlongDescription',
               defaultMessage:
-                'The word-by-word line shown under the spectrum while a recitation with word timings plays. Turn it off to keep the player to the spectrum alone.',
+                'The word-by-word line shown above the spectrum while a recitation with word timings plays. Independent of the spectrum.',
             })}
           >
             <Row
               label={formatMessage({
                 id: 'settings.followAlongLine',
-                defaultMessage: 'Text line',
+                defaultMessage: 'Quran line',
               })}
               description={
                 followAlongLine
@@ -333,8 +335,7 @@ export default function SettingsPage() {
                     })
                   : formatMessage({
                       id: 'settings.followAlongLineOff',
-                      defaultMessage:
-                        'Hidden. The follow-along mode is not offered.',
+                      defaultMessage: 'Hidden. The line is not drawn.',
                     })
               }
             >
@@ -343,7 +344,27 @@ export default function SettingsPage() {
                 onCheckedChange={setFollowAlongLine}
                 label={formatMessage({
                   id: 'settings.followAlongLine',
-                  defaultMessage: 'Text line',
+                  defaultMessage: 'Quran line',
+                })}
+              />
+            </Row>
+            <Row
+              label={formatMessage({
+                id: 'settings.followAlongAhkam',
+                defaultMessage: 'Ahkam tags',
+              })}
+              description={formatMessage({
+                id: 'settings.followAlongAhkamDescription',
+                defaultMessage:
+                  'A second line under the ayah naming the rule that applies to each word: madd, ghunnah, qalqalah, idgham, ikhfa or iqlab. Only rules the bundled dataset annotates.',
+              })}
+            >
+              <Switch
+                checked={ahkamTags}
+                onCheckedChange={setAhkamTags}
+                label={formatMessage({
+                  id: 'settings.followAlongAhkam',
+                  defaultMessage: 'Ahkam tags',
                 })}
               />
             </Row>

@@ -10,6 +10,7 @@ import { useNetworkStatus } from '@/hooks/use-network-status';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
 import {
   currentTimeAtom,
+  followAlongLineAtom,
   fullscreenAtom,
   playbackModeAtom,
   playbackSpeedAtom,
@@ -19,6 +20,8 @@ import {
   visualizerModelAtom,
   volumeAtom,
 } from '@/jotai/atom';
+import { followAlongBlockReason } from '@/services/reciters/capabilities';
+import { isFollowAlongEnabled } from '@/services/reciters/flags';
 import { Playlist } from '@/types';
 import { cn } from '@/utils';
 import { canUseAudioAnalyser } from '@/utils/audio-cors';
@@ -62,7 +65,8 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
   const [playbackMode] = useAtom(playbackModeAtom);
   const visualizerModel = useAtomValue(visualizerModelAtom);
   const spectrumEnabled = useAtomValue(spectrumEnabledAtom);
-  const [activeMode, setActiveMode] = useAtom(playerModeAtom);
+  const followAlongLine = useAtomValue(followAlongLineAtom);
+  const activeMode = useAtomValue(playerModeAtom);
   const selectedReciter = useAtomValue(selectedReciterAtom);
   const previousTrackRef = useRef<number | undefined>(undefined);
   // Browsers fire `pause` before `ended`, so `isPlaying` is already false when
@@ -350,16 +354,25 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
             />
           )}
 
-          {/* The line belongs above the spectrum it accompanies. */}
-          {activeMode === 'follow-along' &&
+          {/*
+            The line belongs above the spectrum it accompanies. Settings own it
+            now: no mode row, no close button, just a preference.
+          */}
+          {isFollowAlongEnabled() &&
+            followAlongLine &&
+            activeMode === 'listening' &&
             selectedReciter &&
-            currentTrack !== undefined && (
+            currentTrack !== undefined &&
+            followAlongBlockReason(
+              selectedReciter.source,
+              selectedReciter.moshaf,
+              isOnline
+            ) === null && (
               <FollowAlongPanel
                 audio={audioElement}
                 source={selectedReciter.source}
                 moshafId={selectedReciter.moshaf.id}
                 surah={currentTrack + 1}
-                onClose={() => setActiveMode('listening')}
               />
             )}
 

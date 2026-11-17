@@ -50,15 +50,35 @@ const showFollowAlong = isFollowAlongEnabled() && showFollowAlongLine;
 element for analysis.
 
 It now mounts in `player.tsx`, above the spectrum, not inside `player-controls`.
-That is why the mode lives in a shared atom:
+That is why the mode lives in a shared atom, and why `follow-along` is no longer
+one of its values:
 
 ```ts
-export type PlayerMode = 'listening' | 'tahfeez' | 'follow-along';
+export type PlayerMode = 'listening' | 'tahfeez';
 export const playerModeAtom = atom<PlayerMode>('listening');
 ```
 
-`PlayerControls` sets it from the mode switcher; `Player` reads it to decide
-whether to render the line above the graph.
+`PlayerControls` sets it from the mode switcher; `Player` reads it, plus the
+setting and the provider gate, to decide whether to render the line:
+
+```ts
+isFollowAlongEnabled() &&
+  followAlongLine &&
+  activeMode === 'listening' &&
+  followAlongBlockReason(source, moshaf, isOnline) === null;
+```
+
+The gate matters: without it, an unsupported reciter would sit under a permanent
+"No word timings" line.
+
+### The ahkam second line
+
+`AhkamRail` is back, mounted inside the panel under the ayah line behind
+`ahkamTagsAtom`. It reads rules from the bundled text, not from timings, so it
+appears even when the provider's timings fell back to the ayah. Only the six
+sound groups are listed (`AHKAM_GROUPS`); `hamzat_wasl`, `lam_shamsiyyah` and
+`silent` stay as glyph styling, because they describe the writing rather than a
+sound.
 
 Removed from the panel:
 
@@ -92,6 +112,7 @@ New message ids in `src/app/(ar)/settings/page.tsx`:
 - `settings.followAlong`, `settings.followAlongDescription`
 - `settings.followAlongLine`, `settings.followAlongLineOn`,
   `settings.followAlongLineOff`
+- `settings.followAlongAhkam`, `settings.followAlongAhkamDescription`
 
 All three locales (`ar`, `en`, `de`) carry the keys. Storage key is
 `follow-along-line`; an existing user has no value and gets the default (`true`),
@@ -131,6 +152,9 @@ Then check by hand, in a word-timing recitation (e.g. Quran Foundation moshaf 4)
 
 1. The line renders above the spectrum, and the spectrum keeps playing.
 2. The word lights at the start of its own audio, not before it.
-3. Settings → Follow-along → Quran line off removes the mode row after a reload.
-4. Settings → Spectrum → Show spectrum off removes the graph and keeps the line.
-5. The About page no longer claims a pitch contour.
+3. No follow-along row exists in the mode switcher.
+4. Settings → Follow-along → Quran line off removes the line after a reload, with
+   no mode row to fall back to.
+5. Settings → Spectrum → Show spectrum off removes the graph and keeps the line.
+6. Settings → Follow-along → Ahkam tags off removes the second row only.
+7. The About page no longer claims a pitch contour.

@@ -13,7 +13,7 @@ import Image from 'next/image';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { BiVolumeFull, BiVolumeMute } from 'react-icons/bi';
 import { BsFullscreen, BsFullscreenExit } from 'react-icons/bs';
-import { FiActivity, FiHeadphones, FiRepeat } from 'react-icons/fi';
+import { FiHeadphones, FiRepeat } from 'react-icons/fi';
 import {
   MdCheck,
   MdCloudDownload,
@@ -31,7 +31,6 @@ import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { useSleepTimer } from '@/hooks/use-sleep-timer';
 import { TimeRange, useTahfeezSession } from '@/hooks/use-tahfeez-session';
 import {
-  followAlongLineAtom,
   fullscreenAtom,
   lastVolumeAtom,
   playbackModeAtom,
@@ -40,11 +39,7 @@ import {
   selectedReciterAtom,
   volumeAtom,
 } from '@/jotai/atom';
-import {
-  canUseRangeMode,
-  followAlongBlockReason,
-} from '@/services/reciters/capabilities';
-import { isFollowAlongEnabled } from '@/services/reciters/flags';
+import { canUseRangeMode } from '@/services/reciters/capabilities';
 import { cn } from '@/utils';
 
 import DownloadAllButton from './download-all-button';
@@ -174,25 +169,11 @@ export default function PlayerControls({
     canUseRangeMode(selectedReciter?.source, selectedReciter?.moshaf) &&
     isOnline;
 
-  const [showFollowAlongLine] = useAtom(followAlongLineAtom);
-  // The line is the mode. With it switched off there is nothing the mode adds
-  // beyond the spectrum, so the row disappears instead of opening an empty panel.
-  const showFollowAlong = isFollowAlongEnabled() && showFollowAlongLine;
-  const followAlongReason = followAlongBlockReason(
-    selectedReciter?.source,
-    selectedReciter?.moshaf,
-    isOnline
-  );
-  const isFollowAlongSupported = showFollowAlong && followAlongReason === null;
-
   useEffect(() => {
     if (!isTahfeezSupported && activeMode === 'tahfeez') {
       setActiveMode('listening');
     }
-    if (!isFollowAlongSupported && activeMode === 'follow-along') {
-      setActiveMode('listening');
-    }
-  }, [isTahfeezSupported, isFollowAlongSupported, activeMode, setActiveMode]);
+  }, [isTahfeezSupported, activeMode, setActiveMode]);
 
   const { formatMessage } = useIntl();
   const { isRTL } = useDirection();
@@ -420,30 +401,6 @@ export default function PlayerControls({
     listeningMode: formatMessage({
       id: 'tahfeez.listeningLabel',
       defaultMessage: 'Listening',
-    }),
-    followAlongMode: formatMessage({
-      id: 'followAlong.mode',
-      defaultMessage: 'Follow-along',
-    }),
-    followAlongDisabledOffline: formatMessage({
-      id: 'followAlong.disabled.offline',
-      defaultMessage: 'Not available offline',
-    }),
-    followAlongDisabledProvider: formatMessage({
-      id: 'followAlong.disabled.provider',
-      defaultMessage: 'This provider has no word timings',
-    }),
-    followAlongDisabledNotHafs: formatMessage({
-      id: 'followAlong.disabled.notHafs',
-      defaultMessage: 'Hafs an Asim only',
-    }),
-    followAlongDisabledNoTimings: formatMessage({
-      id: 'followAlong.disabled.noTimings',
-      defaultMessage: 'This recitation has no timings',
-    }),
-    followAlongDisabledUnaudited: formatMessage({
-      id: 'followAlong.disabled.unaudited',
-      defaultMessage: 'This recitation is not audited yet',
     }),
     modeSwitcher: formatMessage({
       id: 'player.modeSwitcher',
@@ -725,31 +682,6 @@ export default function PlayerControls({
               setShowMoreMenu(false);
             }}
           />
-          {showFollowAlong ? (
-            <MenuRow
-              icon={<FiActivity size={18} aria-hidden="true" />}
-              label={messages.followAlongMode}
-              pressed={activeMode === 'follow-along'}
-              disabled={!isFollowAlongSupported}
-              title={
-                isFollowAlongSupported
-                  ? undefined
-                  : followAlongReason === 'offline'
-                    ? messages.followAlongDisabledOffline
-                    : followAlongReason === 'not-hafs'
-                      ? messages.followAlongDisabledNotHafs
-                      : followAlongReason === 'no-timings'
-                        ? messages.followAlongDisabledNoTimings
-                        : followAlongReason === 'unaudited'
-                          ? messages.followAlongDisabledUnaudited
-                          : messages.followAlongDisabledProvider
-              }
-              onClick={() => {
-                setActiveMode('follow-along');
-                setShowMoreMenu(false);
-              }}
-            />
-          ) : null}
         </MenuGroup>
 
         <MenuGroup label={messages.sleepTimer}>
