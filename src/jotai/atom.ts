@@ -1,11 +1,34 @@
-import { atom } from 'jotai';
+import { atom, type SetStateAction } from 'jotai';
 
 import { LinkSource, Reciter, Riwaya } from '@/types';
+import { markSettingsChanged } from '@/utils/settings-sync';
+import { APP_STORAGE_KEYS } from '@/utils/storage/storage-keys';
 
 import { createAtomWithStorage } from './create-atom-with-storage';
 
+/**
+ * A setting the account ring carries between devices.
+ *
+ * Returns two atoms over one storage key. The first keeps the old export name,
+ * so every component reads and writes it unchanged; its setter also stamps the
+ * change and tells the account sync to push it. The second (`*StoredAtom`) is
+ * the raw storage atom: the sync writes values that arrived from the ring there,
+ * so adopting a value never stamps it and never sends it back.
+ */
+function syncedSetting<T>(key: string, initialValue: T) {
+  const stored = createAtomWithStorage<T>(key, initialValue);
+  const local = atom(
+    (get) => get(stored),
+    (_get, set, update: SetStateAction<T>) => {
+      set(stored, update);
+      markSettingsChanged();
+    }
+  );
+  return [local, stored] as const;
+}
+
 export const favoriteRecitersAtom = createAtomWithStorage<string[]>(
-  'favorite-reciter',
+  APP_STORAGE_KEYS.favorites,
   []
 );
 export const selectedRiwayaAtom = createAtomWithStorage<Riwaya | 'all'>(
@@ -30,10 +53,8 @@ export const forcedOfflineAtom = createAtomWithStorage<boolean>(
 // add a synchronous localStorage write four times a second.
 export const currentTimeAtom = atom(0);
 
-export const playbackSpeedAtom = createAtomWithStorage<number>(
-  'playback-speed-value',
-  1
-);
+export const [playbackSpeedAtom, playbackSpeedStoredAtom] =
+  syncedSetting<number>('playback-speed-value', 1);
 
 export type PlaybackMode = 'off' | 'shuffle' | 'repeat-one';
 export const playbackModeAtom = createAtomWithStorage<PlaybackMode>(
@@ -57,7 +78,7 @@ export const lastVolumeAtom = createAtomWithStorage<number>(
   }
 );
 
-export const recitersSortAtom = createAtomWithStorage<
+export const [recitersSortAtom, recitersSortStoredAtom] = syncedSetting<
   'popular' | 'alphabetical' | 'views'
 >('reciters-sort-atom', 'alphabetical');
 
@@ -88,19 +109,24 @@ export const selectedReciterAtom = createAtomWithStorage<Reciter | null>(
 );
 
 export type Theme = 'light' | 'dark' | 'system';
-export const themeAtom = createAtomWithStorage<Theme>(
+export const [themeAtom, themeStoredAtom] = syncedSetting<Theme>(
   'theme-preference',
   'system'
 );
 
 /** The colour palette is a separate axis from the light/dark mode. */
 export type Palette = 'classic' | 'warm' | 'night';
-export const paletteAtom = createAtomWithStorage<Palette>(
+export const [paletteAtom, paletteStoredAtom] = syncedSetting<Palette>(
   'theme-palette',
   'warm'
 );
 
 export type VisualiserModel = 'bars' | 'peaks' | 'ribbon';
+export const [visualizerModelAtom, visualizerModelStoredAtom] =
+  syncedSetting<VisualiserModel>('visualizer-model', 'ribbon');
+export const [enabledSourcesAtom, enabledSourcesStoredAtom] = syncedSetting<
+  LinkSource[]
+>('enabled-sources', [LinkSource.MP3QURAN, LinkSource.ITQAN]);
 export const visualizerModelAtom = createAtomWithStorage<VisualiserModel>(
   'visualizer-model',
   'ribbon'

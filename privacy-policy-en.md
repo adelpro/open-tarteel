@@ -36,6 +36,14 @@ Since no personal data is collected, there is no need for data deletion requests
 
 Open Tarteel does not use any third-party services for analytics, tracking, or data collection. The app runs entirely on your device without sending any information externally.
 
+## The Account Ring (Optional)
+
+Listening needs no account. If you create a ring to sync your devices, the following applies:
+
+- Your favourites, the synced settings (appearance, sources, sort order, spectrum and speed) and the names of your devices are stored on Open Tarteel's public sync relay. They are **signed**, so only a device holding the ring key can change them, but they are **not encrypted**: anyone who knows the ring's public key can read them.
+- The ring key leaves your devices only inside a pairing code. **For its two minutes a pairing code is the ring**: whoever scans or copies it in that time joins with full access. It is deleted from the relay as soon as a device reads it.
+- Signing out erases the key from that browser only. There is no password and no recovery: if the last device signs out, the ring cannot be opened again.
+
 ## Updates to this Policy
 
 We may update this policy periodically. If significant changes are made, we will notify users within the app. Continued use of the app signifies your acceptance of the updated policy.

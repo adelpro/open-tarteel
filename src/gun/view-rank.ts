@@ -1,9 +1,7 @@
 'use client';
-import Gun from 'gun/gun';
+import { VIEW_COUNTS_KEY } from '@/constants';
 
-import { GUNCONFIG, VIEW_COUNTS_KEY } from '@/constants';
-
-const gun = Gun(GUNCONFIG);
+import { gun } from './index';
 
 const viewCountsNode = gun.get(VIEW_COUNTS_KEY);
 
