@@ -1,6 +1,6 @@
 import {
+  AHKAM_GROUPS,
   TAJWEED_COLORS,
-  TAJWEED_GROUP_ORDER,
   TAJWEED_LABELS,
 } from '@/services/quran-text/rules';
 import { cn } from '@/utils';
@@ -26,7 +26,7 @@ export function TajweedLegend({
       className={cn(styles.legend, className)}
       aria-label={locale === 'ar' ? 'أحكام التجويد' : 'Tajweed rules'}
     >
-      {TAJWEED_GROUP_ORDER.map((group) => (
+      {AHKAM_GROUPS.map((group) => (
         <li key={group} className={styles.legendItem}>
           <span
             className={styles.swatch}

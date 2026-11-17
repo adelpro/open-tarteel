@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
+import { AHKAM_GROUPS } from '@/services/quran-text/rules';
 import type { AyahData, TajweedRule } from '@/services/quran-text/types';
 
-import { AHKAM_GROUPS, ayahAhkam } from './ahkam';
+import { ayahAhkam } from './ahkam';
 
 /** Build an ayah from text and rules, counting words the way the build does. */
 const ayah = (

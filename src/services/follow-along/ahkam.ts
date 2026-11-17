@@ -1,23 +1,10 @@
 import type { TajweedGroup } from '@/services/quran-text/rules';
-import { ayahWordChars, ruleGroup } from '@/services/quran-text/rules';
+import {
+  AHKAM_GROUPS,
+  ayahWordChars,
+  ruleGroup,
+} from '@/services/quran-text/rules';
 import type { AyahData } from '@/services/quran-text/types';
-
-/**
- * The rules that describe a sound the reciter makes: madd, ghunnah, qalqalah,
- * idgham, ikhfa, iqlab.
- *
- * The dataset also annotates `hamzat_wasl`, `lam_shamsiyyah` and `silent`, which
- * are facts about how the text is written and where a reading starts, not about
- * the voice. They stay as glyph styling on the line and never appear as ahkam.
- */
-export const AHKAM_GROUPS: readonly TajweedGroup[] = [
-  'madd',
-  'ghunnah',
-  'qalqalah',
-  'idgham',
-  'ikhfa',
-  'iqlab',
-];
 
 /** Order is the tie-break when two rules cover the same number of characters. */
 const AHKAM_ORDER = new Map(AHKAM_GROUPS.map((group, index) => [group, index]));

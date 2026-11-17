@@ -3,7 +3,11 @@
 import { useLayoutEffect, useRef } from 'react';
 
 import type { WordState } from '@/services/follow-along';
-import { ruleGroup, TAJWEED_COLORS } from '@/services/quran-text/rules';
+import {
+  isAhkamGroup,
+  ruleGroup,
+  TAJWEED_COLORS,
+} from '@/services/quran-text/rules';
 import { cn } from '@/utils';
 
 import { AyahMarker } from './ayah-marker';
@@ -105,10 +109,14 @@ export function QuranLine({
           ) : (
             word.chars.map((char, index) => {
               const group = ruleGroup(char.rule);
+              // Only an ahkam earns a colour. A hamzat wasl or a silent letter
+              // is a fact about the writing, and colouring it would claim the
+              // line marks something the reciter does.
+              const marked = group && isAhkamGroup(group) ? group : null;
               return (
                 <span
                   key={index}
-                  style={group ? { color: TAJWEED_COLORS[group] } : undefined}
+                  style={marked ? { color: TAJWEED_COLORS[marked] } : undefined}
                 >
                   {char.ch}
                 </span>
