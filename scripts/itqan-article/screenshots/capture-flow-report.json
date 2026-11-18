@@ -1,0 +1,72 @@
+{
+  "app": "Open Tarteel",
+  "template": "sada",
+  "structure": "stores",
+  "files": [
+    {
+      "path": "App Store/ar-SA/iPhone 6.9/01.png",
+      "width": 1320,
+      "height": 2868,
+      "family": "iphone",
+      "lang": "ar-SA",
+      "slide": 1
+    },
+    {
+      "path": "App Store/ar-SA/iPhone 6.9/02.png",
+      "width": 1320,
+      "height": 2868,
+      "family": "iphone",
+      "lang": "ar-SA",
+      "slide": 2
+    },
+    {
+      "path": "App Store/ar-SA/iPhone 6.9/03.png",
+      "width": 1320,
+      "height": 2868,
+      "family": "iphone",
+      "lang": "ar-SA",
+      "slide": 3
+    },
+    {
+      "path": "App Store/ar-SA/iPhone 6.9/04.png",
+      "width": 1320,
+      "height": 2868,
+      "family": "iphone",
+      "lang": "ar-SA",
+      "slide": 4
+    },
+    {
+      "path": "App Store/ar-SA/Mac 2880/01.png",
+      "width": 2880,
+      "height": 1800,
+      "family": "mac",
+      "lang": "ar-SA",
+      "slide": 1
+    },
+    {
+      "path": "App Store/ar-SA/Mac 2880/02.png",
+      "width": 2880,
+      "height": 1800,
+      "family": "mac",
+      "lang": "ar-SA",
+      "slide": 2
+    },
+    {
+      "path": "App Store/ar-SA/Mac 2880/03.png",
+      "width": 2880,
+      "height": 1800,
+      "family": "mac",
+      "lang": "ar-SA",
+      "slide": 3
+    },
+    {
+      "path": "App Store/ar-SA/Mac 2880/04.png",
+      "width": 2880,
+      "height": 1800,
+      "family": "mac",
+      "lang": "ar-SA",
+      "slide": 4
+    }
+  ],
+  "warnings": []
+}

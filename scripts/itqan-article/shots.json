@@ -1,0 +1,44 @@
+{
+  "app": "Open Tarteel",
+  "template": "sada",
+  "languages": ["ar-SA"],
+  "sizes": ["ios-6.9", "mac-2880"],
+  "slides": [
+    {
+      "templateSlide": 0,
+      "headline": "الكلمة *تُضاء* حين تُتلى",
+      "subtitle": "سطر قرآني فوق الطيف، ووسوم أحكام في مواضعها.",
+      "captures": {
+        "iphone": "captures/iphone-01-follow.png",
+        "mac": "captures/mac-01-follow.png"
+      }
+    },
+    {
+      "templateSlide": 1,
+      "headline": "اعرف *قدرة* المصدر قبل النقر",
+      "subtitle": "خمسة مصادر، منها MP3Quran v4 التجريبي، وشارات توضح التوقيت.",
+      "captures": {
+        "iphone": "captures/iphone-02-sources.png",
+        "mac": "captures/mac-02-sources.png"
+      }
+    },
+    {
+      "templateSlide": 2,
+      "headline": "ثلاث *لوحات*، وثلاث لغات",
+      "subtitle": "المظهر واللغة والصوت محفوظة على جهازك.",
+      "captures": {
+        "iphone": "captures/iphone-04-appearance.png",
+        "mac": "captures/mac-04-appearance.png"
+      }
+    },
+    {
+      "templateSlide": 3,
+      "headline": "تلاوتك *تبقى* بلا شبكة",
+      "subtitle": "نزّل سورة أو قارئًا كاملًا، ثم شغّله دون اتصال.",
+      "captures": {
+        "iphone": "captures/iphone-05-offline.png",
+        "mac": "captures/mac-05-offline.png"
+      }
+    }
+  ]
+}
