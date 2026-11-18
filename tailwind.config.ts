@@ -36,7 +36,10 @@ const config: Config = {
         'surface-raised': 'var(--surface-raised)',
         'surface-sunken': 'var(--surface-sunken)',
         'border-strong': 'var(--border-strong)',
-        primary: 'var(--accent)',
+        // `--accent` is a CSS variable (three palettes × two modes), so it
+        // cannot be split into Tailwind's `rgb(... / <alpha>)` channels. The
+        // `<alpha-value>` placeholder lets `primary/35` tint the live token.
+        primary: 'color-mix(in srgb, var(--accent) calc(<alpha-value> * 100%), transparent)',
         'primary-hover': 'var(--accent-hover)',
         'primary-soft': 'var(--accent-soft)',
         'primary-line': 'var(--accent-line)',

@@ -20,7 +20,7 @@ export default function AboutPage() {
           />
         </h1>
 
-        <div className="m-1 space-y-4 rounded p-2 ps-4 text-lg md:m-2 md:border md:border-gray-200 md:p-8 md:shadow-sm md:dark:border-gray-700">
+        <div className="m-1 space-y-4 rounded p-2 ps-4 text-lg md:m-2 md:border md:border-border md:p-8 md:shadow-sm">
           <p>
             <FormattedMessage
               defaultMessage="Quran.us.kg هو تطبيق قرآن مفتوح المصدر صمم لتوفير تجربة استماع مثالية عبر مختلف المنصات. بُني التطبيق باستخدام تقنيات ويب حديثة لضمان:"
@@ -85,7 +85,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <section className="m-1 rounded p-2 ps-4 md:m-2 md:border md:border-gray-200 md:p-8 md:shadow-sm md:dark:border-gray-700">
+        <section className="m-1 rounded p-2 ps-4 md:m-2 md:border md:border-border md:p-8 md:shadow-sm">
           <h2 className="mb-3 text-2xl font-bold">
             <FormattedMessage
               defaultMessage="أسئلة شائعة"
@@ -106,7 +106,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <div className="mt-5 flex w-full max-w-2xl items-center justify-center text-sm text-gray-600">
+        <div className="mt-5 flex w-full max-w-2xl items-center justify-center text-sm text-ink-muted">
           <p>
             <FormattedMessage
               defaultMessage="جميع الحقوق محفوظة"
@@ -116,7 +116,7 @@ export default function AboutPage() {
           </p>
         </div>
         {/* Credits section at the very bottom */}
-        <div className="flex w-full justify-center text-gray-600">
+        <div className="flex w-full justify-center text-ink-muted">
           <div className="px-4 py-2 text-sm">
             Made by{' '}
             <a

@@ -15,13 +15,13 @@ export default function PrivacyPage() {
               id="privacy.title"
             />
           </h1>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-ink-muted">
             <FormattedMessage
               defaultMessage="المطور/الشركة: Benyahia-DEV"
               id="privacy.developer"
             />
           </p>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-ink-muted">
             <FormattedMessage
               defaultMessage="تاريخ السريان: 14 فبراير 2025"
               id="privacy.effectiveDate"
@@ -30,7 +30,7 @@ export default function PrivacyPage() {
         </div>
 
         {/* Content Sections */}
-        <div className="space-y-8 border-gray-200 p-2 ps-6 text-lg dark:border-gray-700 md:rounded md:border md:p-6 md:ps-10 md:shadow-sm">
+        <div className="space-y-8 border-border p-2 ps-6 text-lg md:rounded md:border md:p-6 md:ps-10 md:shadow-sm">
           <section className="space-y-4">
             <h2 className="text-2xl font-bold">
               <FormattedMessage

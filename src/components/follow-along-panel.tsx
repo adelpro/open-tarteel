@@ -21,6 +21,8 @@ import { groupByAyah, repairAyah } from '@/services/timings/word-timings';
 import type { LinkSource } from '@/types';
 import { cn } from '@/utils';
 
+import Tag from './ui/tag';
+
 export interface FollowAlongPanelProps {
   /** The player's audio element. Used for time and for the pitch analyser. */
   audio: HTMLAudioElement | null;
@@ -162,6 +164,11 @@ export function FollowAlongPanel({
     return () => cancelAnimationFrame(frame);
   }, [audio, data, repaired, source, surah]);
 
+  const closeLabel = formatMessage({
+    id: 'followAlong.close',
+    defaultMessage: 'Turn off',
+  });
+
   const marks = useMemo(
     () => (data ? data.timings.map((timing) => timing.startMs / 1000) : []),
     [data]
@@ -208,21 +215,16 @@ export function FollowAlongPanel({
           </p>
         </div>
         {onClose ? (
-          <button
-            type="button"
+          <Tag
+            variant="filter"
+            size="sm"
             onClick={onClose}
-            aria-label={formatMessage({
-              id: 'followAlong.close',
-              defaultMessage: 'Turn off',
-            })}
-            className="flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-xs font-bold text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink"
+            aria-label={closeLabel}
+            title={closeLabel}
+            icon={<FiX size={12} />}
           >
-            <FiX size={12} aria-hidden="true" />
-            {formatMessage({
-              id: 'followAlong.close',
-              defaultMessage: 'Turn off',
-            })}
-          </button>
+            {closeLabel}
+          </Tag>
         ) : null}
       </div>
 

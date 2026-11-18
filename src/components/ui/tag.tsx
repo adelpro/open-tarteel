@@ -57,7 +57,7 @@ export default function Tag({
   const interactive = variant === 'filter';
 
   const base =
-    'inline-flex shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[8px] text-center font-bold leading-5 transition-colors duration-120';
+    'focus-ring inline-flex shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[8px] text-center font-bold leading-5 transition-colors duration-120';
 
   const variantStyles = (() => {
     if (variant === 'filter') {
@@ -93,6 +93,7 @@ export default function Tag({
     return (
       <button
         type="button"
+        data-tag={variant}
         onClick={onClick}
         disabled={disabled}
         aria-pressed={selected}
@@ -107,6 +108,7 @@ export default function Tag({
 
   return (
     <span
+      data-tag={variant}
       title={title}
       aria-label={ariaLabel}
       className={cn(

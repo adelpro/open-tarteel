@@ -280,7 +280,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
             id: 'searchPlaceHolder',
             defaultMessage: 'Search A Reciter',
           })}
-          className="min-h-11 w-full min-w-0 border-0 bg-transparent py-2 text-base text-foreground shadow-none placeholder:text-muted focus:border-0 focus:outline-none focus:ring-0"
+          className="focus-ring min-h-11 w-full min-w-0 border-0 bg-transparent py-2 text-base text-foreground shadow-none placeholder:text-muted"
         />
         {searchTerm && (
           <button
@@ -290,7 +290,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
               id: 'common.clear',
               defaultMessage: 'Clear search',
             })}
-            className="-me-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted hover:text-foreground"
+            className="focus-ring -me-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-control text-muted hover:text-foreground"
           >
             <MdClose className="size-5" />
           </button>
@@ -362,7 +362,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
               )
             }
             aria-label={sortLabel}
-            className="flex h-10 items-center gap-1 rounded-[8px] border border-border bg-surface px-3 text-[13px] font-bold text-ink transition-colors duration-120 hover:bg-surface-sunken"
+            className="focus-ring flex h-11 items-center gap-1 rounded-[8px] border border-border bg-surface px-3 text-[13px] font-bold text-ink transition-colors duration-120 hover:bg-surface-sunken"
           >
             <span>{sortShortLabel}</span>
             <MdExpandMore
@@ -436,7 +436,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
                     onClick={() => handleSelectReciter(reciter)}
                     aria-current={current ? 'true' : undefined}
                     className={cn(
-                      'flex min-h-16 min-w-0 flex-1 items-center gap-3 px-4 py-2 text-start transition-colors hover:bg-surface-sunken',
+                      'focus-ring flex min-h-16 min-w-0 flex-1 items-center gap-3 px-4 py-2 text-start transition-colors hover:bg-surface-sunken',
                       current && 'bg-primary-soft'
                     )}
                   >
@@ -509,7 +509,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
                           })
                     }
                     aria-pressed={isFavorite}
-                    className="me-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-sunken hover:text-foreground"
+                    className="focus-ring me-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-control text-muted transition-colors hover:bg-surface-sunken hover:text-foreground"
                   >
                     {isFavorite ? (
                       <BsStarFill className="size-5 text-mark" />

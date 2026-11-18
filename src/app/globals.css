@@ -338,6 +338,16 @@ dialog::backdrop {
   transform: scale(1.15);
 }
 
+/* ─── Shared focus ring ───
+   The single focus treatment for every interactive element in the app. Using
+   :focus-visible keeps pointer clicks quiet while keyboard focus is always
+   visible (DESIGN.md: one focus ring, never duplicated). */
+@layer utilities {
+  .focus-ring {
+    @apply focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+}
+
 /* ─── Reduced motion ─── */
 @media (prefers-reduced-motion: reduce) {
   *,

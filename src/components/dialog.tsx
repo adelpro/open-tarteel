@@ -112,7 +112,7 @@ export default function Dialog({
                 type="button"
                 onClick={() => setIsOpen(false)}
                 aria-label="Close"
-                className="transition-opacity duration-180 hover:opacity-70"
+                className="focus-ring transition-opacity duration-180 hover:opacity-70"
               >
                 <Image src={close} alt="close" width={24} height={24} />
               </button>

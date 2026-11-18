@@ -50,6 +50,7 @@ import DownloadAllButton from './download-all-button';
 import { FollowAlongPanel } from './follow-along-panel';
 import TahfeezModeControls, { TahfeezSettings } from './tahfeez-mode-controls';
 import ActionSheet from './ui/action-sheet';
+import Tag from './ui/tag';
 // ─── Helpers ─────────────────────────────────────────
 const getCurrentMinute = (seconds: number): number => Math.ceil(seconds / 60);
 
@@ -310,7 +311,7 @@ export default function PlayerControls({
         onClick={onClick}
         disabled={disabled}
         className={cn(
-          'flex size-11 items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken',
+          'focus-ring flex size-11 items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken',
           extraClass
         )}
         aria-label={alt}
@@ -538,7 +539,7 @@ export default function PlayerControls({
               onPointerLeave={clearVolumeLongPress}
               onPointerCancel={clearVolumeLongPress}
               onContextMenu={(event) => event.preventDefault()}
-              className="flex size-11 select-none items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken"
+              className="focus-ring flex size-11 select-none items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken"
               aria-label={messages.volumeControl}
             >
               {volume > 0 ? (
@@ -560,7 +561,7 @@ export default function PlayerControls({
                 onChange={(event) =>
                   setVolume(Number((event.target as HTMLInputElement).value))
                 }
-                className="h-full w-1 cursor-pointer appearance-none bg-transparent"
+                className="focus-ring h-full w-1 cursor-pointer appearance-none bg-transparent"
                 style={{
                   writingMode: 'vertical-lr',
                   WebkitAppearance: 'slider-vertical',
@@ -611,7 +612,7 @@ export default function PlayerControls({
           <button
             onClick={togglePlaybackMode}
             className={cn(
-              'flex size-11 items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken',
+              'focus-ring flex size-11 items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken',
               playbackMode !== 'off' && 'animate-slideInWithFade'
             )}
             aria-label={
@@ -667,7 +668,7 @@ export default function PlayerControls({
           >
             <button
               onClick={toggleFullscreen}
-              className="flex size-11 items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken"
+              className="focus-ring flex size-11 items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken"
               aria-label={
                 isFullscreen
                   ? messages.exitFullscreen
@@ -693,7 +694,7 @@ export default function PlayerControls({
         <Tooltip content={messages.more}>
           <button
             onClick={() => setShowMoreMenu(true)}
-            className="relative flex size-11 items-center justify-center rounded-[10px] text-ink-muted transition-colors duration-120 hover:bg-surface-sunken hover:text-ink"
+            className="focus-ring relative flex size-11 items-center justify-center rounded-[10px] text-ink-muted transition-colors duration-120 hover:bg-surface-sunken hover:text-ink"
             aria-label={messages.more}
           >
             <span className="text-lg font-bold">⋯</span>
@@ -771,39 +772,40 @@ export default function PlayerControls({
         <MenuGroup label={messages.sleepTimer}>
           <div className="flex flex-wrap gap-1.5 px-2 pb-2">
             {SLEEP_MINUTES.map((minutes) => (
-              <button
+              <Tag
                 key={minutes}
-                type="button"
+                variant="filter"
+                size="md"
                 onClick={() => {
                   setSleepTimer(minutes);
                   setShowMoreMenu(false);
                 }}
-                className="h-9 rounded-[8px] border border-border bg-surface px-3 text-[12px] font-bold text-ink transition-colors duration-120 hover:bg-surface-sunken"
               >
                 {minutes}m
-              </button>
+              </Tag>
             ))}
-            <button
-              type="button"
+            <Tag
+              variant="filter"
+              size="md"
               onClick={() => {
                 setSleepTimer('end');
                 setShowMoreMenu(false);
               }}
-              className="h-9 rounded-[8px] border border-border bg-surface px-3 text-[12px] font-bold text-ink transition-colors duration-120 hover:bg-surface-sunken"
             >
               {messages.untilEnd}
-            </button>
+            </Tag>
             {remainingTime ? (
-              <button
-                type="button"
+              <Tag
+                variant="filter"
+                size="md"
+                className="text-danger"
                 onClick={() => {
                   clearSleepTimer();
                   setShowMoreMenu(false);
                 }}
-                className="h-9 rounded-[8px] px-3 text-[12px] font-bold text-danger transition-colors duration-120 hover:bg-surface-sunken"
               >
                 {messages.cancelTimer}
-              </button>
+              </Tag>
             ) : null}
           </div>
         </MenuGroup>
@@ -874,19 +876,19 @@ export default function PlayerControls({
       </ActionSheet>
 
       {progress || lastError ? (
-        <button
-          type="button"
+        <Tag
+          variant="filter"
+          size="md"
           onClick={() => setShowMoreMenu(true)}
-          className="fixed bottom-[calc(env(safe-area-inset-bottom)+72px)] left-1/2 z-40 flex h-10 -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-surface px-3.5 text-[12px] font-bold text-ink shadow-md md:bottom-6"
+          className="fixed bottom-[calc(env(safe-area-inset-bottom)+72px)] left-1/2 z-40 -translate-x-1/2 border border-border bg-surface text-ink shadow-md md:bottom-6"
+          icon={
+            progress ? (
+              <MdCloudDownload className="size-4 text-primary" />
+            ) : (
+              <MdWarning className="size-4 text-danger" />
+            )
+          }
         >
-          {progress ? (
-            <MdCloudDownload
-              className="size-4 text-primary"
-              aria-hidden="true"
-            />
-          ) : (
-            <MdWarning className="size-4 text-danger" aria-hidden="true" />
-          )}
           <span className="tabular-nums">
             {progress
               ? formatMessage(
@@ -906,7 +908,7 @@ export default function PlayerControls({
               {Math.round((progress.completed / progress.total) * 100)}%
             </span>
           ) : null}
-        </button>
+        </Tag>
       ) : null}
     </div>
   );
@@ -953,7 +955,7 @@ function MenuRow({
       disabled={disabled}
       title={title}
       aria-pressed={pressed}
-      className="flex min-h-12 w-full items-center gap-3 rounded-[8px] px-2 text-start text-[14px] text-ink transition-colors duration-120 hover:bg-surface-sunken disabled:cursor-not-allowed disabled:opacity-50"
+      className="focus-ring flex min-h-12 w-full items-center gap-3 rounded-[8px] px-2 text-start text-[14px] text-ink transition-colors duration-120 hover:bg-surface-sunken disabled:cursor-not-allowed disabled:opacity-50"
     >
       <span className="flex size-5 shrink-0 items-center justify-center text-ink-muted">
         {icon}
