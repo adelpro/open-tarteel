@@ -296,7 +296,7 @@ export default function Sheet({
 
   const headerContent = (
     <>
-      <h2 className="text-base font-semibold text-foreground">{title}</h2>
+      <h2 className="text-base font-bold text-foreground">{title}</h2>
       <div className="flex items-center gap-1">
         {wide && onTogglePin ? (
           <button

@@ -22,19 +22,27 @@ const PALETTES: PaletteOption[] = [
     value: 'warm',
     label: 'Warm',
     description: 'Paper, emerald, brass',
-    swatches: ['#f6f2e9', '#0c6b53', '#8a6420'],
+    swatches: ['var(--warm-canvas)', 'var(--warm-primary)', 'var(--warm-mark)'],
   },
   {
     value: 'classic',
     label: 'Classic',
     description: 'Sky blue on zinc',
-    swatches: ['#f4f4f5', '#0ea5e9', '#18181b'],
+    swatches: [
+      'var(--classic-canvas)',
+      'var(--classic-primary)',
+      'var(--classic-ink)',
+    ],
   },
   {
     value: 'night',
     label: 'Night',
     description: 'Green-black and mint',
-    swatches: ['#0a0d0c', '#6fe3b8', '#e3c27e'],
+    swatches: [
+      'var(--night-canvas)',
+      'var(--night-primary)',
+      'var(--night-mark-dark)',
+    ],
   },
 ];
 

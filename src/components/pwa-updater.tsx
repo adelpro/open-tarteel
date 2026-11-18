@@ -109,21 +109,21 @@ const PwaUpdater = () => {
         <h2 id="pwa-update-title" className="text-lg font-bold text-foreground">
           {formatMessage({ id: 'pwa.update_title' })}
         </h2>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-ink-muted">
           {formatMessage({ id: 'pwa.update_description' })}
         </p>
         <div className="flex justify-end gap-2">
           <button
             type="button"
             onClick={() => setIsOpen(false)}
-            className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+            className="rounded-lg px-4 py-2 text-sm font-bold text-ink transition-colors duration-180 hover:bg-surface-sunken"
           >
             {formatMessage({ id: 'pwa.update_later' })}
           </button>
           <button
             type="button"
             onClick={handleUpdate}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-bold text-on-primary transition-colors duration-180 hover:bg-primary-hover"
           >
             {formatMessage({ id: 'pwa.update_now' })}
           </button>

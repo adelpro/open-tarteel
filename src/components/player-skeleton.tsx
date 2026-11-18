@@ -8,7 +8,7 @@ export default function PlayerSkeleton() {
     <div
       role="status"
       aria-label="Loading player"
-      className="flex w-full max-w-xl animate-pulse flex-col items-center justify-center gap-3 rounded-[16px] border border-border bg-surface p-3"
+      className="flex w-full max-w-xl flex-col items-center justify-center gap-3 rounded-[16px] border border-border bg-surface p-3"
       style={{ minHeight: 258 }}
     >
       <div className="h-[72px] w-full max-w-md rounded-lg bg-surface-sunken" />

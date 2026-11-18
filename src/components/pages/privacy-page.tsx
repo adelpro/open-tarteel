@@ -32,7 +32,7 @@ export default function PrivacyPage() {
         {/* Content Sections */}
         <div className="space-y-8 border-gray-200 p-2 ps-6 text-lg dark:border-gray-700 md:rounded md:border md:p-6 md:ps-10 md:shadow-sm">
           <section className="space-y-4">
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-2xl font-bold">
               <FormattedMessage
                 defaultMessage="خصوصيتك مهمة بالنسبة لنا"
                 id="privacy.section1.title"
@@ -47,7 +47,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-2xl font-bold">
               <FormattedMessage
                 defaultMessage="ما المعلومات التي نجمعها؟"
                 id="privacy.section2.title"
@@ -62,7 +62,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-2xl font-bold">
               <FormattedMessage
                 defaultMessage="لماذا لا نجمع البيانات؟"
                 id="privacy.section3.title"
@@ -91,7 +91,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-2xl font-bold">
               <FormattedMessage
                 defaultMessage="نحن نحترم خصوصية أطفالك"
                 id="privacy.section4.title"
@@ -106,7 +106,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-2xl font-bold">
               <FormattedMessage
                 defaultMessage="الحفاظ على أمان بياناتك"
                 id="privacy.section5.title"
@@ -121,7 +121,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-2xl font-bold">
               <FormattedMessage
                 defaultMessage="حقوق خصوصيتك"
                 id="privacy.section6.title"
@@ -136,7 +136,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-2xl font-bold">
               <FormattedMessage
                 defaultMessage="خدمات الطرف الثالث"
                 id="privacy.section7.title"
@@ -151,7 +151,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="space-y-4 border-t pt-6">
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-2xl font-bold">
               <FormattedMessage
                 defaultMessage="اتصل بنا"
                 id="privacy.section8.title"
@@ -165,7 +165,7 @@ export default function PrivacyPage() {
               <br />
               <a
                 href="mailto:contact@quran.us.kg"
-                className="mt-2 inline-block font-semibold text-brand-CTA-blue-600"
+                className="mt-2 inline-block font-bold text-primary"
               >
                 contact@quran.us.kg
               </a>

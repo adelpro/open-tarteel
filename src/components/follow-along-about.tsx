@@ -28,7 +28,7 @@ export function FollowAlongAbout() {
 
   return (
     <section className="mt-6 space-y-3">
-      <h2 className="mb-2 text-2xl font-semibold">
+      <h2 className="mb-2 text-2xl font-bold">
         <FormattedMessage
           defaultMessage="تتبّع التلاوة ومنحنى الصوت"
           id="about.followAlong.title"

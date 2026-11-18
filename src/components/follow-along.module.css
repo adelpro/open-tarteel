@@ -21,9 +21,9 @@
   padding-inline: 0.06em;
   border-radius: 0.35em;
   transition:
-    opacity 140ms linear,
-    transform 160ms ease,
-    background-color 160ms ease;
+    opacity 120ms cubic-bezier(0.2, 0, 0, 1),
+    transform 180ms cubic-bezier(0.2, 0, 0, 1),
+    background-color 180ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 .word[data-state='spoken'] {
@@ -69,7 +69,7 @@
   inset: 0;
   display: grid;
   place-items: center;
-  color: #332a18;
+  color: var(--warm-ink);
   font-family: system-ui, sans-serif;
   font-size: 0.45em;
   font-weight: 600;

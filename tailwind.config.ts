@@ -12,6 +12,13 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    // Only the three loaded Tajawal weights exist. `font-normal`,
+    // `font-medium` and `font-semibold` are deliberately absent (DESIGN.md).
+    fontWeight: {
+      regular: '400',
+      bold: '700',
+      black: '900',
+    },
     extend: {
       colors: {
         background: 'var(--background)',
@@ -38,20 +45,21 @@ const config: Config = {
         success: 'var(--success)',
         warning: 'var(--warning)',
         danger: 'var(--danger)',
-        'brand-dark-100': '#f5f6f7',
-        'brand-CTA-dark-200': '#e5e7eb',
-        'brand-CTA-dark-500': '#6B7280',
-        'brand-CTA-dark-600': '#222222',
-        'brand-CTA-blue-500': '#0190dd',
-        'brand-CTA-blue-600': '#07507f',
-        'brand-CTA-green-500': '#10B981',
-        'brand-CTA-green-600': '#059669',
-        'brand-CTA-red-500': '#FF4B4B',
-        'brand-CTA-red-600': '#DB2727',
-        'brand-success': '#4BB543',
-        'brand-info': '#4D71F9',
-        'brand-warning': '#FFA800',
-        'brand-danger': '#FF4B4B',
+        scrim: 'var(--scrim)',
+      },
+      // 4px vertical rhythm from DESIGN.md. `extend` keeps Tailwind's
+      // numeric scale (p-2, gap-4, ...) intact alongside the named steps.
+      spacing: {
+        xxs: '4px',
+        xs: '8px',
+        sm: '12px',
+        md: '16px',
+        lg: '20px',
+        xl: '24px',
+        '2xl': '32px',
+        '3xl': '40px',
+        '4xl': '48px',
+        '5xl': '64px',
       },
       borderRadius: {
         control: '10px',
@@ -65,6 +73,9 @@ const config: Config = {
         '240': '240ms',
       },
       transitionTimingFunction: {
+        // Bare `transition-*` utilities use the standard easing too, so every
+        // default transition follows the motion token (DESIGN.md).
+        DEFAULT: 'cubic-bezier(0.2, 0, 0, 1)',
         standard: 'cubic-bezier(0.2, 0, 0, 1)',
       },
     },

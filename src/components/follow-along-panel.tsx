@@ -200,7 +200,7 @@ export function FollowAlongPanel({
     >
       <div className="flex h-7 items-center justify-between gap-2">
         <div className="flex items-center gap-1.5">
-          <p className="text-xs font-semibold">
+          <p className="text-xs font-bold">
             {formatMessage({
               id: 'followAlong.mode',
               defaultMessage: 'Follow-along',
@@ -215,7 +215,7 @@ export function FollowAlongPanel({
               id: 'followAlong.close',
               defaultMessage: 'Turn off',
             })}
-            className="flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink"
+            className="flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-xs font-bold text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink"
           >
             <FiX size={12} aria-hidden="true" />
             {formatMessage({

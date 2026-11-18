@@ -75,7 +75,7 @@ export default function Tag({
     if (variant === 'status') {
       return cn('border-border border bg-transparent', toneText[tone]);
     }
-    return 'text-ink-muted font-normal tabular-nums';
+    return 'text-ink-muted font-regular tabular-nums';
   })();
 
   const content = (

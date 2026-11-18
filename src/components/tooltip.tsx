@@ -59,7 +59,7 @@ export default function Tooltip({
       {visible ? (
         <span
           role="tooltip"
-          className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 block w-max max-w-[min(16rem,calc(100vw-2rem))] -translate-x-1/2 transform whitespace-normal break-words rounded bg-gray-800 px-2 py-1 text-center text-xs text-white"
+          className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 block w-max max-w-[min(16rem,calc(100vw-2rem))] -translate-x-1/2 transform whitespace-normal break-words rounded-[10px] border border-border bg-surface-raised px-2 py-1 text-center text-xs text-ink"
         >
           {content}
         </span>

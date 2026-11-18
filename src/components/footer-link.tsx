@@ -13,7 +13,7 @@ export const FooterLink = ({ href, children, onClick }: FooterLinkProps) => {
     <LocalizedLink
       href={href}
       onClick={onClick}
-      className="group flex min-h-11 min-w-11 flex-row items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-1 py-3 text-[13px] font-medium text-ink-muted transition-all duration-200 hover:-translate-y-0.5 hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-accent dark:text-slate-300 dark:hover:text-slate-100"
+      className="flex min-h-11 min-w-11 flex-row items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-1 py-3 text-[13px] font-bold text-ink-muted transition-colors duration-180 hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       {children}
     </LocalizedLink>

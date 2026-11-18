@@ -100,10 +100,10 @@ export default function ContactPage() {
       </h1>
       {formSubmitted ? (
         <div
-          className="flex w-full max-w-lg animate-fade-up flex-col items-center justify-center gap-6 rounded-3xl border border-gray-200/60 bg-white/60 p-10 shadow-2xl backdrop-blur-xl dark:border-gray-700/60 dark:bg-gray-900/60"
+          className="flex w-full max-w-lg animate-fade-up flex-col items-center justify-center gap-6 rounded-3xl border border-border bg-surface p-10"
           dir={formatMessage({ id: 'contact.send' }) === 'Send' ? 'ltr' : 'rtl'}
         >
-          <div className="flex size-24 items-center justify-center rounded-full bg-green-100 text-green-600 shadow-inner dark:bg-green-900/30 dark:text-green-400">
+          <div className="flex size-24 items-center justify-center rounded-full bg-surface-sunken text-success">
             <svg
               className="size-12"
               fill="none"
@@ -119,20 +119,20 @@ export default function ContactPage() {
             </svg>
           </div>
           <p
-            className="text-center text-3xl font-bold text-gray-800 dark:text-gray-100"
+            className="text-center text-3xl font-bold text-ink"
             role="alert"
           >
             {formatMessage({ id: 'contact.thank_you_for_contacting' })}
           </p>
           <LocalizedLink href="/" className="mt-4 flex w-full justify-center">
-            <button className="w-full rounded-xl bg-gray-100 px-6 py-4 text-lg font-bold text-gray-700 transition-all hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+            <button className="w-full rounded-xl border border-border bg-surface px-6 py-4 text-lg font-bold text-ink transition-colors duration-180 hover:bg-surface-sunken focus:outline-none focus:ring-2 focus:ring-primary/35 focus:ring-offset-2 focus:ring-offset-background">
               {formatMessage({ id: 'contact.back_to_home' })}
             </button>
           </LocalizedLink>
         </div>
       ) : (
         <div className="w-full max-w-2xl animate-fade-up">
-          <div className="rounded-3xl border border-gray-200/60 bg-white/60 p-6 shadow-2xl backdrop-blur-xl dark:border-gray-700/60 dark:bg-gray-900/60 sm:p-10">
+          <div className="rounded-3xl border border-border bg-surface p-6 sm:p-10">
             <form
               className="flex flex-col gap-6"
               dir={
@@ -142,14 +142,14 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="name"
-                  className="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                  className="mb-2 block text-sm font-bold text-ink"
                 >
                   {formatMessage({ id: 'contact.name' })}
                 </label>
                 <input
                   type="text"
                   required
-                  className="dark:focus:border-brand-CTA-blue-400 w-full rounded-xl border border-gray-300 bg-gray-50/50 p-4 text-lg text-gray-900 transition-all focus:border-brand-CTA-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500/20 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:focus:bg-gray-800"
+                  className="w-full rounded-xl border border-border bg-surface-sunken p-4 text-lg text-ink transition-colors duration-180 focus:border-strong focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/35 focus:ring-offset-2 focus:ring-offset-background"
                   id="name"
                   placeholder={formatMessage({ id: 'contact.name' })}
                   value={name}
@@ -163,14 +163,14 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="email"
-                  className="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                  className="mb-2 block text-sm font-bold text-ink"
                 >
                   {formatMessage({ id: 'contact.email' })}
                 </label>
                 <input
                   type="email"
                   required
-                  className="dark:focus:border-brand-CTA-blue-400 w-full rounded-xl border border-gray-300 bg-gray-50/50 p-4 text-lg text-gray-900 transition-all focus:border-brand-CTA-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500/20 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:focus:bg-gray-800"
+                  className="w-full rounded-xl border border-border bg-surface-sunken p-4 text-lg text-ink transition-colors duration-180 focus:border-strong focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/35 focus:ring-offset-2 focus:ring-offset-background"
                   id="email"
                   placeholder={formatMessage({ id: 'contact.email' })}
                   value={email}
@@ -184,12 +184,12 @@ export default function ContactPage() {
               <div>
                 <label
                   htmlFor="message"
-                  className="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                  className="mb-2 block text-sm font-bold text-ink"
                 >
                   {formatMessage({ id: 'contact.message' })}
                 </label>
                 <textarea
-                  className="dark:focus:border-brand-CTA-blue-400 w-full rounded-xl border border-gray-300 bg-gray-50/50 p-4 text-lg text-gray-900 transition-all focus:border-brand-CTA-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500/20 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:focus:bg-gray-800"
+                  className="w-full rounded-xl border border-border bg-surface-sunken p-4 text-lg text-ink transition-colors duration-180 focus:border-strong focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/35 focus:ring-offset-2 focus:ring-offset-background"
                   id="message"
                   rows={4}
                   required
@@ -204,10 +204,10 @@ export default function ContactPage() {
 
               {error?.length > 0 && (
                 <div
-                  className="rounded-lg bg-red-50 p-4 text-red-600 dark:bg-red-900/30 dark:text-red-400"
+                  className="rounded-lg bg-surface-sunken p-4 text-danger"
                   role="alert"
                 >
-                  <p className="text-sm font-medium">{error}</p>
+                  <p className="text-sm font-bold">{error}</p>
                 </div>
               )}
 
@@ -221,7 +221,7 @@ export default function ContactPage() {
                   event.preventDefault();
                   validateAndSend();
                 }}
-                className="dark:to-brand-CTA-blue-400 dark:shadow-brand-CTA-blue-400/20 dark:hover:shadow-brand-CTA-blue-400/30 mt-2 flex w-full items-center justify-center rounded-xl bg-brand-CTA-blue-500 py-4 text-lg font-bold text-white shadow-lg shadow-brand-CTA-blue-500/30 transition-all duration-200 hover:scale-[1.02] hover:shadow-brand-CTA-blue-500/40 active:scale-[0.98] disabled:scale-100 disabled:opacity-70"
+                className="mt-2 flex w-full items-center justify-center rounded-xl bg-primary py-4 text-lg font-bold text-on-primary transition-colors duration-180 hover:bg-primary-hover disabled:opacity-70"
                 disabled={loading}
               >
                 {buttonContent}

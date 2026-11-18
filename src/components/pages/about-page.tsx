@@ -64,7 +64,7 @@ export default function AboutPage() {
 
           <FollowAlongAbout />
 
-          <h2 className="mb-2 mt-6 text-2xl font-semibold">
+          <h2 className="mb-2 mt-6 text-2xl font-bold">
             <FormattedMessage
               defaultMessage="مصادر تلاوة متعددة"
               id="about.providers.title"
@@ -86,7 +86,7 @@ export default function AboutPage() {
         </div>
 
         <section className="m-1 rounded p-2 ps-4 md:m-2 md:border md:border-gray-200 md:p-8 md:shadow-sm md:dark:border-gray-700">
-          <h2 className="mb-3 text-2xl font-semibold">
+          <h2 className="mb-3 text-2xl font-bold">
             <FormattedMessage
               defaultMessage="أسئلة شائعة"
               id="about.faq.title"
@@ -95,7 +95,7 @@ export default function AboutPage() {
           <div className="space-y-4">
             {[1, 2, 3, 4].map((number) => (
               <div key={number}>
-                <h3 className="text-lg font-semibold">
+                <h3 className="text-lg font-bold">
                   <FormattedMessage id={`about.faq.q${number}`} />
                 </h3>
                 <p className="mt-1">

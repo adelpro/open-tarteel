@@ -60,6 +60,23 @@
   /* Shadow */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+
+  /* Static palette previews. These are fixed DESIGN.md token values, not the
+     active theme roles, so the theme picker can show all three palettes at
+     once without any component hard-coding a hex. */
+  --warm-canvas: #f6f2e9;
+  --warm-primary: #0c6b53;
+  --warm-mark: #8a6420;
+  --warm-ink: #1a1813;
+  --classic-canvas: #f4f4f5;
+  --classic-primary: #0ea5e9;
+  --classic-ink: #18181b;
+  --night-canvas: #f3f4f1;
+  --night-primary: #0b6b52;
+  --night-mark-dark: #e3c27e;
+
+  /* The single overlay backdrop, shared by dialogs and sheets. */
+  --scrim: rgba(0, 0, 0, 0.5);
 }
 
 .dark {
@@ -228,52 +245,17 @@
 body {
   color: var(--foreground);
   background-color: var(--background);
-  /* Subtle mesh-like gradient overlay for depth */
-  background-image:
-    radial-gradient(
-      ellipse 80% 50% at 20% -10%,
-      rgba(14, 165, 233, 0.06) 0%,
-      transparent 60%
-    ),
-    radial-gradient(
-      ellipse 60% 40% at 80% 110%,
-      rgba(99, 102, 241, 0.05) 0%,
-      transparent 60%
-    );
+  font-size: 15px;
+  line-height: 1.7;
   transition:
-    background-color 0.35s ease,
-    color 0.35s ease;
+    background-color 180ms cubic-bezier(0.2, 0, 0, 1),
+    color 180ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-.dark body,
-.dark {
-  background-image:
-    radial-gradient(
-      ellipse 80% 50% at 20% -10%,
-      rgba(14, 165, 233, 0.07) 0%,
-      transparent 60%
-    ),
-    radial-gradient(
-      ellipse 60% 40% at 80% 110%,
-      rgba(99, 102, 241, 0.06) 0%,
-      transparent 60%
-    );
-}
-
-/* The warm, night and classic palettes are flat: no decorative wash, no colour orbs. */
-[data-theme='classic'],
-[data-theme='classic'] body,
-[data-theme='warm'],
-[data-theme='warm'] body,
-[data-theme='night'],
-[data-theme='night'] body {
-  background-image: none;
-}
-
-[data-theme='classic'] .ambient-orbs,
-[data-theme='warm'] .ambient-orbs,
-[data-theme='night'] .ambient-orbs {
-  display: none;
+/* Arabic is the primary language and takes no letter-spacing (DESIGN.md). */
+:lang(ar),
+[lang='ar'] {
+  letter-spacing: 0;
 }
 
 /* Internal design harness: no app chrome over the validation sheet. */

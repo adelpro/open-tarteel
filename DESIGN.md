@@ -38,6 +38,8 @@ colors:
   warning-dark: '#FBBF24'
   danger: '#DC2626'
   danger-dark: '#F87171'
+  # Single overlay backdrop for dialogs and sheets
+  scrim: 'rgba(0, 0, 0, 0.5)'
   # Palette: warm
   warm-canvas: '#F6F2E9'
   warm-canvas-dark: '#0B110F'
@@ -204,6 +206,8 @@ are identical across all three.
 - **Border** (`--border`) draws every hairline: card edges, row dividers, input
   outlines. **Border-strong** is for the focused input and the selected card
   only. Borders are always 1px.
+- **Scrim** (`--scrim`) is the one overlay backdrop, shared by every dialog and
+  sheet. It is the same neutral dark wash in every palette and mode.
 - **Success / Warning / Danger** are functional and never decorative.
   Success is download-complete and saved. Warning is _forced_ offline and
   storage pressure. Danger is failed downloads and destructive actions.

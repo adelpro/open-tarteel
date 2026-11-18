@@ -44,7 +44,7 @@ const PlaylistDialog = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-12 w-full animate-pulse rounded-lg bg-gray-200" />
+      <div className="h-12 w-full rounded-lg bg-surface-sunken" />
     ),
   }
 );
@@ -324,7 +324,7 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
       {typeof currentTrack === 'number' && (
         <div className="flex min-h-[232px] w-full flex-col items-center justify-center">
           {!isOnline && availableIndices.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-4 text-center text-[13px] font-medium text-ink-muted">
+            <div className="flex flex-col items-center justify-center p-4 text-center text-[13px] font-bold text-ink-muted">
               <FormattedMessage
                 id="offline.noDownloadedSurahs"
                 defaultMessage="No downloaded surahs for this reciter. Connect to the internet to stream or download."
