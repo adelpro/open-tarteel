@@ -1,4 +1,4 @@
-import { Tajawal } from 'next/font/google';
+import { Amiri, Tajawal } from 'next/font/google';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import { EnabledSourcesCookieSync } from '@/components/enabled-sources-cookie-sync';
@@ -16,6 +16,16 @@ import type { SeoLocale } from '@/lib/seo/routes';
 const tajawal = Tajawal({
   weight: ['400', '700', '900'],
   subsets: ['arabic'],
+  preload: true,
+});
+
+// Scripture only (DESIGN.md quran: 400). The generated class registers the
+// face and exposes its family through --font-amiri; Tajawal stays the UI font.
+const amiri = Amiri({
+  weight: ['400'],
+  subsets: ['arabic'],
+  variable: '--font-amiri',
+  display: 'swap',
   preload: true,
 });
 
@@ -38,7 +48,7 @@ export function RootShell({
         <HtmlWrapper>
           <body
             suppressHydrationWarning
-            className={`${tajawal.className} min-h-full bg-background antialiased`}
+            className={`${tajawal.className} ${amiri.variable} min-h-full bg-background antialiased`}
           >
             <a
               href="#main-content"

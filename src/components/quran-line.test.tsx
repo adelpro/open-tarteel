@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
@@ -62,5 +65,43 @@ describe('QuranLine', () => {
 
     expect(screen.getByText('١١٢')).toBeInTheDocument();
     expect(container.querySelector('[aria-hidden="true"]')).not.toBeNull();
+  });
+
+  it('uses the loaded Amiri variable, never the fictional Amiri Quran face', () => {
+    const { container } = render(<QuranLine words={words} />);
+    const line = container.querySelector('[lang="ar"]') as HTMLElement | null;
+    expect(line).not.toBeNull();
+
+    // Vitest does not inject CSS modules. Apply the module's real `.line`
+    // rule to the rendered element so the computed family is the one users
+    // actually get, not an empty jsdom string.
+    const css = readFileSync(
+      join(process.cwd(), 'src/components/follow-along.module.css'),
+      'utf8'
+    );
+    const rule = css.match(/\.line\s*\{[^}]*\}/)?.[0];
+    expect(rule).toBeDefined();
+    // next/font exposes the generated, registered family through this variable.
+    expect(rule).toContain('var(--font-amiri)');
+
+    // Simulate that generated family name (jsdom does not resolve var()).
+    const loadedFace = '__Amiri_loaded';
+    const className = (line as HTMLElement).className.split(/\s+/)[0];
+    const style = document.createElement('style');
+    style.textContent = (rule as string)
+      .replace(/^\.line\b/, `.${className}`)
+      .replace('var(--font-amiri)', loadedFace);
+    document.head.appendChild(style);
+
+    let fontFamily = '';
+    try {
+      fontFamily = getComputedStyle(line as HTMLElement).fontFamily;
+    } finally {
+      style.remove();
+    }
+
+    expect(fontFamily).toMatch(new RegExp(`^"?${loadedFace}"?`));
+    expect(fontFamily).toContain('Scheherazade New');
+    expect(fontFamily).not.toMatch(/Amiri\s+Quran/i);
   });
 });

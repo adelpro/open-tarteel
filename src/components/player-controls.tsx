@@ -2,8 +2,6 @@
 
 import backwardSVG from '@svgs/music-backward.svg';
 import forwardSVG from '@svgs/music-forward.svg';
-import pauseSVG from '@svgs/music-pause.svg';
-import playSVG from '@svgs/music-play.svg';
 import playlistSVG from '@svgs/music-playlist.svg';
 import shuffleSVG from '@svgs/music-shuffle.svg';
 import shuffleDisabledSVG from '@svgs/music-shuffle-disabled.svg';
@@ -13,6 +11,7 @@ import Image from 'next/image';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { BiVolumeFull, BiVolumeMute } from 'react-icons/bi';
 import { BsFullscreen, BsFullscreenExit } from 'react-icons/bs';
+import { FaPause, FaPlay } from 'react-icons/fa';
 import { FiActivity, FiHeadphones, FiRepeat } from 'react-icons/fi';
 import {
   MdCheck,
@@ -455,6 +454,10 @@ export default function PlayerControls({
       id: 'player.modeSwitcher',
       defaultMessage: 'Playback mode',
     }),
+    playbackModeLabel: formatMessage({
+      id: 'player.playbackMode',
+      defaultMessage: 'Shuffle / repeat',
+    }),
     playerSettings: formatMessage({
       id: 'player.settings',
       defaultMessage: 'Player',
@@ -522,12 +525,54 @@ export default function PlayerControls({
       ) : null}
 
       <div
-        className="relative flex w-full items-center justify-between gap-2 md:gap-3"
+        data-transport
+        className="relative flex w-full items-center justify-center gap-2 md:gap-3"
         dir={isRTL ? 'rtl' : 'ltr'}
       >
-        {/* Volume Control */}
+        {/* Previous — 44px ghost (DESIGN.md). */}
+        {renderImageButton(
+          backwardSVG,
+          messages.previousTrack,
+          handlePreviousTrackWithStopSession
+        )}
+
+        {/* Play — 56px primary circle with a 24px on-primary glyph. */}
+        <Tooltip content={audioPlaying ? messages.pause : messages.play}>
+          <button
+            onClick={
+              activeMode === 'tahfeez'
+                ? () =>
+                    session.handlePlayPause(
+                      currentRangesRef.current,
+                      tahfeezSettings.repeat,
+                      tahfeezSettings.delay
+                    )
+                : togglePlayPause
+            }
+            className={cn(
+              'focus-ring flex size-14 items-center justify-center rounded-full bg-primary text-on-primary transition-colors duration-120 hover:bg-primary-hover',
+              audioPlaying ? 'animate-slideInWithFade' : ''
+            )}
+            aria-label={audioPlaying ? messages.pause : messages.play}
+          >
+            {audioPlaying ? (
+              <FaPause size={ICON_SIZE} aria-hidden="true" />
+            ) : (
+              <FaPlay size={ICON_SIZE} aria-hidden="true" />
+            )}
+          </button>
+        </Tooltip>
+
+        {/* Next — 44px ghost. */}
+        {renderImageButton(
+          forwardSVG,
+          messages.nextTrack,
+          handleNextTrackWithStopSession
+        )}
+
+        {/* Volume — 44px ghost; tap for the slider, hold to mute. */}
         <div
-          className="relative flex shrink-0 items-center gap-2"
+          className="relative flex shrink-0 items-center"
           ref={volumeRef}
           style={{ touchAction: 'none' }}
         >
@@ -574,123 +619,7 @@ export default function PlayerControls({
           )}
         </div>
 
-        {/* Core Controls */}
-        {renderImageButton(
-          forwardSVG,
-          messages.nextTrack,
-          handleNextTrackWithStopSession
-        )}
-        {renderImageButton(
-          audioPlaying ? pauseSVG : playSVG,
-          audioPlaying ? messages.pause : messages.play,
-          activeMode === 'tahfeez'
-            ? () =>
-                session.handlePlayPause(
-                  currentRangesRef.current,
-                  tahfeezSettings.repeat,
-                  tahfeezSettings.delay
-                )
-            : togglePlayPause,
-          audioPlaying ? 'animate-slideInWithFade' : ''
-        )}
-        {renderImageButton(
-          backwardSVG,
-          messages.previousTrack,
-          handlePreviousTrackWithStopSession
-        )}
-
-        {/* Playback Mode */}
-        <Tooltip
-          content={
-            playbackMode === 'off'
-              ? messages.allOff
-              : playbackMode === 'shuffle'
-                ? messages.shuffleEnabled
-                : messages.repeatOne
-          }
-        >
-          <button
-            onClick={togglePlaybackMode}
-            className={cn(
-              'focus-ring flex size-11 items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken',
-              playbackMode !== 'off' && 'animate-slideInWithFade'
-            )}
-            aria-label={
-              playbackMode === 'off'
-                ? messages.allOff
-                : playbackMode === 'shuffle'
-                  ? messages.shuffleEnabled
-                  : messages.repeatOne
-            }
-          >
-            {playbackMode === 'off' ? (
-              <Image
-                src={shuffleDisabledSVG}
-                alt=""
-                width={ICON_SIZE}
-                height={ICON_SIZE}
-              />
-            ) : playbackMode === 'shuffle' ? (
-              <Image
-                src={shuffleSVG}
-                alt=""
-                width={ICON_SIZE}
-                height={ICON_SIZE}
-              />
-            ) : (
-              <MdRepeatOne size={ICON_SIZE} className="text-primary" />
-            )}
-          </button>
-        </Tooltip>
-
-        {/* Sleep timer indicator (all sizes; set from the More menu) */}
-        {remainingTime !== null && remainingTime > 0 && (
-          <div className="flex h-9 w-9 items-center justify-center">
-            <span className="flex items-center text-xs font-bold text-primary">
-              <Image
-                src={sleepSVG}
-                alt=""
-                width={12}
-                height={12}
-                className="me-0.5"
-              />
-              {getCurrentMinute(remainingTime)}
-            </span>
-          </div>
-        )}
-
-        {/* Desktop quick actions (everything else lives in the More menu). */}
-        <div className="hidden items-center gap-1 md:flex">
-          <Tooltip
-            content={
-              isFullscreen ? messages.exitFullscreen : messages.enterFullscreen
-            }
-          >
-            <button
-              onClick={toggleFullscreen}
-              className="focus-ring flex size-11 items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken"
-              aria-label={
-                isFullscreen
-                  ? messages.exitFullscreen
-                  : messages.enterFullscreen
-              }
-            >
-              {isFullscreen ? (
-                <BsFullscreenExit size={ICON_SIZE} className="text-ink-muted" />
-              ) : (
-                <BsFullscreen size={ICON_SIZE} className="text-ink-muted" />
-              )}
-            </button>
-          </Tooltip>
-
-          {renderImageButton(
-            playlistSVG,
-            messages.togglePlaylist,
-            togglePlaylistOpen
-          )}
-        </div>
-
-        {/* More menu */}
+        {/* More — 44px ghost; everything secondary lives in its sheet. */}
         <Tooltip content={messages.more}>
           <button
             onClick={() => setShowMoreMenu(true)}
@@ -770,6 +699,14 @@ export default function PlayerControls({
         </MenuGroup>
 
         <MenuGroup label={messages.sleepTimer}>
+          {remainingTime !== null && remainingTime > 0 ? (
+            <div className="flex min-h-12 items-center gap-3 px-2 text-[13px] font-bold text-primary">
+              <Image src={sleepSVG} alt="" width={18} height={18} />
+              <span className="flex-1 tabular-nums">
+                {messages.sleepTimerActive(getCurrentMinute(remainingTime))}
+              </span>
+            </div>
+          ) : null}
           <div className="flex flex-wrap gap-1.5 px-2 pb-2">
             {SLEEP_MINUTES.map((minutes) => (
               <Tag
@@ -812,6 +749,28 @@ export default function PlayerControls({
 
         <MenuGroup label={messages.playerSettings}>
           <MenuRow
+            icon={
+              playbackMode === 'off' ? (
+                <Image src={shuffleDisabledSVG} alt="" width={18} height={18} />
+              ) : playbackMode === 'shuffle' ? (
+                <Image src={shuffleSVG} alt="" width={18} height={18} />
+              ) : (
+                <MdRepeatOne size={18} aria-hidden="true" />
+              )
+            }
+            label={messages.playbackModeLabel}
+            onClick={togglePlaybackMode}
+            trailing={
+              <span className="text-[12px] font-bold tabular-nums text-ink-muted">
+                {playbackMode === 'off'
+                  ? messages.allOff
+                  : playbackMode === 'shuffle'
+                    ? messages.shuffleEnabled
+                    : messages.repeatOne}
+              </span>
+            }
+          />
+          <MenuRow
             icon={<MdSpeed size={18} aria-hidden="true" />}
             label={messages.playbackSpeedLabel}
             onClick={() => togglePlaybackSpeed()}
@@ -843,7 +802,7 @@ export default function PlayerControls({
           </MenuGroup>
         ) : null}
 
-        <div className="md:hidden">
+        <div>
           <MenuGroup label={messages.appSettings}>
             <MenuRow
               icon={

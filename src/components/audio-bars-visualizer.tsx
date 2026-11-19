@@ -266,7 +266,7 @@ export default function AudioBarsVisualizer({
     >
       <canvas
         ref={canvasRef}
-        className="block h-full w-full transition-opacity duration-200"
+        className="block h-full w-full transition-opacity duration-180"
         style={{ opacity: enabled && isPlaying && showVisualizer ? 1 : 0 }}
       />
     </div>

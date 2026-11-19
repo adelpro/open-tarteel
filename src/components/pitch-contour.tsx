@@ -43,23 +43,36 @@ const STRONG_CLARITY = 0.93;
 const LOUD_RMS = 0.12;
 const TICK_COUNT = 4;
 
-const GRID_COLOR = 'rgba(148, 163, 184, 0.18)';
-const LABEL_COLOR = 'rgba(148, 163, 184, 0.75)';
-const MARK_COLOR = 'rgba(210, 220, 250, 0.22)';
-const SILENCE_FILL = 'rgba(148, 158, 180, 0.07)';
-const PILL_SUSTAINED_FILL = 'rgba(74, 99, 230, 0.10)';
-const PILL_SUSTAINED_STROKE = 'rgba(74, 99, 230, 0.45)';
-const PILL_WANDER_FILL = 'rgba(245, 197, 24, 0.08)';
-const PILL_WANDER_STROKE = 'rgba(201, 169, 28, 0.45)';
-
 type Sample = { time: number; midi: number | null; strong: boolean; level: number };
 type Box = { start: number; end: number; midi: number; kind: 'sustained' | 'wander' };
 
+/**
+ * The contour reads the same three CSS variables as the audio bars, so it
+ * follows every palette × mode combination without introducing a new hue.
+ */
+const readTokens = () => {
+  const styles = getComputedStyle(document.documentElement);
+  const pick = (name: string, fallback: string) =>
+    styles.getPropertyValue(name).trim() || fallback;
+  return {
+    front: pick('--accent', '#0c6b53'),
+    line: pick('--accent-line', '#bcd8ca'),
+    border: pick('--border', '#e3dccb'),
+  };
+};
+
+/** CSS variables hold hex colours; canvas needs comma-separated channels. */
+const channelsOf = (colour: string): string => {
+  const hex = colour.trim().match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i)?.[1];
+  if (!hex) return '12, 107, 83';
+  const full = hex.length === 3 ? [...hex].map((c) => c + c).join('') : hex;
+  return [0, 2, 4]
+    .map((index) => Number.parseInt(full.slice(index, index + 2), 16))
+    .join(', ');
+};
+
 const withAlpha = (base: string, alpha: number): string =>
   `rgba(${base}, ${alpha})`;
-
-const BRASS = '245, 197, 24';
-const SLATE = '226, 232, 240';
 
 /**
  * Rolling pitch ribbon from the shared AudioContext.
@@ -99,6 +112,12 @@ export function PitchContour({
     let detector: PitchDetector<Float32Array> | null = null;
     let buffer: Float32Array<ArrayBuffer> | null = null;
     let sampleRate = 48000;
+    let tokens = readTokens();
+    let ink = {
+      accent: channelsOf(tokens.front),
+      line: channelsOf(tokens.line),
+      border: channelsOf(tokens.border),
+    };
     const history: Sample[] = [];
     const recent: number[] = [];
     const smoother = new OneEuroFilter();
@@ -226,18 +245,18 @@ export function PitchContour({
       context.font = '9px system-ui, sans-serif';
       for (const midi of tickValues()) {
         const y = yFor(midi);
-        context.strokeStyle = GRID_COLOR;
+        context.strokeStyle = withAlpha(ink.border, 0.18);
         context.beginPath();
         context.moveTo(28, y);
         context.lineTo(width, y);
         context.stroke();
-        context.fillStyle = LABEL_COLOR;
+        context.fillStyle = withAlpha(ink.line, 0.75);
         context.fillText(noteName(midi), 2, y + 3);
       }
 
       // ayah marks
       context.setLineDash([2, 4]);
-      context.strokeStyle = MARK_COLOR;
+      context.strokeStyle = withAlpha(ink.line, 0.22);
       for (const mark of marks) {
         if (now - mark > windowSec || mark > now + 0.5) continue;
         const x = xFor(now, mark);
@@ -255,7 +274,7 @@ export function PitchContour({
         if (end - silenceStart >= SILENCE_SECONDS) {
           const x1 = xFor(now, silenceStart);
           const x2 = xFor(now, end);
-          context.fillStyle = SILENCE_FILL;
+          context.fillStyle = withAlpha(ink.border, 0.07);
           context.fillRect(x1, 6, Math.max(1, x2 - x1), height - 12);
         }
         silenceStart = null;
@@ -270,12 +289,14 @@ export function PitchContour({
         const x1 = xFor(now, box.start);
         const x2 = xFor(now, box.end);
         const y = yFor(box.midi);
-        context.fillStyle =
-          box.kind === 'sustained' ? PILL_SUSTAINED_FILL : PILL_WANDER_FILL;
-        context.strokeStyle =
-          box.kind === 'sustained'
-            ? PILL_SUSTAINED_STROKE
-            : PILL_WANDER_STROKE;
+        context.fillStyle = withAlpha(
+          box.kind === 'sustained' ? ink.accent : ink.line,
+          box.kind === 'sustained' ? 0.1 : 0.08
+        );
+        context.strokeStyle = withAlpha(
+          box.kind === 'sustained' ? ink.accent : ink.line,
+          0.45
+        );
         context.lineWidth = 1;
         context.beginPath();
         context.roundRect(x1, y - 6, Math.max(4, x2 - x1 + 4), 12, 6);
@@ -285,9 +306,9 @@ export function PitchContour({
 
       // ribbon: fill under the band, brightening toward the playhead
       const fill = context.createLinearGradient(0, 0, width, 0);
-      fill.addColorStop(0, withAlpha(BRASS, 0));
-      fill.addColorStop(0.65, withAlpha(BRASS, 0.08));
-      fill.addColorStop(1, withAlpha(BRASS, 0.22));
+      fill.addColorStop(0, withAlpha(ink.accent, 0));
+      fill.addColorStop(0.65, withAlpha(ink.accent, 0.08));
+      fill.addColorStop(1, withAlpha(ink.accent, 0.22));
 
       context.beginPath();
       let started = false;
@@ -313,22 +334,22 @@ export function PitchContour({
         context.fill();
       }
 
-      // trail: slate line for soft frames, brass over strong ones
+      // trail: border-tinted line for soft frames, accent over strong ones
       const soft = context.createLinearGradient(0, 0, width, 0);
-      soft.addColorStop(0, withAlpha(SLATE, 0.05));
-      soft.addColorStop(0.7, withAlpha(SLATE, 0.45));
-      soft.addColorStop(1, withAlpha(SLATE, 0.9));
+      soft.addColorStop(0, withAlpha(ink.border, 0.05));
+      soft.addColorStop(0.7, withAlpha(ink.border, 0.45));
+      soft.addColorStop(1, withAlpha(ink.border, 0.9));
       strokeRuns(now, () => true, soft, 2);
 
       const strong = context.createLinearGradient(0, 0, width, 0);
-      strong.addColorStop(0, withAlpha(BRASS, 0));
-      strong.addColorStop(0.6, withAlpha(BRASS, 0.35));
-      strong.addColorStop(1, withAlpha(BRASS, 1));
+      strong.addColorStop(0, withAlpha(ink.accent, 0));
+      strong.addColorStop(0.6, withAlpha(ink.accent, 0.35));
+      strong.addColorStop(1, withAlpha(ink.accent, 1));
       strokeRuns(now, (sample) => sample.strong, strong, 2.4);
 
       // playhead: hairline, glow, breathing dot
       const last = [...history].reverse().find((sample) => sample.midi != null);
-      context.strokeStyle = withAlpha(BRASS, 0.45);
+      context.strokeStyle = withAlpha(ink.accent, 0.45);
       context.lineWidth = 1;
       context.beginPath();
       context.moveTo(width - 1, 6);
@@ -345,19 +366,35 @@ export function PitchContour({
           y,
           18
         );
-        glow.addColorStop(0, withAlpha(BRASS, 0.45));
-        glow.addColorStop(1, withAlpha(BRASS, 0));
+        glow.addColorStop(0, withAlpha(ink.accent, 0.45));
+        glow.addColorStop(1, withAlpha(ink.accent, 0));
         context.fillStyle = glow;
         context.beginPath();
         context.arc(width - 1, y, 18, 0, Math.PI * 2);
         context.fill();
 
-        context.fillStyle = withAlpha(BRASS, 1);
+        context.fillStyle = withAlpha(ink.accent, 1);
         context.beginPath();
         context.arc(width - 1, y, 3 + 3 * last.level, 0, Math.PI * 2);
         context.fill();
       }
     };
+
+    // Palette and mode changes swap the CSS variables; redraw with the new
+    // channels instead of keeping a stale hue from the previous theme.
+    const theme = new MutationObserver(() => {
+      tokens = readTokens();
+      ink = {
+        accent: channelsOf(tokens.front),
+        line: channelsOf(tokens.line),
+        border: channelsOf(tokens.border),
+      };
+      draw(0);
+    });
+    theme.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme', 'class'],
+    });
 
     const tick = () => {
       frame = requestAnimationFrame(tick);
@@ -416,6 +453,7 @@ export function PitchContour({
     return () => {
       cancelAnimationFrame(frame);
       observer?.disconnect();
+      theme.disconnect();
       audio?.removeEventListener('play', resume);
       audio?.removeEventListener('playing', resume);
     };
