@@ -1,3 +1,4 @@
+import Tag from '@/components/ui/tag';
 import {
   TAJWEED_COLORS,
   TAJWEED_GROUP_ORDER,
@@ -28,12 +29,19 @@ export function TajweedLegend({
     >
       {TAJWEED_GROUP_ORDER.map((group) => (
         <li key={group} className={styles.legendItem}>
-          <span
-            className={styles.swatch}
-            style={{ color: TAJWEED_COLORS[group] }}
-            aria-hidden="true"
-          />
-          {TAJWEED_LABELS[group][locale]}
+          <Tag
+            variant="static"
+            size="xs"
+            icon={
+              <span
+                className={styles.swatch}
+                style={{ color: TAJWEED_COLORS[group] }}
+                aria-hidden="true"
+              />
+            }
+          >
+            {TAJWEED_LABELS[group][locale]}
+          </Tag>
         </li>
       ))}
     </ul>

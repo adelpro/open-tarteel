@@ -258,7 +258,10 @@ export function FollowAlongPanel({
             )}
           />
           <PitchContour audio={audio} marks={marks} />
-          <TajweedLegend locale={locale === 'ar' ? 'ar' : 'en'} />
+          <TajweedLegend
+            locale={locale === 'ar' ? 'ar' : 'en'}
+            className="text-xs"
+          />
         </>
       )}
     </section>
