@@ -40,7 +40,9 @@ import {
 import { canDownload } from '@/services/reciters/capabilities';
 import { Reciter } from '@/types';
 import { cn, generateFavId } from '@/utils';
+import { getRiwayaKeyFromValue } from '@/utils/get-riwaya-from-mushaf';
 
+import ProviderBadges from './provider-badge';
 import ReciterFilters from './reciter-filters';
 import Sheet from './sheet';
 import SimpleSkeleton from './simple-skeleton';
@@ -244,7 +246,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
 
   const sortShortLabel =
     sortMode === 'alphabetical'
-      ? 'A–Z'
+      ? formatMessage({ id: 'sort.shortAlphabet', defaultMessage: 'A–Z' })
       : sortMode === 'views'
         ? formatMessage({ id: 'sort.shortViews', defaultMessage: 'Views' })
         : formatMessage({ id: 'sort.shortPopular', defaultMessage: 'Popular' });
@@ -441,24 +443,37 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
                     )}
                   >
                     <span className="min-w-0 flex-1">
-                      <span
-                        className={cn(
-                          'block truncate text-[16px] text-foreground',
-                          current && 'font-bold'
-                        )}
-                      >
-                        {reciter.name}
+                      <span className="flex min-w-0 items-baseline gap-2">
+                        <span
+                          className={cn(
+                            'min-w-0 truncate text-[16px] text-foreground',
+                            current && 'font-bold'
+                          )}
+                        >
+                          {reciter.name}
+                        </span>
+                        <span className="shrink-0 text-[16px] text-ink-muted">
+                          {formatMessage({
+                            id: `riwaya.${getRiwayaKeyFromValue(reciter.moshaf.riwaya)}`,
+                          })}
+                        </span>
                       </span>
-                      <span className="mt-1 flex min-w-0 items-center gap-1.5 overflow-hidden text-[12px] text-muted">
+                      <span className="mt-0.5 flex min-w-0 items-center gap-1.5 overflow-hidden whitespace-nowrap text-[13px] text-muted">
                         <span className="min-w-0 truncate">
                           {reciter.moshaf.name}
                         </span>
                         <span aria-hidden="true">·</span>
-                        <span className="shrink-0 text-[11px]">
+                        <span className="shrink-0">
                           {formatMessage({
                             id: SOURCE_LABEL_IDS[reciter.source],
                           })}
                         </span>
+                        <ProviderBadges
+                          source={reciter.source}
+                          max={2}
+                          plain
+                          className="hidden text-[13px] lg:inline"
+                        />
                         {downloaded && (
                           <MdCloudDone
                             className="size-3.5 shrink-0 text-success"
@@ -467,13 +482,13 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
                         )}
                       </span>
                     </span>
-                    <span className="flex w-12 shrink-0 flex-col items-end gap-1 text-[11px] leading-none text-muted">
+                    <span className="flex w-12 shrink-0 flex-col items-end gap-1 text-xs leading-none text-muted">
                       <span className="flex items-center justify-end gap-1">
                         <BsStarFill
                           className="size-3 shrink-0 text-mark"
                           aria-hidden="true"
                         />
-                        <span className="tnum w-5 text-end">
+                        <span className="tabular-nums w-5 text-end">
                           {favoriteCounts[favId] ?? 0}
                         </span>
                       </span>
@@ -488,7 +503,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
                           className="size-3 shrink-0"
                           aria-hidden="true"
                         />
-                        <span className="tnum w-5 text-end">
+                        <span className="tabular-nums w-5 text-end">
                           {viewCounts[favId] ?? 0}
                         </span>
                       </span>
