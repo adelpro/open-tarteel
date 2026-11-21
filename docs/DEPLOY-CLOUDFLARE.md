@@ -28,6 +28,11 @@ static assets binding, the self-reference service binding, and
 `upload_source_maps: false`. The last one matters: uploading the ~14 MB source
 map stalled on this network, while the 11.7 MB Worker uploaded successfully.
 
+`/api/reciters` must not gzip manually on Cloudflare. The edge already
+compresses responses; gzip plus edge zstd left gzip bytes that the client could
+not parse, which surfaced as "فشل في تحميل القراء". The route skips manual gzip
+when the `cf-ray` header is present.
+
 ## Environment
 
 Public values are inlined at build time from `.env.cloudflare.example`. Use
