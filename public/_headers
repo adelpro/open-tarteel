@@ -1,0 +1,13 @@
+# Cloudflare Workers static assets: keep these in sync with netlify.toml.
+# The service worker must never be served from the HTTP cache.
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+  Service-Worker-Allowed: /
+
+# Health endpoint used by deploy smoke tests.
+/api/health
+  Cache-Control: no-store
+
+# Connectivity probes must never be cached.
+/offline-check
+  Cache-Control: no-store, max-age=0
