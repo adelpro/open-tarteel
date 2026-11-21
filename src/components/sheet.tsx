@@ -296,7 +296,7 @@ export default function Sheet({
 
   const headerContent = (
     <>
-      <h2 className="text-base font-semibold text-foreground">{title}</h2>
+      <h2 className="text-base font-bold text-foreground">{title}</h2>
       <div className="flex items-center gap-1">
         {wide && onTogglePin ? (
           <button
@@ -312,7 +312,7 @@ export default function Sheet({
               defaultMessage: pinned ? 'Unpin panel' : 'Pin panel',
             })}
             className={cn(
-              'flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-surface-sunken',
+              'focus-ring flex h-11 w-11 items-center justify-center rounded-control transition-colors hover:bg-surface-sunken',
               pinned ? 'text-foreground' : 'text-muted'
             )}
           >
@@ -330,7 +330,7 @@ export default function Sheet({
             id: 'close',
             defaultMessage: 'Close',
           })}
-          className="-me-2 flex h-11 w-11 items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-sunken hover:text-foreground"
+          className="focus-ring -me-2 flex h-11 w-11 items-center justify-center rounded-control text-muted transition-colors hover:bg-surface-sunken hover:text-foreground"
         >
           <MdClose className="size-5" />
         </button>
@@ -347,7 +347,7 @@ export default function Sheet({
           open ? 'flex' : 'hidden'
         )}
       >
-        <div className="flex h-[52px] shrink-0 items-center justify-between border-b border-border px-4">
+        <div className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4">
           {headerContent}
         </div>
         {toolbar}
@@ -375,7 +375,7 @@ export default function Sheet({
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose();
       }}
-      className="fixed inset-x-0 bottom-0 top-auto m-0 mx-auto w-full max-w-[520px] rounded-t-2xl border-t border-border bg-surface p-0 text-foreground backdrop:bg-zinc-500/50 dark:backdrop:bg-zinc-900/60"
+      className="fixed inset-x-0 bottom-0 top-auto m-0 mx-auto w-full max-w-[520px] rounded-t-2xl border-t border-border bg-surface p-0 text-foreground backdrop:bg-scrim"
     >
       <span
         aria-hidden="true"
@@ -385,7 +385,7 @@ export default function Sheet({
       </span>
       <div ref={panelRef} className="flex h-[90dvh] flex-col">
         <div
-          className="flex h-[52px] shrink-0 select-none items-center justify-between border-b border-border px-4"
+          className="flex h-14 shrink-0 select-none items-center justify-between border-b border-border px-4"
           onPointerDown={onDragStart}
           onPointerMove={onDragMove}
           onPointerUp={(event) => finishDrag(event, false)}

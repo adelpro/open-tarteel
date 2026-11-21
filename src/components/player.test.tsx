@@ -22,7 +22,10 @@ vi.mock('@/hooks/use-offline-download', () => ({
 }));
 vi.mock('./player-controls', () => ({ default: () => null }));
 vi.mock('./range', () => ({ default: () => null }));
-vi.mock('./track-info', () => ({ default: () => null }));
+vi.mock('./track-info', () => ({
+  default: () => null,
+  NowPlayingHeader: () => null,
+}));
 
 const playlist = [1, 2, 3].map((surah) => ({
   surahId: String(surah),

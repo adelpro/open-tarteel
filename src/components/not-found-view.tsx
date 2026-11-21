@@ -26,8 +26,8 @@ export function NotFoundView({ locale }: { locale: SeoLocale }) {
   const copy = COPY[locale];
 
   return (
-    <div className="mt-4 flex min-h-screen items-center justify-center bg-gray-100 p-4">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 text-center shadow-lg">
+    <div className="mt-4 flex min-h-screen items-center justify-center bg-canvas p-4">
+      <div className="w-full max-w-md rounded-lg bg-surface p-6 text-center">
         <h1 className="mt-4 text-2xl font-bold">{copy.title}</h1>
         <Image
           src={failSVG}
@@ -36,12 +36,12 @@ export function NotFoundView({ locale }: { locale: SeoLocale }) {
           height={200}
           className="mx-auto"
         />
-        <p className="mt-4 text-gray-600">{copy.body}</p>
+        <p className="mt-4 text-ink-muted">{copy.body}</p>
 
         <div className="mt-6">
           <LocalizedLink
             href="/"
-            className="hover:from-brand-CTA-blue-700 inline-block w-full rounded-md bg-gradient-to-r from-brand-CTA-blue-600 to-brand-CTA-blue-500 px-4 py-2 font-medium text-white hover:to-brand-CTA-blue-600"
+            className="inline-block w-full rounded-md bg-primary px-4 py-2 font-bold text-on-primary transition-colors duration-180 hover:bg-primary-hover"
           >
             {copy.home}
           </LocalizedLink>

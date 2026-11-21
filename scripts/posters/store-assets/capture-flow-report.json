@@ -1,0 +1,104 @@
+{
+  "app": "Open Tarteel",
+  "template": "noor",
+  "structure": "stores",
+  "files": [
+    {
+      "path": "App Store/ar-SA/iPhone 6.9/01.png",
+      "width": 1320,
+      "height": 2868,
+      "family": "iphone",
+      "lang": "ar-SA",
+      "slide": 1
+    },
+    {
+      "path": "App Store/ar-SA/iPhone 6.9/02.png",
+      "width": 1320,
+      "height": 2868,
+      "family": "iphone",
+      "lang": "ar-SA",
+      "slide": 2
+    },
+    {
+      "path": "App Store/ar-SA/iPhone 6.9/03.png",
+      "width": 1320,
+      "height": 2868,
+      "family": "iphone",
+      "lang": "ar-SA",
+      "slide": 3
+    },
+    {
+      "path": "App Store/ar-SA/iPad 13/01.png",
+      "width": 2064,
+      "height": 2752,
+      "family": "ipad",
+      "lang": "ar-SA",
+      "slide": 1
+    },
+    {
+      "path": "App Store/ar-SA/iPad 13/02.png",
+      "width": 2064,
+      "height": 2752,
+      "family": "ipad",
+      "lang": "ar-SA",
+      "slide": 2
+    },
+    {
+      "path": "App Store/ar-SA/iPad 13/03.png",
+      "width": 2064,
+      "height": 2752,
+      "family": "ipad",
+      "lang": "ar-SA",
+      "slide": 3
+    },
+    {
+      "path": "Google Play/ar/Phone/01.png",
+      "width": 1080,
+      "height": 1920,
+      "family": "android-phone",
+      "lang": "ar-SA",
+      "slide": 1
+    },
+    {
+      "path": "Google Play/ar/Phone/02.png",
+      "width": 1080,
+      "height": 1920,
+      "family": "android-phone",
+      "lang": "ar-SA",
+      "slide": 2
+    },
+    {
+      "path": "Google Play/ar/Phone/03.png",
+      "width": 1080,
+      "height": 1920,
+      "family": "android-phone",
+      "lang": "ar-SA",
+      "slide": 3
+    },
+    {
+      "path": "Google Play/ar/Tablet 10/01.png",
+      "width": 1440,
+      "height": 2560,
+      "family": "android-tablet",
+      "lang": "ar-SA",
+      "slide": 1
+    },
+    {
+      "path": "Google Play/ar/Tablet 10/02.png",
+      "width": 1440,
+      "height": 2560,
+      "family": "android-tablet",
+      "lang": "ar-SA",
+      "slide": 2
+    },
+    {
+      "path": "Google Play/ar/Tablet 10/03.png",
+      "width": 1440,
+      "height": 2560,
+      "family": "android-tablet",
+      "lang": "ar-SA",
+      "slide": 3
+    }
+  ],
+  "warnings": []
+}

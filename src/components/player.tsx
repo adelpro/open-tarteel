@@ -29,7 +29,7 @@ import { canUseAudioAnalyser } from '@/utils/audio-cors';
 import { FollowAlongPanel } from './follow-along-panel';
 import PlayerControls from './player-controls';
 import Range from './range';
-import TrackInfo from './track-info';
+import TrackInfo, { NowPlayingHeader } from './track-info';
 
 const AudioBarsVisualizer = dynamic(
   () => import('@/components/audio-bars-visualizer'),
@@ -50,7 +50,7 @@ const PlaylistDialog = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-12 w-full animate-pulse rounded-lg bg-gray-200" />
+      <div className="h-12 w-full rounded-lg bg-surface-sunken" />
     ),
   }
 );
@@ -323,17 +323,18 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
   });
   return (
     <div
+      data-player-card
       className={cn(
-        'flex w-full max-w-xl flex-col items-center justify-start',
+        'flex w-full max-w-lg flex-col items-center justify-start',
         isFullscreen
-          ? 'w-full max-w-xl bg-background text-foreground'
-          : 'min-h-[210px] max-w-xl rounded-[16px] border border-border bg-surface p-3'
+          ? 'w-full max-w-lg bg-background text-foreground'
+          : 'rounded-[16px] border border-border bg-surface p-4'
       )}
     >
       {typeof currentTrack === 'number' && (
-        <div className="flex min-h-[232px] w-full flex-col items-center justify-center">
+        <div className="flex w-full flex-col">
           {!isOnline && availableIndices.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-4 text-center text-[13px] font-medium text-ink-muted">
+            <div className="flex flex-col items-center justify-center p-4 text-center text-[13px] font-bold text-ink-muted">
               <FormattedMessage
                 id="offline.noDownloadedSurahs"
                 defaultMessage="No downloaded surahs for this reciter. Connect to the internet to stream or download."
@@ -353,6 +354,9 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
               crossOrigin={canAnalyse ? 'anonymous' : undefined}
             />
           )}
+
+          {/* 1. now-playing header — surah 18/700, reciter 13 muted */}
+          <NowPlayingHeader currentTrackId={currentTrack} />
 
           {/*
             The line belongs above the spectrum it accompanies. Settings own it
@@ -376,6 +380,7 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
               />
             )}
 
+          {/* 2. visualiser */}
           {spectrumEnabled ? (
             <div className="w-full">
               <AudioBarsVisualizer
@@ -387,64 +392,40 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
             </div>
           ) : null}
 
-          {isFullscreen ? (
-            <>
-              <PlayerControls
-                isPlaying={isPlaying}
-                volumeRef={volumeRef}
-                audioRef={audioRef}
-                audioElement={audioElement}
-                togglePlayPause={togglePlayPause}
-                handlePreviousTrack={handlePreviousTrack}
-                handleNextTrack={handleNextTrack}
-                togglePlaylistOpen={togglePlaylistOpen}
-                currentTrackId={currentTrack}
-                tahfeezActiveRef={tahfeezActiveRef}
-              />
-              <Range
-                currentTime={currentTime}
-                setCurrentTime={setCurrentTime}
-                duration={duration}
-                audioRef={audioRef}
-              />
-              <TrackInfo
-                currentTrackId={currentTrack}
-                duration={duration}
-                currentTime={currentTime}
-              />
-            </>
-          ) : (
-            <>
-              <PlayerControls
-                isPlaying={isPlaying}
-                volumeRef={volumeRef}
-                audioRef={audioRef}
-                audioElement={audioElement}
-                togglePlayPause={togglePlayPause}
-                handlePreviousTrack={handlePreviousTrack}
-                handleNextTrack={handleNextTrack}
-                togglePlaylistOpen={togglePlaylistOpen}
-                currentTrackId={currentTrack}
-                tahfeezActiveRef={tahfeezActiveRef}
-              />
-              <Range
-                currentTime={currentTime}
-                setCurrentTime={setCurrentTime}
-                duration={duration}
-                audioRef={audioRef}
-              />
-              <PlaylistDialog
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                setCurrentTrack={setCurrentTrack}
-              />
-              <TrackInfo
-                currentTrackId={currentTrack}
-                duration={duration}
-                currentTime={currentTime}
-              />
-            </>
-          )}
+          {/* 3. seek */}
+          <Range
+            currentTime={currentTime}
+            setCurrentTime={setCurrentTime}
+            duration={duration}
+            audioRef={audioRef}
+          />
+
+          {/* 4. transport */}
+          <PlayerControls
+            isPlaying={isPlaying}
+            volumeRef={volumeRef}
+            audioRef={audioRef}
+            audioElement={audioElement}
+            togglePlayPause={togglePlayPause}
+            handlePreviousTrack={handlePreviousTrack}
+            handleNextTrack={handleNextTrack}
+            togglePlaylistOpen={togglePlaylistOpen}
+            currentTrackId={currentTrack}
+            tahfeezActiveRef={tahfeezActiveRef}
+          />
+
+          {/* 5. one metadata line */}
+          <TrackInfo
+            currentTrackId={currentTrack}
+            duration={duration}
+            currentTime={currentTime}
+          />
+
+          <PlaylistDialog
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            setCurrentTrack={setCurrentTrack}
+          />
         </div>
       )}
     </div>

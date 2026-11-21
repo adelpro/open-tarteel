@@ -96,7 +96,7 @@ export default function Dialog({
       }}
       onKeyDown={handleKeyDown}
       className={cn(
-        'top-50 left-50 -translate-x-50 -translate-y-50 fixed z-[60] mx-auto w-[98%] max-w-4xl origin-top animate-slideInWithFade p-2 backdrop:bg-zinc-500/50 dark:backdrop:bg-zinc-900/50',
+        'top-50 left-50 -translate-x-50 -translate-y-50 fixed z-[60] mx-auto w-[98%] max-w-4xl origin-top animate-slideInWithFade p-2 backdrop:bg-scrim',
         className
       )}
       aria-modal="true"
@@ -104,7 +104,7 @@ export default function Dialog({
       aria-labelledby={ariaLabelledBy}
     >
       {/* Apply overflow and rounded corners to the main content container */}
-      <div className="h-full w-full overflow-hidden rounded-2xl border border-gray-200/80 bg-background p-1 text-foreground shadow-2xl dark:border-gray-700 sm:p-2">
+      <div className="h-full w-full overflow-hidden rounded-2xl border border-border bg-surface p-1 text-ink sm:p-2">
         <div className="h-full w-full overflow-y-auto rounded-xl">
           {!hideCloseButton && (
             <div className="m-2 flex items-center justify-end">
@@ -112,7 +112,7 @@ export default function Dialog({
                 type="button"
                 onClick={() => setIsOpen(false)}
                 aria-label="Close"
-                className="transition-transform duration-200 hover:scale-110"
+                className="focus-ring transition-opacity duration-180 hover:opacity-70"
               >
                 <Image src={close} alt="close" width={24} height={24} />
               </button>

@@ -37,7 +37,7 @@ const BETA = () =>
     'provider.badge.beta',
     'Beta',
     <FiAlertTriangle size={11} aria-hidden="true" />,
-    'warning'
+    'neutral'
   );
 
 const TIMING = (coverage: 'all' | 'partial' | 'none') =>
@@ -137,7 +137,7 @@ export default function ProviderBadges({
   if (plain) {
     return (
       <span
-        className={cn('text-[11px] text-ink-muted', className)}
+        className={cn('text-xs text-ink-muted', className)}
         title={tooltip}
       >
         {tooltip}

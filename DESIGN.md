@@ -38,6 +38,8 @@ colors:
   warning-dark: '#FBBF24'
   danger: '#DC2626'
   danger-dark: '#F87171'
+  # Single overlay backdrop for dialogs and sheets
+  scrim: 'rgba(0, 0, 0, 0.5)'
   # Palette: warm
   warm-canvas: '#F6F2E9'
   warm-canvas-dark: '#0B110F'
@@ -204,6 +206,8 @@ are identical across all three.
 - **Border** (`--border`) draws every hairline: card edges, row dividers, input
   outlines. **Border-strong** is for the focused input and the selected card
   only. Borders are always 1px.
+- **Scrim** (`--scrim`) is the one overlay backdrop, shared by every dialog and
+  sheet. It is the same neutral dark wash in every palette and mode.
 - **Success / Warning / Danger** are functional and never decorative.
   Success is download-complete and saved. Warning is _forced_ offline and
   storage pressure. Danger is failed downloads and destructive actions.
@@ -474,6 +478,46 @@ progress fill.
 - Don't mix `m-1`-style section margins with padded cards. One gutter system.
 - Don't make the user scroll past filters to see results. One filter axis,
   one disclosure.
+- Don't write a `brand-*` hex value or a Tailwind default-palette class
+  (`zinc-*`, `sky-*`, `blue-*`, `emerald-*`, `red-*`, `neutral-*`, or any
+  other default ramp) in a component. Components read semantic roles; only
+  the token blocks know hex values.
+- Don't add ambient orbs or `blur-[Npx]` decoration in any palette or mode.
+  `warm` and `night` remove the ambient orbs entirely.
+- Don't use `transition-all`. Animate only the properties named in Motion —
+  colour, background, opacity, sheet translate, and progress width.
+- Don't use font weight 500 or 600 in any family. Tajawal loads 400/700/900
+  only and no other weight is available.
+- Don't use `text-[10px]`, `text-[8px]`, or any size below the 12px micro
+  floor.
+- Don't create a second `Tag`, a second overlay, or a second focus ring. There
+  is exactly one of each in the app; extend the primitive rather than writing
+  a new one.
+- Don't hard-code spectrum colours. The spectrum reads CSS variables only, so
+  it follows every palette × mode combination.
+
+## Enforcement
+
+DESIGN.md is the authoritative specification for this product's interface.
+Code follows this file; when the two disagree the file wins and the code
+changes. A new colour, type step, radius, or spacing value is added here as a
+token first, mapped in `tailwind.config.ts`, then read through its semantic
+alias — never introduced ad hoc inside a component.
+
+These are hard rules, checked in code review, not stylistic preferences:
+
+- No `brand-*` hex values or Tailwind default-palette classes in components;
+  components read semantic roles, only the token blocks hold hex values.
+- No ambient orbs and no `blur-[Npx]` decoration in any palette or mode.
+- No `transition-all`; only the properties named in Motion are animated.
+- No font weight 500 or 600 in any family (Tajawal loads 400/700/900 only).
+- No `text-[10px]` or anything below the 12px micro floor.
+- One `Tag` primitive, one overlay primitive, one focus ring — reused, never
+  duplicated.
+- The spectrum reads CSS variables only.
+
+Detector rules this project deliberately waives, with reasons, are recorded
+in `docs/superpowers/decisions/2026-11-18-detector-waivers.md`.
 
 ## Agent Prompt Guide
 

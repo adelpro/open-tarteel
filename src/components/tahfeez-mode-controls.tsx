@@ -31,7 +31,7 @@ interface Segment {
 }
 
 const INPUT_CLASS =
-  'w-20 rounded-lg border border-border bg-surface px-3 py-1.5 text-sm font-medium text-ink focus:outline-none focus:ring-2 focus:ring-primary';
+  'w-20 rounded-lg border border-border bg-surface px-3 py-1.5 text-sm font-bold text-ink focus-ring';
 const LABEL_CLASS = 'text-xs text-ink-muted';
 
 // Tahfeez Mode Controls Component
@@ -312,7 +312,7 @@ export default function TahfeezModeControls({
                 repeat: value,
               }))
             }
-            className={`rounded-md border px-2 py-0.5 font-medium transition-colors ${
+            className={`rounded-md border px-2 py-0.5 font-bold transition-colors ${
               tahfeezSettings.repeat === value
                 ? 'border-primary bg-primary text-on-primary'
                 : 'border-border bg-surface text-ink-muted hover:bg-surface-sunken hover:text-ink'
@@ -335,7 +335,7 @@ export default function TahfeezModeControls({
                 delay: value,
               }))
             }
-            className={`rounded-md border px-2 py-0.5 font-medium transition-colors ${
+            className={`rounded-md border px-2 py-0.5 font-bold transition-colors ${
               tahfeezSettings.delay === value
                 ? 'border-primary bg-primary text-on-primary'
                 : 'border-border bg-surface text-ink-muted hover:bg-surface-sunken hover:text-ink'
@@ -421,7 +421,7 @@ export default function TahfeezModeControls({
       {/* Status summary */}
       {segments.length > 0 && !error && !invalidRange && (
         <div className="mt-3 flex flex-col items-center justify-center gap-1">
-          <div className="text-sm font-medium text-success">
+          <div className="text-sm font-bold text-success">
             {formatMessage({ id: 'tahfeez.readyToStart' })}
           </div>
           <div className="flex items-center gap-2 font-bold text-ink-muted">

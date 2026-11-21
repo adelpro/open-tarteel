@@ -16,6 +16,7 @@ import {
 } from '@/jotai/atom';
 import type { Reciter } from '@/types';
 import { generateFavId } from '@/utils';
+import { getRiwayaKeyFromValue } from '@/utils/get-riwaya-from-mushaf';
 import { useShareReciter } from '@/utils/share';
 
 import ReciterSelectorDialog from './reciter-selector-dialog';
@@ -83,6 +84,12 @@ export default function ReciterSelector({ initialReciter }: Props) {
       defaultMessage: 'Choose a reciter to start listening',
     });
 
+  const riwayaName = displayedReciter?.moshaf?.riwaya
+    ? formatMessage({
+        id: `riwaya.${getRiwayaKeyFromValue(displayedReciter.moshaf.riwaya)}`,
+      })
+    : null;
+
   const favId = displayedReciter ? generateFavId(displayedReciter) : null;
   const isFavorite = favId ? favoriteReciters.includes(favId) : false;
 
@@ -104,10 +111,17 @@ export default function ReciterSelector({ initialReciter }: Props) {
           className="flex min-h-12 min-w-0 flex-1 items-center gap-3 rounded-[10px] px-3 py-1.5 text-start transition-colors duration-120 hover:bg-surface-sunken"
         >
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-[16px] font-bold text-ink">
-              {displayedReciterName}
+            <span className="flex min-w-0 items-baseline gap-2">
+              <span className="min-w-0 truncate text-[16px] font-bold text-ink">
+                {displayedReciterName}
+              </span>
+              {riwayaName ? (
+                <span className="shrink-0 text-[13px] text-ink-muted">
+                  {riwayaName}
+                </span>
+              ) : null}
             </span>
-            <span className="mt-0.5 block truncate text-[12px] text-ink-muted">
+            <span className="mt-0.5 block truncate text-xs text-ink-muted">
               {moshafName}
             </span>
           </span>

@@ -78,8 +78,12 @@ describe('PlayerControls', () => {
   it('mutes on a long press and does not open the slider', () => {
     vi.useFakeTimers();
     localStorage.setItem('volume-value', '0.8');
-    const { store, getByRole, queryByRole } = renderControls();
-    const button = getByRole('button', { name: 'Volume control' });
+    const { store, container } = renderControls();
+    // Volume now lives in the ⋯ sheet; a closed dialog hides it from role
+    // queries, so address the control directly.
+    const button = container.querySelector(
+      'button[aria-label="Volume control"]'
+    ) as HTMLButtonElement;
 
     fireEvent.pointerDown(button);
     act(() => {
@@ -89,14 +93,16 @@ describe('PlayerControls', () => {
     fireEvent.click(button);
 
     expect(store.get(volumeAtom)).toBe(0);
-    expect(queryByRole('slider')).toBeNull();
+    expect(container.querySelector('input[type="range"]')).toBeNull();
   });
 
   it('restores the previous level on a second long press', () => {
     vi.useFakeTimers();
     localStorage.setItem('volume-value', '0.8');
-    const { store, getByRole } = renderControls();
-    const button = getByRole('button', { name: 'Volume control' });
+    const { store, container } = renderControls();
+    const button = container.querySelector(
+      'button[aria-label="Volume control"]'
+    ) as HTMLButtonElement;
 
     fireEvent.pointerDown(button);
     act(() => {
@@ -116,8 +122,10 @@ describe('PlayerControls', () => {
   it('persists the last audible level when muting', () => {
     vi.useFakeTimers();
     localStorage.setItem('volume-value', '0.8');
-    const { getByRole } = renderControls();
-    const button = getByRole('button', { name: 'Volume control' });
+    const { container } = renderControls();
+    const button = container.querySelector(
+      'button[aria-label="Volume control"]'
+    ) as HTMLButtonElement;
 
     fireEvent.pointerDown(button);
     act(() => {
@@ -132,8 +140,10 @@ describe('PlayerControls', () => {
     vi.useFakeTimers();
     localStorage.setItem('volume-value', '0');
     localStorage.setItem('last-volume-value', '0.8');
-    const { store, getByRole } = renderControls();
-    const button = getByRole('button', { name: 'Volume control' });
+    const { store, container } = renderControls();
+    const button = container.querySelector(
+      'button[aria-label="Volume control"]'
+    ) as HTMLButtonElement;
 
     fireEvent.pointerDown(button);
     act(() => {
@@ -145,13 +155,15 @@ describe('PlayerControls', () => {
   });
 
   it('keeps a tap for the volume slider', () => {
-    const { getByRole } = renderControls();
-    const button = getByRole('button', { name: 'Volume control' });
+    const { container } = renderControls();
+    const button = container.querySelector(
+      'button[aria-label="Volume control"]'
+    ) as HTMLButtonElement;
 
     fireEvent.pointerDown(button);
     fireEvent.pointerUp(button);
     fireEvent.click(button);
 
-    expect(getByRole('slider')).toBeInTheDocument();
+    expect(container.querySelector('input[type="range"]')).toBeInTheDocument();
   });
 });

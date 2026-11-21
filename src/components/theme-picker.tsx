@@ -26,7 +26,7 @@ const PALETTES: PaletteOption[] = [
     label: 'Warm',
     descriptionId: 'theme.warmDescription',
     description: 'Paper, emerald, brass',
-    swatches: ['#f6f2e9', '#0c6b53', '#8a6420'],
+    swatches: ['var(--warm-canvas)', 'var(--warm-primary)', 'var(--warm-mark)'],
   },
   {
     value: 'classic',
@@ -34,7 +34,11 @@ const PALETTES: PaletteOption[] = [
     label: 'Classic',
     descriptionId: 'theme.classicDescription',
     description: 'Sky blue on zinc',
-    swatches: ['#f4f4f5', '#0ea5e9', '#18181b'],
+    swatches: [
+      'var(--classic-canvas)',
+      'var(--classic-primary)',
+      'var(--classic-ink)',
+    ],
   },
   {
     value: 'night',
@@ -42,7 +46,13 @@ const PALETTES: PaletteOption[] = [
     label: 'Night',
     descriptionId: 'theme.nightDescription',
     description: 'Green-black and mint',
-    swatches: ['#0a0d0c', '#6fe3b8', '#e3c27e'],
+    // Night is dark-first: the description says green-black and mint, so the
+    // preview must show the dark palette values, not the light-mode ones.
+    swatches: [
+      'var(--night-canvas-dark)',
+      'var(--night-primary-dark)',
+      'var(--night-mark-dark)',
+    ],
   },
 ];
 
@@ -124,7 +134,7 @@ export default function ThemePicker({ className }: { className?: string }) {
                     defaultMessage: option.label,
                   })}
                 </span>
-                <span className="mt-0.5 block text-[11px] leading-tight text-ink-muted">
+                <span className="mt-0.5 block text-xs leading-tight text-ink-muted">
                   {formatMessage({
                     id: option.descriptionId,
                     defaultMessage: option.description,

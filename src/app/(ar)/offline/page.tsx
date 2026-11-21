@@ -22,10 +22,8 @@ export default function OfflinePage() {
       />
 
       <h1 className="mb-2 text-2xl font-bold">لا يوجد اتصال بالإنترنت</h1>
-      <p className="mb-1 text-lg text-gray-500 dark:text-gray-400">
-        You are currently offline
-      </p>
-      <p className="mb-6 max-w-sm text-sm text-gray-400 dark:text-gray-500">
+      <p className="mb-1 text-lg text-ink-muted">You are currently offline</p>
+      <p className="mb-6 max-w-sm text-sm text-ink-muted">
         تحقق من اتصالك بالإنترنت وحاول مرة أخرى. المحتوى الذي تم تنزيله مسبقاً
         لا يزال متاحاً.
       </p>

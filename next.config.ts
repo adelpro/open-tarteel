@@ -84,6 +84,9 @@ const nextConfig: NextConfig = {
       (isNetlifyPreview ? 'true' : 'false'),
   },
   poweredByHeader: false,
+  // The Next dev tools badge docks bottom-left and covers the footer at 375px.
+  // It is dev-only decoration, not part of the interface.
+  devIndicators: false,
   productionBrowserSourceMaps: false,
   allowedDevOrigins: ['localhost'],
   compiler: {

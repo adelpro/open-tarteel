@@ -46,7 +46,7 @@ export default function Segmented<T extends string>({
             disabled={option.disabled}
             onClick={() => onChange(option.value)}
             className={cn(
-              'flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-[8px] px-2 text-[13px] font-bold transition-colors duration-120',
+              'focus-ring flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-[8px] px-2 text-[13px] font-bold transition-colors duration-120',
               active
                 ? 'border border-border bg-surface text-ink'
                 : 'border border-transparent text-ink-muted hover:text-ink',

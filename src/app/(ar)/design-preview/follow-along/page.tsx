@@ -33,7 +33,7 @@ export default function FollowAlongPreviewPage() {
       className="mx-auto flex w-full max-w-2xl flex-col gap-6 p-6"
     >
       <div>
-        <h1 className="text-xl font-semibold">معاينة: تتبّع التلاوة</h1>
+        <h1 className="text-xl font-bold">معاينة: تتبّع التلاوة</h1>
         <p className="mt-1 text-sm text-ink-muted">
           صفحة داخلية للمعاينة فقط: سطر واحد، مفتاح الألوان، ومنحنى الصوت بدون
           مشغّل.

@@ -1,3 +1,4 @@
+import Tag from '@/components/ui/tag';
 import {
   AHKAM_GROUPS,
   TAJWEED_COLORS,
@@ -28,12 +29,19 @@ export function TajweedLegend({
     >
       {AHKAM_GROUPS.map((group) => (
         <li key={group} className={styles.legendItem}>
-          <span
-            className={styles.swatch}
-            style={{ color: TAJWEED_COLORS[group] }}
-            aria-hidden="true"
-          />
-          {TAJWEED_LABELS[group][locale]}
+          <Tag
+            variant="static"
+            size="xs"
+            icon={
+              <span
+                className={styles.swatch}
+                style={{ color: TAJWEED_COLORS[group] }}
+                aria-hidden="true"
+              />
+            }
+          >
+            {TAJWEED_LABELS[group][locale]}
+          </Tag>
         </li>
       ))}
     </ul>

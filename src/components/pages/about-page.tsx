@@ -20,7 +20,7 @@ export default function AboutPage() {
           />
         </h1>
 
-        <div className="m-1 space-y-4 rounded p-2 ps-4 text-lg md:m-2 md:border md:border-gray-200 md:p-8 md:shadow-sm md:dark:border-gray-700">
+        <div className="m-1 space-y-4 rounded p-2 ps-4 text-lg md:m-2 md:border md:border-border md:p-8">
           <p>
             <FormattedMessage
               defaultMessage="Quran.us.kg هو تطبيق قرآن مفتوح المصدر صمم لتوفير تجربة استماع مثالية عبر مختلف المنصات. بُني التطبيق باستخدام تقنيات ويب حديثة لضمان:"
@@ -64,7 +64,7 @@ export default function AboutPage() {
 
           <FollowAlongAbout />
 
-          <h2 className="mb-2 mt-6 text-2xl font-semibold">
+          <h2 className="mb-2 mt-6 text-2xl font-bold">
             <FormattedMessage
               defaultMessage="مصادر تلاوة متعددة"
               id="about.providers.title"
@@ -85,8 +85,8 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <section className="m-1 rounded p-2 ps-4 md:m-2 md:border md:border-gray-200 md:p-8 md:shadow-sm md:dark:border-gray-700">
-          <h2 className="mb-3 text-2xl font-semibold">
+        <section className="m-1 rounded p-2 ps-4 md:m-2 md:border md:border-border md:p-8">
+          <h2 className="mb-3 text-2xl font-bold">
             <FormattedMessage
               defaultMessage="أسئلة شائعة"
               id="about.faq.title"
@@ -95,7 +95,7 @@ export default function AboutPage() {
           <div className="space-y-4">
             {[1, 2, 3, 4].map((number) => (
               <div key={number}>
-                <h3 className="text-lg font-semibold">
+                <h3 className="text-lg font-bold">
                   <FormattedMessage id={`about.faq.q${number}`} />
                 </h3>
                 <p className="mt-1">
@@ -106,7 +106,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <div className="mt-5 flex w-full max-w-2xl items-center justify-center text-sm text-gray-600">
+        <div className="mt-5 flex w-full max-w-2xl items-center justify-center text-sm text-ink-muted">
           <p>
             <FormattedMessage
               defaultMessage="جميع الحقوق محفوظة"
@@ -116,7 +116,7 @@ export default function AboutPage() {
           </p>
         </div>
         {/* Credits section at the very bottom */}
-        <div className="flex w-full justify-center text-gray-600">
+        <div className="flex w-full justify-center text-ink-muted">
           <div className="px-4 py-2 text-sm">
             <FormattedMessage
               id="about.footer.madeBy"

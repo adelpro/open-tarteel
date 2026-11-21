@@ -54,7 +54,7 @@ export default function HomeClient() {
     return (
       <div className="flex w-full justify-center">
         <div className="flex min-h-16 w-full max-w-lg items-center rounded-2xl border border-border bg-surface p-1.5">
-          <span className="h-4 w-40 animate-pulse rounded-full bg-surface-sunken" />
+          <span className="h-4 w-40 rounded-full bg-surface-sunken" />
         </div>
       </div>
     );

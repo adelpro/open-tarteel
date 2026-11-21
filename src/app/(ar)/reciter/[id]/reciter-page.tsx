@@ -219,12 +219,12 @@ function ReciterContent({
   return (
     <>
       {isFullscreen && (
-        <p className="mb-5 flex items-center justify-center gap-2 text-4xl font-bold text-gray-500">
+        <p className="mb-5 flex items-center justify-center gap-2 text-4xl font-bold text-ink-muted">
           {activeReciter?.name}
         </p>
       )}
       {detailError ? (
-        <div className="flex flex-col items-center gap-3 p-6 text-center text-sm text-gray-500">
+        <div className="flex flex-col items-center gap-3 p-6 text-center text-sm text-ink-muted">
           <p>
             {formatMessage({
               id: 'reciter.loadError',

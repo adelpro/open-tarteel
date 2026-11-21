@@ -89,8 +89,8 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
   return (
     <div className="animate-fade-up p-2 sm:p-4">
       <div className="mb-4 flex items-center justify-between px-2">
-        <h2 className="flex items-center gap-3 text-2xl font-black text-gray-800 dark:text-gray-100">
-          <div className="dark:bg-brand-CTA-blue-400/10 dark:text-brand-CTA-blue-400 flex size-10 items-center justify-center rounded-xl bg-brand-CTA-blue-500/10 text-brand-CTA-blue-500">
+        <h2 className="flex items-center gap-3 text-2xl font-black text-ink">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-surface-sunken text-ink-muted">
             <BsBook className="size-5" />
           </div>
           <FormattedMessage id="playlist.title" />
@@ -98,7 +98,7 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
 
         <Tag variant="static" size="md">
           {displayPlaylist.length}{' '}
-          <span className="font-normal">
+          <span className="font-regular">
             <FormattedMessage
               id="playlist.surahs"
               values={{ count: displayPlaylist.length }}
@@ -126,15 +126,15 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
         ) : (
           <div
             role="note"
-            className="flex items-start gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-xs text-gray-600 dark:border-gray-700 dark:bg-gray-800/60 dark:text-gray-300"
+            className="flex items-start gap-2 rounded-lg border border-border bg-surface-sunken px-3 py-2.5 text-xs text-ink-muted"
           >
             <MdCloudOff
               size={18}
-              className="mt-0.5 shrink-0 text-gray-400 dark:text-gray-500"
+              className="mt-0.5 shrink-0 text-ink-muted"
               aria-hidden="true"
             />
             <div className="space-y-0.5">
-              <p className="font-semibold text-gray-700 dark:text-gray-200">
+              <p className="font-bold text-ink">
                 <FormattedMessage
                   id="download.unavailableTitle"
                   defaultMessage="Download unavailable for this provider"
@@ -152,9 +152,9 @@ export default function Playlist({ setIsOpen, setCurrentTrack }: Props) {
       </div>
 
       {displayPlaylist.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-3 py-12 text-center text-gray-500 dark:text-gray-400">
-          <MdCloudDone className="size-12 text-gray-400 dark:text-gray-500" />
-          <p className="max-w-md font-medium">
+        <div className="flex flex-col items-center justify-center gap-3 py-12 text-center text-ink-muted">
+          <MdCloudDone className="size-12 text-ink-muted" />
+          <p className="max-w-md font-bold">
             {!isOnline
               ? formatMessage({
                   id: 'offline.noDownloadedSurahs',

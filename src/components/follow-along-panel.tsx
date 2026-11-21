@@ -238,7 +238,7 @@ export function FollowAlongPanel({
               locale={locale === 'ar' ? 'ar' : 'en'}
             />
           ) : null}
-          <TajweedLegend locale={locale === 'ar' ? 'ar' : 'en'} />
+          <TajweedLegend locale={locale === 'ar' ? 'ar' : 'en'} className="text-xs" />
         </>
       )}
     </section>

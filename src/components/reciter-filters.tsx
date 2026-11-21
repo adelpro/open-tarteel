@@ -9,6 +9,7 @@ import { cn } from '@/utils';
 
 import ProviderBadges from './provider-badge';
 import Switch from './ui/switch';
+import Tag from './ui/tag';
 
 type Option = { value: string; label: string };
 
@@ -76,16 +77,16 @@ export default function ReciterFilters({
         type="button"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
-        className="flex h-10 items-center gap-2 rounded-[8px] border border-border bg-surface px-3 text-[13px] font-bold text-ink transition-colors duration-120 hover:bg-surface-sunken"
+        className="focus-ring flex h-11 items-center gap-2 rounded-[8px] border border-border bg-surface px-3 text-[13px] font-bold text-ink transition-colors duration-120 hover:bg-surface-sunken"
       >
         <MdTune className="size-4 text-ink-muted" aria-hidden="true" />
-        <span>
+        <Tag variant="static" tone="neutral" size="sm">
           {formatMessage({ id: 'filters.title', defaultMessage: 'Filters' })}
-        </span>
+        </Tag>
         {activeCount > 0 ? (
-          <span className="flex size-5 items-center justify-center rounded-full bg-primary text-[11px] tabular-nums text-on-primary">
+          <Tag variant="status" tone="primary" size="xs">
             {activeCount}
-          </span>
+          </Tag>
         ) : null}
       </button>
 
@@ -100,7 +101,7 @@ export default function ReciterFilters({
         onClick={(event) => {
           if (event.target === dialogRef.current) setOpen(false);
         }}
-        className="fixed inset-x-0 bottom-0 top-auto m-0 mx-auto w-full max-w-[520px] rounded-t-[20px] border-t border-border bg-surface p-0 text-ink backdrop:bg-zinc-900/50 lg:inset-0 lg:m-auto lg:h-fit lg:max-h-[80dvh] lg:max-w-md lg:rounded-card lg:border"
+        className="fixed inset-x-0 bottom-0 top-auto m-0 mx-auto w-full max-w-[520px] rounded-t-[20px] border-t border-border bg-surface p-0 text-ink backdrop:bg-scrim lg:inset-0 lg:m-auto lg:h-fit lg:max-h-[80dvh] lg:max-w-md lg:rounded-card lg:border"
       >
         <div className="flex h-14 items-center justify-between border-b border-border px-4">
           <h2 id={titleId} className="text-[16px] font-bold">
@@ -109,7 +110,7 @@ export default function ReciterFilters({
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="-me-2 flex size-11 items-center justify-center rounded-full text-ink-muted transition-colors duration-120 hover:bg-surface-sunken hover:text-ink"
+            className="focus-ring -me-2 flex size-11 items-center justify-center rounded-control text-ink-muted transition-colors duration-120 hover:bg-surface-sunken hover:text-ink"
             aria-label={formatMessage({
               id: 'common.close',
               defaultMessage: 'Close',
@@ -199,7 +200,7 @@ export default function ReciterFilters({
             type="button"
             onClick={clearAll}
             disabled={activeCount === 0}
-            className="h-11 px-2 text-[13px] font-bold text-ink-muted transition-colors duration-120 hover:text-ink disabled:opacity-40"
+            className="focus-ring h-11 px-2 text-[13px] font-bold text-ink-muted transition-colors duration-120 hover:text-ink disabled:opacity-40"
           >
             {formatMessage({
               id: 'filters.clear',
@@ -209,7 +210,7 @@ export default function ReciterFilters({
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="flex h-11 items-center rounded-[10px] bg-primary px-5 text-[14px] font-bold text-on-primary transition-colors duration-120 hover:bg-primary-hover"
+            className="focus-ring flex h-11 items-center rounded-[10px] bg-primary px-5 text-[14px] font-bold text-on-primary transition-colors duration-120 hover:bg-primary-hover"
           >
             {formatMessage(
               {
@@ -236,10 +237,10 @@ function FilterSection({
 }) {
   return (
     <section className={cn('px-2', className)}>
-      <h3 className="px-2 pb-1 pt-2 text-[12px] font-bold text-ink-muted">
+      <h3 className="px-2 pb-1 pt-2 text-xs font-bold text-ink-muted">
         {title}
       </h3>
-      <ul>{children}</ul>
+      <ul className="divide-y divide-border">{children}</ul>
     </section>
   );
 }
@@ -262,7 +263,7 @@ function CheckRow({
           type="checkbox"
           checked={checked}
           onChange={onChange}
-          className="size-4 shrink-0 rounded border-border-strong text-primary focus:ring-primary"
+          className="focus-ring size-4 shrink-0 rounded border-border-strong text-primary"
         />
         <span className="min-w-0">
           <span className="block truncate text-[14px] text-ink">{label}</span>

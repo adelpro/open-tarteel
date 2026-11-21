@@ -17,29 +17,29 @@ export default function Error({ error, reset }: Props): React.ReactElement {
       : 'Something went wrong. Please try again.';
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <div className="mx-auto flex w-full max-w-md flex-col rounded-lg bg-white px-10 py-8 text-center shadow-lg dark:bg-gray-800">
+    <div className="flex min-h-screen w-full items-center justify-center bg-canvas">
+      <div className="mx-auto flex w-full max-w-md flex-col rounded-lg bg-surface px-10 py-8 text-center">
         <Image src={errorSVG} alt="Error" className="m-auto" />
-        <h1 className="mb-5 text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 className="mb-5 text-3xl font-bold text-ink">
           {error.name || 'Error'}
         </h1>
-        <p className="mb-8 text-xl text-gray-600 dark:text-gray-300">
+        <p className="mb-8 text-xl text-ink-muted">
           {message}
         </p>
         {error.digest && (
-          <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mb-4 text-sm text-ink-muted">
             Error ID: {error.digest}
           </p>
         )}
         <button
-          className="mx-2 my-4 w-full rounded-md bg-red-500 py-2 text-white transition-colors duration-300 ease-in-out hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+          className="mx-2 my-4 w-full rounded-md bg-primary py-2 text-on-primary transition-colors duration-180 hover:bg-primary-hover focus-ring"
           onClick={reset}
         >
           Try again
         </button>
         <LocalizedLink
           href="/"
-          className="hover:from-brand-CTA-blue-700 mx-2 w-full rounded-md bg-gradient-to-r from-brand-CTA-blue-600 to-brand-CTA-blue-500 py-2 text-white transition-colors duration-300 ease-in-out hover:to-brand-CTA-blue-600 focus:outline-none focus:ring-2 focus:ring-brand-CTA-blue-500 focus:ring-offset-2"
+          className="mx-2 w-full rounded-md bg-primary py-2 text-on-primary transition-colors duration-180 hover:bg-primary-hover focus-ring"
         >
           Return to the Home page
         </LocalizedLink>
