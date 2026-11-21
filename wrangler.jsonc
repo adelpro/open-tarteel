@@ -4,6 +4,9 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-11-21",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  // Uploading the ~14 MB source map stalls on this network; it is not needed
+  // for the test deploy.
+  "upload_source_maps": false,
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
