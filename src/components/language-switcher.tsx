@@ -28,7 +28,7 @@ export default function LanguageSwitcher() {
           id: 'language.select',
           defaultMessage: 'Select language',
         })}
-        className="focus-visible:ring-primary/35 h-10 appearance-none rounded-[8px] border border-border bg-surface pe-9 ps-3 text-[13px] font-bold text-ink focus:outline-none focus-visible:ring-2"
+        className="focus-ring h-11 appearance-none rounded-[8px] border border-border bg-surface pe-9 ps-3 text-[13px] font-bold text-ink"
       >
         {Object.entries(LANGUAGES).map(([code, config]) => (
           <option key={code} value={code}>
