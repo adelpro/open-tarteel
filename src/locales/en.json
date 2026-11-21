@@ -234,6 +234,7 @@
   "tahfeez.errorAyahs": "Could not find specified ayahs in timestamps",
   "language.select": "Select language",
   "player.modeSwitcher": "Playback mode",
+  "player.playbackMode": "Shuffle / repeat",
   "provider.badge.beta": "Beta",
   "provider.badge.timing": "Timing",
   "provider.badge.timingPartial": "Some timings",

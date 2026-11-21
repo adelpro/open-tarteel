@@ -711,7 +711,7 @@ export default function PlayerControls({
             {SLEEP_MINUTES.map((minutes) => (
               <Tag
                 key={minutes}
-                variant="filter"
+                variant="action"
                 size="md"
                 onClick={() => {
                   setSleepTimer(minutes);
@@ -722,7 +722,7 @@ export default function PlayerControls({
               </Tag>
             ))}
             <Tag
-              variant="filter"
+              variant="action"
               size="md"
               onClick={() => {
                 setSleepTimer('end');
@@ -733,7 +733,7 @@ export default function PlayerControls({
             </Tag>
             {remainingTime ? (
               <Tag
-                variant="filter"
+                variant="action"
                 size="md"
                 className="text-danger"
                 onClick={() => {
@@ -836,10 +836,10 @@ export default function PlayerControls({
 
       {progress || lastError ? (
         <Tag
-          variant="filter"
+          variant="action"
           size="md"
           onClick={() => setShowMoreMenu(true)}
-          className="fixed bottom-[calc(env(safe-area-inset-bottom)+72px)] left-1/2 z-40 -translate-x-1/2 border border-border bg-surface text-ink shadow-md md:bottom-6"
+          className="fixed bottom-[calc(env(safe-area-inset-bottom)+72px)] left-1/2 z-40 -translate-x-1/2 border border-border bg-surface text-ink md:bottom-6"
           icon={
             progress ? (
               <MdCloudDownload className="size-4 text-primary" />

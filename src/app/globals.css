@@ -72,7 +72,9 @@
   --classic-primary: #0ea5e9;
   --classic-ink: #18181b;
   --night-canvas: #f3f4f1;
+  --night-canvas-dark: #0a0d0c;
   --night-primary: #0b6b52;
+  --night-primary-dark: #6fe3b8;
   --night-mark-dark: #e3c27e;
 
   /* The single overlay backdrop, shared by dialogs and sheets. */

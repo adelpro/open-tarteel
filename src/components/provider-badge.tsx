@@ -137,7 +137,7 @@ export default function ProviderBadges({
   if (plain) {
     return (
       <span
-        className={cn('text-[11px] text-ink-muted', className)}
+        className={cn('text-xs text-ink-muted', className)}
         title={tooltip}
       >
         {tooltip}

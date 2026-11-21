@@ -20,7 +20,7 @@ export default function AboutPage() {
           />
         </h1>
 
-        <div className="m-1 space-y-4 rounded p-2 ps-4 text-lg md:m-2 md:border md:border-border md:p-8 md:shadow-sm">
+        <div className="m-1 space-y-4 rounded p-2 ps-4 text-lg md:m-2 md:border md:border-border md:p-8">
           <p>
             <FormattedMessage
               defaultMessage="Quran.us.kg هو تطبيق قرآن مفتوح المصدر صمم لتوفير تجربة استماع مثالية عبر مختلف المنصات. بُني التطبيق باستخدام تقنيات ويب حديثة لضمان:"
@@ -85,7 +85,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <section className="m-1 rounded p-2 ps-4 md:m-2 md:border md:border-border md:p-8 md:shadow-sm">
+        <section className="m-1 rounded p-2 ps-4 md:m-2 md:border md:border-border md:p-8">
           <h2 className="mb-3 text-2xl font-bold">
             <FormattedMessage
               defaultMessage="أسئلة شائعة"

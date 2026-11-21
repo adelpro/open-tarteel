@@ -4,7 +4,7 @@ import React, { ReactNode } from 'react';
 
 import { cn } from '@/utils';
 
-export type TagVariant = 'filter' | 'static' | 'status' | 'count';
+export type TagVariant = 'filter' | 'action' | 'static' | 'status' | 'count';
 export type TagTone =
   'neutral' | 'primary' | 'success' | 'warning' | 'danger' | 'mark';
 
@@ -39,7 +39,9 @@ const toneText: Record<TagTone, string> = {
 
 /**
  * The only tag/chip primitive in the app. One visual language for filters,
- * labels, statuses, and counts.
+ * action chips, labels, statuses, and counts. `filter` is a toggle and emits
+ * `aria-pressed`; `action` looks identical but omits it, for chips that
+ * perform a one-shot command (dismiss, set a timer, open download progress).
  */
 export default function Tag({
   children,
@@ -54,16 +56,17 @@ export default function Tag({
   title,
   'aria-label': ariaLabel,
 }: TagProps) {
-  const interactive = variant === 'filter';
+  const interactive = variant === 'filter' || variant === 'action';
 
   const base =
     'focus-ring inline-flex shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[8px] text-center font-bold leading-5 transition-colors duration-120';
 
   const variantStyles = (() => {
-    if (variant === 'filter') {
+    if (variant === 'filter' || variant === 'action') {
+      const isSelected = variant === 'filter' && selected;
       return cn(
         "relative border after:absolute after:inset-x-0 after:-inset-y-1 after:content-['']",
-        selected
+        isSelected
           ? 'border-primary-line bg-primary-soft text-primary'
           : 'border-border bg-surface text-ink-muted hover:bg-surface-sunken hover:text-ink',
         disabled && 'cursor-not-allowed opacity-50'
@@ -96,7 +99,7 @@ export default function Tag({
         data-tag={variant}
         onClick={onClick}
         disabled={disabled}
-        aria-pressed={selected}
+        aria-pressed={variant === 'filter' ? selected : undefined}
         aria-label={ariaLabel}
         title={title}
         className={cn(base, sizeStyles[size], variantStyles, className)}

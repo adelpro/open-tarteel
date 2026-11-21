@@ -37,10 +37,10 @@ const stopServer = () => {
 let failed = [];
 try {
   let ready = false;
-  for (let i = 0; i < 60; i += 1) {
+  for (let index = 0; index < 60; index += 1) {
     try {
-      const res = await fetch(`${BASE}/api/health`);
-      if (res.ok) { ready = true; break; }
+      const response = await fetch(`${BASE}/api/health`);
+      if (response.ok) { ready = true; break; }
     } catch { /* still starting */ }
     if (server.exitCode !== null) break;
     await sleep(1000);

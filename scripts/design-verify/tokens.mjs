@@ -2,14 +2,54 @@
  * Design-system token assertion for Task 2.
  *
  * Run against a local `next dev` on http://localhost:3000 (branch `develop`).
- * Exits 1 if any of the four token invariants is violated.
+ * Exits 1 if any of the five token invariants is violated.
  */
+import { readdirSync,readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { chromium } from '@playwright/test';
 
 // Default to the local dev server on 3000. The port is overridable because
 // another supervised service may already own 3000 on a shared machine.
 const BASE_URL = `http://localhost:${process.env.DESIGN_VERIFY_PORT ?? '3000'}`;
+const SRC_DIR = fileURLToPath(new URL('../../src/', import.meta.url));
 const failures = [];
+
+/**
+ * Static half of (e): the 12px type floor. A browser check alone cannot see
+ * an undersized utility that no audited page happens to render, so scan the
+ * source tree too. Matches the literal class names, not a regex character
+ * class (text-[8px] must mean exactly that string).
+ */
+function scanUndersizedType(directory) {
+  const hits = [];
+  const pattern = /text-\[(?:8|10|11)px\]/g;
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) {
+      hits.push(...scanUndersizedType(path));
+    } else if (entry.isFile() && /\.(?:tsx?|jsx?|css|mdx?)$/.test(entry.name)) {
+      const text = readFileSync(path, 'utf8');
+      for (const match of text.matchAll(pattern)) {
+        const line = text.slice(0, match.index).split('\n').length;
+        hits.push(`${path.replace(SRC_DIR, 'src/')}:${line} ${match[0]}`);
+      }
+    }
+  }
+  return hits;
+}
+
+const undersizedType = scanUndersizedType(SRC_DIR);
+if (undersizedType.length > 0) {
+  failures.push(`(e) undersized type utility in src/: ${undersizedType.join(' | ')}`);
+}
+console.log(
+  'Static type-floor scan:',
+  undersizedType.length === 0
+    ? 'PASS (no text-[8px], text-[10px] or text-[11px] in src/)'
+    : undersizedType.join(' | ')
+);
 
 let browser;
 try {
@@ -110,4 +150,4 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log('PASS: token assertions (a)-(d) all satisfied');
+console.log('PASS: token assertions (a)-(d) and static type-floor check (e) all satisfied');

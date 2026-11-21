@@ -31,7 +31,7 @@ interface Segment {
 }
 
 const INPUT_CLASS =
-  'w-20 rounded-lg border border-border bg-surface px-3 py-1.5 text-sm font-bold text-ink focus:outline-none focus:ring-2 focus:ring-primary/35 focus:ring-offset-2 focus:ring-offset-background';
+  'w-20 rounded-lg border border-border bg-surface px-3 py-1.5 text-sm font-bold text-ink focus-ring';
 const LABEL_CLASS = 'text-xs text-ink-muted';
 
 // Tahfeez Mode Controls Component

@@ -125,7 +125,7 @@ export default function ContactPage() {
             {formatMessage({ id: 'contact.thank_you_for_contacting' })}
           </p>
           <LocalizedLink href="/" className="mt-4 flex w-full justify-center">
-            <button className="w-full rounded-xl border border-border bg-surface px-6 py-4 text-lg font-bold text-ink transition-colors duration-180 hover:bg-surface-sunken focus:outline-none focus:ring-2 focus:ring-primary/35 focus:ring-offset-2 focus:ring-offset-background">
+            <button className="w-full rounded-xl border border-border bg-surface px-6 py-4 text-lg font-bold text-ink transition-colors duration-180 hover:bg-surface-sunken focus-ring">
               {formatMessage({ id: 'contact.back_to_home' })}
             </button>
           </LocalizedLink>
@@ -149,7 +149,7 @@ export default function ContactPage() {
                 <input
                   type="text"
                   required
-                  className="w-full rounded-xl border border-border bg-surface-sunken p-4 text-lg text-ink transition-colors duration-180 focus:border-strong focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/35 focus:ring-offset-2 focus:ring-offset-background"
+                  className="w-full rounded-xl border border-border bg-surface-sunken p-4 text-lg text-ink transition-colors duration-180 focus:border-strong focus:bg-surface focus-ring"
                   id="name"
                   placeholder={formatMessage({ id: 'contact.name' })}
                   value={name}
@@ -170,7 +170,7 @@ export default function ContactPage() {
                 <input
                   type="email"
                   required
-                  className="w-full rounded-xl border border-border bg-surface-sunken p-4 text-lg text-ink transition-colors duration-180 focus:border-strong focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/35 focus:ring-offset-2 focus:ring-offset-background"
+                  className="w-full rounded-xl border border-border bg-surface-sunken p-4 text-lg text-ink transition-colors duration-180 focus:border-strong focus:bg-surface focus-ring"
                   id="email"
                   placeholder={formatMessage({ id: 'contact.email' })}
                   value={email}
@@ -189,7 +189,7 @@ export default function ContactPage() {
                   {formatMessage({ id: 'contact.message' })}
                 </label>
                 <textarea
-                  className="w-full rounded-xl border border-border bg-surface-sunken p-4 text-lg text-ink transition-colors duration-180 focus:border-strong focus:bg-surface focus:outline-none focus:ring-2 focus:ring-primary/35 focus:ring-offset-2 focus:ring-offset-background"
+                  className="w-full rounded-xl border border-border bg-surface-sunken p-4 text-lg text-ink transition-colors duration-180 focus:border-strong focus:bg-surface focus-ring"
                   id="message"
                   rows={4}
                   required

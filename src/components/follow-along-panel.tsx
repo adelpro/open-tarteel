@@ -216,7 +216,7 @@ export function FollowAlongPanel({
         </div>
         {onClose ? (
           <Tag
-            variant="filter"
+            variant="action"
             size="sm"
             onClick={onClose}
             aria-label={closeLabel}

@@ -84,7 +84,7 @@ function TagGroup({
 }) {
   return (
     <div className={cn('space-y-2', className)}>
-      <p className="text-[11px] font-bold text-ink-muted">{label}</p>
+      <p className="text-xs font-bold text-ink-muted">{label}</p>
       <div className="flex flex-wrap items-center gap-2">{children}</div>
     </div>
   );
@@ -314,7 +314,7 @@ export default function DesignPreview() {
           </div>
         </Section>
 
-        <footer className="border-t border-border pt-4 text-[11px] text-ink-subtle">
+        <footer className="border-t border-border pt-4 text-xs text-ink-subtle">
           Phase 0 validation sheet · 3 palettes × 2 modes
         </footer>
       </div>

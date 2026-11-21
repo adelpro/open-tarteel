@@ -235,6 +235,7 @@
   "tahfeez.errorTimestamps": "فشل تحميل الطوابع الزمنية. تحقق من معرف القارئ ورقم السورة.",
   "tahfeez.errorAyahs": "تعذر العثور على الآيات المحددة في الطوابع الزمنية",
   "player.modeSwitcher": "وضع التشغيل",
+  "player.playbackMode": "عشوائي / تكرار",
   "provider.badge.beta": "تجريبي",
   "provider.badge.timing": "توقيت",
   "provider.badge.timingPartial": "توقيت لبعض السور",

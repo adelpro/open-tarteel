@@ -26,6 +26,13 @@ rendered component changes.
   buttons, inputs, or the player. If it does reproduce, the waiver is void and
   the component must be corrected.
 
+- **Final fix wave (2026-11-21)** — four shadow declarations that had crept
+  back into `about-page.tsx` (two card blocks), `privacy-page.tsx` (card
+  block), `player-controls.tsx` (download-status chip) and `root-shell.tsx`
+  (skip-link focus) were removed. No card, button, input, player or skip-link
+  shadow remains in `src/`; the only `box-shadow` rules left in `globals.css`
+  are 1px focus rings. The waiver condition is true again, not merely intended.
+
 Reviewing: re-run the detector after any change to the palette tokens or to the
 elevation rules in `DESIGN.md`. Add a new row here (with a reason and a scope)
 before suppressing any other rule.

@@ -30,7 +30,7 @@ export default function PrivacyPage() {
         </div>
 
         {/* Content Sections */}
-        <div className="space-y-8 border-border p-2 ps-6 text-lg md:rounded md:border md:p-6 md:ps-10 md:shadow-sm">
+        <div className="space-y-8 border-border p-2 ps-6 text-lg md:rounded md:border md:p-6 md:ps-10">
           <section className="space-y-4">
             <h2 className="text-2xl font-bold">
               <FormattedMessage

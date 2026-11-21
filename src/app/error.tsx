@@ -32,14 +32,14 @@ export default function Error({ error, reset }: Props): React.ReactElement {
           </p>
         )}
         <button
-          className="mx-2 my-4 w-full rounded-md bg-primary py-2 text-on-primary transition-colors duration-180 hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/35 focus:ring-offset-2 focus:ring-offset-background"
+          className="mx-2 my-4 w-full rounded-md bg-primary py-2 text-on-primary transition-colors duration-180 hover:bg-primary-hover focus-ring"
           onClick={reset}
         >
           Try again
         </button>
         <LocalizedLink
           href="/"
-          className="mx-2 w-full rounded-md bg-primary py-2 text-on-primary transition-colors duration-180 hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/35 focus:ring-offset-2 focus:ring-offset-background"
+          className="mx-2 w-full rounded-md bg-primary py-2 text-on-primary transition-colors duration-180 hover:bg-primary-hover focus-ring"
         >
           Return to the Home page
         </LocalizedLink>

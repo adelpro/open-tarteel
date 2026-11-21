@@ -38,9 +38,11 @@ const PALETTES: PaletteOption[] = [
     value: 'night',
     label: 'Night',
     description: 'Green-black and mint',
+    // Night is dark-first: the description says green-black and mint, so the
+    // preview must show the dark palette values, not the light-mode ones.
     swatches: [
-      'var(--night-canvas)',
-      'var(--night-primary)',
+      'var(--night-canvas-dark)',
+      'var(--night-primary-dark)',
       'var(--night-mark-dark)',
     ],
   },
@@ -121,7 +123,7 @@ export default function ThemePicker({ className }: { className?: string }) {
                 <span className="block text-[13px] font-bold leading-tight text-ink">
                   {option.label}
                 </span>
-                <span className="mt-0.5 block text-[11px] leading-tight text-ink-muted">
+                <span className="mt-0.5 block text-xs leading-tight text-ink-muted">
                   {option.description}
                 </span>
               </span>

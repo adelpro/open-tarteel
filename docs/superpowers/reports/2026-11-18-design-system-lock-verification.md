@@ -31,8 +31,8 @@ corepack yarn test:run                           516 passed, 6 skipped
 | FINDING-006 44px touch targets | verified with deferral | `primitives.mjs` (b) and (c), `reciter-list.mjs` (c), `shell.mjs` (b). Range-input hit areas are excluded from the measurement and remain a deferred minor. |
 | FINDING-007 focus/active/disabled states | deferred | `primitives.mjs` (a) OR and (d) stricter check: all `[data-tag]`, Segmented items and touched buttons carry `.focus-ring` and resolve the primary ring in computed `box-shadow`. Active/disabled styling was not asserted exhaustively. |
 | FINDING-008 type and motion scale | verified | Detector `undersized-ui-text` 24 → 0; `tokens.mjs` (d) body 15px/1.7; motion tokens 120/180/240 with standard easing applied in touched code. |
-| FINDING-009 one Tag primitive | verified with deferral | `Tag` is the sole chip (`data-tag` hooks); four parallel chip systems removed. Detector `nested-cards` 2 remains in the reciter DOM; no element location is reported and the audited tree shows sibling surfaces, so it is deferred to the final review. |
-| FINDING-010 mobile shell and transport | verified with deferral | `player.mjs` (b) exactly five visible controls (44/56/44/44/44), `shell.mjs` (a) scrollWidth 375. Skeleton shape was not restyled to the new player card. |
+| FINDING-009 one Tag primitive | verified with deferral | `Tag` is the sole chip (`data-tag` hooks); four parallel chip systems removed. A final-fix-wave `action` variant keeps the same visuals without `aria-pressed` for one-shot chips. Detector `nested-cards` 2 remains; the detector reports no element path, so the two hits stay deferred without attributed identities (see Detector regression). |
+| FINDING-010 mobile shell and transport | verified | `player.mjs` (b) exactly five visible controls (44/56/44/44/44), `shell.mjs` (a) scrollWidth 375. Final fix wave reshaped `player-skeleton.tsx` to the real card: `max-w-lg`, no fixed height, and header / 72px visualiser / seek / transport slabs. `player.mjs` reports `cardMaxWidth: "512px"` and `fixedHeightWrappers: []`. |
 
 ## Screenshots
 
@@ -57,9 +57,10 @@ rules gone: undersized-ui-text, pulsing-dot, image-hover-transform, gpt-thin-bor
 ```
 
 - `cream-palette` 8: waived, the cream canvas is an explicit locked token.
-- `cramped-padding` 462: collapsed into FINDING-004/FINDING-009. It is one repeated list-row pattern, already graded; not padded by new findings.
-- `nested-cards` 2: deferred as described above.
-- DOM dumps were deleted after the scan.
+- `cramped-padding` 462: **98% of the final 472 counted hits** (462/472 = 97.9%). It collapsed into FINDING-004/FINDING-009: one repeated list-row pattern, already graded, not padded by new findings. One DOM measurement from the production build on `/reciter/quran.foundation-13` (1440px) substantiates the collapse: the reciter row `button.focus-ring ... min-h-16 ... px-4 py-2` computes `padding-top: 8px`, `padding-bottom: 8px`, `padding-left: 16px`, `padding-right: 16px`, `min-height: 64px` across 80 rows. That is the compact list row the rule calls "cramped", and the locked spec accepts it.
+- `nested-cards` 2: **deferred, and the detector gives no element identity.** Its output contains only the rule label "Card inside card" and a count per page — no element path, selector, or DOM snippet. These two hits are therefore not attributed to any component here; naming one would be a guess. They remain deferred with that limitation.
+- DOM dumps were deleted after the scan. The figures above are from that scan; the final fix wave did not re-run the external detector, but re-ran all five `design-verify` scripts (see "Final fix wave re-verification" in `.superpowers/sdd/.../task-7-report.md`).
+- Fixed `waitForTimeout` calls remain in `tokens.mjs`, `primitives.mjs`, `player.mjs`, `reciter-list.mjs`, `shell.mjs` and `dump-dom.mjs`. They are startup/settling waits on a locally started build, not blocking, and are deferred.
 
 ## Spec regression
 
@@ -75,7 +76,7 @@ gstack-design-md.ts tokens DESIGN.md → token map parses; no errors
 ## Summary
 
 - Findings: 10 audited. 4 verified, 4 verified with a narrow deferral, 2 deferred (FINDING-002 headed visual check unavailable, FINDING-007 active/disabled states).
-- Deferred details: third-party Notify badge, range-input hit measurement, active/disabled styling, `nested-cards` detector hits, skeleton shape.
+- Deferred details: third-party Notify badge, range-input hit measurement, active/disabled styling, `nested-cards` detector hits (no element path reported), fixed `waitForTimeout` settling waits. Skeleton shape is no longer deferred.
 - Design score: C → not re-graded; this report records verification, not a new audit.
 - Detector: 811 → 472 counted.
 - No push, no PR. Three unrelated untracked `docs/follow-along/article-ar-*.md` drafts were left untouched.
