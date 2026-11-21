@@ -38,7 +38,7 @@
     "build": "next build",
     "build:cf": "CF_BUILD=true opennextjs-cloudflare build",
     "preview:cf": "wrangler dev",
-    "deploy:cf": "opennextjs-cloudflare deploy",
+    "deploy:cf": "opennextjs-cloudflare deploy --upload-source-maps=false",
     "analyze": "ANALYZE=true next build",
     "start": "next start",
     "start:standalone": "rm -rf .next/standalone/.next/static .next/standalone/public && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",

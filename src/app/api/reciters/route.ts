@@ -36,7 +36,14 @@ export async function GET(request: NextRequest) {
       Vary: 'Cookie, Accept-Encoding',
     };
 
-    if ((request.headers.get('accept-encoding') ?? '').includes('gzip')) {
+    // Cloudflare already compresses responses at the edge. If we gzip here as
+    // well, the edge wraps the gzip bytes in zstd and the browser ends up with
+    // a gzip payload it cannot JSON.parse. `cf-ray` marks a Cloudflare hop.
+    const throughCloudflare = Boolean(request.headers.get('cf-ray'));
+    if (
+      !throughCloudflare &&
+      (request.headers.get('accept-encoding') ?? '').includes('gzip')
+    ) {
       return new NextResponse(new Uint8Array(gzipSync(body)), {
         headers: { ...headers, 'Content-Encoding': 'gzip' },
       });
