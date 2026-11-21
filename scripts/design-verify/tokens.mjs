@@ -4,7 +4,7 @@
  * Run against a local `next dev` on http://localhost:3000 (branch `develop`).
  * Exits 1 if any of the four token invariants is violated.
  */
-import { chromium } from '/home/adelpro/gstack/node_modules/playwright/index.mjs';
+import { chromium } from '@playwright/test';
 
 // Default to the local dev server on 3000. The port is overridable because
 // another supervised service may already own 3000 on a shared machine.
@@ -61,10 +61,18 @@ try {
       orbElements,
       blurredElements,
       pulsingElements,
-      amiriLoaded: document.fonts.check('28px Amiri'),
       bodyFontSize: getComputedStyle(document.body).fontSize,
       bodyLineHeight: getComputedStyle(document.body).lineHeight,
     };
+  });
+
+  // (c) next/font loads Amiri on demand: `check()` is false on `/` until the
+  // face is requested. Force the registered face to load with a sample ayah,
+  // then assert it is actually available — no second navigation needed.
+  const amiriLoaded = await page.evaluate(async () => {
+    await document.fonts.load('28px Amiri', 'قُلْ أَعُوذُ');
+    await document.fonts.ready;
+    return document.fonts.check('28px Amiri');
   });
 
   if (result.orbElements.length > 0 || result.blurredElements.length > 0) {
@@ -77,14 +85,19 @@ try {
       `(b) non-motion-safe pulse animation found: ${result.pulsingElements.join(' | ')}`
     );
   }
-  if (result.amiriLoaded !== true) {
-    failures.push('(c) document.fonts.check("28px Amiri") is not true');
+  if (amiriLoaded !== true) {
+    failures.push(
+      '(c) document.fonts.check("28px Amiri") is not true after loading the registered face'
+    );
   }
   if (result.bodyFontSize !== '15px') {
     failures.push(`(d) body font-size is ${result.bodyFontSize}, expected 15px`);
   }
 
-  console.log('Observed:', JSON.stringify(result, null, 2));
+  console.log(
+    'Observed:',
+    JSON.stringify({ ...result, amiriLoadedAfterRequest: amiriLoaded }, null, 2)
+  );
 } catch (error) {
   failures.push(`unexpected error: ${error instanceof Error ? error.stack : error}`);
 } finally {

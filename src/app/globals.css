@@ -146,7 +146,8 @@
   --mark: #8a6420;
 
   --success: #2e7d5b;
-  --warning: #a9690a;
+  /* 5.1:1 on warm surface-sunken; the old #a9690a was 3.7:1 at 12px. */
+  --warning: #8a5608;
   --danger: #b23a2e;
 }
 

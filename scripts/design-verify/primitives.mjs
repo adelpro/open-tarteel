@@ -16,11 +16,20 @@
  * Exits 1 if any invariant is violated.
  */
 // Use the project's installed Playwright so this works on any machine/CI.
+import { readFileSync } from 'node:fs';
+
 import { chromium } from '@playwright/test';
 
 const BASE_URL = `http://localhost:${process.env.DESIGN_VERIFY_PORT ?? '3000'}`;
 const PAGE_URL = `${BASE_URL}/reciter/quran.foundation-13`;
 const failures = [];
+
+// The opener is translated on the Arabic route. Read the live label instead of
+// hard-coding the retired English string (same pattern as the other scripts).
+const ar = JSON.parse(
+  readFileSync(new URL('../../src/locales/ar.json', import.meta.url), 'utf8')
+);
+const openSelectorLabel = ar['reciter.openSelector'] ?? 'Open reciter selector';
 
 /** `color-mix(in srgb, var(--accent) 35%, …)` resolves to `color(srgb … / 0.35)`. */
 function primaryRingInShadow(shadow, accentChannels) {
@@ -189,7 +198,10 @@ try {
   // Now open the reciter sheet and check its buttons too. A click that lands
   // before React hydration silently does nothing, so retry until it opens.
   for (let attempt = 0; attempt < 5; attempt += 1) {
-    await page.getByRole('button', { name: /open reciter selector/i }).first().click();
+    await page
+      .getByRole('button', { name: openSelectorLabel, exact: false })
+      .first()
+      .click();
     try {
       await page.waitForSelector('dialog[open]', { timeout: 5_000 });
       break;

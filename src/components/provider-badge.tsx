@@ -37,7 +37,7 @@ const BETA = () =>
     'provider.badge.beta',
     'Beta',
     <FiAlertTriangle size={11} aria-hidden="true" />,
-    'warning'
+    'neutral'
   );
 
 const TIMING = (coverage: 'all' | 'partial' | 'none') =>
