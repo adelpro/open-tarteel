@@ -142,3 +142,17 @@ Record actual files changed, commands run, and any deviations from the spec in a
 - [ ] **Step 3: Commit**
 
 `git add docs/superpowers/plans/2026-11-22-follow-along-ahkam-tags.md && git commit -m "docs: record follow-along tag plan completion"`
+
+## Completion
+
+Implemented on `staging` and deployed to https://open-tarteel.adelpro.workers.dev (version `aaab6b52`).
+
+- `45e97cd` — typographic rule key: `ruleGroupsForWord` helper + tests, `AhkamRuleKey`, removed `AhkamRail` and its test, wired the panel.
+- `ef6aed6` — More-menu "سطر التلاوة" toggle bound to `followAlongLineAtom`, with locale keys.
+- `82bc870` — Settings reduced to the ahkam-tags switch only.
+- `2e8419a` — rule key applied to the design-preview page; underline widths set inline to guarantee 2px/3px borders.
+- `b3e031a` — Settings description copy updated for all three locales.
+
+Deviation from the written plan: the design-preview page was also updated to use `AhkamRuleKey`; otherwise the old primitive chips would still appear on that internal page. The underline uses inline `borderBottomStyle/Width/Color` instead of Tailwind border utilities because the computed width was 0px with the utility classes alone.
+
+Verification: 524 tests passed, type-check and lint clean. Live at 375px: rule key present with six labels, zero circles/spans, 2px underline, no horizontal scroll; Settings shows only the ahkam switch; More menu shows "سطر التلاوة" after the two playback-mode rows.
