@@ -1,7 +1,6 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { MdExpandMore } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import type { Language } from '@/constants/language';
@@ -18,28 +17,24 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <div className="relative inline-flex items-center">
-      <select
-        value={locale}
-        onChange={(event) =>
-          handleLanguageChange(event.target.value as Language)
-        }
-        aria-label={formatMessage({
-          id: 'language.select',
-          defaultMessage: 'Select language',
-        })}
-        className="focus-ring h-11 appearance-none rounded-[8px] border border-border bg-surface pe-9 ps-3 text-[13px] font-bold text-ink"
-      >
-        {Object.entries(LANGUAGES).map(([code, config]) => (
-          <option key={code} value={code}>
-            {config.label}
-          </option>
-        ))}
-      </select>
-      <MdExpandMore
-        className="pointer-events-none absolute end-2 size-4 text-ink-muted"
-        aria-hidden="true"
-      />
-    </div>
+    // One arrow only: the Tailwind forms plugin draws the platform arrow in
+    // the select's background. A second custom chevron made two arrows.
+    <select
+      value={locale}
+      onChange={(event) =>
+        handleLanguageChange(event.target.value as Language)
+      }
+      aria-label={formatMessage({
+        id: 'language.select',
+        defaultMessage: 'Select language',
+      })}
+      className="focus-ring h-11 rounded-[8px] border border-border bg-surface pe-9 ps-3 text-[13px] font-bold text-ink"
+    >
+      {Object.entries(LANGUAGES).map(([code, config]) => (
+        <option key={code} value={code}>
+          {config.label}
+        </option>
+      ))}
+    </select>
   );
 }

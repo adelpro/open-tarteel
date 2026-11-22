@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-import { PitchContour } from '@/components/pitch-contour';
 import { QuranLine, type QuranLineWord } from '@/components/quran-line';
 import { TajweedLegend } from '@/components/tajweed-legend';
 import type { SurahData } from '@/services/quran-text';
@@ -72,7 +71,6 @@ export default function FollowAlongPreviewPage() {
         );
       })}
 
-      <PitchContour audio={null} />
     </main>
   );
 }

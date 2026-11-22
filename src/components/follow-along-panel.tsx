@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { FiX } from 'react-icons/fi';
 import { useIntl } from 'react-intl';
 
-import { PitchContour } from '@/components/pitch-contour';
 import { QuranLine, type QuranLineWord } from '@/components/quran-line';
 import { TajweedLegend } from '@/components/tajweed-legend';
 import {
@@ -169,11 +168,6 @@ export function FollowAlongPanel({
     defaultMessage: 'Turn off',
   });
 
-  const marks = useMemo(
-    () => (data ? data.timings.map((timing) => timing.startMs / 1000) : []),
-    [data]
-  );
-
   const line = useMemo<QuranLineWord[]>(() => {
     const ayah = data?.surah.ayahs[active.ayah - 1];
     if (!ayah) return [];
@@ -257,7 +251,6 @@ export function FollowAlongPanel({
               { ayah: active.ayah }
             )}
           />
-          <PitchContour audio={audio} marks={marks} />
           <TajweedLegend
             locale={locale === 'ar' ? 'ar' : 'en'}
             className="text-xs"
