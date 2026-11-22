@@ -95,6 +95,18 @@ export const ruleGroup = (
   rule: string | null | undefined
 ): TajweedGroup | null => (rule ? (TAJWEED_RULE_GROUPS[rule] ?? null) : null);
 
+/** Every distinct rule group covering one word, in first-seen order. */
+export const ruleGroupsForWord = (
+  chars: readonly { rule?: string | null }[]
+): Set<TajweedGroup> => {
+  const groups = new Set<TajweedGroup>();
+  for (const char of chars) {
+    const group = ruleGroup(char.rule);
+    if (group) groups.add(group);
+  }
+  return groups;
+};
+
 export interface AyahChar {
   ch: string;
   /** Rule id that covers this codepoint, or null. */

@@ -4,9 +4,8 @@ import { useAtomValue } from 'jotai';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-import { AhkamRail } from '@/components/ahkam-rail';
+import { AhkamRuleKey } from '@/components/ahkam-rule-key';
 import { QuranLine, type QuranLineWord } from '@/components/quran-line';
-import { TajweedLegend } from '@/components/tajweed-legend';
 import { ahkamTagsAtom } from '@/jotai/atom';
 import {
   ayahAt,
@@ -15,12 +14,10 @@ import {
   WORD_ANTICIPATION_MS,
   wordAt,
 } from '@/services/follow-along';
-import { ayahAhkam } from '@/services/follow-along/ahkam';
 import { loadSurah, type SurahData } from '@/services/quran-text';
 import {
   ayahWordChars,
-  ruleGroup,
-  type TajweedGroup,
+  ruleGroupsForWord,
 } from '@/services/quran-text/rules';
 import type { AyahTiming, WordTiming } from '@/services/timings';
 import { groupByAyah, repairAyah } from '@/services/timings/word-timings';
@@ -166,15 +163,6 @@ export function FollowAlongPanel({
     return () => cancelAnimationFrame(frame);
   }, [audio, data, repaired, source, surah]);
 
-  /**
-   * Only the ayah on screen is walked. The rules come from the bundled text, so
-   * this needs no timings: it survives the ayah-level fallback.
-   */
-  const ahkam = useMemo(() => {
-    const ayah = data?.surah.ayahs[active.ayah - 1];
-    return ayah ? ayahAhkam(ayah) : [];
-  }, [data, active.ayah]);
-
 
   const line = useMemo<QuranLineWord[]>(() => {
     const ayah = data?.surah.ayahs[active.ayah - 1];
@@ -203,15 +191,10 @@ export function FollowAlongPanel({
   }, [active, data]);
 
   // A word can carry several tajweed rules. Highlight every matching tag.
-  const activeGroups = useMemo(() => {
-    const current = line.find((word) => word.state === 'current');
-    const groups = new Set<TajweedGroup>();
-    for (const char of current?.chars ?? []) {
-      const group = ruleGroup(char.rule);
-      if (group) groups.add(group);
-    }
-    return groups;
-  }, [line]);
+  const activeGroups = useMemo(
+    () => ruleGroupsForWord(line.find((word) => word.state === 'current')?.chars ?? []),
+    [line]
+  );
 
   return (
     <section
@@ -248,18 +231,12 @@ export function FollowAlongPanel({
             )}
           />
           {showAhkam ? (
-            <>
-              <AhkamRail
-                rules={ahkam}
-                activeWord={active.fallback ? null : active.stored}
-                locale={locale === 'ar' ? 'ar' : 'en'}
-              />
-              <TajweedLegend
-                locale={locale === 'ar' ? 'ar' : 'en'}
-                className="mt-2 text-xs"
+            <div className="mt-2">
+              <AhkamRuleKey
                 activeGroups={activeGroups}
+                locale={locale === 'ar' ? 'ar' : 'en'}
               />
-            </>
+            </div>
           ) : null}
         </>
       )}

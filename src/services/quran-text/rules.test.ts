@@ -7,6 +7,7 @@ import {
   ayahChars,
   ayahWordChars,
   ruleGroup,
+  ruleGroupsForWord,
   TAJWEED_RULE_GROUPS,
 } from './rules';
 import type { AyahData } from './types';
@@ -82,5 +83,24 @@ describe('ayahWordChars', () => {
     expect(words[0].chars.map((char) => char.ch).join('')).toBe(stored[0]);
     expect(words[6].chars.map((char) => char.ch).join('')).toBe(stored[6]);
     expect(words[6].chars[0].rule).toBe('hamzat_wasl');
+  });
+});
+
+describe('ruleGroupsForWord', () => {
+  it('returns every rule group on a word, de-duplicated', () => {
+    expect(
+      ruleGroupsForWord([
+        { rule: 'madd_2' },
+        { rule: 'ghunnah' },
+        { rule: 'madd_6' },
+        { rule: null },
+      ])
+    ).toEqual(new Set(['madd', 'ghunnah']));
+  });
+
+  it('returns an empty set for a word with no annotated rules', () => {
+    expect(ruleGroupsForWord([{ rule: null }, { rule: undefined }])).toEqual(
+      new Set()
+    );
   });
 });
