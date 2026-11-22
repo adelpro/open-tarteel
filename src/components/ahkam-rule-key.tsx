@@ -24,7 +24,10 @@ export function AhkamRuleKey({
   locale = 'ar',
 }: AhkamRuleKeyProps) {
   return (
-    <ul className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+    <ul
+      aria-label={locale === 'ar' ? 'أحكام التجويد' : 'Tajweed rules'}
+      className="flex flex-wrap items-baseline gap-x-4 gap-y-1"
+    >
       {AHKAM_GROUPS.map((group) => {
         const active = activeGroups.has(group);
         return (

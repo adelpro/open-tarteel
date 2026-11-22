@@ -76,21 +76,23 @@ describe('FollowAlongPanel', () => {
     expect(screen.getByRole('list', { name: 'أحكام التجويد' })).toBeTruthy();
   });
 
-  it('adds the ahkam marks when the preference is on', async () => {
+  it('shows the rule key when the preference is on', async () => {
     stubTimings(4);
     renderPanel(true);
 
-    const rail = await screen.findByRole('list', { name: 'أحكام الآية' });
-    // The dataset has a ghunnah on the last word of this ayah, and nothing else.
-    expect(rail.textContent).toBe('غنة');
+    const key = await screen.findByRole('list', { name: 'أحكام التجويد' });
+    // The dataset has a ghunnah on the last word of this ayah.
+    expect(key.textContent).toContain('غنة');
   });
 
-  it('leaves the ahkam marks out when the preference is off', async () => {
+  it('leaves the rule key out when the preference is off', async () => {
     stubTimings(4);
     renderPanel(false);
 
     await screen.findByLabelText('Ayah 1');
-    expect(screen.queryByRole('list', { name: 'أحكام الآية' })).toBeNull();
+    expect(
+      screen.queryByRole('list', { name: 'أحكام التجويد' })
+    ).toBeNull();
   });
 
   it('draws nothing but the line', async () => {

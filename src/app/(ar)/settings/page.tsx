@@ -1,10 +1,7 @@
 'use client';
 
 import { useAtom } from 'jotai';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { FiInfo } from 'react-icons/fi';
 import { MdArrowBack } from 'react-icons/md';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -20,7 +17,6 @@ import { useLocalePath } from '@/hooks/use-locale-path';
 import {
   ahkamTagsAtom,
   enabledSourcesAtom,
-  followAlongLineAtom,
   forcedOfflineAtom,
   spectrumEnabledAtom,
   visualizerModelAtom,
@@ -84,10 +80,8 @@ export default function SettingsPage() {
   const [enabledSources, setEnabledSources] = useAtom(enabledSourcesAtom);
   const [forcedOffline, setForcedOffline] = useAtom(forcedOfflineAtom);
   const [visualizerModel, setVisualizerModel] = useAtom(visualizerModelAtom);
-  const [followAlongLine, setFollowAlongLine] = useAtom(followAlongLineAtom);
   const [spectrumEnabled, setSpectrumEnabled] = useAtom(spectrumEnabledAtom);
   const [ahkamTags, setAhkamTags] = useAtom(ahkamTagsAtom);
-  const [showAvailability, setShowAvailability] = useState(false);
 
   const toggleSource = (source: LinkSource) => {
     setEnabledSources((previous) => {
@@ -322,123 +316,29 @@ export default function SettingsPage() {
             description={formatMessage({
               id: 'settings.followAlongDescription',
               defaultMessage:
-                'The word-by-word line shown above the spectrum while a recitation with word timings plays. Independent of the spectrum.',
+                'The word-by-word line shown while a recitation with word timings plays. Toggle it from the player’s more menu.',
             })}
           >
-            <Row
-              label={
-                <span className="flex items-center gap-1.5">
-                  {formatMessage({
-                    id: 'settings.followAlongLine',
-                    defaultMessage: 'Quran line',
-                  })}
-                  <button
-                    type="button"
-                    onClick={() => setShowAvailability((open) => !open)}
-                    aria-expanded={showAvailability}
-                    aria-controls="follow-along-availability"
-                    aria-label={formatMessage({
-                      id: 'settings.followAlongAvailability',
-                      defaultMessage: 'Where the line is available',
-                    })}
-                    className="flex size-5 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink"
-                  >
-                    <FiInfo size={13} aria-hidden="true" />
-                  </button>
-                </span>
-              }
-              description={
-                followAlongLine
-                  ? formatMessage({
-                      id: 'settings.followAlongLineOn',
-                      defaultMessage:
-                        'The line follows the reciter word by word.',
-                    })
-                  : formatMessage({
-                      id: 'settings.followAlongLineOff',
-                      defaultMessage: 'Hidden. The line is not drawn.',
-                    })
-              }
-            >
-              <Switch
-                checked={followAlongLine}
-                onCheckedChange={setFollowAlongLine}
-                label={formatMessage({
-                  id: 'settings.followAlongLine',
-                  defaultMessage: 'Quran line',
-                })}
-              />
-            </Row>
             <Row
               label={formatMessage({
                 id: 'settings.followAlongAhkam',
                 defaultMessage: 'Ahkam tags',
               })}
-              description={
-                followAlongLine
-                  ? formatMessage({
-                      id: 'settings.followAlongAhkamDescription',
-                      defaultMessage:
-                        'Marks the rule that applies to each word of the ayah: madd, ghunnah, qalqalah, idgham, ikhfa or iqlab. Only rules the bundled dataset annotates.',
-                    })
-                  : formatMessage({
-                      id: 'settings.followAlongAhkamDisabled',
-                      defaultMessage:
-                        'Turn the Quran line on first: the marks annotate it.',
-                    })
-              }
+              description={formatMessage({
+                id: 'settings.followAlongAhkamDescription',
+                defaultMessage:
+                  'Show the colored rule key beneath the recitation line.',
+              })}
             >
-              {/* The marks annotate the line, so they cannot outlive it. */}
               <Switch
                 checked={ahkamTags}
                 onCheckedChange={setAhkamTags}
-                disabled={!followAlongLine}
                 label={formatMessage({
                   id: 'settings.followAlongAhkam',
                   defaultMessage: 'Ahkam tags',
                 })}
               />
             </Row>
-            {showAvailability ? (
-              <div
-                id="follow-along-availability"
-                className="space-y-1.5 px-4 py-3 text-[12px] leading-5 text-ink-muted"
-              >
-                <p>
-                  <FormattedMessage
-                    id="settings.followAlongAvailabilityHafs"
-                    defaultMessage="Hafs an Asim only, for now."
-                  />
-                </p>
-                <p>
-                  <FormattedMessage
-                    id="settings.followAlongAvailabilityProviders"
-                    defaultMessage="Quran Foundation and the twelve audited MP3Quran v4 recitations. Everything else plays without the line."
-                  />
-                </p>
-                <p>
-                  <FormattedMessage
-                    id="settings.followAlongAvailabilityText"
-                    defaultMessage="Quran text in the Uthmani script from Tanzil, verbatim."
-                  />
-                </p>
-                <p>
-                  <FormattedMessage
-                    id="settings.followAlongAvailabilityDataset"
-                    defaultMessage="Ahkam data from quran-tajweed, under CC BY 4.0."
-                  />
-                </p>
-                <Link
-                  href={localePath('/about')}
-                  className="inline-block font-bold text-primary underline-offset-2 hover:underline"
-                >
-                  <FormattedMessage
-                    id="settings.followAlongAvailabilityMore"
-                    defaultMessage="About this feature"
-                  />
-                </Link>
-              </div>
-            ) : null}
           </Group>
 
           <Group
