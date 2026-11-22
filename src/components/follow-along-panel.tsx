@@ -1,10 +1,12 @@
 'use client';
 
+import { useAtomValue } from 'jotai';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 import { QuranLine, type QuranLineWord } from '@/components/quran-line';
 import { TajweedLegend } from '@/components/tajweed-legend';
+import { showAhkamTagsAtom } from '@/jotai/atom';
 import {
   ayahAt,
   buildLineStates,
@@ -13,7 +15,11 @@ import {
   wordAt,
 } from '@/services/follow-along';
 import { loadSurah, type SurahData } from '@/services/quran-text';
-import { ayahWordChars, ruleGroup } from '@/services/quran-text/rules';
+import {
+  ayahWordChars,
+  ruleGroup,
+  type TajweedGroup,
+} from '@/services/quran-text/rules';
 import type { AyahTiming, WordTiming } from '@/services/timings';
 import { groupByAyah, repairAyah } from '@/services/timings/word-timings';
 import type { LinkSource } from '@/types';
@@ -49,6 +55,7 @@ export function FollowAlongPanel({
   className,
 }: FollowAlongPanelProps) {
   const { formatMessage, locale } = useIntl();
+  const showAhkamTags = useAtomValue(showAhkamTagsAtom);
   const [status, setStatus] = useState<Status>('loading');
   const [data, setData] = useState<{
     surah: SurahData;
@@ -183,14 +190,15 @@ export function FollowAlongPanel({
     return rendered;
   }, [active, data]);
 
-  // Highlight the legend entry for the rule on the word being recited.
-  const activeGroup = useMemo(() => {
+  // A word can carry several tajweed rules. Highlight every matching tag.
+  const activeGroups = useMemo(() => {
     const current = line.find((word) => word.state === 'current');
+    const groups = new Set<TajweedGroup>();
     for (const char of current?.chars ?? []) {
       const group = ruleGroup(char.rule);
-      if (group) return group;
+      if (group) groups.add(group);
     }
-    return null;
+    return groups;
   }, [line]);
 
   return (
@@ -227,11 +235,13 @@ export function FollowAlongPanel({
               { ayah: active.ayah }
             )}
           />
-          <TajweedLegend
-            locale={locale === 'ar' ? 'ar' : 'en'}
-            className="mt-2 text-xs"
-            activeGroup={activeGroup}
-          />
+          {showAhkamTags ? (
+            <TajweedLegend
+              locale={locale === 'ar' ? 'ar' : 'en'}
+              className="mt-2 text-xs"
+              activeGroups={activeGroups}
+            />
+          ) : null}
         </>
       )}
     </section>

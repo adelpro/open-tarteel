@@ -12,8 +12,8 @@ import styles from './follow-along.module.css';
 export interface TajweedLegendProps {
   locale?: 'ar' | 'en';
   className?: string;
-  /** Rule group of the word currently being recited. */
-  activeGroup?: TajweedGroup | null;
+  /** Rule groups on the word currently being recited; all matches highlight. */
+  activeGroups?: Set<TajweedGroup>;
 }
 
 /**
@@ -24,7 +24,7 @@ export interface TajweedLegendProps {
 export function TajweedLegend({
   locale = 'ar',
   className,
-  activeGroup,
+  activeGroups,
 }: TajweedLegendProps) {
   return (
     <ul
@@ -37,7 +37,7 @@ export function TajweedLegend({
             variant="static"
             size="xs"
             className={cn(
-              activeGroup === group &&
+              activeGroups?.has(group) &&
                 'scale-110 ring-2 ring-primary/40 transition-transform duration-120'
             )}
             icon={

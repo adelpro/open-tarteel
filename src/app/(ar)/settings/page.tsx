@@ -17,6 +17,7 @@ import { useLocalePath } from '@/hooks/use-locale-path';
 import {
   enabledSourcesAtom,
   forcedOfflineAtom,
+  showAhkamTagsAtom,
   visualizerModelAtom,
 } from '@/jotai/atom';
 import { isMp3QuranV4Enabled } from '@/services/reciters/flags';
@@ -77,6 +78,7 @@ export default function SettingsPage() {
   const [enabledSources, setEnabledSources] = useAtom(enabledSourcesAtom);
   const [forcedOffline, setForcedOffline] = useAtom(forcedOfflineAtom);
   const [visualizerModel, setVisualizerModel] = useAtom(visualizerModelAtom);
+  const [showAhkamTags, setShowAhkamTags] = useAtom(showAhkamTagsAtom);
 
   const toggleSource = (source: LinkSource) => {
     setEnabledSources((previous) => {
@@ -233,6 +235,34 @@ export default function SettingsPage() {
                 label={formatMessage({
                   id: 'settings.offlineMode',
                   defaultMessage: 'Offline mode',
+                })}
+              />
+            </Row>
+          </Group>
+
+          <Group
+            title={formatMessage({
+              id: 'settings.followAlong',
+              defaultMessage: 'Follow-along',
+            })}
+          >
+            <Row
+              label={formatMessage({
+                id: 'settings.showAhkamTags',
+                defaultMessage: 'Show tajweed tags',
+              })}
+              description={formatMessage({
+                id: 'settings.showAhkamTagsDescription',
+                defaultMessage:
+                  'Show the rule chips beneath the recitation line.',
+              })}
+            >
+              <Switch
+                checked={showAhkamTags}
+                onCheckedChange={setShowAhkamTags}
+                label={formatMessage({
+                  id: 'settings.showAhkamTags',
+                  defaultMessage: 'Show tajweed tags',
                 })}
               />
             </Row>

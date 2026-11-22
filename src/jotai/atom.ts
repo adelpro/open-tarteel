@@ -126,3 +126,9 @@ export const reciterListPinnedAtom = createAtomWithStorage<boolean>(
 
 /** Set while the follow-along mode is open, so the spectrum can stand aside. */
 export const followAlongActiveAtom = atom(false);
+
+/** Show the tajweed legend chips under the follow-along line. */
+export const showAhkamTagsAtom = createAtomWithStorage<boolean>(
+  'show-ahkam-tags',
+  true
+);

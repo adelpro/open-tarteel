@@ -243,5 +243,8 @@
   "about.followAlong.accuracy": "Die Genauigkeit ist nicht vollständig: Wort-Timings decken 99,45% der Wörter der unterstützten Quran-Foundation-Rezitationen und 99,99% der zwölf geprüften MP3Quran-v4-Rezitationen ab. Bei 0,70% der Verse sind weniger als 85% der Wörter mit Timing versehen, daher stoppt die Wortverfolgung für diesen Vers und der ganze Vers wird hervorgehoben, bis der nächste beginnt, statt ein falsches Wort zu markieren. Die App synchronisiert nur die Oberfläche; die Zahlen sind aus den veröffentlichten Daten berechnet.",
   "about.followAlong.sources": "Quellen und Prüfsummen",
   "about.followAlong.licenseNote": "Text unter CC BY 3.0 mit Tanzil-Bedingungen, Tajwid unter CC BY 4.0, Versmarker unter OFL.",
-  "followAlong.close": "Ausschalten"
+  "followAlong.close": "Ausschalten",
+  "settings.followAlong": "Mitlesen",
+  "settings.showAhkamTags": "Tajwid-Tags anzeigen",
+  "settings.showAhkamTagsDescription": "Zeige die Regel-Chips unter der Rezitationszeile."
 }
