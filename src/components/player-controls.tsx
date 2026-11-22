@@ -846,7 +846,7 @@ export default function PlayerControls({
           variant="action"
           size="md"
           onClick={() => setShowMoreMenu(true)}
-          className="fixed bottom-[calc(env(safe-area-inset-bottom)+72px)] left-1/2 z-40 -translate-x-1/2 border border-border bg-surface text-ink md:bottom-6"
+          className="fixed bottom-[calc(env(safe-area-inset-bottom)+72px)] left-1/2 z-40 -translate-x-1/2 gap-3 border border-border bg-surface text-ink md:bottom-6"
           icon={
             progress ? (
               <MdCloudDownload className="size-4 text-primary" />

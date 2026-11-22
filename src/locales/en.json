@@ -264,5 +264,7 @@
   "followAlong.close": "Turn off",
   "settings.followAlong": "Follow-along",
   "settings.showAhkamTags": "Show tajweed tags",
-  "settings.showAhkamTagsDescription": "Show the rule chips beneath the recitation line."
+  "settings.showAhkamTagsDescription": "Show the rule chips beneath the recitation line.",
+  "settings.downloadingSurah": "Downloading surah {surah}",
+  "settings.downloadSpeed": "Speed {speed}"
 }

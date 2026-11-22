@@ -246,5 +246,7 @@
   "followAlong.close": "Ausschalten",
   "settings.followAlong": "Mitlesen",
   "settings.showAhkamTags": "Tajwid-Tags anzeigen",
-  "settings.showAhkamTagsDescription": "Zeige die Regel-Chips unter der Rezitationszeile."
+  "settings.showAhkamTagsDescription": "Zeige die Regel-Chips unter der Rezitationszeile.",
+  "settings.downloadingSurah": "Sure {surah} wird heruntergeladen",
+  "settings.downloadSpeed": "Geschwindigkeit {speed}"
 }

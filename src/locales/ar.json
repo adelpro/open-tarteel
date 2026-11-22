@@ -265,5 +265,7 @@
   "followAlong.close": "إيقاف",
   "settings.followAlong": "تتبّع التلاوة",
   "settings.showAhkamTags": "إظهار وسوم التجويد",
-  "settings.showAhkamTagsDescription": "إظهار بطاقات الأحكام أسفل سطر التلاوة."
+  "settings.showAhkamTagsDescription": "إظهار بطاقات الأحكام أسفل سطر التلاوة.",
+  "settings.downloadingSurah": "جارٍ تنزيل السورة {surah}",
+  "settings.downloadSpeed": "السرعة {speed}"
 }
