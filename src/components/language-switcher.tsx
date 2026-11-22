@@ -28,7 +28,12 @@ export default function LanguageSwitcher() {
         id: 'language.select',
         defaultMessage: 'Select language',
       })}
-      className="focus-ring h-11 rounded-[8px] border border-border bg-surface pe-9 ps-3 text-[13px] font-bold text-ink"
+      dir={locale === 'ar' ? 'rtl' : 'ltr'}
+      className={
+        locale === 'ar'
+          ? 'focus-ring h-11 rounded-[8px] border border-border bg-surface bg-[position:left_0.75rem_center] pl-9 pr-3 text-[13px] font-bold text-ink'
+          : 'focus-ring h-11 rounded-[8px] border border-border bg-surface pr-9 pl-3 text-[13px] font-bold text-ink'
+      }
     >
       {Object.entries(LANGUAGES).map(([code, config]) => (
         <option key={code} value={code}>
