@@ -3,6 +3,7 @@ import {
   TAJWEED_COLORS,
   TAJWEED_GROUP_ORDER,
   TAJWEED_LABELS,
+  type TajweedGroup,
 } from '@/services/quran-text/rules';
 import { cn } from '@/utils';
 
@@ -11,6 +12,8 @@ import styles from './follow-along.module.css';
 export interface TajweedLegendProps {
   locale?: 'ar' | 'en';
   className?: string;
+  /** Rule group of the word currently being recited. */
+  activeGroup?: TajweedGroup | null;
 }
 
 /**
@@ -21,6 +24,7 @@ export interface TajweedLegendProps {
 export function TajweedLegend({
   locale = 'ar',
   className,
+  activeGroup,
 }: TajweedLegendProps) {
   return (
     <ul
@@ -32,6 +36,10 @@ export function TajweedLegend({
           <Tag
             variant="static"
             size="xs"
+            className={cn(
+              activeGroup === group &&
+                'scale-110 ring-2 ring-primary/40 transition-transform duration-120'
+            )}
             icon={
               <span
                 className={styles.swatch}

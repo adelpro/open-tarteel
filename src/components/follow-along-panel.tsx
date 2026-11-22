@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { FiX } from 'react-icons/fi';
 import { useIntl } from 'react-intl';
 
 import { QuranLine, type QuranLineWord } from '@/components/quran-line';
@@ -14,13 +13,11 @@ import {
   wordAt,
 } from '@/services/follow-along';
 import { loadSurah, type SurahData } from '@/services/quran-text';
-import { ayahWordChars } from '@/services/quran-text/rules';
+import { ayahWordChars, ruleGroup } from '@/services/quran-text/rules';
 import type { AyahTiming, WordTiming } from '@/services/timings';
 import { groupByAyah, repairAyah } from '@/services/timings/word-timings';
 import type { LinkSource } from '@/types';
 import { cn } from '@/utils';
-
-import Tag from './ui/tag';
 
 export interface FollowAlongPanelProps {
   /** The player's audio element. Used for the word clock. */
@@ -29,8 +26,6 @@ export interface FollowAlongPanelProps {
   moshafId: string;
   /** 1-based surah number. */
   surah: number;
-  /** Returns the player to listening mode. */
-  onClose?: () => void;
   className?: string;
 }
 
@@ -51,7 +46,6 @@ export function FollowAlongPanel({
   source,
   moshafId,
   surah,
-  onClose,
   className,
 }: FollowAlongPanelProps) {
   const { formatMessage, locale } = useIntl();
@@ -163,11 +157,6 @@ export function FollowAlongPanel({
     return () => cancelAnimationFrame(frame);
   }, [audio, data, repaired, source, surah]);
 
-  const closeLabel = formatMessage({
-    id: 'followAlong.close',
-    defaultMessage: 'Turn off',
-  });
-
   const line = useMemo<QuranLineWord[]>(() => {
     const ayah = data?.surah.ayahs[active.ayah - 1];
     if (!ayah) return [];
@@ -194,34 +183,21 @@ export function FollowAlongPanel({
     return rendered;
   }, [active, data]);
 
+  // Highlight the legend entry for the rule on the word being recited.
+  const activeGroup = useMemo(() => {
+    const current = line.find((word) => word.state === 'current');
+    for (const char of current?.chars ?? []) {
+      const group = ruleGroup(char.rule);
+      if (group) return group;
+    }
+    return null;
+  }, [line]);
+
   return (
     <section
       dir="rtl"
       className={cn('flex w-full flex-col gap-2 px-3 pb-2', className)}
     >
-      <div className="flex h-7 items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5">
-          <p className="text-xs font-bold">
-            {formatMessage({
-              id: 'followAlong.mode',
-              defaultMessage: 'Follow-along',
-            })}
-          </p>
-        </div>
-        {onClose ? (
-          <Tag
-            variant="action"
-            size="sm"
-            onClick={onClose}
-            aria-label={closeLabel}
-            title={closeLabel}
-            icon={<FiX size={12} />}
-          >
-            {closeLabel}
-          </Tag>
-        ) : null}
-      </div>
-
       {status === 'loading' && (
         <p className="text-xs text-ink-muted">
           {formatMessage({
@@ -253,7 +229,8 @@ export function FollowAlongPanel({
           />
           <TajweedLegend
             locale={locale === 'ar' ? 'ar' : 'en'}
-            className="text-xs"
+            className="mt-2 text-xs"
+            activeGroup={activeGroup}
           />
         </>
       )}

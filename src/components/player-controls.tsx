@@ -495,7 +495,6 @@ export default function PlayerControls({
             source={selectedReciter.source}
             moshafId={selectedReciter.moshaf.id}
             surah={chapterNumber}
-            onClose={() => setActiveMode('listening')}
           />
         )}
       {activeMode === 'tahfeez' ? (
@@ -533,7 +532,8 @@ export default function PlayerControls({
         {renderImageButton(
           backwardSVG,
           messages.previousTrack,
-          handlePreviousTrackWithStopSession
+          handlePreviousTrackWithStopSession,
+          isRTL ? 'scale-x-[-1]' : undefined
         )}
 
         {/* Play — 56px primary circle with a 24px on-primary glyph. */}
@@ -558,7 +558,13 @@ export default function PlayerControls({
             {audioPlaying ? (
               <FaPause size={ICON_SIZE} aria-hidden="true" />
             ) : (
-              <FaPlay size={ICON_SIZE} aria-hidden="true" />
+              // The FaPlay glyph sits right of its box centre; nudge it back
+              // so the triangle is optically centred in the round button.
+              <FaPlay
+                size={ICON_SIZE}
+                aria-hidden="true"
+                className={isRTL ? 'translate-x-px' : '-translate-x-px'}
+              />
             )}
           </button>
         </Tooltip>
@@ -567,7 +573,8 @@ export default function PlayerControls({
         {renderImageButton(
           forwardSVG,
           messages.nextTrack,
-          handleNextTrackWithStopSession
+          handleNextTrackWithStopSession,
+          isRTL ? 'scale-x-[-1]' : undefined
         )}
 
         {/* Volume — 44px ghost; tap for the slider, hold to mute. */}
