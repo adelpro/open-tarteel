@@ -4,12 +4,12 @@ Date: 2026-11-22
 Method: gstack `seo-audit` skill + `scripts/seo-audit.mjs` + rendered-page checks with Playwright. Missing inputs: no Search Console access and no field Core Web Vitals, so indexing status, crawl errors and real-user CWV are not verified.
 
 Targets:
-- Cloudflare test worker (v2.0.0, deployed from `cloudflare-deploy`): https://open-tarteel-cf-test.adelpro.workers.dev
+- Cloudflare test worker (v2.0.0, deployed from `cloudflare-deploy`): https://open-tarteel.adelpro.workers.dev
 - Production (older deploy): https://tarteel.quran.us.kg
 
 ## Result on the deployed v2.0.0 test worker
 
-`CHECK_URL=https://open-tarteel-cf-test.adelpro.workers.dev node scripts/seo-audit.mjs` produced **9 problems, all of them "is not noindex"**. That is intentional: the test target is built with `SEO_NOINDEX=true` so it cannot compete with production. Every crawlability, canonical and hreflang check passed:
+`CHECK_URL=https://open-tarteel.adelpro.workers.dev node scripts/seo-audit.mjs` produced **9 problems, all of them "is not noindex"**. That is intentional: the test target is built with `SEO_NOINDEX=true` so it cannot compete with production. Every crawlability, canonical and hreflang check passed:
 
 - sitemap answers 200 and names itself in `robots.txt`
 - no duplicate `<loc>` values
