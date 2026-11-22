@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 
+import { AhkamRuleKey } from '@/components/ahkam-rule-key';
 import { QuranLine, type QuranLineWord } from '@/components/quran-line';
-import { TajweedLegend } from '@/components/tajweed-legend';
 import type { SurahData } from '@/services/quran-text';
-import { ayahWordChars } from '@/services/quran-text/rules';
+import { ayahWordChars, ruleGroupsForWord } from '@/services/quran-text/rules';
 
 /**
  * Internal visual harness: the line and its colour key with no player, no
@@ -39,8 +39,6 @@ export default function FollowAlongPreviewPage() {
         </p>
       </div>
 
-      <TajweedLegend />
-
       {surah?.ayahs.map((ayah, index) => {
         const stored = ayahWordChars(ayah).filter(
           (word) => word.storedIndex > ayah.b
@@ -58,12 +56,17 @@ export default function FollowAlongPreviewPage() {
           markerNumber: index + 1,
         });
 
+        const activeGroups = ruleGroupsForWord(
+          words.find((word) => word.state === 'current')?.chars ?? []
+        );
+
         return (
-          <QuranLine
-            key={index}
-            words={words}
-            ariaLabel={`الآية ${index + 1}`}
-          />
+          <div key={index}>
+            <QuranLine words={words} ariaLabel={`الآية ${index + 1}`} />
+            <div className="mt-2">
+              <AhkamRuleKey activeGroups={activeGroups} />
+            </div>
+          </div>
         );
       })}
 

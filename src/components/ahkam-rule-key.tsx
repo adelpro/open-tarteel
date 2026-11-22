@@ -35,12 +35,14 @@ export function AhkamRuleKey({
             key={group}
             aria-current={active ? 'true' : undefined}
             className={cn(
-              'border-b-2 pb-0.5 text-xs leading-5 transition-[color,border-width] duration-180 ease-standard',
-              active
-                ? 'border-b-[3px] font-bold text-ink'
-                : 'font-normal text-ink-muted'
+              'pb-0.5 text-xs leading-5 transition-[color,border-width] duration-180 ease-standard',
+              active ? 'font-bold text-ink' : 'font-normal text-ink-muted'
             )}
-            style={{ borderBottomColor: TAJWEED_COLORS[group] }}
+            style={{
+              borderBottomStyle: 'solid',
+              borderBottomWidth: active ? 3 : 2,
+              borderBottomColor: TAJWEED_COLORS[group],
+            }}
           >
             {TAJWEED_LABELS[group][locale]}
           </li>
