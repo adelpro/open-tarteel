@@ -12,7 +12,6 @@ import React, {
 import { BsStar, BsStarFill } from 'react-icons/bs';
 import {
   MdClose,
-  MdCloudDone,
   MdExpandMore,
   MdSearch,
   MdVisibility,
@@ -42,7 +41,6 @@ import { Reciter } from '@/types';
 import { cn, generateFavId } from '@/utils';
 import { getRiwayaKeyFromValue } from '@/utils/get-riwaya-from-mushaf';
 
-import ProviderBadges from './provider-badge';
 import ReciterFilters from './reciter-filters';
 import Sheet from './sheet';
 import SimpleSkeleton from './simple-skeleton';
@@ -425,10 +423,6 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
             const favId = generateFavId(reciter);
             const isFavorite = favoriteReciters.includes(favId);
             const current = selectedFavId === favId;
-            const downloaded = isReciterDownloaded(
-              reciter.id,
-              reciter.moshaf.id
-            );
 
             return (
               <li key={favId} className="border-b border-border">
@@ -458,28 +452,10 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
                           })}
                         </span>
                       </span>
-                      <span className="mt-0.5 flex min-w-0 items-center gap-1.5 overflow-hidden whitespace-nowrap text-[13px] text-muted">
-                        <span className="min-w-0 truncate">
-                          {reciter.moshaf.name}
-                        </span>
-                        <span aria-hidden="true">·</span>
-                        <span className="shrink-0">
-                          {formatMessage({
-                            id: SOURCE_LABEL_IDS[reciter.source],
-                          })}
-                        </span>
-                        <ProviderBadges
-                          source={reciter.source}
-                          max={2}
-                          plain
-                          className="hidden text-[13px] lg:inline"
-                        />
-                        {downloaded && (
-                          <MdCloudDone
-                            className="size-3.5 shrink-0 text-success"
-                            aria-hidden="true"
-                          />
-                        )}
+                      <span className="mt-0.5 block min-w-0 truncate whitespace-nowrap text-[13px] text-muted">
+                        {formatMessage({
+                          id: SOURCE_LABEL_IDS[reciter.source],
+                        })}
                       </span>
                     </span>
                     <span className="flex w-12 shrink-0 flex-col items-end gap-1 text-xs leading-none text-muted">
