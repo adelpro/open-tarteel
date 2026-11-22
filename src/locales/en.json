@@ -275,7 +275,7 @@
   "provider.badge.noDownload": "No download",
   "provider.badge.more": "+{count}",
   "tahfeez.noTimings": "No ayah timings for this surah.",
-  "settings.source.mp3quranv4": "MP3 Quran v4 (beta)",
+  "settings.source.mp3quranv4": "MP3 Quran v4",
   "tahfeez.invalidRange": "The start ayah must be before the end ayah.",
   "tahfeez.strategy": "Range strategy",
   "about.followAlong.title": "Follow-along",
@@ -291,5 +291,10 @@
   "about.followAlong.method": "The colours mark where a rule applies in the text, not whether it was applied correctly. The mode does not record your voice, compare it, or give a verdict.",
   "about.followAlong.sources": "Sources and digests",
   "about.followAlong.licenseNote": "Text under CC BY 3.0 with Tanzil terms, tajweed under CC BY 4.0, ayah markers under OFL.",
-  "followAlong.close": "Turn off"
+  "followAlong.close": "Turn off",
+  "settings.followAlong": "Follow-along",
+  "settings.showAhkamTags": "Show tajweed tags",
+  "settings.showAhkamTagsDescription": "Show the rule chips beneath the recitation line.",
+  "settings.downloadingSurah": "Downloading surah {surah}",
+  "settings.downloadSpeed": "Speed {speed}"
 }

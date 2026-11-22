@@ -257,7 +257,7 @@
   "tahfeez.noTimings": "Für diese Sure sind keine Zeitangaben verfügbar.",
   "tahfeez.modeDisabledOffline": "Der Tahfeez-Modus ist offline nicht verfügbar.",
   "tahfeez.modeDisabledNoTimings": "Diese Rezitation hat keine Ayah-Timings",
-  "settings.source.mp3quranv4": "MP3 Quran v4 (Beta)",
+  "settings.source.mp3quranv4": "MP3 Quran v4",
   "tahfeez.invalidRange": "Die Start-Aya muss vor der End-Aya liegen.",
   "tahfeez.strategy": "Wiederholungsmodus",
   "about.followAlong.title": "Mitlesen",
@@ -273,5 +273,10 @@
   "about.followAlong.method": "Die Farben zeigen, wo eine Regel im Text gilt, nicht ob sie richtig angewandt wurde. Der Modus zeichnet deine Stimme nicht auf, vergleicht sie nicht und gibt kein Urteil ab.",
   "about.followAlong.sources": "Quellen und Prüfsummen",
   "about.followAlong.licenseNote": "Text unter CC BY 3.0 mit Tanzil-Bedingungen, Tajwid unter CC BY 4.0, Versmarker unter OFL.",
-  "followAlong.close": "Ausschalten"
+  "followAlong.close": "Ausschalten",
+  "settings.followAlong": "Mitlesen",
+  "settings.showAhkamTags": "Tajwid-Tags anzeigen",
+  "settings.showAhkamTagsDescription": "Zeige die Regel-Chips unter der Rezitationszeile.",
+  "settings.downloadingSurah": "Sure {surah} wird heruntergeladen",
+  "settings.downloadSpeed": "Geschwindigkeit {speed}"
 }

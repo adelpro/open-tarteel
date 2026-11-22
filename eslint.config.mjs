@@ -115,6 +115,9 @@ const config = [
     ignores: [
       '.next/**',
       '.netlify/**',
+      '.open-next/**',
+      '.worker-next/**',
+      '.wrangler/**',
       'node_modules/**',
       'coverage/**',
       '.husky/**',

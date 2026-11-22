@@ -133,10 +133,8 @@ export const playerModeAtom = atom<PlayerMode>('listening');
  * Sources shown in the reciter list by default: the two word-timing providers,
  * because word timings are what the Quran line needs.
  *
- * Quran Foundation is the broad catalogue; MP3Quran v4 is the audited set and
- * needs `NEXT_PUBLIC_ENABLE_MP3QURAN_V4` to appear at all. MP3Quran v3 is ayah
- * timings only, so it is no longer on by default — a user who wants it turns it
- * back on in settings. Itqan and Qurani.ai stay opt-in as before.
+ * Word-timing providers only: Quran Foundation and MP3Quran v4. Other sources
+ * stay opt-in so every default supports follow-along.
  */
 export const enabledSourcesAtom = createAtomWithStorage<LinkSource[]>(
   'enabled-sources',
@@ -162,3 +160,6 @@ export const followAlongLineAtom = createAtomWithStorage<boolean>(
   'follow-along-line',
   true
 );
+
+/** Set while the follow-along mode is open, so the spectrum can stand aside. */
+export const followAlongActiveAtom = atom(false);

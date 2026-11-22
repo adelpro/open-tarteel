@@ -82,6 +82,8 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_IS_PREVIEW:
       process.env.NEXT_PUBLIC_IS_PREVIEW ??
       (isNetlifyPreview ? 'true' : 'false'),
+    // Set for the Cloudflare test worker: no outbound WebSocket to Gun there.
+    NEXT_PUBLIC_DISABLE_GUN: process.env.NEXT_PUBLIC_DISABLE_GUN ?? 'false',
   },
   poweredByHeader: false,
   // The Next dev tools badge docks bottom-left and covers the footer at 375px.

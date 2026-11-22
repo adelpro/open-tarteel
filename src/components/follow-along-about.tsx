@@ -63,6 +63,7 @@ export function FollowAlongAbout() {
         />
       </p>
 
+
       <details className="text-sm">
         <summary className="cursor-pointer">
           <FormattedMessage

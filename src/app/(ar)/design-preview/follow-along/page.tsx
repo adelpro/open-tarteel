@@ -35,8 +35,7 @@ export default function FollowAlongPreviewPage() {
       <div>
         <h1 className="text-xl font-bold">معاينة: تتبّع التلاوة</h1>
         <p className="mt-1 text-sm text-ink-muted">
-          صفحة داخلية للمعاينة فقط: سطر واحد، مفتاح الألوان، ومنحنى الصوت بدون
-          مشغّل.
+          صفحة داخلية للمعاينة فقط: سطر واحد ومفتاح الألوان بدون مشغّل.
         </p>
       </div>
 
@@ -67,6 +66,7 @@ export default function FollowAlongPreviewPage() {
           />
         );
       })}
+
     </main>
   );
 }

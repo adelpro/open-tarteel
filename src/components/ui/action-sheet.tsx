@@ -47,7 +47,7 @@ export default function ActionSheet({
         if (event.target === ref.current) onClose();
       }}
       className={cn(
-        'fixed inset-x-0 bottom-0 top-auto m-0 mx-auto w-full max-w-[520px] rounded-t-[20px] border-t border-border bg-surface p-0 text-ink backdrop:bg-scrim lg:inset-0 lg:m-auto lg:h-fit lg:max-h-[85dvh] lg:max-w-sm lg:rounded-[16px] lg:border',
+        'fixed inset-x-0 bottom-0 top-auto m-0 mx-auto w-full max-w-[520px] rounded-t-[20px] border-t border-border bg-surface p-0 text-ink backdrop:bg-scrim lg:inset-0 lg:m-auto lg:h-fit lg:max-h-[90dvh] lg:max-w-[520px] lg:rounded-[16px] lg:border',
         className
       )}
     >
@@ -64,7 +64,7 @@ export default function ActionSheet({
           <MdClose className="size-5" aria-hidden="true" />
         </button>
       </div>
-      <div className="max-h-[70dvh] overflow-y-auto overflow-x-hidden overscroll-contain p-2 pb-[max(12px,env(safe-area-inset-bottom))] [-ms-overflow-style:none] [scrollbar-width:none] lg:max-h-[calc(85dvh-3.5rem)] [&::-webkit-scrollbar]:hidden">
+      <div className="max-h-[calc(100dvh-5rem)] overflow-y-auto overflow-x-hidden overscroll-contain p-2 pb-[max(12px,env(safe-area-inset-bottom))] [-ms-overflow-style:none] [scrollbar-width:none] lg:max-h-[calc(90dvh-3.5rem)] [&::-webkit-scrollbar]:hidden">
         {children}
       </div>
     </dialog>

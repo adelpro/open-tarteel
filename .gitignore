@@ -36,6 +36,12 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
+!.env.cloudflare.example
+
+# Cloudflare / OpenNext build output
+.open-next/
+.worker-next/
+.wrangler/
 
 # vercel
 .vercel

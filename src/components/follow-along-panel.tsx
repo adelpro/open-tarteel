@@ -17,7 +17,11 @@ import {
 } from '@/services/follow-along';
 import { ayahAhkam } from '@/services/follow-along/ahkam';
 import { loadSurah, type SurahData } from '@/services/quran-text';
-import { ayahWordChars } from '@/services/quran-text/rules';
+import {
+  ayahWordChars,
+  ruleGroup,
+  type TajweedGroup,
+} from '@/services/quran-text/rules';
 import type { AyahTiming, WordTiming } from '@/services/timings';
 import { groupByAyah, repairAyah } from '@/services/timings/word-timings';
 import type { LinkSource } from '@/types';
@@ -171,6 +175,7 @@ export function FollowAlongPanel({
     return ayah ? ayahAhkam(ayah) : [];
   }, [data, active.ayah]);
 
+
   const line = useMemo<QuranLineWord[]>(() => {
     const ayah = data?.surah.ayahs[active.ayah - 1];
     if (!ayah) return [];
@@ -196,6 +201,17 @@ export function FollowAlongPanel({
 
     return rendered;
   }, [active, data]);
+
+  // A word can carry several tajweed rules. Highlight every matching tag.
+  const activeGroups = useMemo(() => {
+    const current = line.find((word) => word.state === 'current');
+    const groups = new Set<TajweedGroup>();
+    for (const char of current?.chars ?? []) {
+      const group = ruleGroup(char.rule);
+      if (group) groups.add(group);
+    }
+    return groups;
+  }, [line]);
 
   return (
     <section
@@ -232,13 +248,19 @@ export function FollowAlongPanel({
             )}
           />
           {showAhkam ? (
-            <AhkamRail
-              rules={ahkam}
-              activeWord={active.fallback ? null : active.stored}
-              locale={locale === 'ar' ? 'ar' : 'en'}
-            />
+            <>
+              <AhkamRail
+                rules={ahkam}
+                activeWord={active.fallback ? null : active.stored}
+                locale={locale === 'ar' ? 'ar' : 'en'}
+              />
+              <TajweedLegend
+                locale={locale === 'ar' ? 'ar' : 'en'}
+                className="mt-2 text-xs"
+                activeGroups={activeGroups}
+              />
+            </>
           ) : null}
-          <TajweedLegend locale={locale === 'ar' ? 'ar' : 'en'} className="text-xs" />
         </>
       )}
     </section>

@@ -276,7 +276,7 @@
   "provider.badge.noDownload": "لا يدعم التحميل",
   "provider.badge.more": "+{count}",
   "tahfeez.noTimings": "لا تتوفر توقيتات الآيات لهذه السورة.",
-  "settings.source.mp3quranv4": "MP3 القرآن v4 (تجريبي)",
+  "settings.source.mp3quranv4": "MP3 القرآن v4",
   "tahfeez.invalidRange": "يجب أن تكون آية البداية قبل آية النهاية.",
   "tahfeez.strategy": "طريقة التكرار",
   "about.followAlong.title": "تتبّع التلاوة",
@@ -292,5 +292,10 @@
   "about.followAlong.method": "التلوين يبيّن موضع الحكم في النص، لا صحة تطبيقه في التلاوة. الوضع لا يسجّل صوتك ولا يقارنه ولا يصدر تقييمًا.",
   "about.followAlong.sources": "المصادر والبصمات",
   "about.followAlong.licenseNote": "النص بترخيص CC BY 3.0 وشروط تنزيل، والتجويد بترخيص CC BY 4.0، وعلامات الآيات بترخيص OFL.",
-  "followAlong.close": "إيقاف"
+  "followAlong.close": "إيقاف",
+  "settings.followAlong": "تتبّع التلاوة",
+  "settings.showAhkamTags": "إظهار وسوم التجويد",
+  "settings.showAhkamTagsDescription": "إظهار بطاقات الأحكام أسفل سطر التلاوة.",
+  "settings.downloadingSurah": "جارٍ تنزيل السورة {surah}",
+  "settings.downloadSpeed": "السرعة {speed}"
 }

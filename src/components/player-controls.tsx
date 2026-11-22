@@ -474,7 +474,8 @@ export default function PlayerControls({
         {renderImageButton(
           backwardSVG,
           messages.previousTrack,
-          handlePreviousTrackWithStopSession
+          handlePreviousTrackWithStopSession,
+          isRTL ? 'scale-x-[-1]' : undefined
         )}
 
         {/* Play — 56px primary circle with a 24px on-primary glyph. */}
@@ -499,7 +500,13 @@ export default function PlayerControls({
             {audioPlaying ? (
               <FaPause size={ICON_SIZE} aria-hidden="true" />
             ) : (
-              <FaPlay size={ICON_SIZE} aria-hidden="true" />
+              // The FaPlay glyph sits right of its box centre; nudge it back
+              // so the triangle is optically centred in the round button.
+              <FaPlay
+                size={ICON_SIZE}
+                aria-hidden="true"
+                className={isRTL ? 'translate-x-px' : '-translate-x-px'}
+              />
             )}
           </button>
         </Tooltip>
@@ -508,7 +515,8 @@ export default function PlayerControls({
         {renderImageButton(
           forwardSVG,
           messages.nextTrack,
-          handleNextTrackWithStopSession
+          handleNextTrackWithStopSession,
+          isRTL ? 'scale-x-[-1]' : undefined
         )}
 
         {/* Volume — 44px ghost; tap for the slider, hold to mute. */}
@@ -755,7 +763,7 @@ export default function PlayerControls({
           variant="action"
           size="md"
           onClick={() => setShowMoreMenu(true)}
-          className="fixed bottom-[calc(env(safe-area-inset-bottom)+72px)] left-1/2 z-40 -translate-x-1/2 border border-border bg-surface text-ink md:bottom-6"
+          className="fixed bottom-[calc(env(safe-area-inset-bottom)+72px)] left-1/2 z-40 -translate-x-1/2 gap-3 border border-border bg-surface text-ink md:bottom-6"
           icon={
             progress ? (
               <MdCloudDownload className="size-4 text-primary" />

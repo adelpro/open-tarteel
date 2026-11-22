@@ -19,16 +19,23 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    // No custom chevron: a browser that keeps its own arrow alongside ours drew
-    // two. The platform control draws exactly one, and pads for it itself.
+    // One arrow only: the Tailwind forms plugin draws the platform arrow in
+    // the select's background. A second custom chevron made two arrows.
     <select
       value={locale}
-      onChange={(event) => handleLanguageChange(event.target.value as Language)}
+      onChange={(event) =>
+        handleLanguageChange(event.target.value as Language)
+      }
       aria-label={formatMessage({
         id: 'language.select',
         defaultMessage: 'Select language',
       })}
-      className="focus-ring h-11 rounded-[8px] border border-border bg-surface px-3 text-[13px] font-bold text-ink"
+      dir={locale === 'ar' ? 'rtl' : 'ltr'}
+      className={
+        locale === 'ar'
+          ? 'focus-ring h-11 rounded-[8px] border border-border bg-surface bg-[position:left_0.75rem_center] pl-9 pr-3 text-[13px] font-bold text-ink'
+          : 'focus-ring h-11 rounded-[8px] border border-border bg-surface pr-9 pl-3 text-[13px] font-bold text-ink'
+      }
     >
       {Object.entries(LANGUAGES).map(([code, config]) => (
         <option key={code} value={code}>
