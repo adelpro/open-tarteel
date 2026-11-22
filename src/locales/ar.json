@@ -211,7 +211,7 @@
   "settings.spectrumShow": "إظهار الطيف",
   "settings.spectrumShowDescription": "ارسم الأعمدة أو القمم أو الشريط أثناء التشغيل. منفصل عن السطر القرآني.",
   "settings.followAlong": "تتبّع التلاوة",
-  "settings.followAlongDescription": "السطر القرآني كلمة بكلمة يظهر فوق الطيف أثناء تلاوة لها توقيت كلمات. مستقل عن الطيف.",
+  "settings.followAlongDescription": "السطر القرآني كلمة بكلمة يظهر عند تفعيله من قائمة المزيد في المشغّل.",
   "settings.followAlongLine": "السطر القرآني",
   "settings.followAlongLineOn": "السطر يتبع القارئ كلمة بكلمة.",
   "settings.followAlongLineOff": "مخفي. لا يُرسم السطر.",

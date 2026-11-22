@@ -211,7 +211,7 @@
   "settings.spectrumShow": "Spektrum anzeigen",
   "settings.spectrumShowDescription": "Balken, Spitzen oder Band während der Wiedergabe zeichnen. Unabhängig von der Koranzeile.",
   "settings.followAlong": "Mitlesen",
-  "settings.followAlongDescription": "Die wortweise Koranzeile über dem Spektrum, während eine Rezitation mit Wort-Timings läuft. Unabhängig vom Spektrum.",
+  "settings.followAlongDescription": "Die Wort-für-Wort-Zeile erscheint, wenn sie im Player-Menü aktiviert wird.",
   "settings.followAlongLine": "Koranzeile",
   "settings.followAlongLineOn": "Die Zeile folgt dem Rezitator Wort für Wort.",
   "settings.followAlongLineOff": "Ausgeblendet. Die Zeile wird nicht gezeichnet.",
