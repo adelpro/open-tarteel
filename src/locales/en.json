@@ -292,9 +292,9 @@
   "about.followAlong.sources": "Sources and digests",
   "about.followAlong.licenseNote": "Text under CC BY 3.0 with Tanzil terms, tajweed under CC BY 4.0, ayah markers under OFL.",
   "followAlong.close": "Turn off",
-  "settings.followAlong": "Follow-along",
   "settings.showAhkamTags": "Show tajweed tags",
   "settings.showAhkamTagsDescription": "Show the rule chips beneath the recitation line.",
   "settings.downloadingSurah": "Downloading surah {surah}",
-  "settings.downloadSpeed": "Speed {speed}"
+  "settings.downloadSpeed": "Speed {speed}",
+  "player.followAlongLine": "Follow-along line"
 }

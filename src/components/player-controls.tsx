@@ -16,6 +16,7 @@ import { FiHeadphones, FiRepeat } from 'react-icons/fi';
 import {
   MdCheck,
   MdCloudDownload,
+  MdGraphicEq,
   MdRepeatOne,
   MdSpeed,
   MdWarning,
@@ -30,6 +31,7 @@ import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { useSleepTimer } from '@/hooks/use-sleep-timer';
 import { TimeRange, useTahfeezSession } from '@/hooks/use-tahfeez-session';
 import {
+  followAlongLineAtom,
   fullscreenAtom,
   lastVolumeAtom,
   playbackModeAtom,
@@ -94,6 +96,7 @@ export default function PlayerControls({
   const [playbackSpeed, setPlaybackSpeed] = useAtom(playbackSpeedAtom);
   const [playbackMode, setPlaybackMode] = useAtom(playbackModeAtom);
   const [activeMode, setActiveMode] = useAtom(playerModeAtom);
+  const [followAlongLine, setFollowAlongLine] = useAtom(followAlongLineAtom);
   const selectedReciter = useAtomValue(selectedReciterAtom);
   const isOnline = useNetworkStatus();
   const {
@@ -406,6 +409,10 @@ export default function PlayerControls({
       id: 'player.modeSwitcher',
       defaultMessage: 'Playback mode',
     }),
+    followAlongLine: formatMessage({
+      id: 'player.followAlongLine',
+      defaultMessage: 'Follow-along line',
+    }),
     playbackModeLabel: formatMessage({
       id: 'player.playbackMode',
       defaultMessage: 'Shuffle / repeat',
@@ -619,6 +626,12 @@ export default function PlayerControls({
               setActiveMode('tahfeez');
               setShowMoreMenu(false);
             }}
+          />
+          <MenuRow
+            icon={<MdGraphicEq size={18} aria-hidden="true" />}
+            label={messages.followAlongLine}
+            pressed={followAlongLine}
+            onClick={() => setFollowAlongLine((previous) => !previous)}
           />
         </MenuGroup>
 

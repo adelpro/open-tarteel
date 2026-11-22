@@ -293,9 +293,9 @@
   "about.followAlong.sources": "المصادر والبصمات",
   "about.followAlong.licenseNote": "النص بترخيص CC BY 3.0 وشروط تنزيل، والتجويد بترخيص CC BY 4.0، وعلامات الآيات بترخيص OFL.",
   "followAlong.close": "إيقاف",
-  "settings.followAlong": "تتبّع التلاوة",
   "settings.showAhkamTags": "إظهار وسوم التجويد",
   "settings.showAhkamTagsDescription": "إظهار بطاقات الأحكام أسفل سطر التلاوة.",
   "settings.downloadingSurah": "جارٍ تنزيل السورة {surah}",
-  "settings.downloadSpeed": "السرعة {speed}"
+  "settings.downloadSpeed": "السرعة {speed}",
+  "player.followAlongLine": "سطر التلاوة"
 }

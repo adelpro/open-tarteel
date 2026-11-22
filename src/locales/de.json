@@ -274,9 +274,9 @@
   "about.followAlong.sources": "Quellen und Prüfsummen",
   "about.followAlong.licenseNote": "Text unter CC BY 3.0 mit Tanzil-Bedingungen, Tajwid unter CC BY 4.0, Versmarker unter OFL.",
   "followAlong.close": "Ausschalten",
-  "settings.followAlong": "Mitlesen",
   "settings.showAhkamTags": "Tajwid-Tags anzeigen",
   "settings.showAhkamTagsDescription": "Zeige die Regel-Chips unter der Rezitationszeile.",
   "settings.downloadingSurah": "Sure {surah} wird heruntergeladen",
-  "settings.downloadSpeed": "Geschwindigkeit {speed}"
+  "settings.downloadSpeed": "Geschwindigkeit {speed}",
+  "player.followAlongLine": "Rezitationszeile"
 }
