@@ -23,7 +23,7 @@ import { cn } from '@/utils';
 import Tag from './ui/tag';
 
 export interface FollowAlongPanelProps {
-  /** The player's audio element. Used for time and for the pitch analyser. */
+  /** The player's audio element. Used for the word clock. */
   audio: HTMLAudioElement | null;
   source: LinkSource;
   moshafId: string;

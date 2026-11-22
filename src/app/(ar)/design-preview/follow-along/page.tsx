@@ -8,7 +8,7 @@ import type { SurahData } from '@/services/quran-text';
 import { ayahWordChars } from '@/services/quran-text/rules';
 
 /**
- * Internal visual harness: the line, legend and contour with no player, no
+ * Internal visual harness: the line and legend with no player, no
  * providers and no network beyond the bundled surah. Never linked publicly.
  */
 export default function FollowAlongPreviewPage() {
@@ -35,8 +35,7 @@ export default function FollowAlongPreviewPage() {
       <div>
         <h1 className="text-xl font-bold">معاينة: تتبّع التلاوة</h1>
         <p className="mt-1 text-sm text-ink-muted">
-          صفحة داخلية للمعاينة فقط: سطر واحد، مفتاح الألوان، ومنحنى الصوت بدون
-          مشغّل.
+          صفحة داخلية للمعاينة فقط: سطر واحد ومفتاح الألوان بدون مشغّل.
         </p>
       </div>
 
