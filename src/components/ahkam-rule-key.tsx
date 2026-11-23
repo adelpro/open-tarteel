@@ -35,8 +35,10 @@ export function AhkamRuleKey({
             key={group}
             aria-current={active ? 'true' : undefined}
             className={cn(
-              'pb-0.5 text-xs leading-5 transition-[color,border-width] duration-180 ease-standard',
-              active ? 'font-bold text-ink' : 'font-normal text-ink-muted'
+              'origin-center pb-0.5 text-xs leading-5 transition-[color,border-width,transform] duration-180 ease-standard',
+              active
+                ? 'scale-[1.08] font-bold text-ink'
+                : 'font-normal text-ink-muted'
             )}
             style={{
               borderBottomStyle: 'solid',
