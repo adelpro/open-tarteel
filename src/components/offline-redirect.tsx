@@ -4,54 +4,46 @@ import { useAtomValue } from 'jotai';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
+import { useNetworkStatus } from '@/hooks/use-network-status';
 import { offlineModeAtom } from '@/jotai/offline-mode';
 import { localeFromPath, stripLocale, withLocale } from '@/lib/seo/routes';
-
-const CONNECTIVITY_CHECK_URL = 'https://www.gstatic.com/generate_204';
 
 export default function OfflineRedirect() {
   const pathname = usePathname();
   const router = useRouter();
   const offlineMode = useAtomValue(offlineModeAtom);
+  // The same derived "effectively online" value the downloads-only UI uses.
+  // A second, independent probe here could contradict the hook on a captive
+  // portal and bounce a still-offline user off the /offline shell.
+  const isOnline = useNetworkStatus();
   const barePath = stripLocale(pathname);
   const homePath = withLocale(localeFromPath(pathname), '/');
 
   useEffect(() => {
     let cancelled = false;
 
-    const checkConnectivity = async () => {
-      // Only handle returning to home when on the /offline fallback page
+    const redirectWhenBackOnline = () => {
+      // Only handle returning to home when on the /offline fallback page.
+      // Forced-offline mode keeps the user on the fallback even when the
+      // network is genuinely back.
       if (barePath !== '/offline' || cancelled || offlineMode === 'on') return;
+      if (!isOnline) return;
 
-      if (!navigator.onLine) return;
-
-      try {
-        await fetch(`${CONNECTIVITY_CHECK_URL}?t=${Date.now()}`, {
-          cache: 'no-store',
-          mode: 'no-cors',
-          signal: AbortSignal.timeout(5000),
-        });
-        if (
-          !cancelled &&
-          stripLocale(window.location.pathname) === '/offline'
-        ) {
-          router.replace(homePath);
-        }
-      } catch {
-        // Still offline
+      if (stripLocale(window.location.pathname) === '/offline') {
+        router.replace(homePath);
       }
     };
 
     if (barePath === '/offline') {
-      void checkConnectivity();
-      window.addEventListener('online', checkConnectivity);
-      window.addEventListener('focus', checkConnectivity);
-      const intervalId = window.setInterval(checkConnectivity, 10_000);
+      redirectWhenBackOnline();
+      window.addEventListener('online', redirectWhenBackOnline);
+      window.addEventListener('focus', redirectWhenBackOnline);
+      const intervalId = window.setInterval(redirectWhenBackOnline, 10_000);
 
       return () => {
         cancelled = true;
-        window.removeEventListener('online', checkConnectivity);
-        window.removeEventListener('focus', checkConnectivity);
+        window.removeEventListener('online', redirectWhenBackOnline);
+        window.removeEventListener('focus', redirectWhenBackOnline);
         window.clearInterval(intervalId);
       };
     }
@@ -59,7 +51,7 @@ export default function OfflineRedirect() {
     return () => {
       cancelled = true;
     };
-  }, [barePath, homePath, router, offlineMode]);
+  }, [barePath, homePath, router, offlineMode, isOnline]);
 
   return null;
 }
