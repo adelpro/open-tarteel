@@ -562,13 +562,17 @@ export default function PlayerControls({
                 onChange={(event) =>
                   setVolume(Number((event.target as HTMLInputElement).value))
                 }
-                className="focus-ring h-full w-1 cursor-pointer appearance-none bg-transparent"
+                className="focus-ring h-full w-1 cursor-pointer appearance-none bg-surface-sunken"
                 style={{
                   writingMode: 'vertical-lr',
                   WebkitAppearance: 'slider-vertical',
-                  // The palette sets --accent and --accent-line, so the gauge
-                  // follows the active theme without a hardcoded hue.
-                  background: `linear-gradient(to top, var(--accent) 0%, var(--accent) ${volume * 100}%, var(--accent-line) ${volume * 100}%, var(--accent-line) 100%)`,
+                  // Same fill as the seek bar: --accent to --accent-line on a
+                  // --surface-sunken track, so every palette stays in sync.
+                  backgroundImage:
+                    'linear-gradient(to top, var(--accent), var(--accent-line))',
+                  backgroundSize: `100% ${volume * 100}%`,
+                  backgroundPosition: 'bottom',
+                  backgroundRepeat: 'no-repeat',
                   borderRadius: '9999px',
                 }}
                 aria-label={messages.volumeControl}

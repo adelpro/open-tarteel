@@ -272,7 +272,7 @@
   "followAlong.disabled.provider": "هذه الجهة لا توفّر توقيت الكلمات",
   "followAlong.disabled.notHafs": "متاح برواية حفص عن عاصم فقط",
   "followAlong.disabled.noTimings": "هذه التلاوة بلا توقيت",
-  "followAlong.disabled.unaudited": "هذه التلاوة لم تُتحقَّق بعد",
+  "followAlong.disabled.unaudited": "هذه التلاوة لم يتم التحقق منها بعد",
   "provider.badge.noDownload": "لا يدعم التحميل",
   "provider.badge.more": "+{count}",
   "tahfeez.noTimings": "لا تتوفر توقيتات الآيات لهذه السورة.",

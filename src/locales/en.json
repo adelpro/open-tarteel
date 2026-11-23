@@ -271,7 +271,7 @@
   "followAlong.disabled.provider": "This provider has no word timings",
   "followAlong.disabled.notHafs": "Hafs an Asim only",
   "followAlong.disabled.noTimings": "This recitation has no timings",
-  "followAlong.disabled.unaudited": "This recitation is not audited yet",
+  "followAlong.disabled.unaudited": "This recitation has not been verified yet",
   "provider.badge.noDownload": "No download",
   "provider.badge.more": "+{count}",
   "tahfeez.noTimings": "No ayah timings for this surah.",
