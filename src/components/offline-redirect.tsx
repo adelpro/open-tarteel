@@ -4,7 +4,7 @@ import { useAtomValue } from 'jotai';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { forcedOfflineAtom } from '@/jotai/atom';
+import { offlineModeAtom } from '@/jotai/offline-mode';
 import { localeFromPath, stripLocale, withLocale } from '@/lib/seo/routes';
 
 const CONNECTIVITY_CHECK_URL = 'https://www.gstatic.com/generate_204';
@@ -12,7 +12,7 @@ const CONNECTIVITY_CHECK_URL = 'https://www.gstatic.com/generate_204';
 export default function OfflineRedirect() {
   const pathname = usePathname();
   const router = useRouter();
-  const forcedOffline = useAtomValue(forcedOfflineAtom);
+  const offlineMode = useAtomValue(offlineModeAtom);
   const barePath = stripLocale(pathname);
   const homePath = withLocale(localeFromPath(pathname), '/');
 
@@ -21,7 +21,7 @@ export default function OfflineRedirect() {
 
     const checkConnectivity = async () => {
       // Only handle returning to home when on the /offline fallback page
-      if (barePath !== '/offline' || cancelled || forcedOffline) return;
+      if (barePath !== '/offline' || cancelled || offlineMode === 'on') return;
 
       if (!navigator.onLine) return;
 
@@ -59,7 +59,7 @@ export default function OfflineRedirect() {
     return () => {
       cancelled = true;
     };
-  }, [barePath, homePath, router, forcedOffline]);
+  }, [barePath, homePath, router, offlineMode]);
 
   return null;
 }
