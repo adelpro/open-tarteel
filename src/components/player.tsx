@@ -29,7 +29,7 @@ import { canUseAudioAnalyser } from '@/utils/audio-cors';
 import { FollowAlongPanel } from './follow-along-panel';
 import PlayerControls from './player-controls';
 import Range from './range';
-import TrackInfo, { NowPlayingHeader } from './track-info';
+import TrackInfo from './track-info';
 
 const AudioBarsVisualizer = dynamic(
   () => import('@/components/audio-bars-visualizer'),
@@ -354,9 +354,6 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
               crossOrigin={canAnalyse ? 'anonymous' : undefined}
             />
           )}
-
-          {/* 1. now-playing header — surah 18/700, reciter 13 muted */}
-          <NowPlayingHeader currentTrackId={currentTrack} />
 
           {/*
             The line belongs above the spectrum it accompanies. Settings own it
