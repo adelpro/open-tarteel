@@ -11,10 +11,13 @@ import { isEffectivelyOffline, offlineModeAtom } from '@/jotai/offline-mode';
  * on mount and again on every remount. The store dedupes in-flight and recent
  * checks and keeps a single pair of window listeners.
  */
-type Listener = (online: boolean) => void;
+type Status = { online: boolean; ready: boolean };
+type Listener = (status: Status) => void;
+
+const INITIAL_STATUS: Status = { online: true, ready: false };
 
 const listeners = new Set<Listener>();
-let online = true;
+let status: Status = INITIAL_STATUS;
 let inFlight: Promise<void> | null = null;
 let lastCheck = 0;
 // Auto mode only flips to offline after two consecutive failed probes. A single
@@ -23,10 +26,18 @@ let failedChecks = 0;
 let wired = false;
 let detachWindowListeners: (() => void) | null = null;
 
-function emit(next: boolean) {
-  if (next === online) return;
-  online = next;
-  for (const listener of listeners) listener(next);
+function publish(next: Status) {
+  if (next.online === status.online && next.ready === status.ready) return;
+  status = next;
+  for (const listener of listeners) listener(status);
+}
+
+function setOnline(online: boolean) {
+  publish({ ...status, online });
+}
+
+function markReady() {
+  publish({ ...status, ready: true });
 }
 
 function subscribe(listener: Listener) {
@@ -47,7 +58,7 @@ async function check(force = false) {
     try {
       if (typeof navigator !== 'undefined' && !navigator.onLine) {
         failedChecks = 2;
-        emit(false);
+        setOnline(false);
         return;
       }
       // Without an active service worker there is no cached document to be
@@ -57,7 +68,7 @@ async function check(force = false) {
         !navigator.serviceWorker?.controller
       ) {
         failedChecks = 0;
-        emit(true);
+        setOnline(true);
         return;
       }
       const response = await fetch(`/offline-check?t=${now}`, {
@@ -66,15 +77,18 @@ async function check(force = false) {
       });
       if (response.ok) {
         failedChecks = 0;
-        emit(true);
+        setOnline(true);
       } else {
         failedChecks += 1;
-        if (failedChecks >= 2) emit(false);
+        if (failedChecks >= 2) setOnline(false);
       }
     } catch {
       failedChecks += 1;
-      if (failedChecks >= 2) emit(false);
+      if (failedChecks >= 2) setOnline(false);
     } finally {
+      // Every settled probe — including the immediate navigator/no-SW paths —
+      // makes the connectivity answer trustworthy for late-mounting consumers.
+      markReady();
       inFlight = null;
     }
   })();
@@ -87,7 +101,7 @@ function wire() {
   wired = true;
   const sync = () => {
     lastCheck = 0;
-    emit(navigator.onLine);
+    setOnline(navigator.onLine);
     void check(true);
   };
   window.addEventListener('online', sync);
@@ -106,29 +120,44 @@ export function resetNetworkStatusForTests(): void {
   detachWindowListeners?.();
   detachWindowListeners = null;
   listeners.clear();
-  online = true;
+  status = { ...INITIAL_STATUS };
   inFlight = null;
   lastCheck = 0;
   failedChecks = 0;
   wired = false;
 }
 
-export function useNetworkStatus() {
-  const mode = useAtomValue(offlineModeAtom);
+function useStatus(): Status {
   // The first render must be identical on the server and in the browser.
-  const [isOnline, setIsOnline] = useState(true);
+  // In particular it must not trust navigator.onLine or a module-level value
+  // left over from an earlier check, so hydration cannot diverge.
+  const [current, setCurrent] = useState<Status>(INITIAL_STATUS);
 
   useEffect(() => {
     wire();
-    const unsubscribe = subscribe(setIsOnline);
-    setIsOnline(navigator.onLine);
+    const unsubscribe = subscribe(setCurrent);
+    // Adopt the shared, already-settled answer if another consumer probed
+    // first; the first render above stays SSR-safe because ready starts false.
+    setCurrent(status);
     void check();
     return unsubscribe;
   }, []);
+
+  return current;
+}
+
+/** Connectivity plus a flag telling consumers whether the first probe settled. */
+export function useNetworkStatusDetails(): Status {
+  return useStatus();
+}
+
+export function useNetworkStatus() {
+  const mode = useAtomValue(offlineModeAtom);
+  const { online } = useStatus();
 
   useEffect(() => {
     void check(true);
   }, [mode]);
 
-  return !isEffectivelyOffline(mode, isOnline);
+  return !isEffectivelyOffline(mode, online);
 }

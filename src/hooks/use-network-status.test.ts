@@ -9,6 +9,7 @@ import {
   resetNetworkStatusForTests,
   retryConnectivityCheck,
   useNetworkStatus,
+  useNetworkStatusDetails,
 } from './use-network-status';
 
 describe('useNetworkStatus', () => {
@@ -123,6 +124,49 @@ describe('useNetworkStatus', () => {
       window.dispatchEvent(new Event('online'));
     });
     expect(result.current).toBe(true);
+  });
+
+  it('marks ready only after the first connectivity check settles', async () => {
+    vi.useFakeTimers();
+    Object.defineProperty(navigator, 'serviceWorker', {
+      value: { controller: {} },
+      configurable: true,
+    });
+    let resolveFetch: (value: { ok: boolean }) => void = () => {};
+    const fetchMock = vi.fn().mockImplementation(
+      () =>
+        new Promise<{ ok: boolean }>((resolve) => {
+          resolveFetch = resolve;
+        })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const { result } = renderHook(() => useNetworkStatusDetails());
+    expect(result.current.ready).toBe(false);
+    expect(result.current.online).toBe(true);
+
+    await act(async () => {
+      resolveFetch({ ok: true });
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(result.current.ready).toBe(true);
+    expect(result.current.online).toBe(true);
+  });
+
+  it('marks ready after the immediate navigator.onLine === false path', async () => {
+    setOnLine(false);
+
+    const { result } = renderHook(() => useNetworkStatusDetails());
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(result.current.ready).toBe(true);
+    expect(result.current.online).toBe(false);
   });
 
   it('needs two consecutive failed probes before going offline in auto mode', async () => {

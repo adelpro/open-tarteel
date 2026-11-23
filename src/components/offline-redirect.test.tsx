@@ -3,7 +3,10 @@ import { createStore, Provider } from 'jotai';
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useNetworkStatus } from '@/hooks/use-network-status';
+import {
+  useNetworkStatus,
+  useNetworkStatusDetails,
+} from '@/hooks/use-network-status';
 import { offlineModeAtom } from '@/jotai/offline-mode';
 
 import OfflineRedirect from './offline-redirect';
@@ -22,6 +25,7 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@/hooks/use-network-status', () => ({
   useNetworkStatus: vi.fn(),
+  useNetworkStatusDetails: vi.fn(),
 }));
 
 describe('OfflineRedirect', () => {
@@ -46,6 +50,10 @@ describe('OfflineRedirect', () => {
     fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);
     vi.mocked(useNetworkStatus).mockReturnValue(false);
+    vi.mocked(useNetworkStatusDetails).mockReturnValue({
+      online: false,
+      ready: false,
+    });
     Object.defineProperty(navigator, 'onLine', {
       value: false,
       writable: true,
@@ -83,7 +91,29 @@ describe('OfflineRedirect', () => {
     mockPathname = '/offline';
     setLocation('/offline');
     // The network really is back; the forced-offline guard must still win.
-    vi.mocked(useNetworkStatus).mockReturnValue(true);
+    vi.mocked(useNetworkStatusDetails).mockReturnValue({
+      online: true,
+      ready: true,
+    });
+
+    render(<OfflineRedirect />, { wrapper: wrapperFor(store) });
+
+    expect(mockReplace).not.toHaveBeenCalled();
+    expect(mockPush).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('does not redirect while the first connectivity check has not settled', () => {
+    const store = createStore();
+    store.set(offlineModeAtom, 'auto');
+    mockPathname = '/offline';
+    setLocation('/offline');
+    // SSR-safe seeding makes `online` true before the probe settles; redirect
+    // must wait for `ready` or it bounces genuinely-offline users home.
+    vi.mocked(useNetworkStatusDetails).mockReturnValue({
+      online: true,
+      ready: false,
+    });
 
     render(<OfflineRedirect />, { wrapper: wrapperFor(store) });
 
@@ -97,7 +127,10 @@ describe('OfflineRedirect', () => {
     store.set(offlineModeAtom, 'auto');
     mockPathname = '/en/offline';
     setLocation('/en/offline');
-    vi.mocked(useNetworkStatus).mockReturnValue(true);
+    vi.mocked(useNetworkStatusDetails).mockReturnValue({
+      online: true,
+      ready: true,
+    });
 
     render(<OfflineRedirect />, { wrapper: wrapperFor(store) });
 
