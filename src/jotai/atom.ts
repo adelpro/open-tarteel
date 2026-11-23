@@ -20,10 +20,6 @@ export const showVisualizerAtom = createAtomWithStorage<boolean>(
   'show-visualizer',
   true
 );
-export const forcedOfflineAtom = createAtomWithStorage<boolean>(
-  'forced-offline',
-  false
-);
 
 // Playback position is per session: a reload starts from the beginning and
 // the audio element writes time on every `timeupdate`, so persisting it would
