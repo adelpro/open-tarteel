@@ -3,7 +3,7 @@
 import { useAtom, useAtomValue } from 'jotai';
 import dynamic from 'next/dynamic';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { useMediaSession } from '@/hooks/use-media-session';
 import { useNetworkStatus } from '@/hooks/use-network-status';
@@ -61,6 +61,7 @@ type Props = {
 };
 
 export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
+  const { formatMessage } = useIntl();
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackMode] = useAtom(playbackModeAtom);
   const visualizerModel = useAtomValue(visualizerModelAtom);
@@ -83,6 +84,14 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const isOnline = useNetworkStatus();
+  const followAlongBlock =
+    selectedReciter && currentTrack !== undefined
+      ? followAlongBlockReason(
+          selectedReciter.source,
+          selectedReciter.moshaf,
+          isOnline
+        )
+      : null;
   const { isTrackCached } = useOfflineDownload();
 
   // In offline mode, determine which track indices are cached/playable
@@ -364,18 +373,34 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
             activeMode === 'listening' &&
             selectedReciter &&
             currentTrack !== undefined &&
-            followAlongBlockReason(
-              selectedReciter.source,
-              selectedReciter.moshaf,
-              isOnline
-            ) === null && (
+            followAlongBlock === null ? (
               <FollowAlongPanel
                 audio={audioElement}
                 source={selectedReciter.source}
                 moshafId={selectedReciter.moshaf.id}
                 surah={currentTrack + 1}
               />
-            )}
+            ) : isFollowAlongEnabled() &&
+              followAlongLine &&
+              activeMode === 'listening' &&
+              followAlongBlock ? (
+              <p className="text-center text-[12px] text-ink-muted">
+                {formatMessage(
+                  {
+                    id: 'followAlong.unavailable',
+                    defaultMessage: 'Follow-along: {reason}',
+                  },
+                  {
+                    reason: formatMessage({
+                      id: `followAlong.disabled.${followAlongBlock
+                        .replace('not-hafs', 'notHafs')
+                        .replace('no-timings', 'noTimings')}`,
+                      defaultMessage: 'Not available',
+                    }),
+                  }
+                )}
+              </p>
+            ) : null}
 
           {/* 2. visualiser */}
           {spectrumEnabled ? (

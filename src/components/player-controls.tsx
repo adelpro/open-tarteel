@@ -566,7 +566,9 @@ export default function PlayerControls({
                 style={{
                   writingMode: 'vertical-lr',
                   WebkitAppearance: 'slider-vertical',
-                  background: `linear-gradient(to top, var(--accent) 0%, var(--accent) ${volume * 100}%, var(--border-strong) ${volume * 100}%, var(--border-strong) 100%)`,
+                  // The palette sets --accent and --accent-line, so the gauge
+                  // follows the active theme without a hardcoded hue.
+                  background: `linear-gradient(to top, var(--accent) 0%, var(--accent) ${volume * 100}%, var(--accent-line) ${volume * 100}%, var(--accent-line) 100%)`,
                   borderRadius: '9999px',
                 }}
                 aria-label={messages.volumeControl}

@@ -297,5 +297,6 @@
   "settings.showAhkamTagsDescription": "إظهار بطاقات الأحكام أسفل سطر التلاوة.",
   "settings.downloadingSurah": "جارٍ تنزيل السورة {surah}",
   "settings.downloadSpeed": "السرعة {speed}",
-  "player.followAlongLine": "سطر التلاوة"
+  "player.followAlongLine": "سطر التلاوة",
+  "followAlong.unavailable": "تتبّع التلاوة: {reason}"
 }

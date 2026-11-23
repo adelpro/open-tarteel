@@ -278,5 +278,6 @@
   "settings.showAhkamTagsDescription": "Zeige die Regel-Chips unter der Rezitationszeile.",
   "settings.downloadingSurah": "Sure {surah} wird heruntergeladen",
   "settings.downloadSpeed": "Geschwindigkeit {speed}",
-  "player.followAlongLine": "Rezitationszeile"
+  "player.followAlongLine": "Rezitationszeile",
+  "followAlong.unavailable": "Mitlesen: {reason}"
 }

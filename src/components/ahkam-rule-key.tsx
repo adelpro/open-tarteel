@@ -37,7 +37,7 @@ export function AhkamRuleKey({
             className={cn(
               'origin-center pb-0.5 text-xs leading-5 transition-[color,border-width,transform] duration-180 ease-standard',
               active
-                ? 'scale-[1.08] font-bold text-ink'
+                ? 'scale-[1.12] font-bold text-ink'
                 : 'font-normal text-ink-muted'
             )}
             style={{

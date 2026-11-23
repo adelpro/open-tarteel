@@ -158,7 +158,8 @@ export const reciterListPinnedAtom = createAtomWithStorage<boolean>(
  */
 export const followAlongLineAtom = createAtomWithStorage<boolean>(
   'follow-along-line',
-  true
+  true,
+  { getOnInit: true }
 );
 
 /** Set while the follow-along mode is open, so the spectrum can stand aside. */
