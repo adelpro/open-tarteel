@@ -200,4 +200,31 @@ describe('useNetworkStatus', () => {
     });
     expect(result.current).toBe(true);
   });
+
+  it('probes again after an initial check with no service worker', async () => {
+    const originalServiceWorker = Object.getOwnPropertyDescriptor(
+      navigator,
+      'serviceWorker'
+    );
+    resetNetworkStatusForTests();
+    Object.defineProperty(navigator, 'serviceWorker', {
+      value: undefined,
+      configurable: true,
+    });
+    await retryConnectivityCheck();
+
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true });
+    vi.stubGlobal('fetch', fetchMock);
+    Object.defineProperty(navigator, 'serviceWorker', {
+      value: { controller: {} },
+      configurable: true,
+    });
+    await retryConnectivityCheck();
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    vi.unstubAllGlobals();
+    if (originalServiceWorker) {
+      Object.defineProperty(navigator, 'serviceWorker', originalServiceWorker);
+    }
+  });
 });

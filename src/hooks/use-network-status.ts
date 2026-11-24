@@ -89,9 +89,13 @@ async function check(force = false) {
       // Every settled probe — including the immediate navigator/no-SW paths —
       // makes the connectivity answer trustworthy for late-mounting consumers.
       markReady();
-      inFlight = null;
     }
-  })();
+    // Clear on the returned promise, not above: the synchronous early-return
+    // paths finish the async body before `inFlight` is assigned, which would
+    // otherwise leave a permanently resolved promise stuck in `inFlight`.
+  })().finally(() => {
+    inFlight = null;
+  });
 
   return inFlight;
 }
@@ -157,6 +161,15 @@ export function useNetworkStatus() {
 
   useEffect(() => {
     void check(true);
+  }, [mode]);
+
+  useEffect(() => {
+    // Mobile browsers can lose connectivity without firing `offline` (captive
+    // portals, Wi-Fi with no uplink). Probe periodically so Auto still notices;
+    // check()'s own 10 s throttle keeps this to one request per interval.
+    if (typeof window === 'undefined' || mode !== 'auto') return;
+    const intervalId = window.setInterval(() => void check(), 5_000);
+    return () => window.clearInterval(intervalId);
   }, [mode]);
 
   return !isEffectivelyOffline(mode, online);
