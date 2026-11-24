@@ -68,6 +68,23 @@ function validateSurah(surah, ayahs, rows) {
 }
 
 /**
+ * Refuse to publish a truncated allowlist when the upstream API shifts its
+ * route or payload shape and every recitation silently looks like a miss.
+ */
+function assertProbeResults(hafsCount, passing) {
+  assert.ok(hafsCount > 0, 'catalogue returned no Hafs recitations');
+  assert.ok(
+    passing.size >= 12,
+    `probe returned only ${passing.size} recitations (expected at least 12)`
+  );
+  assert.ok(
+    passing.size >= Math.ceil(hafsCount * 0.5),
+    `probe returned ${passing.size} of ${hafsCount} Hafs recitations`
+  );
+  assert.ok(passing.has('118'), 'known-good control recitation 118 did not pass');
+}
+
+/**
  * Judge the whole sample, not each surah: a six-ayah surah loses 17% of its
  * words to one un-timed ayah, which the app's per-ayah fallback handles.
  */
@@ -126,6 +143,19 @@ function selfTest() {
 
   assert.equal(retryDelayMs('2', 1), 2000);
   assert.equal(retryDelayMs(null, 2), 8000);
+
+  const manyIds = new Set([
+    '118',
+    ...Array.from({ length: 117 }, (_, index) => String(1000 + index)),
+  ]);
+  const withoutControl = new Set(
+    Array.from({ length: 168 }, (_, index) => String(2000 + index))
+  );
+  assert.doesNotThrow(() => assertProbeResults(235, manyIds));
+  assert.throws(() => assertProbeResults(235, new Set()));
+  assert.throws(() => assertProbeResults(0, manyIds));
+  assert.throws(() => assertProbeResults(235, new Set(['118'])));
+  assert.throws(() => assertProbeResults(235, withoutControl));
 
   console.log('self-test: PASS');
 }
@@ -269,6 +299,7 @@ async function main() {
   await Promise.all(
     Array.from({ length: CONCURRENCY }, () => worker())
   );
+  assertProbeResults(hafs.length, passing);
   await emitAllowlist(passing);
 }
 

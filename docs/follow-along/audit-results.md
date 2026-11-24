@@ -107,8 +107,9 @@ accuracy audit; the 99.99% figure above applies only to the original 12.
 
 - Timing _accuracy_: no ground truth exists. Only coverage and index validity.
 - Tajweed rule _correctness_: scholarly, not computable here.
-- v4 catalogue beyond the 12 curated recitations: 223 Hafs recitations unproven,
-  so they are not exposed.
+- v4 catalogue beyond the 168 probe-verified recitations: 67 Hafs recitations
+  were blocked or remain unproven, so they are not exposed. The original 12
+  below were fully audited; the rest were checked on ten surahs only.
 - Translation licence: the API exposes no licence field; CC BY-ND is recorded
   from the gallery page.
 - Current tanzil.net release vs the pinned 2017 copy: not byte-diffed yet.
