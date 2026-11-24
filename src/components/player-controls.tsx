@@ -6,16 +6,17 @@ import playlistSVG from '@svgs/music-playlist.svg';
 import shuffleSVG from '@svgs/music-shuffle.svg';
 import shuffleDisabledSVG from '@svgs/music-shuffle-disabled.svg';
 import sleepSVG from '@svgs/sleep.svg';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import Image from 'next/image';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { BiVolumeFull, BiVolumeMute } from 'react-icons/bi';
 import { BsFullscreen, BsFullscreenExit } from 'react-icons/bs';
 import { FaPause, FaPlay } from 'react-icons/fa';
-import { FiActivity, FiHeadphones, FiRepeat } from 'react-icons/fi';
+import { FiHeadphones, FiRepeat } from 'react-icons/fi';
 import {
   MdCheck,
   MdCloudDownload,
+  MdGraphicEq,
   MdRepeatOne,
   MdSpeed,
   MdWarning,
@@ -30,23 +31,19 @@ import { useOfflineDownload } from '@/hooks/use-offline-download';
 import { useSleepTimer } from '@/hooks/use-sleep-timer';
 import { TimeRange, useTahfeezSession } from '@/hooks/use-tahfeez-session';
 import {
-  followAlongActiveAtom,
+  followAlongLineAtom,
   fullscreenAtom,
   lastVolumeAtom,
   playbackModeAtom,
   playbackSpeedAtom,
+  playerModeAtom,
   selectedReciterAtom,
   volumeAtom,
 } from '@/jotai/atom';
-import {
-  canUseRangeMode,
-  followAlongBlockReason,
-} from '@/services/reciters/capabilities';
-import { isFollowAlongEnabled } from '@/services/reciters/flags';
+import { canUseRangeMode } from '@/services/reciters/capabilities';
 import { cn } from '@/utils';
 
 import DownloadAllButton from './download-all-button';
-import { FollowAlongPanel } from './follow-along-panel';
 import TahfeezModeControls, { TahfeezSettings } from './tahfeez-mode-controls';
 import ActionSheet from './ui/action-sheet';
 import Tag from './ui/tag';
@@ -98,9 +95,8 @@ export default function PlayerControls({
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackSpeed, setPlaybackSpeed] = useAtom(playbackSpeedAtom);
   const [playbackMode, setPlaybackMode] = useAtom(playbackModeAtom);
-  const [activeMode, setActiveMode] = useState<
-    'listening' | 'tahfeez' | 'follow-along'
-  >('listening');
+  const [activeMode, setActiveMode] = useAtom(playerModeAtom);
+  const [followAlongLine, setFollowAlongLine] = useAtom(followAlongLineAtom);
   const selectedReciter = useAtomValue(selectedReciterAtom);
   const isOnline = useNetworkStatus();
   const {
@@ -176,28 +172,11 @@ export default function PlayerControls({
     canUseRangeMode(selectedReciter?.source, selectedReciter?.moshaf) &&
     isOnline;
 
-  const setFollowAlongActive = useSetAtom(followAlongActiveAtom);
-  const showFollowAlong = isFollowAlongEnabled();
-  const followAlongReason = followAlongBlockReason(
-    selectedReciter?.source,
-    selectedReciter?.moshaf,
-    isOnline
-  );
-  const isFollowAlongSupported = showFollowAlong && followAlongReason === null;
-
   useEffect(() => {
     if (!isTahfeezSupported && activeMode === 'tahfeez') {
       setActiveMode('listening');
     }
-    if (!isFollowAlongSupported && activeMode === 'follow-along') {
-      setActiveMode('listening');
-    }
-  }, [isTahfeezSupported, isFollowAlongSupported, activeMode]);
-
-  useEffect(() => {
-    setFollowAlongActive(activeMode === 'follow-along');
-    return () => setFollowAlongActive(false);
-  }, [activeMode, setFollowAlongActive]);
+  }, [isTahfeezSupported, activeMode, setActiveMode]);
 
   const { formatMessage } = useIntl();
   const { isRTL } = useDirection();
@@ -426,33 +405,13 @@ export default function PlayerControls({
       id: 'tahfeez.listeningLabel',
       defaultMessage: 'Listening',
     }),
-    followAlongMode: formatMessage({
-      id: 'followAlong.mode',
-      defaultMessage: 'Follow-along',
-    }),
-    followAlongDisabledOffline: formatMessage({
-      id: 'followAlong.disabled.offline',
-      defaultMessage: 'Not available offline',
-    }),
-    followAlongDisabledProvider: formatMessage({
-      id: 'followAlong.disabled.provider',
-      defaultMessage: 'This provider has no word timings',
-    }),
-    followAlongDisabledNotHafs: formatMessage({
-      id: 'followAlong.disabled.notHafs',
-      defaultMessage: 'Hafs an Asim only',
-    }),
-    followAlongDisabledNoTimings: formatMessage({
-      id: 'followAlong.disabled.noTimings',
-      defaultMessage: 'This recitation has no timings',
-    }),
-    followAlongDisabledUnaudited: formatMessage({
-      id: 'followAlong.disabled.unaudited',
-      defaultMessage: 'This recitation is not audited yet',
-    }),
     modeSwitcher: formatMessage({
       id: 'player.modeSwitcher',
       defaultMessage: 'Playback mode',
+    }),
+    followAlongLine: formatMessage({
+      id: 'player.followAlongLine',
+      defaultMessage: 'Follow-along line',
     }),
     playbackModeLabel: formatMessage({
       id: 'player.playbackMode',
@@ -487,16 +446,6 @@ export default function PlayerControls({
   // ── Render ───────────────────────────────────────────
   return (
     <div className="flex w-full flex-col">
-      {activeMode === 'follow-along' &&
-        selectedReciter &&
-        chapterNumber !== undefined && (
-          <FollowAlongPanel
-            audio={audioElement}
-            source={selectedReciter.source}
-            moshafId={selectedReciter.moshaf.id}
-            surah={chapterNumber}
-          />
-        )}
       {activeMode === 'tahfeez' ? (
         <TahfeezModeControls
           tahfeezSettings={tahfeezSettings}
@@ -613,11 +562,17 @@ export default function PlayerControls({
                 onChange={(event) =>
                   setVolume(Number((event.target as HTMLInputElement).value))
                 }
-                className="focus-ring h-full w-1 cursor-pointer appearance-none bg-transparent"
+                className="focus-ring h-full w-1 cursor-pointer appearance-none bg-surface-sunken"
                 style={{
                   writingMode: 'vertical-lr',
                   WebkitAppearance: 'slider-vertical',
-                  background: `linear-gradient(to top, var(--accent) 0%, var(--accent) ${volume * 100}%, var(--border-strong) ${volume * 100}%, var(--border-strong) 100%)`,
+                  // Same fill as the seek bar: --accent to --accent-line on a
+                  // --surface-sunken track, so every palette stays in sync.
+                  backgroundImage:
+                    'linear-gradient(to top, var(--accent), var(--accent-line))',
+                  backgroundSize: `100% ${volume * 100}%`,
+                  backgroundPosition: 'bottom',
+                  backgroundRepeat: 'no-repeat',
                   borderRadius: '9999px',
                 }}
                 aria-label={messages.volumeControl}
@@ -678,31 +633,12 @@ export default function PlayerControls({
               setShowMoreMenu(false);
             }}
           />
-          {showFollowAlong ? (
-            <MenuRow
-              icon={<FiActivity size={18} aria-hidden="true" />}
-              label={messages.followAlongMode}
-              pressed={activeMode === 'follow-along'}
-              disabled={!isFollowAlongSupported}
-              title={
-                isFollowAlongSupported
-                  ? undefined
-                  : followAlongReason === 'offline'
-                    ? messages.followAlongDisabledOffline
-                    : followAlongReason === 'not-hafs'
-                      ? messages.followAlongDisabledNotHafs
-                      : followAlongReason === 'no-timings'
-                        ? messages.followAlongDisabledNoTimings
-                        : followAlongReason === 'unaudited'
-                          ? messages.followAlongDisabledUnaudited
-                          : messages.followAlongDisabledProvider
-              }
-              onClick={() => {
-                setActiveMode('follow-along');
-                setShowMoreMenu(false);
-              }}
-            />
-          ) : null}
+          <MenuRow
+            icon={<MdGraphicEq size={18} aria-hidden="true" />}
+            label={messages.followAlongLine}
+            pressed={followAlongLine}
+            onClick={() => setFollowAlongLine((previous) => !previous)}
+          />
         </MenuGroup>
 
         <MenuGroup label={messages.sleepTimer}>

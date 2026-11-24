@@ -14,74 +14,43 @@ type Props = {
   currentTime: number;
 };
 
-/**
- * The now-playing identity at the top of the player: surah at 18/700 and the
- * reciter beneath it at 13 muted (DESIGN.md Section / Meta). It belongs above
- * the controls, not below them.
- */
-export function NowPlayingHeader({
-  currentTrackId,
-}: {
-  currentTrackId: number;
-}) {
-  const selectedReciter = useAtomValue(selectedReciterAtom);
-  const { locale } = useIntl();
-  const playlist = selectedReciter?.moshaf.playlist;
-
-  if (!Array.isArray(playlist)) return null;
-  if (currentTrackId < 0 || currentTrackId >= playlist.length) return null;
-  const currentTrack = playlist[currentTrackId];
-  if (!currentTrack) return null;
-
-  const surah = SURAHS.find(
-    (item) => item.id.toString() === currentTrack.surahId
-  );
-  const surahName = surah
-    ? getSurahDisplayName(surah, locale)
-    : currentTrack.surahId;
-  if (!surahName || !selectedReciter) return null;
-
-  return (
-    <div className="w-full pb-1 text-center">
-      <p className="truncate text-[18px] font-bold leading-tight text-ink">
-        {surahName}
-      </p>
-      <p className="truncate text-[13px] text-ink-muted">
-        {selectedReciter.name}
-        {selectedReciter.moshaf.name
-          ? ` · ${selectedReciter.moshaf.name}`
-          : null}
-      </p>
-    </div>
-  );
-}
-
-/** The single metadata line under the transport: playback time only. */
+/** The single metadata line under the transport: time and surah identity. */
 export default function TrackInfo({
   currentTrackId,
   duration,
   currentTime,
 }: Props) {
-  const { formatMessage } = useIntl();
+  const { formatMessage, locale } = useIntl();
   const playlist = useAtomValue(selectedReciterAtom)?.moshaf.playlist;
 
   if (!Array.isArray(playlist)) return null;
   if (currentTrackId < 0 || currentTrackId >= playlist.length) return null;
-  if (!playlist[currentTrackId]) return null;
+  const track = playlist[currentTrackId];
+  if (!track) return null;
+
+  const surah = SURAHS.find(
+    (item) => item.id.toString() === track.surahId
+  );
+  const surahName = surah
+    ? getSurahDisplayName(surah, locale)
+    : track.surahId;
 
   return (
     <div className="mt-2 flex w-full justify-center">
-      <span
-        dir="ltr"
-        className="text-[12px] tabular-nums text-ink-muted"
-        aria-label={formatMessage({
+      <p
+        className="flex items-center gap-2 text-[12px] text-ink-muted"
+        aria-label={`${formatMessage({
           id: 'player.time',
           defaultMessage: 'Playback position',
-        })}
+        })} - ${surahName}`}
       >
-        {formatTime(currentTime)} /{' '}
-        {duration > 0 ? formatTime(duration) : '--:--'}
-      </span>
+        <span dir="ltr" className="tabular-nums">
+          {formatTime(currentTime)} /{' '}
+          {duration > 0 ? formatTime(duration) : '--:--'}
+        </span>
+        <span aria-hidden="true">-</span>
+        <span>{surahName}</span>
+      </p>
     </div>
   );
 }

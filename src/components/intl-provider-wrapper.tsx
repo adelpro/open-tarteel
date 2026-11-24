@@ -5,7 +5,7 @@ import { ReactNode, useEffect, useLayoutEffect, useState } from 'react';
 import { IntlProvider } from 'react-intl';
 
 import type { Language } from '@/constants/language';
-import { localeFromPath } from '@/lib/seo/routes';
+import { DEFAULT_LOCALE, localeFromPath } from '@/lib/seo/routes';
 
 import ar from '../locales/ar.json';
 import de from '../locales/de.json';
@@ -42,7 +42,16 @@ export default function IntlProviderWrapper({
   // `initialLocale` is the server truth for the first paint; only a pathname
   // change should switch it, so it is intentionally not a dependency.
   useIsomorphicLayoutEffect(() => {
-    setLocale(localeFromPath(window.location.pathname));
+    const url = new URL(window.location.href);
+    const pathLocale = localeFromPath(url.pathname);
+    const lang = url.searchParams.get('lang');
+    const queryLocale =
+      lang === 'en' || lang === 'de' ? (lang as Language) : null;
+    setLocale(
+      pathLocale !== DEFAULT_LOCALE
+        ? (pathLocale as Language)
+        : (queryLocale ?? (DEFAULT_LOCALE as Language))
+    );
   }, [pathname]);
 
   return (

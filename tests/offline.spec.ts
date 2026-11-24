@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const RECITER_PATH = '/reciter/mp3quran.net-1?moshafId=1';
+const RECITER_PATH = '/en/reciter/mp3quran.net-1?moshafId=1';
 const FIRST_TRACK_URL =
   'https://cdn.mp3quran.net/audio/ibrahim-akhdar/r1/001.mp3';
 
@@ -8,12 +8,9 @@ test('downloaded audio survives a cold offline start', async ({
   page,
   context,
 }) => {
-  await page.addInitScript(() => {
-    localStorage.setItem('locale', JSON.stringify('en'));
-  });
-
   await page.goto(RECITER_PATH);
   await page.waitForTimeout(1500);
+  await page.getByRole('button', { name: 'More options' }).click();
   await page.getByRole('button', { name: 'Playlist' }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(
@@ -48,12 +45,15 @@ test('downloaded audio survives a cold offline start', async ({
     }
   });
   await page.reload();
-  await expect(page.getByRole('button', { name: 'Playlist' })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'More options' })
+  ).toBeVisible();
 
   // Go offline and reload the app shell from the service worker.
   await context.setOffline(true);
   await page.reload();
 
+  await page.getByRole('button', { name: 'More options' }).click();
   await page.getByRole('button', { name: 'Playlist' }).click();
   await expect(
     page.getByRole('button', { name: 'Remove download' })
@@ -62,7 +62,7 @@ test('downloaded audio survives a cold offline start', async ({
   // Offline, the download-all action must not be offered.
   const playlistDialog = page.getByRole('dialog');
   await expect(
-    playlistDialog.getByText('Offline — downloads unavailable')
+    playlistDialog.getByText('Offline: downloads unavailable')
   ).toBeVisible();
   await expect(
     playlistDialog.getByRole('button', { name: 'Download', exact: true })
@@ -125,7 +125,17 @@ test('downloaded audio survives a cold offline start', async ({
     )
     .toBeGreaterThan(0);
 
+  // A locale-prefixed offline entry loads the English shell and banner.
+  await page.goto('/en?moshafId=1');
+  await expect(page.getByText('The Holy Quran')).toBeVisible();
+  await expect(page.getByText('Offline: showing downloads')).toBeVisible();
+
+  // The player route stored for returning listeners keeps the interface locale.
+  const cookies = await page.context().cookies();
+  const routeCookie = cookies.find((cookie) => cookie.name === 'reciter-route');
+  expect(decodeURIComponent(routeCookie?.value ?? '')).toContain('lang=en');
+
   // Cache management must work offline from IndexedDB metadata.
-  await page.goto('/settings');
-  await expect(page.getByText('Ibrahim Al-Akdar')).toBeVisible();
+  await page.goto('/en/settings');
+  await expect(page.getByText('إبراهيم الأخضر')).toBeVisible();
 });

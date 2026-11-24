@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from 'react';
 
+import { AhkamRuleKey } from '@/components/ahkam-rule-key';
 import { QuranLine, type QuranLineWord } from '@/components/quran-line';
-import { TajweedLegend } from '@/components/tajweed-legend';
 import type { SurahData } from '@/services/quran-text';
-import { ayahWordChars } from '@/services/quran-text/rules';
+import { ayahWordChars, ruleGroupsForWord } from '@/services/quran-text/rules';
 
 /**
- * Internal visual harness: the line and legend with no player, no
+ * Internal visual harness: the line and its colour key with no player, no
  * providers and no network beyond the bundled surah. Never linked publicly.
  */
 export default function FollowAlongPreviewPage() {
@@ -39,21 +39,16 @@ export default function FollowAlongPreviewPage() {
         </p>
       </div>
 
-      <TajweedLegend />
-
       {surah?.ayahs.map((ayah, index) => {
-        const words: QuranLineWord[] = ayahWordChars(ayah)
-          .filter((word) => word.storedIndex > ayah.b)
-          .map((word, position) => ({
-            id: `${index}-${word.storedIndex}`,
-            chars: word.chars,
-            state:
-              position === 0
-                ? 'spoken'
-                : position === 1
-                  ? 'current'
-                  : 'upcoming',
-          }));
+        const stored = ayahWordChars(ayah).filter(
+          (word) => word.storedIndex > ayah.b
+        );
+        const words: QuranLineWord[] = stored.map((word, position) => ({
+          id: `${index}-${word.storedIndex}`,
+          chars: word.chars,
+          state:
+            position === 0 ? 'spoken' : position === 1 ? 'current' : 'upcoming',
+        }));
 
         words.push({
           id: `marker-${index}`,
@@ -61,12 +56,17 @@ export default function FollowAlongPreviewPage() {
           markerNumber: index + 1,
         });
 
+        const activeGroups = ruleGroupsForWord(
+          words.find((word) => word.state === 'current')?.chars ?? []
+        );
+
         return (
-          <QuranLine
-            key={index}
-            words={words}
-            ariaLabel={`الآية ${index + 1}`}
-          />
+          <div key={index}>
+            <QuranLine words={words} ariaLabel={`الآية ${index + 1}`} />
+            <div className="mt-2">
+              <AhkamRuleKey activeGroups={activeGroups} />
+            </div>
+          </div>
         );
       })}
 

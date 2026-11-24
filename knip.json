@@ -5,7 +5,7 @@
     "src/sw.ts"
   ],
   "project": ["src/**/*.{ts,tsx}", "*.{ts,mjs,js}"],
-  "ignoreDependencies": ["js-yaml", "commitizen"],
+  "ignoreDependencies": ["capture-flow", "commitizen", "js-yaml"],
   "rules": {
     "files": "error",
     "dependencies": "error",

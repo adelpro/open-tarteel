@@ -9,7 +9,12 @@ const PUBLIC_FILE =
 // Paths that keep the rewrite into the Arabic tree. Everything else under /en
 // and /de has a real page tree, including the catch-all 404, so it can be
 // served directly and prerendered.
-const REWRITTEN_ROUTES = new Set(['/settings', '/offline', '/design-preview']);
+//
+// A rewritten path renders inside the Arabic layout, which hard-codes
+// `lang="ar"`, so a reader of /en/settings got an Arabic document until
+// hydration corrected it. Settings and offline are user-facing and now live in
+// the locale trees; design-preview is an internal harness and stays here.
+const REWRITTEN_ROUTES = new Set(['/design-preview']);
 
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;

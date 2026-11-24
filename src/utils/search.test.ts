@@ -6,6 +6,7 @@ import {
   normalizeArabicText,
   removeDefiniteArticle,
   removeTashkeel,
+  withNameAliases,
 } from '@/utils/search';
 
 // ──────────────────────────────────────────
@@ -977,6 +978,14 @@ describe('fuzzySearch', () => {
       // Should still work after clearing
       const result = normalizeArabicText(text);
       expect(result).toBe('عبد الباسط');
+    });
+
+    it('matches a translated name through a stored alias', () => {
+      const item = { id: 'x', name: 'إبراهيم الأكدار' };
+      const aliased = withNameAliases([item], { x: ['Ibrahim Al-Akdar'] });
+
+      expect(fuzzySearch(aliased, 'Ibrahim')).toEqual([aliased[0]]);
+      expect(fuzzySearch([item], 'Ibrahim')).toEqual([]);
     });
 
     it('should cache spaceless searches separately', () => {

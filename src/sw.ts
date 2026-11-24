@@ -193,6 +193,12 @@ const pageNavigationCache = {
       return (
         (await pagesCache.match(request, { ignoreVary: true })) ??
         (await pagesCache.match(requestUrl.pathname, { ignoreVary: true })) ??
+        (await pagesCache.match(shellForUrl(requestUrl), {
+          ignoreVary: true,
+        })) ??
+        (requestUrl.pathname !== '/'
+          ? await pagesCache.match('/', { ignoreVary: true })
+          : null) ??
         Promise.reject(new Error('No cached document available'))
       );
     },
@@ -218,7 +224,28 @@ const runtimeCaching = [
 // App shell URLs to pre-cache on install for offline cold-start support.
 // Cached into 'pages', the same cache Serwist's defaultCache navigation
 // handler (NetworkFirst) checks when offline.
-const APP_SHELL_URLS = ['/', '/offline', '/about', '/settings'];
+const APP_SHELL_URLS = [
+  '/',
+  '/offline',
+  '/about',
+  '/settings',
+  '/en',
+  '/en/offline',
+  '/en/about',
+  '/en/settings',
+  '/de',
+  '/de/offline',
+  '/de/about',
+  '/de/settings',
+];
+
+/** The precached shell to use for a navigation, by reader locale. */
+function shellForUrl(url: URL): string {
+  const lang = url.searchParams.get('lang');
+  if (lang === 'en' || lang === 'de') return `/${lang}`;
+  const segment = url.pathname.split('/')[1];
+  return segment === 'en' || segment === 'de' ? `/${segment}` : '/';
+}
 
 const isAppAssetUrl = (url: URL) =>
   url.origin === self.location.origin &&
@@ -268,9 +295,7 @@ self.addEventListener('install', (event) => {
             });
             if (!response.ok) return;
 
-            if (url === '/offline' || url === '/') {
-              await cacheOfflinePageAssets(response);
-            }
+            await cacheOfflinePageAssets(response);
             await pagesCache.put(url, response.clone());
             await pagesCache.put(
               new URL(url, self.location.origin).href,
@@ -301,8 +326,10 @@ serwist.setCatchHandler(async ({ request }) => {
   if (request.destination === 'document') {
     const pagesCache = await caches.open('pages');
     const matchOptions = { ignoreVary: true, ignoreSearch: true };
+    const shell = shellForUrl(new URL(request.url));
     const fallback =
-      (await pagesCache.match('/', matchOptions)) ??
+      (await pagesCache.match(shell, matchOptions)) ??
+      (shell !== '/' ? await pagesCache.match('/', matchOptions) : null) ??
       (await pagesCache.match('/offline', matchOptions));
     if (fallback) return fallback;
 

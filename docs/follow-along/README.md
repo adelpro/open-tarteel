@@ -2,11 +2,10 @@
 
 Status: implemented on `feat/follow-along`, behind `NEXT_PUBLIC_ENABLE_FOLLOW_ALONG`.
 
-A player mode that follows a recitation: the word being recited is highlighted,
-tajweed rules are coloured on those same glyphs, and a live pitch contour is
-drawn from the same audio. It is a listening and learning aid only: not for
-correcting a recitation, and it does not use artificial intelligence. It does not
-score a recitation or detect mistakes.
+A player mode that follows a recitation: the word being recited is highlighted
+and tajweed rules are coloured on those same glyphs, under the spectrum. It is a
+listening and learning aid only: not for correcting a recitation, and it does not
+use artificial intelligence. It does not score a recitation or detect mistakes.
 
 ## Naming
 
@@ -14,16 +13,16 @@ score a recitation or detect mistakes.
 | ---------------- | ---------------------------- | -------------------------------- |
 | Mode             | تتبّع التلاوة / Follow-along | names the user's task            |
 | Capability badge | كلمة بكلمة / Word-by-word    | names what the provider supplies |
-| Graph panel      | منحنى الصوت / Pitch contour  | names the technical artefact     |
 
 "Pitch" was rejected as the mode name: it is audio-engineering vocabulary, and in
 Arabic it sits next to نغمة / تلحين, which reads as musicalising recitation. The
-technical term stays where it is accurate, on the graph.
+mode no longer draws pitch at all; see [D21](decisions.md).
 
 ## Scope
 
 - One mode inside the existing player, reachable from the mode switcher.
-- Word-level highlight, tajweed colouring, pitch contour, optional English line.
+- Word-level highlight and tajweed colouring, shown under the spectrum. The
+  mode itself can be switched off in settings, which hides it entirely.
 - Word timings from Quran Foundation and a curated MP3Quran v4 set.
 - Hafs ʿan ʿĀṣim only. Every other riwayah sees the mode disabled with a reason.
 
@@ -59,7 +58,6 @@ Hashes, URLs and licences: [data-sources.md](data-sources.md).
 ## Honest accuracy
 
 Word timings cover 99.45% of words for the locked Quran Foundation set and
-99.99% for the audited MP3Quran v4 set. The pitch contour is an estimate from
-compressed audio. Colours mark where a rule applies, not whether it was applied
-correctly. These numbers ship in the About page and are computed from the data,
-never typed by hand.
+99.99% for the audited MP3Quran v4 set. Colours mark where a rule applies, not
+whether it was applied correctly. These numbers ship in the About page and are
+computed from the data, never typed by hand.

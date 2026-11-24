@@ -47,15 +47,39 @@ describe('QuranLine', () => {
     );
   });
 
-  it('colours mapped rules and leaves unmapped text alone', () => {
+  it('colours an ahkam and leaves everything else in ink', () => {
     const { container } = render(<QuranLine words={words} />);
     const coloured = [...container.querySelectorAll('span[style]')].map(
       (node) => node.getAttribute('style') ?? ''
     );
 
-    expect(coloured).toHaveLength(2);
-    expect(coloured[0]).toContain('--tajweed-wasl');
-    expect(coloured[1]).toContain('--tajweed-qalqalah');
+    // The hamzat wasl in the second word is annotated by the dataset but is not
+    // a sound, so qalqalah is the only coloured glyph here.
+    expect(coloured).toHaveLength(1);
+    expect(coloured[0]).toContain('--tajweed-qalqalah');
+  });
+
+  it('leaves writing facts uncoloured', () => {
+    const { container } = render(
+      <QuranLine
+        words={[
+          {
+            id: 1,
+            chars: [
+              { ch: 'ٱ', rule: 'hamzat_wasl' },
+              { ch: 'ل', rule: 'lam_shamsiyyah' },
+              { ch: 'ا', rule: 'silent' },
+              { ch: 'م', rule: 'madd_2' },
+            ],
+          },
+        ]}
+      />
+    );
+
+    const coloured = [...container.querySelectorAll('span[style]')];
+    expect(coloured).toHaveLength(1);
+    expect(coloured[0]).toHaveTextContent('م');
+    expect(coloured[0].getAttribute('style')).toContain('--tajweed-madd');
   });
 
   it('renders an ayah marker instead of glyphs when asked', () => {

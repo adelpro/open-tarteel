@@ -10,12 +10,7 @@ import React, {
   useState,
 } from 'react';
 import { BsStar, BsStarFill } from 'react-icons/bs';
-import {
-  MdClose,
-  MdExpandMore,
-  MdSearch,
-  MdVisibility,
-} from 'react-icons/md';
+import { MdClose, MdExpandMore, MdSearch, MdVisibility } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import { SOURCE_LABEL_IDS } from '@/constants';
@@ -74,7 +69,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
   const isOnline = useNetworkStatus();
   const isDownloadedOnlyEffective = showDownloadedOnly || !isOnline;
   const { reciters, loading, error } = useReciters();
-  const { isReciterDownloaded } = useOfflineDownload();
+  const { isReciterDownloaded, records } = useOfflineDownload();
   const enabledSources = useAtomValue(enabledSourcesAtom);
   const recitersBySource = useMemo(
     () =>
@@ -100,6 +95,23 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
     return () => unsubscribe();
   }, []);
 
+  // A download may have been made while the interface was in another language,
+  // so its stored name is the best alias when searching in the current one.
+  const nameAliases = useMemo(() => {
+    const namesByReciter = new Map(
+      records.map((record) => [
+        `${record.reciterId}:${record.moshafId}`,
+        record.reciterName,
+      ])
+    );
+    const aliases: Record<string, string[]> = {};
+    for (const reciter of recitersBySource) {
+      const name = namesByReciter.get(`${reciter.id}:${reciter.moshaf.id}`);
+      if (name) aliases[generateFavId(reciter)] = [name];
+    }
+    return aliases;
+  }, [records, recitersBySource]);
+
   const {
     searchTerm,
     setSearchTerm,
@@ -118,6 +130,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
     viewCounts,
     favoriteReciters,
     showOnlyFavorites,
+    nameAliases,
   });
 
   const filteredReciters = useMemo(() => {
@@ -464,7 +477,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
                           className="size-3 shrink-0 text-mark"
                           aria-hidden="true"
                         />
-                        <span className="tabular-nums w-5 text-end">
+                        <span className="w-5 text-end tabular-nums">
                           {favoriteCounts[favId] ?? 0}
                         </span>
                       </span>
@@ -479,7 +492,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
                           className="size-3 shrink-0"
                           aria-hidden="true"
                         />
-                        <span className="tabular-nums w-5 text-end">
+                        <span className="w-5 text-end tabular-nums">
                           {viewCounts[favId] ?? 0}
                         </span>
                       </span>

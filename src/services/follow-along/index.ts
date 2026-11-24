@@ -4,8 +4,15 @@ import type { AyahTiming } from '@/services/timings';
 import type { WordInterval } from '@/services/timings/word-timings';
 import { LinkSource } from '@/types';
 
-/** Highlight a word slightly before its timing starts, so it is ready to read. */
-export const WORD_ANTICIPATION_MS = 300;
+/**
+ * How far ahead of its own start a word lights up.
+ *
+ * This used to be 300 ms so the word was already lit when the reciter reached
+ * it, but reading the line against the audio it looks like the text runs ahead
+ * of the voice. Zero keeps the word on its own start; raise it only if a
+ * provider's timings are consistently late.
+ */
+export const WORD_ANTICIPATION_MS = 0;
 
 /** What a word is doing at this instant. */
 export type WordState = 'spoken' | 'current' | 'upcoming';

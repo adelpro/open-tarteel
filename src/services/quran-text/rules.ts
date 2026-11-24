@@ -39,18 +39,27 @@ export const TAJWEED_RULE_GROUPS: Readonly<Record<string, TajweedGroup>> = {
   silent: 'silent',
 };
 
-/** Legend order: what a learner looks for first. */
-export const TAJWEED_GROUP_ORDER: readonly TajweedGroup[] = [
+/**
+ * The rules that describe a sound the reciter makes: madd, ghunnah, qalqalah,
+ * idgham, ikhfa, iqlab.
+ *
+ * The dataset also annotates `hamzat_wasl`, `lam_shamsiyyah` and `silent`, which
+ * are facts about how the text is written and where a reading starts, not about
+ * the voice. Those stay uncoloured: only an ahkam is worth marking on the line.
+ */
+export const AHKAM_GROUPS: readonly TajweedGroup[] = [
   'madd',
   'ghunnah',
   'qalqalah',
   'idgham',
   'ikhfa',
   'iqlab',
-  'wasl',
-  'shams',
-  'silent',
 ];
+
+const AHKAM_SET: ReadonlySet<TajweedGroup> = new Set(AHKAM_GROUPS);
+
+export const isAhkamGroup = (group: TajweedGroup): boolean =>
+  AHKAM_SET.has(group);
 
 export const TAJWEED_LABELS: Readonly<
   Record<TajweedGroup, { ar: string; en: string }>
@@ -85,6 +94,18 @@ export const TAJWEED_COLORS: Readonly<Record<TajweedGroup, string>> = {
 export const ruleGroup = (
   rule: string | null | undefined
 ): TajweedGroup | null => (rule ? (TAJWEED_RULE_GROUPS[rule] ?? null) : null);
+
+/** Every distinct rule group covering one word, in first-seen order. */
+export const ruleGroupsForWord = (
+  chars: readonly { rule?: string | null }[]
+): Set<TajweedGroup> => {
+  const groups = new Set<TajweedGroup>();
+  for (const char of chars) {
+    const group = ruleGroup(char.rule);
+    if (group) groups.add(group);
+  }
+  return groups;
+};
 
 export interface AyahChar {
   ch: string;

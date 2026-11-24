@@ -9,6 +9,7 @@ import OfflineRedirect from '@/components/offline-redirect';
 import PwaUpdater from '@/components/pwa-updater';
 import ReciterRouteCookie from '@/components/reciter-route-cookie';
 import { ServiceWorkerRefresh } from '@/components/service-worker-refresh';
+import ServiceWorkerRegister from '@/components/service-worker-register';
 import StoragePersist from '@/components/storage-persist';
 import { websiteGraph } from '@/lib/seo/json-ld';
 import type { SeoLocale } from '@/lib/seo/routes';
@@ -71,6 +72,7 @@ export function RootShell({
               className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background pb-20 text-foreground"
             >
               <EnabledSourcesCookieSync />
+              <ServiceWorkerRegister />
               <ReciterRouteCookie />
               <StoragePersist />
               <OfflineRedirect />

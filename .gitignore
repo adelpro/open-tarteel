@@ -74,3 +74,7 @@ testsprite_tests/tmp/config.json
 
 # Pinned Quran sources (fetched, never committed)
 data/sources/
+
+# capture-flow output: regenerated, not source
+scripts/posters/captures/
+scripts/posters/store-assets/

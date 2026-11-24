@@ -20,7 +20,9 @@
   display: inline-block;
   padding-inline: 0.06em;
   border-radius: 0.35em;
-  /* Shared motion tokens: 180ms state swap, standard easing (DESIGN.md). */
+  /* Transform, opacity and colour only. None of them takes part in layout,
+     so a growing word cannot push the words beside it. Shared motion tokens:
+     180ms state swap, standard easing (DESIGN.md). */
   @apply transition-[opacity,transform,background-color] duration-180 ease-standard;
 }
 
@@ -34,7 +36,9 @@
 
 .word[data-state='current'] {
   opacity: 1;
-  transform: scale(1.06);
+  /* Grows in place. Strong ease-out so it settles immediately instead of
+     drifting, which is what read as the line being jittery. */
+  transform: scale(1.08);
   background: rgba(127, 127, 127, 0.18);
   background: color-mix(in srgb, currentColor 14%, transparent);
 }
@@ -98,8 +102,14 @@
   background-color: currentColor;
 }
 
-.contour {
-  display: block;
-  width: 100%;
-  direction: ltr;
+@media (prefers-reduced-motion: reduce) {
+  .word {
+    transition:
+      opacity 140ms linear,
+      background-color 140ms linear;
+  }
+
+  .word[data-state='current'] {
+    transform: none;
+  }
 }

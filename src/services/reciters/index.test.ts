@@ -168,7 +168,7 @@ describe('getAllRecitersFromAdapters', () => {
     expect(quranFoundationMock).toHaveBeenCalledTimes(1);
   });
 
-  it('preserves registration order: mp3quran, itqan, qurani.ai, quran.foundation', async () => {
+  it('preserves registration order: quran.foundation, mp3quran, itqan, qurani.ai', async () => {
     mp3Mock.mockResolvedValue([mp3Reciter]);
     itqanMock.mockResolvedValue([itqanReciter]);
     quranaiMock.mockResolvedValue([quranaiReciter]);
@@ -177,10 +177,11 @@ describe('getAllRecitersFromAdapters', () => {
     const result = await getAllRecitersFromAdapters('ar');
 
     expect(result).toHaveLength(4);
-    expect(result[0].source).toBe(LinkSource.MP3QURAN);
-    expect(result[1].source).toBe(LinkSource.ITQAN);
-    expect(result[2].source).toBe(LinkSource.QURANAI);
-    expect(result[3].source).toBe(LinkSource.QURAN_FOUNDATION);
+    // The two word-timing providers lead, because they are the defaults.
+    expect(result[0].source).toBe(LinkSource.QURAN_FOUNDATION);
+    expect(result[1].source).toBe(LinkSource.MP3QURAN);
+    expect(result[2].source).toBe(LinkSource.ITQAN);
+    expect(result[3].source).toBe(LinkSource.QURANAI);
   });
 
   it('when enabledSources provided, only fetches from those adapters', async () => {

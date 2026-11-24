@@ -13,7 +13,9 @@ export default function LanguageSwitcher() {
   const pathname = usePathname();
 
   const handleLanguageChange = (language: Language) => {
-    router.push(withLocale(language, stripLocale(pathname)));
+    // Replace, not push: a push leaves this same page in the old language
+    // underneath, so the back arrow returned to it instead of going home.
+    router.replace(withLocale(language, stripLocale(pathname)));
   };
 
   return (

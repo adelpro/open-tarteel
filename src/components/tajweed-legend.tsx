@@ -1,7 +1,7 @@
 import Tag from '@/components/ui/tag';
 import {
+  AHKAM_GROUPS,
   TAJWEED_COLORS,
-  TAJWEED_GROUP_ORDER,
   TAJWEED_LABELS,
   type TajweedGroup,
 } from '@/services/quran-text/rules';
@@ -31,7 +31,7 @@ export function TajweedLegend({
       className={cn(styles.legend, className)}
       aria-label={locale === 'ar' ? 'أحكام التجويد' : 'Tajweed rules'}
     >
-      {TAJWEED_GROUP_ORDER.map((group) => (
+      {AHKAM_GROUPS.map((group) => (
         <li key={group} className={styles.legendItem}>
           <Tag
             variant="static"

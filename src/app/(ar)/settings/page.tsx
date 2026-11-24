@@ -15,18 +15,17 @@ import Switch from '@/components/ui/switch';
 import useDirection from '@/hooks/use-direction';
 import { useLocalePath } from '@/hooks/use-locale-path';
 import {
+  ahkamTagsAtom,
   enabledSourcesAtom,
-  forcedOfflineAtom,
-  showAhkamTagsAtom,
+  spectrumEnabledAtom,
   visualizerModelAtom,
 } from '@/jotai/atom';
+import { type OfflineMode, offlineModeAtom } from '@/jotai/offline-mode';
 import { isMp3QuranV4Enabled } from '@/services/reciters/flags';
 import { LinkSource } from '@/types';
 
 const AVAILABLE_SOURCES: { source: LinkSource; id: string }[] = [
-  { source: LinkSource.MP3QURAN, id: 'settings.source.mp3quran' },
-  { source: LinkSource.ITQAN, id: 'settings.source.itqan' },
-  { source: LinkSource.QURANAI, id: 'settings.source.quranai' },
+  // The two word-timing providers are the defaults, so they come first.
   {
     source: LinkSource.QURAN_FOUNDATION,
     id: 'settings.source.quranfoundation',
@@ -39,6 +38,9 @@ const AVAILABLE_SOURCES: { source: LinkSource; id: string }[] = [
         },
       ]
     : []),
+  { source: LinkSource.MP3QURAN, id: 'settings.source.mp3quran' },
+  { source: LinkSource.ITQAN, id: 'settings.source.itqan' },
+  { source: LinkSource.QURANAI, id: 'settings.source.quranai' },
 ];
 
 function Group({
@@ -76,9 +78,10 @@ export default function SettingsPage() {
   const router = useRouter();
   const localePath = useLocalePath();
   const [enabledSources, setEnabledSources] = useAtom(enabledSourcesAtom);
-  const [forcedOffline, setForcedOffline] = useAtom(forcedOfflineAtom);
+  const [offlineMode, setOfflineMode] = useAtom(offlineModeAtom);
   const [visualizerModel, setVisualizerModel] = useAtom(visualizerModelAtom);
-  const [showAhkamTags, setShowAhkamTags] = useAtom(showAhkamTagsAtom);
+  const [spectrumEnabled, setSpectrumEnabled] = useAtom(spectrumEnabledAtom);
+  const [ahkamTags, setAhkamTags] = useAtom(ahkamTagsAtom);
 
   const toggleSource = (source: LinkSource) => {
     setEnabledSources((previous) => {
@@ -95,11 +98,10 @@ export default function SettingsPage() {
   };
 
   const handleBack = () => {
-    if (typeof window !== 'undefined' && window.history.length > 1) {
-      router.back();
-    } else {
-      router.push(localePath('/'));
-    }
+    // Home in the language you are reading. `router.back()` landed on this same
+    // page in the previous language whenever the language had just been
+    // switched, which read as a reset rather than a back.
+    router.replace(localePath('/'));
   };
 
   return (
@@ -215,55 +217,46 @@ export default function SettingsPage() {
                 id: 'settings.offlineMode',
                 defaultMessage: 'Offline mode',
               })}
-              description={
-                forcedOffline
-                  ? formatMessage({
-                      id: 'settings.offlineModeActive',
-                      defaultMessage:
-                        'Offline mode is on. Only downloaded reciters and surahs are available.',
-                    })
-                  : formatMessage({
-                      id: 'settings.offlineModeDescription',
-                      defaultMessage:
-                        'Use downloaded content only and hide network-only actions.',
-                    })
-              }
+              description={formatMessage({
+                id: `settings.offlineModeDescription${
+                  offlineMode === 'on'
+                    ? 'On'
+                    : offlineMode === 'off'
+                      ? 'Off'
+                      : 'Auto'
+                }`,
+              })}
             >
-              <Switch
-                checked={forcedOffline}
-                onCheckedChange={setForcedOffline}
+              <Segmented<OfflineMode>
+                value={offlineMode}
+                onChange={setOfflineMode}
                 label={formatMessage({
                   id: 'settings.offlineMode',
                   defaultMessage: 'Offline mode',
                 })}
-              />
-            </Row>
-          </Group>
-
-          <Group
-            title={formatMessage({
-              id: 'settings.followAlong',
-              defaultMessage: 'Follow-along',
-            })}
-          >
-            <Row
-              label={formatMessage({
-                id: 'settings.showAhkamTags',
-                defaultMessage: 'Show tajweed tags',
-              })}
-              description={formatMessage({
-                id: 'settings.showAhkamTagsDescription',
-                defaultMessage:
-                  'Show the rule chips beneath the recitation line.',
-              })}
-            >
-              <Switch
-                checked={showAhkamTags}
-                onCheckedChange={setShowAhkamTags}
-                label={formatMessage({
-                  id: 'settings.showAhkamTags',
-                  defaultMessage: 'Show tajweed tags',
-                })}
+                options={[
+                  {
+                    value: 'auto',
+                    label: formatMessage({
+                      id: 'settings.offlineModeAuto',
+                      defaultMessage: 'Auto',
+                    }),
+                  },
+                  {
+                    value: 'on',
+                    label: formatMessage({
+                      id: 'settings.offlineModeOn',
+                      defaultMessage: 'On',
+                    }),
+                  },
+                  {
+                    value: 'off',
+                    label: formatMessage({
+                      id: 'settings.offlineModeOff',
+                      defaultMessage: 'Off',
+                    }),
+                  },
+                ]}
               />
             </Row>
           </Group>
@@ -279,6 +272,26 @@ export default function SettingsPage() {
                 'Choose the shape the spectrum takes while a recitation plays.',
             })}
           >
+            <Row
+              label={formatMessage({
+                id: 'settings.spectrumShow',
+                defaultMessage: 'Show spectrum',
+              })}
+              description={formatMessage({
+                id: 'settings.spectrumShowDescription',
+                defaultMessage:
+                  'Draw the bars, peaks or ribbon while audio plays. Separate from the Quran line.',
+              })}
+            >
+              <Switch
+                checked={spectrumEnabled}
+                onCheckedChange={setSpectrumEnabled}
+                label={formatMessage({
+                  id: 'settings.spectrumShow',
+                  defaultMessage: 'Show spectrum',
+                })}
+              />
+            </Row>
             <div className="p-4">
               <Segmented
                 value={visualizerModel}
@@ -312,6 +325,39 @@ export default function SettingsPage() {
                 ]}
               />
             </div>
+          </Group>
+
+          <Group
+            title={formatMessage({
+              id: 'settings.followAlong',
+              defaultMessage: 'Follow-along',
+            })}
+            description={formatMessage({
+              id: 'settings.followAlongDescription',
+              defaultMessage:
+                'The word-by-word line shown while a recitation with word timings plays. Toggle it from the player’s more menu.',
+            })}
+          >
+            <Row
+              label={formatMessage({
+                id: 'settings.followAlongAhkam',
+                defaultMessage: 'Ahkam tags',
+              })}
+              description={formatMessage({
+                id: 'settings.followAlongAhkamDescription',
+                defaultMessage:
+                  'Show the colored rule key beneath the recitation line.',
+              })}
+            >
+              <Switch
+                checked={ahkamTags}
+                onCheckedChange={setAhkamTags}
+                label={formatMessage({
+                  id: 'settings.followAlongAhkam',
+                  defaultMessage: 'Ahkam tags',
+                })}
+              />
+            </Row>
           </Group>
 
           <Group

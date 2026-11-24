@@ -4,54 +4,62 @@ import { useAtomValue } from 'jotai';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { forcedOfflineAtom } from '@/jotai/atom';
-import { localeFromPath, stripLocale, withLocale } from '@/lib/seo/routes';
-
-const CONNECTIVITY_CHECK_URL = 'https://www.gstatic.com/generate_204';
+import { useNetworkStatusDetails } from '@/hooks/use-network-status';
+import { offlineModeAtom } from '@/jotai/offline-mode';
+import {
+  localeFromPath,
+  type SeoLocale,
+  stripLocale,
+  withLocale,
+} from '@/lib/seo/routes';
 
 export default function OfflineRedirect() {
   const pathname = usePathname();
   const router = useRouter();
-  const forcedOffline = useAtomValue(forcedOfflineAtom);
+  const offlineMode = useAtomValue(offlineModeAtom);
+  // `ready` guards the mount effect: useNetworkStatus seeds `online` to true
+  // for SSR/hydration, so redirecting on the first render could bounce a
+  // genuinely-offline user off the /offline shell before the probe settles.
+  const { online, ready } = useNetworkStatusDetails();
   const barePath = stripLocale(pathname);
-  const homePath = withLocale(localeFromPath(pathname), '/');
+  const pathLocale = localeFromPath(pathname);
+  const lang =
+    typeof window === 'undefined'
+      ? null
+      : new URLSearchParams(window.location.search).get('lang');
+  const resolvedLocale: SeoLocale =
+    pathLocale !== 'ar'
+      ? pathLocale
+      : lang === 'en' || lang === 'de'
+        ? lang
+        : 'ar';
+  const homePath = withLocale(resolvedLocale, '/');
 
   useEffect(() => {
     let cancelled = false;
 
-    const checkConnectivity = async () => {
-      // Only handle returning to home when on the /offline fallback page
-      if (barePath !== '/offline' || cancelled || forcedOffline) return;
+    const redirectWhenBackOnline = () => {
+      // Only handle returning to home when on the /offline fallback page.
+      // Forced-offline mode keeps the user on the fallback even when the
+      // network is genuinely back.
+      if (barePath !== '/offline' || cancelled || offlineMode === 'on') return;
+      if (!ready || !online) return;
 
-      if (!navigator.onLine) return;
-
-      try {
-        await fetch(`${CONNECTIVITY_CHECK_URL}?t=${Date.now()}`, {
-          cache: 'no-store',
-          mode: 'no-cors',
-          signal: AbortSignal.timeout(5000),
-        });
-        if (
-          !cancelled &&
-          stripLocale(window.location.pathname) === '/offline'
-        ) {
-          router.replace(homePath);
-        }
-      } catch {
-        // Still offline
+      if (stripLocale(window.location.pathname) === '/offline') {
+        router.replace(homePath);
       }
     };
 
     if (barePath === '/offline') {
-      void checkConnectivity();
-      window.addEventListener('online', checkConnectivity);
-      window.addEventListener('focus', checkConnectivity);
-      const intervalId = window.setInterval(checkConnectivity, 10_000);
+      redirectWhenBackOnline();
+      window.addEventListener('online', redirectWhenBackOnline);
+      window.addEventListener('focus', redirectWhenBackOnline);
+      const intervalId = window.setInterval(redirectWhenBackOnline, 10_000);
 
       return () => {
         cancelled = true;
-        window.removeEventListener('online', checkConnectivity);
-        window.removeEventListener('focus', checkConnectivity);
+        window.removeEventListener('online', redirectWhenBackOnline);
+        window.removeEventListener('focus', redirectWhenBackOnline);
         window.clearInterval(intervalId);
       };
     }
@@ -59,7 +67,7 @@ export default function OfflineRedirect() {
     return () => {
       cancelled = true;
     };
-  }, [barePath, homePath, router, forcedOffline]);
+  }, [barePath, homePath, router, offlineMode, online, ready]);
 
   return null;
 }

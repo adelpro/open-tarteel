@@ -1,0 +1,10 @@
+{
+  "manifest": "./shots.json",
+  "out": "./store-assets",
+  "captures": [
+    {
+      "name": "Staging (Playwright)",
+      "command": "node capture.mjs"
+    }
+  ]
+}

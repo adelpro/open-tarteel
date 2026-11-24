@@ -1,6 +1,7 @@
 import { render, waitFor } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import React from 'react';
+import { IntlProvider } from 'react-intl';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { selectedReciterAtom } from '@/jotai/atom';
@@ -39,9 +40,11 @@ describe('ReciterRouteCookie', () => {
     store.set(selectedReciterAtom, reciter);
 
     render(
-      <Provider store={store}>
-        <ReciterRouteCookie />
-      </Provider>
+      <IntlProvider locale="ar" messages={{}}>
+        <Provider store={store}>
+          <ReciterRouteCookie />
+        </Provider>
+      </IntlProvider>
     );
 
     await waitFor(() =>
@@ -51,13 +54,34 @@ describe('ReciterRouteCookie', () => {
     );
   });
 
+  it('writes the interface locale into the cookie for English readers', async () => {
+    const store = createStore();
+    store.set(selectedReciterAtom, reciter);
+
+    render(
+      <IntlProvider locale="en" messages={{}}>
+        <Provider store={store}>
+          <ReciterRouteCookie />
+        </Provider>
+      </IntlProvider>
+    );
+
+    await waitFor(() =>
+      expect(readCookie('reciter-route')).toBe(
+        '/reciter/mp3quran.net-1?moshafId=1&lang=en'
+      )
+    );
+  });
+
   it('clears the route when no reciter is selected', async () => {
     document.cookie = 'reciter-route=%2Freciter%2Fx%3FmoshafId%3D1; path=/';
 
     render(
-      <Provider store={createStore()}>
-        <ReciterRouteCookie />
-      </Provider>
+      <IntlProvider locale="ar" messages={{}}>
+        <Provider store={createStore()}>
+          <ReciterRouteCookie />
+        </Provider>
+      </IntlProvider>
     );
 
     await waitFor(() => expect(readCookie('reciter-route')).toBeNull());

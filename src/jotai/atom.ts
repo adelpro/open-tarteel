@@ -20,10 +20,6 @@ export const showVisualizerAtom = createAtomWithStorage<boolean>(
   'show-visualizer',
   true
 );
-export const forcedOfflineAtom = createAtomWithStorage<boolean>(
-  'forced-offline',
-  false
-);
 
 // Playback position is per session: a reload starts from the beginning and
 // the audio element writes time on every `timeupdate`, so persisting it would
@@ -105,8 +101,33 @@ export const visualizerModelAtom = createAtomWithStorage<VisualiserModel>(
   'visualizer-model',
   'ribbon'
 );
+
 /**
- * Sources shown in the reciter list by default.
+ * Show the spectrum. A display preference, so it persists; turning it off
+ * leaves the follow-along line alone, and the other way round.
+ */
+export const spectrumEnabledAtom = createAtomWithStorage<boolean>(
+  'spectrum-enabled',
+  true
+);
+
+/**
+ * Show the ahkam marks under the ayah line. Opt-out rather than opt-in: the
+ * marks are the reason many people use the line at all.
+ */
+export const ahkamTagsAtom = createAtomWithStorage<boolean>('ahkam-tags', true);
+
+export type PlayerMode = 'listening' | 'tahfeez';
+
+/**
+ * The active playback mode. Shared because the player renders the follow-along
+ * line above the spectrum, while the switcher that sets the mode lives in the
+ * controls below it.
+ */
+export const playerModeAtom = atom<PlayerMode>('listening');
+/**
+ * Sources shown in the reciter list by default: the two word-timing providers,
+ * because word timings are what the Quran line needs.
  *
  * Word-timing providers only: Quran Foundation and MP3Quran v4. Other sources
  * stay opt-in so every default supports follow-along.
@@ -124,11 +145,18 @@ export const reciterListPinnedAtom = createAtomWithStorage<boolean>(
   false
 );
 
+/**
+ * Show the word-synced line in the follow-along mode.
+ *
+ * Persisted: it is a reading preference, not view state, so it must survive a
+ * reload. Off means the mode is not offered at all, which leaves the spectrum
+ * as the only thing on screen.
+ */
+export const followAlongLineAtom = createAtomWithStorage<boolean>(
+  'follow-along-line',
+  true,
+  { getOnInit: true }
+);
+
 /** Set while the follow-along mode is open, so the spectrum can stand aside. */
 export const followAlongActiveAtom = atom(false);
-
-/** Show the tajweed legend chips under the follow-along line. */
-export const showAhkamTagsAtom = createAtomWithStorage<boolean>(
-  'show-ahkam-tags',
-  true
-);

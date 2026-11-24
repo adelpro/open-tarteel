@@ -12,7 +12,9 @@ import Segmented from './ui/segmented';
 
 type PaletteOption = {
   value: Palette;
+  labelId: string;
   label: string;
+  descriptionId: string;
   description: string;
   swatches: [string, string, string];
 };
@@ -20,13 +22,17 @@ type PaletteOption = {
 const PALETTES: PaletteOption[] = [
   {
     value: 'warm',
+    labelId: 'theme.warm',
     label: 'Warm',
+    descriptionId: 'theme.warmDescription',
     description: 'Paper, emerald, brass',
     swatches: ['var(--warm-canvas)', 'var(--warm-primary)', 'var(--warm-mark)'],
   },
   {
     value: 'classic',
+    labelId: 'theme.classic',
     label: 'Classic',
+    descriptionId: 'theme.classicDescription',
     description: 'Sky blue on zinc',
     swatches: [
       'var(--classic-canvas)',
@@ -36,7 +42,9 @@ const PALETTES: PaletteOption[] = [
   },
   {
     value: 'night',
+    labelId: 'theme.night',
     label: 'Night',
+    descriptionId: 'theme.nightDescription',
     description: 'Green-black and mint',
     // Night is dark-first: the description says green-black and mint, so the
     // preview must show the dark palette values, not the light-mode ones.
@@ -121,10 +129,16 @@ export default function ThemePicker({ className }: { className?: string }) {
               </span>
               <span className="min-w-0">
                 <span className="block text-[13px] font-bold leading-tight text-ink">
-                  {option.label}
+                  {formatMessage({
+                    id: option.labelId,
+                    defaultMessage: option.label,
+                  })}
                 </span>
                 <span className="mt-0.5 block text-xs leading-tight text-ink-muted">
-                  {option.description}
+                  {formatMessage({
+                    id: option.descriptionId,
+                    defaultMessage: option.description,
+                  })}
                 </span>
               </span>
             </button>

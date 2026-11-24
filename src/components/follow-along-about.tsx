@@ -37,14 +37,14 @@ export function FollowAlongAbout() {
 
       <p>
         <FormattedMessage
-          defaultMessage="يُبرز هذا الوضع الكلمة التي تُتلى الآن، ويلوّن مواضع أحكام التجويد. الأداة للاستماع والتعلّم فقط، وليست لتصحيح التلاوة، ولا تستعمل الذكاء الاصطناعي."
+          defaultMessage="يُبرز هذا الوضع الكلمة التي تُتلى الآن، ويلوّن مواضع أحكام التجويد. الأداة للاستماع والتعلّم فقط، وليست لتصحيح التلاوة، ولا تستعمل الذكاء الاصطناعي، ولا تقيس الأداء."
           id="about.followAlong.description"
         />
       </p>
 
       <p>
         <FormattedMessage
-          defaultMessage="يعمل مع التلاوات التي توفّر توقيتًا على مستوى الكلمة، وبرواية حفص عن عاصم فقط. التلاوات الأخرى تبقى في القائمة لكنها معطّلة مع بيان السبب."
+          defaultMessage="يعمل مع التلاوات التي توفّر توقيتًا على مستوى الكلمة، وبرواية حفص عن عاصم فقط. اليوم يعني ذلك مؤسسة القرآن والتلاوات الاثنتي عشرة المدققة من MP3Quran v4. وما عداها يُشغَّل عاديًا، لكن السطر لا يظهر."
           id="about.followAlong.hafs"
         />
       </p>
@@ -55,6 +55,14 @@ export function FollowAlongAbout() {
           id="about.followAlong.accuracy"
         />
       </p>
+
+      <p>
+        <FormattedMessage
+          defaultMessage="التلوين يبيّن موضع الحكم في النص، لا صحة تطبيقه في التلاوة. الوضع لا يسجّل صوتك ولا يقارنه ولا يصدر تقييمًا."
+          id="about.followAlong.method"
+        />
+      </p>
+
 
       <details className="text-sm">
         <summary className="cursor-pointer">

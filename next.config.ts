@@ -37,7 +37,9 @@ const withSerwist = withSerwistInit({
   swDest: 'public/sw.js',
   cacheOnNavigation: true,
   disable: !isProduction,
-  register: isProduction,
+  // Registered explicitly in src/components/service-worker-register.tsx so the
+  // Cloudflare/OpenNext build behaves the same as the standard Next build.
+  register: false,
   // Only build assets are precached; keep the limit small so a stray large
   // file cannot inflate the service worker install.
   maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB

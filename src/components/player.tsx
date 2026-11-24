@@ -3,27 +3,33 @@
 import { useAtom, useAtomValue } from 'jotai';
 import dynamic from 'next/dynamic';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { useMediaSession } from '@/hooks/use-media-session';
 import { useNetworkStatus } from '@/hooks/use-network-status';
 import { useOfflineDownload } from '@/hooks/use-offline-download';
 import {
   currentTimeAtom,
-  followAlongActiveAtom,
+  followAlongLineAtom,
   fullscreenAtom,
   playbackModeAtom,
   playbackSpeedAtom,
+  playerModeAtom,
+  selectedReciterAtom,
+  spectrumEnabledAtom,
   visualizerModelAtom,
   volumeAtom,
 } from '@/jotai/atom';
+import { followAlongBlockReason } from '@/services/reciters/capabilities';
+import { isFollowAlongEnabled } from '@/services/reciters/flags';
 import { Playlist } from '@/types';
 import { cn } from '@/utils';
 import { canUseAudioAnalyser } from '@/utils/audio-cors';
 
+import { FollowAlongPanel } from './follow-along-panel';
 import PlayerControls from './player-controls';
 import Range from './range';
-import TrackInfo, { NowPlayingHeader } from './track-info';
+import TrackInfo from './track-info';
 
 const AudioBarsVisualizer = dynamic(
   () => import('@/components/audio-bars-visualizer'),
@@ -55,10 +61,14 @@ type Props = {
 };
 
 export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
+  const { formatMessage } = useIntl();
   const isFullscreen = useAtomValue(fullscreenAtom);
   const [playbackMode] = useAtom(playbackModeAtom);
   const visualizerModel = useAtomValue(visualizerModelAtom);
-  const followAlongActive = useAtomValue(followAlongActiveAtom);
+  const spectrumEnabled = useAtomValue(spectrumEnabledAtom);
+  const followAlongLine = useAtomValue(followAlongLineAtom);
+  const activeMode = useAtomValue(playerModeAtom);
+  const selectedReciter = useAtomValue(selectedReciterAtom);
   const previousTrackRef = useRef<number | undefined>(undefined);
   // Browsers fire `pause` before `ended`, so `isPlaying` is already false when
   // the next source mounts. This carries the intent to keep playing across
@@ -74,6 +84,14 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const isOnline = useNetworkStatus();
+  const followAlongBlock =
+    selectedReciter && currentTrack !== undefined
+      ? followAlongBlockReason(
+          selectedReciter.source,
+          selectedReciter.moshaf,
+          isOnline
+        )
+      : null;
   const { isTrackCached } = useOfflineDownload();
 
   // In offline mode, determine which track indices are cached/playable
@@ -346,11 +364,46 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
             />
           )}
 
-          {/* 1. now-playing header — surah 18/700, reciter 13 muted */}
-          <NowPlayingHeader currentTrackId={currentTrack} />
+          {/*
+            The line belongs above the spectrum it accompanies. Settings own it
+            now: no mode row, no close button, just a preference.
+          */}
+          {isFollowAlongEnabled() &&
+            followAlongLine &&
+            activeMode === 'listening' &&
+            selectedReciter &&
+            currentTrack !== undefined &&
+            followAlongBlock === null ? (
+              <FollowAlongPanel
+                audio={audioElement}
+                source={selectedReciter.source}
+                moshafId={selectedReciter.moshaf.id}
+                surah={currentTrack + 1}
+              />
+            ) : isFollowAlongEnabled() &&
+              followAlongLine &&
+              activeMode === 'listening' &&
+              followAlongBlock ? (
+              <p className="text-center text-[12px] text-ink-muted">
+                {formatMessage(
+                  {
+                    id: 'followAlong.unavailable',
+                    defaultMessage: 'Follow-along: {reason}',
+                  },
+                  {
+                    reason: formatMessage({
+                      id: `followAlong.disabled.${followAlongBlock
+                        .replace('not-hafs', 'notHafs')
+                        .replace('no-timings', 'noTimings')}`,
+                      defaultMessage: 'Not available',
+                    }),
+                  }
+                )}
+              </p>
+            ) : null}
 
           {/* 2. visualiser */}
-          {followAlongActive ? null : (
+          {spectrumEnabled ? (
             <div className="w-full">
               <AudioBarsVisualizer
                 audioId="audio"
@@ -359,7 +412,7 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
                 model={visualizerModel}
               />
             </div>
-          )}
+          ) : null}
 
           {/* 3. seek */}
           <Range

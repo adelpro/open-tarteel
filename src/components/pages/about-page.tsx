@@ -118,7 +118,10 @@ export default function AboutPage() {
         {/* Credits section at the very bottom */}
         <div className="flex w-full justify-center text-ink-muted">
           <div className="px-4 py-2 text-sm">
-            Made by{' '}
+            <FormattedMessage
+              id="about.footer.madeBy"
+              defaultMessage="Made by"
+            />{' '}
             <a
               href="https://adelpro.us.kg"
               target="_blank"
@@ -134,7 +137,10 @@ export default function AboutPage() {
               rel="noopener noreferrer"
               className="underline"
             >
-              Source
+              <FormattedMessage
+                id="about.footer.source"
+                defaultMessage="Source"
+              />
             </a>
           </div>
         </div>
