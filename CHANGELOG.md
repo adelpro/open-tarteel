@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2026-11-24
+
+### Added
+
+- offline-first boot: the service worker precaches localized app shells and
+  serves cached pages, Quran text and downloaded audio with no network
+- three-level offline mode (Auto / On / Off) with automatic detection of silent
+  network loss and a one-tap Retry action
+- manual reciter and mushaf downloads remain available while online and play
+  back offline, including seeking
+
+### Changed
+
+- reciter links carry `lang=en|de` through canonical Arabic player URLs so the
+  interface locale survives offline navigation
+- offline search matches both the localized and stored reciter names, so
+  `?query=Ibrahim` finds a downloaded reciter
+- the service worker is registered explicitly on every build, including the
+  Cloudflare/OpenNext output
+
+### Fixed
+
+- service worker install no longer aborts on precache URLs missing from the
+  Worker asset host
+- the offline banner respects the `lang` parameter on bare offline URLs
+- Auto mode keeps probing after connectivity checks that return early, so a
+  silent network loss switches the UI to downloads-only
+
 ## [0.5.0-rc.8] - 2026-11-12
 
 ### Fixed
