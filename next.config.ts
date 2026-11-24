@@ -43,6 +43,16 @@ const withSerwist = withSerwistInit({
   // Only build assets are precached; keep the limit small so a stray large
   // file cannot inflate the service worker install.
   maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB
+  // These exist in the Next/Netlify output but not in the Cloudflare Worker's
+  // static assets. Serwist's precache install fails on a 404, which prevented
+  // the worker from ever activating on the live deploy.
+  exclude: [
+    /\.map$/,
+    /^manifest.*\.js$/,
+    /_headers$/,
+    /_buildManifest\.js$/,
+    /_ssgManifest\.js$/,
+  ],
 });
 
 const noindex = isNetlifyPreview || process.env.SEO_NOINDEX === 'true';
