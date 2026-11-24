@@ -246,6 +246,7 @@
   "player.modeSwitcher": "Wiedergabemodus",
   "player.playbackMode": "Zufall / Wiederholen",
   "provider.badge.beta": "Beta",
+  "provider.badge.followAlong": "Mitlesen",
   "provider.badge.timing": "Zeitangaben",
   "provider.badge.timingPartial": "Teilweise Timings",
   "provider.badge.word": "Wort für Wort",

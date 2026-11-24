@@ -266,6 +266,7 @@
   "player.modeSwitcher": "Playback mode",
   "player.playbackMode": "Shuffle / repeat",
   "provider.badge.beta": "Beta",
+  "provider.badge.followAlong": "Follow-along",
   "provider.badge.timing": "Timing",
   "provider.badge.timingPartial": "Some timings",
   "provider.badge.word": "Word-by-word",

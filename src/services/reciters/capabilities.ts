@@ -15,6 +15,8 @@ export type ProviderCapabilities = {
   timingCoverage: 'all' | 'partial' | 'none';
   /** Whether the app's range/tahfeez engine supports this provider today. */
   timingIntegration: 'implemented' | 'planned';
+  /** Provider publishes word timings; per-reciter truth is canUseFollowAlong. */
+  followAlong: boolean;
   names: 'ar' | 'ar+en';
   riwayah: { multiple: boolean; qiraah: boolean };
   audioTiers: Array<'original' | 'mp3_64' | 'opus_48'>;
@@ -34,6 +36,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     id: LinkSource.MP3QURAN,
     label: { ar: 'MP3 Quran', en: 'MP3 Quran' },
     beta: false,
+    followAlong: false,
     // https://www.mp3quran.net/eng/timing-api, 115 timing reads for 299 moshafs.
     timing: 'ayah',
     timingCoverage: 'partial',
@@ -52,6 +55,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     id: LinkSource.ITQAN,
     label: { ar: 'إتقان', en: 'Itqan' },
     beta: false,
+    followAlong: false,
     // https://docs.cms.itqan.dev/docs/guides/recitations-ayah-timings/
     // Timings exist per surah, and some recitations omit them entirely.
     timing: 'ayah',
@@ -71,6 +75,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     id: LinkSource.QURANAI,
     label: { ar: 'قرآني', en: 'Qurani.ai' },
     beta: false,
+    followAlong: false,
     // `includeTimings=true` returns per-ayah start/end/duration on each ayah.
     timing: 'ayah',
     timingCoverage: 'all',
@@ -89,6 +94,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     id: LinkSource.QURAN_FOUNDATION,
     label: { ar: 'مؤسسة القرآن', en: 'Quran Foundation' },
     beta: false,
+    followAlong: true,
     // https://api-docs.quran.foundation/docs/content_apis_versioned/4.0.0/audio-reciter-timestamp/
     timing: 'word',
     timingCoverage: 'partial',
@@ -108,6 +114,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     id: LinkSource.MP3QURAN_V4,
     label: { ar: 'MP3 Quran v4', en: 'MP3 Quran v4' },
     beta: true,
+    followAlong: true,
     timing: 'word',
     timingCoverage: 'partial',
     timingIntegration: 'implemented',
