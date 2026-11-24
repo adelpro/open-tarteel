@@ -274,6 +274,7 @@ async function cacheOfflinePageAssets(response: Response) {
       const assetResponse = await fetch(assetUrl, {
         credentials: 'same-origin',
         cache: 'reload',
+        signal: AbortSignal.timeout(8_000),
       });
       if (assetResponse.ok) {
         await assetsCache.put(assetUrl, assetResponse);
@@ -292,6 +293,7 @@ self.addEventListener('install', (event) => {
             const response = await fetch(url, {
               credentials: 'same-origin',
               cache: 'reload',
+              signal: AbortSignal.timeout(8_000),
             });
             if (!response.ok) return;
 
