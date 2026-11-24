@@ -23,9 +23,7 @@ export default function LanguageSwitcher() {
     // the select's background. A second custom chevron made two arrows.
     <select
       value={locale}
-      onChange={(event) =>
-        handleLanguageChange(event.target.value as Language)
-      }
+      onChange={(event) => handleLanguageChange(event.target.value as Language)}
       aria-label={formatMessage({
         id: 'language.select',
         defaultMessage: 'Select language',
@@ -34,7 +32,7 @@ export default function LanguageSwitcher() {
       className={
         locale === 'ar'
           ? 'focus-ring h-11 rounded-[8px] border border-border bg-surface bg-[position:left_0.75rem_center] pl-9 pr-3 text-[13px] font-bold text-ink'
-          : 'focus-ring h-11 rounded-[8px] border border-border bg-surface pr-9 pl-3 text-[13px] font-bold text-ink'
+          : 'focus-ring h-11 rounded-[8px] border border-border bg-surface pl-3 pr-9 text-[13px] font-bold text-ink'
       }
     >
       {Object.entries(LANGUAGES).map(([code, config]) => (

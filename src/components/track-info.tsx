@@ -28,12 +28,8 @@ export default function TrackInfo({
   const track = playlist[currentTrackId];
   if (!track) return null;
 
-  const surah = SURAHS.find(
-    (item) => item.id.toString() === track.surahId
-  );
-  const surahName = surah
-    ? getSurahDisplayName(surah, locale)
-    : track.surahId;
+  const surah = SURAHS.find((item) => item.id.toString() === track.surahId);
+  const surahName = surah ? getSurahDisplayName(surah, locale) : track.surahId;
 
   return (
     <div className="mt-2 flex w-full justify-center">

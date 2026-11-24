@@ -49,9 +49,7 @@ const PlaylistDialog = dynamic(
     import('@/components/playlist-dialog').then((module_) => module_.default),
   {
     ssr: false,
-    loading: () => (
-      <div className="h-12 w-full rounded-lg bg-surface-sunken" />
-    ),
+    loading: () => <div className="h-12 w-full rounded-lg bg-surface-sunken" />,
   }
 );
 
@@ -369,38 +367,38 @@ export default function Player({ playlist, initialTrackIndex = 0 }: Props) {
             now: no mode row, no close button, just a preference.
           */}
           {isFollowAlongEnabled() &&
+          followAlongLine &&
+          activeMode === 'listening' &&
+          selectedReciter &&
+          currentTrack !== undefined &&
+          followAlongBlock === null ? (
+            <FollowAlongPanel
+              audio={audioElement}
+              source={selectedReciter.source}
+              moshafId={selectedReciter.moshaf.id}
+              surah={currentTrack + 1}
+            />
+          ) : isFollowAlongEnabled() &&
             followAlongLine &&
             activeMode === 'listening' &&
-            selectedReciter &&
-            currentTrack !== undefined &&
-            followAlongBlock === null ? (
-              <FollowAlongPanel
-                audio={audioElement}
-                source={selectedReciter.source}
-                moshafId={selectedReciter.moshaf.id}
-                surah={currentTrack + 1}
-              />
-            ) : isFollowAlongEnabled() &&
-              followAlongLine &&
-              activeMode === 'listening' &&
-              followAlongBlock ? (
-              <p className="text-center text-[12px] text-ink-muted">
-                {formatMessage(
-                  {
-                    id: 'followAlong.unavailable',
-                    defaultMessage: 'Follow-along: {reason}',
-                  },
-                  {
-                    reason: formatMessage({
-                      id: `followAlong.disabled.${followAlongBlock
-                        .replace('not-hafs', 'notHafs')
-                        .replace('no-timings', 'noTimings')}`,
-                      defaultMessage: 'Not available',
-                    }),
-                  }
-                )}
-              </p>
-            ) : null}
+            followAlongBlock ? (
+            <p className="text-center text-[12px] text-ink-muted">
+              {formatMessage(
+                {
+                  id: 'followAlong.unavailable',
+                  defaultMessage: 'Follow-along: {reason}',
+                },
+                {
+                  reason: formatMessage({
+                    id: `followAlong.disabled.${followAlongBlock
+                      .replace('not-hafs', 'notHafs')
+                      .replace('no-timings', 'noTimings')}`,
+                    defaultMessage: 'Not available',
+                  }),
+                }
+              )}
+            </p>
+          ) : null}
 
           {/* 2. visualiser */}
           {spectrumEnabled ? (

@@ -1,6 +1,12 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { MdCloudDone, MdDeleteOutline } from 'react-icons/md';
 import { FormattedMessage } from 'react-intl';
 
@@ -41,7 +47,10 @@ export default function CacheManagement() {
       return;
     }
     setDisplaySpeed(speedRef.current);
-    const timer = window.setInterval(() => setDisplaySpeed(speedRef.current), 1000);
+    const timer = window.setInterval(
+      () => setDisplaySpeed(speedRef.current),
+      1000
+    );
     return () => window.clearInterval(timer);
   }, [isDownloading]);
 

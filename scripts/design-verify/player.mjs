@@ -28,7 +28,9 @@ const failures = [];
 let browser;
 try {
   browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const page = await browser.newPage({
+    viewport: { width: 1280, height: 900 },
+  });
 
   for (const route of ROUTES) {
     // Bounded to 90s: enough for a cold provider fetch, but a missing player
@@ -86,7 +88,10 @@ try {
         while (node && node !== document.body) {
           const classes =
             typeof node.className === 'string' ? node.className : '';
-          if (classes.includes('justify-between') && classes.includes('w-full')) {
+          if (
+            classes.includes('justify-between') &&
+            classes.includes('w-full')
+          ) {
             return node;
           }
           node = node.parentElement;
@@ -228,10 +233,14 @@ try {
     failures.push('(c) ayah line has an empty bounding box');
   }
   if (!scripture.available) {
-    failures.push(`(c) ayah font family is not available: ${scripture.fontFamily}`);
+    failures.push(
+      `(c) ayah font family is not available: ${scripture.fontFamily}`
+    );
   }
   if (scripture.namesFictionalFace) {
-    failures.push('(c) ayah font family still names the fictional "Amiri Quran" face');
+    failures.push(
+      '(c) ayah font family still names the fictional "Amiri Quran" face'
+    );
   }
   if (!scripture.registeredAmiri || scripture.registeredAmiri.length === 0) {
     failures.push('(c) no Amiri FontFace is registered in document.fonts');
@@ -242,7 +251,9 @@ try {
     );
   }
 } catch (error) {
-  failures.push(`unexpected error: ${error instanceof Error ? error.stack : error}`);
+  failures.push(
+    `unexpected error: ${error instanceof Error ? error.stack : error}`
+  );
 } finally {
   await browser?.close();
 }

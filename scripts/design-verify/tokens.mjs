@@ -4,7 +4,7 @@
  * Run against a local `next dev` on http://localhost:3000 (branch `develop`).
  * Exits 1 if any of the five token invariants is violated.
  */
-import { readdirSync,readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -42,7 +42,9 @@ function scanUndersizedType(directory) {
 
 const undersizedType = scanUndersizedType(SRC_DIR);
 if (undersizedType.length > 0) {
-  failures.push(`(e) undersized type utility in src/: ${undersizedType.join(' | ')}`);
+  failures.push(
+    `(e) undersized type utility in src/: ${undersizedType.join(' | ')}`
+  );
 }
 console.log(
   'Static type-floor scan:',
@@ -131,7 +133,9 @@ try {
     );
   }
   if (result.bodyFontSize !== '15px') {
-    failures.push(`(d) body font-size is ${result.bodyFontSize}, expected 15px`);
+    failures.push(
+      `(d) body font-size is ${result.bodyFontSize}, expected 15px`
+    );
   }
 
   console.log(
@@ -139,7 +143,9 @@ try {
     JSON.stringify({ ...result, amiriLoadedAfterRequest: amiriLoaded }, null, 2)
   );
 } catch (error) {
-  failures.push(`unexpected error: ${error instanceof Error ? error.stack : error}`);
+  failures.push(
+    `unexpected error: ${error instanceof Error ? error.stack : error}`
+  );
 } finally {
   await browser?.close();
 }
@@ -150,4 +156,6 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log('PASS: token assertions (a)-(d) and static type-floor check (e) all satisfied');
+console.log(
+  'PASS: token assertions (a)-(d) and static type-floor check (e) all satisfied'
+);

@@ -10,7 +10,8 @@
   padding-inline: 0.5rem;
   direction: rtl;
   color: var(--follow-along-ink, currentColor);
-  font-family: var(--font-amiri), 'Scheherazade New', 'Noto Naskh Arabic', serif;
+  font-family:
+    var(--font-amiri), 'Scheherazade New', 'Noto Naskh Arabic', serif;
   font-size: 21px;
   line-height: 1.9;
   white-space: normal;

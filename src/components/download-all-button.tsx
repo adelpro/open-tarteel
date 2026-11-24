@@ -234,9 +234,7 @@ export default function DownloadAllButton({
             />
             <p className="truncate text-[13px] font-bold text-ink">{label}</p>
           </div>
-          <p className="mt-0.5 truncate text-xs text-ink-muted">
-            {subtitle}
-          </p>
+          <p className="mt-0.5 truncate text-xs text-ink-muted">{subtitle}</p>
         </div>
 
         {status === 'downloading' ? (

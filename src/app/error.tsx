@@ -23,23 +23,21 @@ export default function Error({ error, reset }: Props): React.ReactElement {
         <h1 className="mb-5 text-3xl font-bold text-ink">
           {error.name || 'Error'}
         </h1>
-        <p className="mb-8 text-xl text-ink-muted">
-          {message}
-        </p>
+        <p className="mb-8 text-xl text-ink-muted">{message}</p>
         {error.digest && (
           <p className="mb-4 text-sm text-ink-muted">
             Error ID: {error.digest}
           </p>
         )}
         <button
-          className="mx-2 my-4 w-full rounded-md bg-primary py-2 text-on-primary transition-colors duration-180 hover:bg-primary-hover focus-ring"
+          className="focus-ring mx-2 my-4 w-full rounded-md bg-primary py-2 text-on-primary transition-colors duration-180 hover:bg-primary-hover"
           onClick={reset}
         >
           Try again
         </button>
         <LocalizedLink
           href="/"
-          className="mx-2 w-full rounded-md bg-primary py-2 text-on-primary transition-colors duration-180 hover:bg-primary-hover focus-ring"
+          className="focus-ring mx-2 w-full rounded-md bg-primary py-2 text-on-primary transition-colors duration-180 hover:bg-primary-hover"
         >
           Return to the Home page
         </LocalizedLink>

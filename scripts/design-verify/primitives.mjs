@@ -34,7 +34,11 @@ const openSelectorLabel = ar['reciter.openSelector'] ?? 'Open reciter selector';
 /** `color-mix(in srgb, var(--accent) 35%, …)` resolves to `color(srgb … / 0.35)`. */
 function primaryRingInShadow(shadow, accentChannels) {
   if (!shadow || shadow === 'none' || !accentChannels) return false;
-  const colors = [...shadow.matchAll(/color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\/\s*([\d.]+)\)/gi)];
+  const colors = [
+    ...shadow.matchAll(
+      /color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\/\s*([\d.]+)\)/gi
+    ),
+  ];
   return colors.some(
     ([, r, g, b, alpha]) =>
       Math.abs(Number(r) - accentChannels[0]) < 0.01 &&
@@ -47,13 +51,16 @@ function primaryRingInShadow(shadow, accentChannels) {
 /** Focus every visible button in `root` and read its computed focus indicator. */
 async function collectFocus(page, root) {
   const count = await page.evaluate((rootSelector) => {
-    for (const element of document
-      .querySelectorAll('[data-dv-btn]')) element.removeAttribute('data-dv-btn');
-    const scope = rootSelector ? document.querySelector(rootSelector) : document;
+    for (const element of document.querySelectorAll('[data-dv-btn]'))
+      element.removeAttribute('data-dv-btn');
+    const scope = rootSelector
+      ? document.querySelector(rootSelector)
+      : document;
     const buttons = [...scope.querySelectorAll('button')].filter(
       (element) => element.getClientRects().length > 0
     );
-    for (const [index, element] of buttons.entries()) element.setAttribute('data-dv-btn', String(index));
+    for (const [index, element] of buttons.entries())
+      element.setAttribute('data-dv-btn', String(index));
     return buttons.length;
   }, root);
 
@@ -65,7 +72,13 @@ async function collectFocus(page, root) {
         const element = document.querySelector(`[data-dv-btn="${index_}"]`);
         const style = getComputedStyle(element);
         return {
-          label: (element.getAttribute('aria-label') || element.textContent || '').trim().slice(0, 40),
+          label: (
+            element.getAttribute('aria-label') ||
+            element.textContent ||
+            ''
+          )
+            .trim()
+            .slice(0, 40),
           focused: document.activeElement === element,
           focusVisible: element.matches(':focus-visible'),
           outline: style.outlineStyle,
@@ -93,7 +106,9 @@ async function assertPrimaryRing(page, accentChannels) {
       button: [...document.querySelectorAll('button.focus-ring')],
     };
     const labelOf = (element) =>
-      (element.getAttribute('aria-label') || element.textContent || '').trim().slice(0, 40);
+      (element.getAttribute('aria-label') || element.textContent || '')
+        .trim()
+        .slice(0, 40);
     const counts = {};
     const missingClass = [];
     const focused = [];
@@ -107,8 +122,9 @@ async function assertPrimaryRing(page, accentChannels) {
           missingClass.push(`${kind} "${label}"`);
         }
         const canFocus =
-          element.matches('button, a[href], input, select, textarea, [tabindex]') &&
-          element.getClientRects().length > 0;
+          element.matches(
+            'button, a[href], input, select, textarea, [tabindex]'
+          ) && element.getClientRects().length > 0;
         if (canFocus) {
           element.focus();
           if (document.activeElement === element) {
@@ -157,7 +173,10 @@ async function assertPrimaryRing(page, accentChannels) {
       );
     }
   }
-  if (observed.probe && !primaryRingInShadow(observed.probe.boxShadow, accentChannels)) {
+  if (
+    observed.probe &&
+    !primaryRingInShadow(observed.probe.boxShadow, accentChannels)
+  ) {
     failures.push(
       `(d) focus-ring class does not produce the primary ring when focused (${observed.hiddenCount} hidden Tags; focused=${observed.probe.isActive}, box-shadow=${observed.probe.boxShadow})`
     );
@@ -206,14 +225,16 @@ try {
       await page.waitForSelector('dialog[open]', { timeout: 5_000 });
       break;
     } catch {
-      if (attempt === 4) throw new Error('reciter sheet did not open after 5 clicks');
+      if (attempt === 4)
+        throw new Error('reciter sheet did not open after 5 clicks');
     }
   }
   // The list hydrates from the reciter catalog asynchronously. Wait until its
   // rows are present so the focus assertions cover the real sheet contents.
   await page.waitForFunction(
     () =>
-      (document.querySelector('dialog[open]')?.querySelectorAll('button').length ?? 0) >= 50,
+      (document.querySelector('dialog[open]')?.querySelectorAll('button')
+        .length ?? 0) >= 50,
     null,
     { timeout: 90_000 }
   );
@@ -237,15 +258,20 @@ try {
   // intentionally excluded (they are not tap targets).
   const smallTargets = await page.evaluate(() => {
     const visible = (element) =>
-      element.getClientRects().length > 0 && getComputedStyle(element).visibility !== 'hidden';
+      element.getClientRects().length > 0 &&
+      getComputedStyle(element).visibility !== 'hidden';
     const selector =
       'button, a[href], input:not([type=hidden]):not([type=range]), select, textarea, [role="button"]';
     return [...document.querySelectorAll(selector)]
       .filter((element) => visible(element))
-      .filter((element) => !element.closest('.sr-only') && !element.classList.contains('sr-only'))
+      .filter(
+        (element) =>
+          !element.closest('.sr-only') && !element.classList.contains('sr-only')
+      )
       .map((element) => {
         const rect =
-          element.matches('input[type=checkbox], input[type=radio]') && element.closest('label')
+          element.matches('input[type=checkbox], input[type=radio]') &&
+          element.closest('label')
             ? element.closest('label').getBoundingClientRect()
             : element.getBoundingClientRect();
         return {
@@ -264,13 +290,13 @@ try {
 
   // (c) One chip radius. Computed styles are available even inside closed
   // dialogs, so this covers every Tag rendered on the page.
-  const chipRadii = await page.evaluate(() =>
-    [...new Set(
+  const chipRadii = await page.evaluate(() => [
+    ...new Set(
       [...document.querySelectorAll('[data-tag]')].map(
         (element) => getComputedStyle(element).borderRadius
       )
-    )]
-  );
+    ),
+  ]);
   if (chipRadii.length !== 1 || chipRadii[0] !== '8px') {
     failures.push(
       `(c) chip border-radius values are [${chipRadii.join(', ')}], expected a single 8px value`
@@ -279,7 +305,10 @@ try {
 
   // (d) Stricter ring check: (a) alone passes on Chromium's native outline.
   // The modal makes page buttons inert, so check them before it opened too.
-  const sheetRingRepresentatives = await assertPrimaryRing(page, accentChannels);
+  const sheetRingRepresentatives = await assertPrimaryRing(
+    page,
+    accentChannels
+  );
   const ringRepresentatives = Object.fromEntries(
     Object.keys(pageRingRepresentatives).map((kind) => [
       kind,
@@ -289,7 +318,9 @@ try {
   // A vacuous set would let a full revert pass, so require members in each group.
   for (const [kind, count] of Object.entries(ringRepresentatives)) {
     if (count === 0) {
-      failures.push(`(d) no ${kind} ring representatives found — assertion would be vacuous`);
+      failures.push(
+        `(d) no ${kind} ring representatives found — assertion would be vacuous`
+      );
     }
   }
 
@@ -300,8 +331,12 @@ try {
         url: page.url(),
         sheetOpen: true,
         buttonsChecked: focusResults.length,
-        buttonsWithNativeOutline: focusResults.filter((r) => r.outline && r.outline !== 'none').length,
-        buttonsWithPrimaryRing: focusResults.filter((r) => primaryRingInShadow(r.boxShadow, accentChannels)).length,
+        buttonsWithNativeOutline: focusResults.filter(
+          (r) => r.outline && r.outline !== 'none'
+        ).length,
+        buttonsWithPrimaryRing: focusResults.filter((r) =>
+          primaryRingInShadow(r.boxShadow, accentChannels)
+        ).length,
         smallTargets,
         chipRadii,
         ringRepresentatives,
@@ -311,7 +346,9 @@ try {
     )
   );
 } catch (error) {
-  failures.push(`unexpected error: ${error instanceof Error ? error.stack : error}`);
+  failures.push(
+    `unexpected error: ${error instanceof Error ? error.stack : error}`
+  );
 } finally {
   await browser?.close();
 }

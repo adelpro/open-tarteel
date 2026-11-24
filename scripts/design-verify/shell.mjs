@@ -74,179 +74,185 @@ async function openReciterSheet(page) {
 
 /** One DOM read. Runs on the preview route and on the reciter/sheet route. */
 async function measure(page) {
-  return page.evaluate(({ rowSelector, sheetSelector }) => {
-    const footer = document.querySelector('footer');
-    const links = footer ? [...footer.querySelectorAll('a')] : [];
-    const legend = document.querySelector(
-      'ul[aria-label="أحكام التجويد"], ul[aria-label="Tajweed rules"]'
-    );
-    const legendItems = legend ? [...legend.querySelectorAll('li')] : [];
-    const word = document.querySelector('[data-state]');
-    const main = document.querySelector('main');
+  return page.evaluate(
+    ({ rowSelector, sheetSelector }) => {
+      const footer = document.querySelector('footer');
+      const links = footer ? [...footer.querySelectorAll('a')] : [];
+      const legend = document.querySelector(
+        'ul[aria-label="أحكام التجويد"], ul[aria-label="Tajweed rules"]'
+      );
+      const legendItems = legend ? [...legend.querySelectorAll('li')] : [];
+      const word = document.querySelector('[data-state]');
+      const main = document.querySelector('main');
 
-    const footerRect = footer?.getBoundingClientRect();
-    const mainRect = main?.getBoundingClientRect();
-    const mainPaddingBottom = main
-      ? Number.parseFloat(getComputedStyle(main).paddingBottom) || 0
-      : 0;
+      const footerRect = footer?.getBoundingClientRect();
+      const mainRect = main?.getBoundingClientRect();
+      const mainPaddingBottom = main
+        ? Number.parseFloat(getComputedStyle(main).paddingBottom) || 0
+        : 0;
 
-    const describe = (element) => {
-      const className =
-        typeof element.className === 'string' ? element.className : '';
-      return `${element.tagName.toLowerCase()}.${className.slice(0, 60)}`;
-    };
-
-    // (a) A single 375px viewport must not widen the layout.
-    const scrollWidth = document.documentElement.scrollWidth;
-
-    // (b) CSS-visible (rendered) links with real hit areas.
-    const linkInfo = links.map((link) => {
-      const rect = link.getBoundingClientRect();
-      const style = getComputedStyle(link);
-      return {
-        label: (link.textContent || '')
-          .trim()
-          .replace(/\s+/g, ' ')
-          .slice(0, 24),
-        href: link.getAttribute('href'),
-        width: Math.round(rect.width),
-        height: Math.round(rect.height),
-        visible:
-          style.display !== 'none' &&
-          style.visibility !== 'hidden' &&
-          rect.width > 0 &&
-          rect.height > 0,
+      const describe = (element) => {
+        const className =
+          typeof element.className === 'string' ? element.className : '';
+        return `${element.tagName.toLowerCase()}.${className.slice(0, 60)}`;
       };
-    });
 
-    // (c) Who actually paints above a point. Anything other than the footer
-    // or its descendants is a badge/sheet covering it (no sheet open here).
-    const overlays = new Set();
-    if (footerRect) {
-      const probe = (x, y) => {
-        if (x < 0 || y < 0 || x >= innerWidth || y >= innerHeight) return null;
-        const element = document.elementFromPoint(x, y);
-        if (!element || element === footer || footer.contains(element)) {
-          return null;
-        }
-        return describe(element);
-      };
-      for (const link of links) {
+      // (a) A single 375px viewport must not widen the layout.
+      const scrollWidth = document.documentElement.scrollWidth;
+
+      // (b) CSS-visible (rendered) links with real hit areas.
+      const linkInfo = links.map((link) => {
         const rect = link.getBoundingClientRect();
-        const hit = probe(
-          rect.left + rect.width / 2,
-          rect.top + rect.height / 2
-        );
-        if (hit) overlays.add(hit);
+        const style = getComputedStyle(link);
+        return {
+          label: (link.textContent || '')
+            .trim()
+            .replace(/\s+/g, ' ')
+            .slice(0, 24),
+          href: link.getAttribute('href'),
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+          visible:
+            style.display !== 'none' &&
+            style.visibility !== 'hidden' &&
+            rect.width > 0 &&
+            rect.height > 0,
+        };
+      });
+
+      // (c) Who actually paints above a point. Anything other than the footer
+      // or its descendants is a badge/sheet covering it (no sheet open here).
+      const overlays = new Set();
+      if (footerRect) {
+        const probe = (x, y) => {
+          if (x < 0 || y < 0 || x >= innerWidth || y >= innerHeight)
+            return null;
+          const element = document.elementFromPoint(x, y);
+          if (!element || element === footer || footer.contains(element)) {
+            return null;
+          }
+          return describe(element);
+        };
+        for (const link of links) {
+          const rect = link.getBoundingClientRect();
+          const hit = probe(
+            rect.left + rect.width / 2,
+            rect.top + rect.height / 2
+          );
+          if (hit) overlays.add(hit);
+        }
+        for (const fraction of [0.1, 0.3, 0.5, 0.7, 0.9]) {
+          const hit = probe(
+            footerRect.left + footerRect.width * fraction,
+            footerRect.top + footerRect.height / 2
+          );
+          if (hit) overlays.add(hit);
+        }
       }
-      for (const fraction of [0.1, 0.3, 0.5, 0.7, 0.9]) {
-        const hit = probe(
-          footerRect.left + footerRect.width * fraction,
-          footerRect.top + footerRect.height / 2
-        );
-        if (hit) overlays.add(hit);
-      }
-    }
 
-    // (d) Measure the *text* element inside each Tag, not the wrapping <li>.
-    // A future Tag font below 12px must fail even if the li still inherits
-    // a 12px floor from elsewhere.
-    const legendText = legendItems.flatMap((item) => {
-      const walker = document.createTreeWalker(item, NodeFilter.SHOW_TEXT);
-      const found = [];
-      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-        const text = (node.textContent || '').trim();
-        if (!text || !node.parentElement) continue;
-        found.push({
-          text: text.slice(0, 24),
-          fontSize: getComputedStyle(node.parentElement).fontSize,
-        });
-      }
-      return found;
-    });
-    const legendTagSwatches = legendItems.filter((item) =>
-      item.querySelector('[data-tag]')
-    ).length;
+      // (d) Measure the *text* element inside each Tag, not the wrapping <li>.
+      // A future Tag font below 12px must fail even if the li still inherits
+      // a 12px floor from elsewhere.
+      const legendText = legendItems.flatMap((item) => {
+        const walker = document.createTreeWalker(item, NodeFilter.SHOW_TEXT);
+        const found = [];
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          const text = (node.textContent || '').trim();
+          if (!text || !node.parentElement) continue;
+          found.push({
+            text: text.slice(0, 24),
+            fontSize: getComputedStyle(node.parentElement).fontSize,
+          });
+        }
+        return found;
+      });
+      const legendTagSwatches = legendItems.filter((item) =>
+        item.querySelector('[data-tag]')
+      ).length;
 
-    // (e) Motion tokens only, never a one-off duration.
-    const wordTransition = word
-      ? getComputedStyle(word).transitionDuration
-      : null;
+      // (e) Motion tokens only, never a one-off duration.
+      const wordTransition = word
+        ? getComputedStyle(word).transitionDuration
+        : null;
 
-    // (f) The footer's -mb-20 must consume <main>'s pb-20 exactly: the footer
-    // may never start above the end of main's content box.
-    const geometry = {
-      scrollY: Math.round(scrollY),
-      footerTop: footerRect ? Math.round(footerRect.top) : null,
-      mainContentBottom: mainRect
-        ? Math.round(mainRect.bottom - mainPaddingBottom)
-        : null,
-      mainPaddingBottom,
-    };
+      // (f) The footer's -mb-20 must consume <main>'s pb-20 exactly: the footer
+      // may never start above the end of main's content box.
+      const geometry = {
+        scrollY: Math.round(scrollY),
+        footerTop: footerRect ? Math.round(footerRect.top) : null,
+        mainContentBottom: mainRect
+          ? Math.round(mainRect.bottom - mainPaddingBottom)
+          : null,
+        mainPaddingBottom,
+      };
 
-    // (g) With a docked sheet open, sample the footer/sheet intersection and
-    // require the sheet (not the footer) to own every hit.
-    const sheet = [...document.querySelectorAll(sheetSelector)].find(
-      (element) => element.querySelectorAll(rowSelector).length >= 10
-    );
-    const sheetRect = sheet?.getBoundingClientRect();
-    const paintedOverSheet = new Set();
-    let sheetProbes = 0;
-    if (sheetRect && footerRect) {
-      const left = Math.max(footerRect.left, sheetRect.left);
-      const right = Math.min(footerRect.right, sheetRect.right);
-      const top = Math.max(footerRect.top, sheetRect.top);
-      const bottom = Math.min(footerRect.bottom, sheetRect.bottom);
-      if (right > left && bottom > top) {
-        for (const fx of [0.2, 0.5, 0.8]) {
-          for (const fy of [0.2, 0.5, 0.8]) {
-            sheetProbes += 1;
-            const hit = document.elementFromPoint(
-              left + (right - left) * fx,
-              top + (bottom - top) * fy
-            );
-            if (hit && (hit === footer || footer.contains(hit))) {
-              paintedOverSheet.add(describe(hit));
+      // (g) With a docked sheet open, sample the footer/sheet intersection and
+      // require the sheet (not the footer) to own every hit.
+      const sheet = [...document.querySelectorAll(sheetSelector)].find(
+        (element) => element.querySelectorAll(rowSelector).length >= 10
+      );
+      const sheetRect = sheet?.getBoundingClientRect();
+      const paintedOverSheet = new Set();
+      let sheetProbes = 0;
+      if (sheetRect && footerRect) {
+        const left = Math.max(footerRect.left, sheetRect.left);
+        const right = Math.min(footerRect.right, sheetRect.right);
+        const top = Math.max(footerRect.top, sheetRect.top);
+        const bottom = Math.min(footerRect.bottom, sheetRect.bottom);
+        if (right > left && bottom > top) {
+          for (const fx of [0.2, 0.5, 0.8]) {
+            for (const fy of [0.2, 0.5, 0.8]) {
+              sheetProbes += 1;
+              const hit = document.elementFromPoint(
+                left + (right - left) * fx,
+                top + (bottom - top) * fy
+              );
+              if (hit && (hit === footer || footer.contains(hit))) {
+                paintedOverSheet.add(describe(hit));
+              }
             }
           }
         }
       }
-    }
 
-    return {
-      scrollWidth,
-      linkInfo,
-      footerPosition: footer ? getComputedStyle(footer).position : null,
-      footerBox: footerRect
-        ? {
-            top: Math.round(footerRect.top),
-            bottom: Math.round(footerRect.bottom),
-          }
-        : null,
-      overlays: [...overlays],
-      legendItemCount: legendItems.length,
-      legendText,
-      legendTagSwatches,
-      wordTransition,
-      geometry,
-      sheetFound: Boolean(sheet),
-      sheetBox: sheetRect
-        ? {
-            top: Math.round(sheetRect.top),
-            bottom: Math.round(sheetRect.bottom),
-          }
-        : null,
-      sheetProbes,
-      paintedOverSheet: [...paintedOverSheet],
-    };
-  }, { rowSelector: ROW_SELECTOR, sheetSelector: SHEET_SELECTOR });
+      return {
+        scrollWidth,
+        linkInfo,
+        footerPosition: footer ? getComputedStyle(footer).position : null,
+        footerBox: footerRect
+          ? {
+              top: Math.round(footerRect.top),
+              bottom: Math.round(footerRect.bottom),
+            }
+          : null,
+        overlays: [...overlays],
+        legendItemCount: legendItems.length,
+        legendText,
+        legendTagSwatches,
+        wordTransition,
+        geometry,
+        sheetFound: Boolean(sheet),
+        sheetBox: sheetRect
+          ? {
+              top: Math.round(sheetRect.top),
+              bottom: Math.round(sheetRect.bottom),
+            }
+          : null,
+        sheetProbes,
+        paintedOverSheet: [...paintedOverSheet],
+      };
+    },
+    { rowSelector: ROW_SELECTOR, sheetSelector: SHEET_SELECTOR }
+  );
 }
 
 /** (f) one guard, reused at every measured scroll position. */
 function checkPaddingCoupling(state, observed) {
   const { footerTop, mainContentBottom } = observed.geometry;
   if (footerTop == null || mainContentBottom == null) {
-    failures.push(`(${state})(f) footer or main missing, cannot check padding coupling`);
+    failures.push(
+      `(${state})(f) footer or main missing, cannot check padding coupling`
+    );
     return;
   }
   if (footerTop < mainContentBottom - 1) {
@@ -267,7 +273,9 @@ try {
     timeout: 120_000,
   });
   if (response && response.status() >= 400) {
-    failures.push(`(setup) ${PREVIEW_ROUTE} returned HTTP ${response.status()}`);
+    failures.push(
+      `(setup) ${PREVIEW_ROUTE} returned HTTP ${response.status()}`
+    );
   }
   // The legend is server-rendered; words need the client fetch. A cold
   // `next dev` compile can be slow, so wait on hydration not a fixed delay.
@@ -292,7 +300,9 @@ try {
   await page.waitForTimeout(200);
   const bottom = await measure(page);
   if (bottom.geometry.scrollY <= top.geometry.scrollY) {
-    failures.push('(f) preview never reached a distinct second scroll position');
+    failures.push(
+      '(f) preview never reached a distinct second scroll position'
+    );
   }
   await page.evaluate(() =>
     document.getElementById('design-verify-scroll-spacer')?.remove()
@@ -330,7 +340,9 @@ try {
     );
   }
   if (top.overlays.length > 0) {
-    failures.push(`(c) elements paint over the footer: ${top.overlays.join(' | ')}`);
+    failures.push(
+      `(c) elements paint over the footer: ${top.overlays.join(' | ')}`
+    );
   }
 
   if (top.legendItemCount === 0) {
@@ -403,7 +415,9 @@ try {
   }
   await sheetPage.close();
 } catch (error) {
-  failures.push(`unexpected error: ${error instanceof Error ? error.stack : error}`);
+  failures.push(
+    `unexpected error: ${error instanceof Error ? error.stack : error}`
+  );
 } finally {
   await browser?.close();
 }

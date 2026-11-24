@@ -32,11 +32,13 @@
 ### Task 1: Tri-state offline mode atom + legacy migration
 
 **Files:**
+
 - Create: `src/jotai/offline-mode.ts`
 - Modify: `src/jotai/atom.ts` (remove `forcedOfflineAtom`, lines 23–26)
 - Test: `src/jotai/offline-mode.test.ts`
 
 **Interfaces:**
+
 - Consumes: `createAtomWithStorage` from `src/jotai/create-atom-with-storage.ts`.
 - Produces: `OfflineMode = 'auto' | 'on' | 'off'`; `offlineModeAtom` (key `offline-mode`, default `'auto'`, `getOnInit: true`, validating guard `isOfflineMode`); `isEffectivelyOffline(mode: OfflineMode, online: boolean): boolean` returning `mode === 'on' || (mode === 'auto' && !online)`; `migrateLegacyForcedOffline(): void` run once at module init.
 
@@ -58,11 +60,13 @@
 ### Task 2: Connectivity hysteresis and derived network status
 
 **Files:**
+
 - Modify: `src/hooks/use-network-status.ts`
 - Modify: `src/hooks/use-network-status.test.ts`
 - Modify: `src/hooks/use-network-status.ssr.test.tsx` (only if the changed import requires it)
 
 **Interfaces:**
+
 - Consumes: `offlineModeAtom`, `isEffectivelyOffline` from Task 1.
 - Produces: `useNetworkStatus(): boolean` (same signature as today, now derived); `retryConnectivityCheck(): Promise<void>`; `resetNetworkStatusForTests(): void` (clears module-level state, listeners and `wired` flag).
 
@@ -81,12 +85,14 @@
 ### Task 3: Settings tri-state control and context-aware offline banner
 
 **Files:**
+
 - Modify: `src/app/(ar)/settings/page.tsx` (offline-mode row, lines ~215–238)
 - Modify: `src/components/network-status-indicator.tsx`
 - Modify: `src/locales/en.json`, `src/locales/ar.json`, `src/locales/de.json` (settings block ~221–224, offline block ~236–241)
 - Test: `tests/offline-mode.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `offlineModeAtom`, `OfflineMode` (Task 1); `retryConnectivityCheck` (Task 2); `Segmented` from `src/components/ui/segmented.tsx`.
 - Produces: Settings control with three options whose `aria-pressed` reflects the mode; banner action that switches `on → auto` or retries the probe in `auto`.
 
@@ -107,12 +113,14 @@
 ### Task 4: Explicit service-worker registration on every build
 
 **Files:**
+
 - Modify: `next.config.ts` (`withSerwistInit` options, lines 35–44)
 - Create: `src/components/service-worker-register.tsx`
 - Modify: `src/components/root-shell.tsx` (mount next to `PwaUpdater`)
 - Test: `src/components/service-worker-register.test.tsx`
 
 **Interfaces:**
+
 - Consumes: browser `navigator.serviceWorker`.
 - Produces: a client component that registers `/sw.js` with `{ scope: '/', updateViaCache: 'none' }`, awaits `navigator.serviceWorker.ready`, and resolves a `controllerchange` if no controller is present.
 
@@ -131,6 +139,7 @@
 ### Task 5: Locale-preserving player navigation and locale-aware offline shell
 
 **Files:**
+
 - Modify: `src/sw.ts`
 - Modify: `src/components/intl-provider-wrapper.tsx`
 - Modify: `src/lib/reciter-route.ts`
@@ -139,6 +148,7 @@
 - Test: `src/lib/reciter-route.test.ts`, `src/components/reciter-route-cookie.test.tsx`, create `src/components/intl-provider-wrapper.test.tsx`, modify `tests/offline.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `localeFromPath`, `withLocale` from `src/lib/seo/routes.ts`; `useIntl().locale`.
 - Produces: `reciterRouteFor(reciter, locale?: Language): string` appending `lang=<locale>` for non-Arabic locales; `isReciterRoute(value: string): boolean` accepting the optional `lang=en|de` parameter and rejecting other values; `IntlProviderWrapper` choosing `lang` over the bare pathname on the client.
 
@@ -164,12 +174,14 @@
 ### Task 6: Offline search matches localized and stored reciter names
 
 **Files:**
+
 - Modify: `src/utils/search.ts`
 - Modify: `src/hooks/use-filter-sort.ts`
 - Modify: `src/components/reciters-list.tsx`
 - Test: `src/utils/search.test.ts`, modify `tests/offline.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `OfflineDownloadRecord.reciterName` from `useOfflineDownload().records`; `generateFavId`.
 - Produces: `withNameAliases<T extends { id: string; name: string }>(items: T[], aliases: Record<string, string[]>): T[]` — copies an item and appends its aliases to `name` so `fuzzySearch` matches either language; `useFilterSort` accepts optional `nameAliases: Record<string, string[]>`.
 

@@ -4,6 +4,7 @@ Date: 2026-11-22
 Method: gstack `seo-audit` skill + `scripts/seo-audit.mjs` + rendered-page checks with Playwright. Missing inputs: no Search Console access and no field Core Web Vitals, so indexing status, crawl errors and real-user CWV are not verified.
 
 Targets:
+
 - Cloudflare test worker (v2.0.0, deployed from `cloudflare-deploy`): https://open-tarteel.adelpro.workers.dev
 - Production (older deploy): https://tarteel.quran.us.kg
 
@@ -20,13 +21,13 @@ Targets:
 
 Rendered-page checks:
 
-| URL | Title | H1 | JSON-LD | Version |
-|---|---|---|---|---|
-| `/about` | حول تطبيق Quran.us.kg | حول تطبيق Quran.us.kg | 2 | `v2.0.0` visible in footer |
-| `/` | القرآن الكريم \| Open Tarteel | القرآن الكريم | 1 | – |
-| `/en` | The Holy Quran \| Open Tarteel | The Holy Quran | 1 | – |
-| `/de` | Der Heilige Koran \| Open Tarteel | Der Heilige Koran | 1 | – |
-| `/settings` | القرآن الكريم \| Open Tarteel | الإعدادات | 1 | `noindex, nofollow` (intended) |
+| URL         | Title                             | H1                    | JSON-LD | Version                        |
+| ----------- | --------------------------------- | --------------------- | ------- | ------------------------------ |
+| `/about`    | حول تطبيق Quran.us.kg             | حول تطبيق Quran.us.kg | 2       | `v2.0.0` visible in footer     |
+| `/`         | القرآن الكريم \| Open Tarteel     | القرآن الكريم         | 1       | –                              |
+| `/en`       | The Holy Quran \| Open Tarteel    | The Holy Quran        | 1       | –                              |
+| `/de`       | Der Heilige Koran \| Open Tarteel | Der Heilige Koran     | 1       | –                              |
+| `/settings` | القرآن الكريم \| Open Tarteel     | الإعدادات             | 1       | `noindex, nofollow` (intended) |
 
 The About page version is in sync with `package.json` (`2.0.0`) because it reads `packageJson.version` directly.
 

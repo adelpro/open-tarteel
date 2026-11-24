@@ -25,10 +25,9 @@ test('three-level offline mode gates network content', async ({ page }) => {
   await expect(page.getByText('Offline: downloads only')).toBeVisible();
   await page.getByRole('button', { name: 'Open reciter selector' }).click();
   const scope = page.getByRole('group', { name: 'Reciter scope' });
-  await expect(scope.getByRole('button', { name: 'Downloaded' })).toHaveAttribute(
-    'aria-pressed',
-    'true'
-  );
+  await expect(
+    scope.getByRole('button', { name: 'Downloaded' })
+  ).toHaveAttribute('aria-pressed', 'true');
   await expect(scope.getByRole('button', { name: 'All' })).toBeDisabled();
   await expect(page.getByText('0 reciters', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Close' }).first().click();

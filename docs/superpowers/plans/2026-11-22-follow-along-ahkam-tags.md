@@ -32,6 +32,7 @@
 ### Task 1: Ahkam rule key
 
 **Files:**
+
 - Create: `src/components/ahkam-rule-key.tsx`
 - Test: `src/services/quran-text/rules.test.ts`
 - Modify: `src/services/quran-text/rules.ts`
@@ -39,6 +40,7 @@
 - Delete: `src/components/ahkam-rail.tsx`
 
 **Interfaces:**
+
 - Consumes: `ruleGroup(rule)`, `TAJWEED_COLORS`, `TAJWEED_LABELS`, `TAJWEED_GROUP_ORDER`, `TajweedGroup`.
 - Produces: `ruleGroupsForWord(chars: { rule?: string | null }[]): Set<TajweedGroup>`; `AhkamRuleKey({ activeGroups, locale })`.
 
@@ -46,8 +48,9 @@
 
 ```ts
 it('returns every rule group on a word', () => {
-  expect(ruleGroupsForWord([{ rule: 'madd' }, { rule: 'ghunnah' }, { rule: 'madd' }]))
-    .toEqual(new Set<TajweedGroup>(['madd', 'ghunnah']));
+  expect(
+    ruleGroupsForWord([{ rule: 'madd' }, { rule: 'ghunnah' }, { rule: 'madd' }])
+  ).toEqual(new Set<TajweedGroup>(['madd', 'ghunnah']));
 });
 ```
 
@@ -78,10 +81,12 @@ Remove `AhkamRail` import, its `ahkam` useMemo, and its render. Import `AhkamRul
 ### Task 2: More-menu follow-along toggle
 
 **Files:**
+
 - Modify: `src/components/player-controls.tsx`
 - Modify: `src/locales/{ar,en,de}.json`
 
 **Interfaces:**
+
 - Consumes: `followAlongLineAtom` from `src/jotai/atom.ts`, existing `MenuRow`.
 - Produces: one More-menu row that toggles follow-along visibility.
 
@@ -104,9 +109,11 @@ Run type-check, lint, and a browser check that toggling the row shows/hides the 
 ### Task 3: Simplify Settings
 
 **Files:**
+
 - Modify: `src/app/(ar)/settings/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `ahkamTagsAtom`.
 - Produces: settings group with exactly one switch.
 
@@ -129,6 +136,7 @@ Type-check, lint, browser check that no follow-along visibility switch remains i
 ### Task 4: Verify and update the plan
 
 **Files:**
+
 - Modify: `docs/superpowers/plans/2026-11-22-follow-along-ahkam-tags.md`
 
 - [ ] **Step 1: Browser verification**

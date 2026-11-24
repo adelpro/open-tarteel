@@ -38,8 +38,14 @@ const SCREENS = [
       await page.getByRole('button', { name: 'Open reciter selector' }).click();
       // The filter dialog is always in the DOM; wait for the visible sheet and
       // a real reciter row, not for a badge span that may be in a closed panel.
-      await page.getByRole('searchbox').first().waitFor({ state: 'visible', timeout: 30_000 });
-      await page.locator('li button').first().waitFor({ state: 'visible', timeout: 30_000 });
+      await page
+        .getByRole('searchbox')
+        .first()
+        .waitFor({ state: 'visible', timeout: 30_000 });
+      await page
+        .locator('li button')
+        .first()
+        .waitFor({ state: 'visible', timeout: 30_000 });
       await page.waitForTimeout(800);
     },
   },
@@ -66,8 +72,15 @@ const hideChrome = async (page) => {
   await page.addStyleTag({ content: HIDE_CHROME });
   await page.evaluate(() => {
     for (const node of document.querySelectorAll('body *')) {
-      if (node.children.length === 0 && /Powered by Netlify/i.test(node.textContent || '')) {
-        (node.closest('div, a') ?? node).style.setProperty('display', 'none', 'important');
+      if (
+        node.children.length === 0 &&
+        /Powered by Netlify/i.test(node.textContent || '')
+      ) {
+        (node.closest('div, a') ?? node).style.setProperty(
+          'display',
+          'none',
+          'important'
+        );
       }
     }
   });

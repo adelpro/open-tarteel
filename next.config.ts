@@ -1,9 +1,10 @@
 // next.config.mjs
+import { createHash } from 'node:crypto';
+import { readdirSync, readFileSync } from 'node:fs';
+import path from 'node:path';
+
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import withSerwistInit from '@serwist/next';
-import { createHash } from 'node:crypto';
-import { readFileSync, readdirSync } from 'node:fs';
-import path from 'node:path';
 import type { NextConfig } from 'next';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -38,7 +39,7 @@ if (
 // Serwist's default public-folder scan includes `_headers`, which Netlify
 // serves but the Cloudflare Worker asset binding does not. A precache 404
 // aborts the worker install, so build the manifest explicitly without it.
-const publicDir = path.join(process.cwd(), 'public');
+const publicDirectory = path.join(process.cwd(), 'public');
 const listPublicFiles = (directory: string, prefix = ''): string[] =>
   readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
@@ -48,7 +49,7 @@ const listPublicFiles = (directory: string, prefix = ''): string[] =>
     return entry.isFile() ? [relative] : [];
   });
 
-const precacheEntries = listPublicFiles(publicDir)
+const precacheEntries = listPublicFiles(publicDirectory)
   .filter(
     (file) =>
       file !== '_headers' && file !== 'sw.js' && !file.startsWith('swe-worker-')
@@ -56,7 +57,7 @@ const precacheEntries = listPublicFiles(publicDir)
   .map((file) => ({
     url: `/${file.split(path.sep).join('/')}`,
     revision: createHash('sha256')
-      .update(readFileSync(path.join(publicDir, file)))
+      .update(readFileSync(path.join(publicDirectory, file)))
       .digest('hex'),
   }));
 

@@ -25,12 +25,20 @@ const server = spawn('corepack', ['yarn', 'start', '-p', PORT], {
   detached: true,
 });
 let serverLog = '';
-server.stdout.on('data', (d) => { serverLog += String(d); });
-server.stderr.on('data', (d) => { serverLog += String(d); });
+server.stdout.on('data', (d) => {
+  serverLog += String(d);
+});
+server.stderr.on('data', (d) => {
+  serverLog += String(d);
+});
 
 const stopServer = () => {
   if (server.exitCode === null && !server.killed) {
-    try { process.kill(-server.pid, 'SIGTERM'); } catch { server.kill('SIGTERM'); }
+    try {
+      process.kill(-server.pid, 'SIGTERM');
+    } catch {
+      server.kill('SIGTERM');
+    }
   }
 };
 
@@ -40,25 +48,37 @@ try {
   for (let index = 0; index < 60; index += 1) {
     try {
       const response = await fetch(`${BASE}/api/health`);
-      if (response.ok) { ready = true; break; }
-    } catch { /* still starting */ }
+      if (response.ok) {
+        ready = true;
+        break;
+      }
+    } catch {
+      /* still starting */
+    }
     if (server.exitCode !== null) break;
     await sleep(1000);
   }
-  if (!ready) throw new Error(`server did not become ready:\n${serverLog.slice(-2000)}`);
+  if (!ready)
+    throw new Error(`server did not become ready:\n${serverLog.slice(-2000)}`);
 
   for (const name of SCRIPTS) {
-    const child = spawn(process.execPath, [`scripts/design-verify/${name}.mjs`], {
-      cwd: process.cwd(),
-      stdio: 'inherit',
-      env: { ...process.env, DESIGN_VERIFY_PORT: PORT },
-    });
+    const child = spawn(
+      process.execPath,
+      [`scripts/design-verify/${name}.mjs`],
+      {
+        cwd: process.cwd(),
+        stdio: 'inherit',
+        env: { ...process.env, DESIGN_VERIFY_PORT: PORT },
+      }
+    );
     const [code] = await once(child, 'exit');
     if (code !== 0) failed.push(`${name} (exit ${code})`);
     console.log(`--- ${name}: ${code === 0 ? 'PASS' : 'FAIL'} ---`);
   }
 } catch (error) {
-  failed.push(`runner: ${error instanceof Error ? error.message : String(error)}`);
+  failed.push(
+    `runner: ${error instanceof Error ? error.message : String(error)}`
+  );
 } finally {
   stopServer();
   await Promise.race([once(server, 'exit'), sleep(5000)]);

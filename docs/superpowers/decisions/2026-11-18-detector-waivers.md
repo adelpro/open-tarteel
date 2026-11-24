@@ -6,10 +6,10 @@ intended design. A waiver is not a blanket exemption: each applies only under
 the condition stated below, and each is re-checked when the token block or the
 rendered component changes.
 
-| Rule                           | Status                       | Scope / condition                                                                                                                                   |
-| ------------------------------ | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `cream-palette`                | Waived                       | The warm canvas is an explicit token (`warm-canvas: #F6F2E9`, dark `#0B110F`), not a detector-recognised "cream" preset. It is intentional and named; do not "fix" it to a neutral preset. |
-| `gpt-thin-border-wide-shadow`  | Waived conditionally         | Waived only when the computed `boxShadow` does not actually reproduce a thin-border/wide-shadow look. The system uses hairline `border-border` with no card shadows; if a computed shadow reappears, the waiver no longer applies and the finding must be fixed. |
+| Rule                          | Status               | Scope / condition                                                                                                                                                                                                                                                |
+| ----------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cream-palette`               | Waived               | The warm canvas is an explicit token (`warm-canvas: #F6F2E9`, dark `#0B110F`), not a detector-recognised "cream" preset. It is intentional and named; do not "fix" it to a neutral preset.                                                                       |
+| `gpt-thin-border-wide-shadow` | Waived conditionally | Waived only when the computed `boxShadow` does not actually reproduce a thin-border/wide-shadow look. The system uses hairline `border-border` with no card shadows; if a computed shadow reappears, the waiver no longer applies and the finding must be fixed. |
 
 ## Rationale
 

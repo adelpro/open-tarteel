@@ -93,7 +93,9 @@ try {
       timeout: 400_000,
     });
     if (response && response.status() >= 400) {
-      failures.push(`${viewport.name}: ${ROUTE} returned HTTP ${response.status()}`);
+      failures.push(
+        `${viewport.name}: ${ROUTE} returned HTTP ${response.status()}`
+      );
       await page.close();
       continue;
     }
@@ -121,8 +123,10 @@ try {
       );
 
       // (a) One language per surface: no retired English default messages.
-      const englishInSheet = (sheet?.innerText ?? '').match(retired)?.[0] ?? null;
-      const englishInFilters = (dialog?.innerText ?? '').match(retired)?.[0] ?? null;
+      const englishInSheet =
+        (sheet?.innerText ?? '').match(retired)?.[0] ?? null;
+      const englishInFilters =
+        (dialog?.innerText ?? '').match(retired)?.[0] ?? null;
 
       // (b) Row density: text bands, not element count. Two text nodes on one
       // line share a band, so a wrapped name adds a third band.
@@ -145,7 +149,10 @@ try {
           if (!bands.some((band) => Math.abs(band - top) <= 2)) bands.push(top);
         }
         return {
-          label: (button.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 48),
+          label: (button.textContent || '')
+            .trim()
+            .replace(/\s+/g, ' ')
+            .slice(0, 48),
           lines: bands.length,
         };
       });
@@ -225,7 +232,9 @@ try {
       );
     }
     if (!triggers.filtersUsesTag) {
-      failures.push(`${viewport.name} (c) the Filters trigger does not use Tag`);
+      failures.push(
+        `${viewport.name} (c) the Filters trigger does not use Tag`
+      );
     }
     if (englishInSheet) {
       failures.push(
@@ -241,7 +250,9 @@ try {
     await page.close();
   }
 } catch (error) {
-  failures.push(`unexpected error: ${error instanceof Error ? error.stack : error}`);
+  failures.push(
+    `unexpected error: ${error instanceof Error ? error.stack : error}`
+  );
 } finally {
   await browser?.close();
 }

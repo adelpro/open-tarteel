@@ -35,10 +35,12 @@
 ### Task 1: Lock the written spec
 
 **Files:**
+
 - Modify: `DESIGN.md`
 - Create: `docs/superpowers/decisions/2026-11-18-detector-waivers.md`
 
 **Interfaces:**
+
 - Consumes: current `DESIGN.md`; authoring guide from `designmd_get_authoring_guide`.
 - Produces: a lint-clean `DESIGN.md`; a recorded list of detector rules that are waived for this project and why.
 
@@ -73,11 +75,13 @@ Write `docs/superpowers/decisions/2026-11-18-detector-waivers.md` listing `cream
 ### Task 2: Remove the parallel systems and add missing tokens
 
 **Files:**
+
 - Modify: `tailwind.config.ts`, `src/app/globals.css`, `src/components/root-shell.tsx`
 - Search-and-replace across: `src/components/pages/contact-page.tsx`, `src/components/not-found-view.tsx`, `src/components/error.tsx`, `src/components/playlist.tsx`, `src/components/pwa-updater.tsx`, `src/components/offline/retry-button.tsx`, `src/components/tooltip.tsx`, `src/components/dialog.tsx`, `src/components/skeleton.tsx`, `src/components/theme-picker.tsx`, `src/components/follow-along.module.css`, `src/components/pitch-contour.tsx`
 - Test: `scripts/design-verify/tokens.mjs` (new)
 
 **Interfaces:**
+
 - Consumes: semantic aliases already in `tailwind.config.ts` (`primary`, `mark`, `surface`, `ink-muted`).
 - Produces: `theme.spacing` 4px scale, `theme.fontWeight` {regular:400, bold:700, black:900}, `motion` token names; no `brand-*` colour keys.
 
@@ -119,10 +123,12 @@ In `src/app/globals.css`, set body font-size 15px and line-height 1.7; keep the 
 ### Task 3: One focus ring, one Tag, one Segmented, one overlay
 
 **Files:**
+
 - Modify: `src/app/globals.css`, `src/components/ui/tag.tsx`, `src/components/ui/segmented.tsx`, `src/components/ui/action-sheet.tsx`, `src/components/sheet.tsx`, `src/components/reciter-filters.tsx`, `src/components/reciters-list.tsx`, `src/components/player-controls.tsx`
 - Test: `scripts/design-verify/primitives.mjs` (new)
 
 **Interfaces:**
+
 - Consumes: `primary`, `surface-sunken`, `border` aliases from Task 2.
 - Produces: `.focus-ring` utility class; `Tag` as the only chip; `Segmented` with 44px items; one overlay component with one scrim.
 
@@ -159,10 +165,12 @@ Set `Segmented` item height to 44px. Make `reciter-filters.tsx`, `sheet.tsx`, `u
 ### Task 4: Player, spectrum and scripture text
 
 **Files:**
+
 - Modify: `src/components/player.tsx`, `src/components/track-info.tsx`, `src/components/player-controls.tsx`, `src/components/audio-bars-visualizer.tsx`, `src/components/pitch-contour.tsx`, `src/components/follow-along.module.css`
 - Test: `scripts/design-verify/player.mjs` (new)
 
 **Interfaces:**
+
 - Consumes: `.focus-ring`, `Tag`, tokens from Tasks 2-3.
 - Produces: player order header → visualiser → seek → transport → metadata; spectrum reads CSS variables via `getComputedStyle`.
 
@@ -197,10 +205,12 @@ In `src/components/pitch-contour.tsx`, replace the eight hardcoded rgba colours 
 ### Task 5: Reciter list, riwaya filters and language
 
 **Files:**
+
 - Modify: `src/components/reciters-list.tsx`, `src/components/reciter-selector.tsx`, `src/components/reciter-filters.tsx`, `src/locales/ar.json`, `src/locales/en.json`, `src/locales/de.json`
 - Test: `scripts/design-verify/reciter-list.mjs` (new), plus updates to any existing reciters-list unit test
 
 **Interfaces:**
+
 - Consumes: `Tag`, `Segmented`, `.focus-ring`.
 - Produces: one-language labels per surface; reciter row limited to name + riwaya on the primary line.
 
@@ -235,10 +245,12 @@ In `reciter-filters.tsx`, keep Source and Riwaya as grouped checkbox rows separa
 ### Task 6: Follow-along, footer and mobile shell
 
 **Files:**
+
 - Modify: `src/components/follow-along-panel.tsx`, `src/components/follow-along.module.css`, `src/components/tajweed-legend.tsx`, `src/components/footer.tsx`, `src/components/footer-link.tsx`
 - Test: `scripts/design-verify/shell.mjs` (new)
 
 **Interfaces:**
+
 - Consumes: `Tag`, motion tokens, focus ring.
 - Produces: 12px minimum legend text; five footer links reachable at 375px; no third-party badge over the footer.
 
@@ -269,10 +281,12 @@ In `footer.tsx`, include the footer in normal flow and reserve its height on `<m
 ### Task 7: Verification gate and regression report
 
 **Files:**
+
 - Create: `docs/superpowers/reports/2026-11-18-design-system-lock-verification.md`
 - Modify: the audit report at `/home/adelpro/.gstack/projects/adelpro-open-tarteel/designs/design-audit-20261118/design-audit-staging-tarteel.quran.us.kg.md` (status lines only)
 
 **Interfaces:**
+
 - Consumes: all six `scripts/design-verify/*.mjs` assertions.
 - Produces: a pass/fail table per finding and per viewport; detector delta.
 

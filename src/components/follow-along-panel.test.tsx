@@ -90,9 +90,7 @@ describe('FollowAlongPanel', () => {
     renderPanel(false);
 
     await screen.findByLabelText('Ayah 1');
-    expect(
-      screen.queryByRole('list', { name: 'أحكام التجويد' })
-    ).toBeNull();
+    expect(screen.queryByRole('list', { name: 'أحكام التجويد' })).toBeNull();
   });
 
   it('draws nothing but the line', async () => {
