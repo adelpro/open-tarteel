@@ -5,6 +5,7 @@ import { FormattedMessage } from 'react-intl';
 
 import packageJson from '@/../package.json';
 import { FollowAlongAbout } from '@/components/follow-along-about';
+import { ProviderCredits } from '@/components/provider-credits';
 
 export default function AboutPage() {
   const currentYear = new Date().getFullYear();
@@ -83,6 +84,7 @@ export default function AboutPage() {
               id="about.providers.description2"
             />
           </p>
+          <ProviderCredits />
         </div>
 
         <section className="m-1 rounded p-2 ps-4 md:m-2 md:border md:border-border md:p-8">

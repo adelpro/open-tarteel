@@ -110,6 +110,8 @@
   "about.feature.community": "Kontinuierliche Aktualisierungen und gemeinschaftsgetriebene Entwicklung",
   "about.mission": "Die App hat das Ziel, eine leicht zugängliche und dauerhafte Quelle für den Heiligen Koran bereitzustellen und dabei höchste technische und gestalterische Standards einzuhalten.",
   "about.providers.title": "Mehrere Rezitationsquellen",
+  "about.providers.creditsTitle": "API-Anbieter",
+  "about.providers.thanks": "Vielen Dank an die API-Anbieter, deren Rezitationen diese App ermöglichen.",
   "about.providers.description1": "Die App bündelt Rezitationen mehrerer unabhängiger Anbieter, darunter MP3Quran, Itqan, Qurani.ai und Quran Foundation. Bei jedem Rezitator wird die Quelle angezeigt; in den Einstellungen lässt sich festlegen, welche Quellen aktiv sind.",
   "about.providers.description2": "Diese Anbieter sind unabhängige Drittanbieter und nicht Teil der App. Audioqualität, Timing-Daten und Download-Unterstützung können sich unterscheiden; die App zeigt, was die jeweilige Quelle unterstützt.",
   "about.footer.rights": "Alle Rechte vorbehalten",

@@ -110,6 +110,8 @@
   "about.feature.community": "Continuous updates and community-driven development",
   "about.mission": "The app aims to provide an accessible and permanent source for the Holy Quran while maintaining the highest technical and design standards.",
   "about.providers.title": "Multiple recitation providers",
+  "about.providers.creditsTitle": "API providers",
+  "about.providers.thanks": "Thank you to the API providers whose recitations make this app possible.",
   "about.providers.description1": "The app brings recitations together from several independent providers, including MP3Quran, Itqan, Qurani.ai and Quran Foundation. Every reciter row names its source, and you can choose which sources are enabled in Settings.",
   "about.providers.description2": "These providers are independent third-party services, not part of the app. Audio quality, timing data and download support can differ between them, and the app shows what each source supports.",
   "about.footer.rights": "All rights reserved",
