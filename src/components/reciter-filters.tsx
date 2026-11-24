@@ -22,6 +22,8 @@ type Props = {
   onRiwiyatChange: (riwayat: Riwaya[]) => void;
   downloadableOnly: boolean;
   onDownloadableOnlyChange: (value: boolean) => void;
+  followAlongOnly: boolean;
+  onFollowAlongOnlyChange: (value: boolean) => void;
   resultCount: number;
 };
 
@@ -38,6 +40,8 @@ export default function ReciterFilters({
   onRiwiyatChange,
   downloadableOnly,
   onDownloadableOnlyChange,
+  followAlongOnly,
+  onFollowAlongOnlyChange,
   resultCount,
 }: Props) {
   const { formatMessage } = useIntl();
@@ -55,7 +59,8 @@ export default function ReciterFilters({
   const activeCount =
     selectedSources.length +
     selectedRiwiyat.length +
-    (downloadableOnly ? 1 : 0);
+    (downloadableOnly ? 1 : 0) +
+    (followAlongOnly ? 1 : 0);
 
   const toggleSource = (source: LinkSource) => {
     onSourcesChange(
@@ -69,6 +74,7 @@ export default function ReciterFilters({
     onSourcesChange([]);
     onRiwiyatChange([]);
     onDownloadableOnlyChange(false);
+    onFollowAlongOnlyChange(false);
   };
 
   return (
@@ -190,6 +196,31 @@ export default function ReciterFilters({
               label={formatMessage({
                 id: 'filter.downloadable',
                 defaultMessage: 'Downloadable',
+              })}
+            />
+          </div>
+
+          <div className="mt-2 flex min-h-12 items-center justify-between gap-4 border-t border-border px-2 pt-3">
+            <div>
+              <p className="text-[14px] font-bold text-ink">
+                {formatMessage({
+                  id: 'filter.followAlong',
+                  defaultMessage: 'Follow-along',
+                })}
+              </p>
+              <p className="text-[12px] text-ink-muted">
+                {formatMessage({
+                  id: 'filters.followAlongHint',
+                  defaultMessage: 'Only recitations with word-level timings.',
+                })}
+              </p>
+            </div>
+            <Switch
+              checked={followAlongOnly}
+              onCheckedChange={onFollowAlongOnlyChange}
+              label={formatMessage({
+                id: 'filter.followAlong',
+                defaultMessage: 'Follow-along',
               })}
             />
           </div>
