@@ -235,6 +235,23 @@ type SearchableItem<T> = T & {
  * fuzzySearch(reciters, 'محمد', { threshold: 0.2 });
  * ```
  */
+/**
+ * Append alternative names to a searchable item so a query in another language
+ * matches the same reciter. The originals are never mutated.
+ */
+export function withNameAliases<T extends { id: string; name: string }>(
+  items: T[],
+  aliases: Record<string, string[]>,
+  keyOf: (item: T) => string = (item) => item.id
+): T[] {
+  return items.map((item) => {
+    const names = aliases[keyOf(item)] ?? [];
+    return names.length > 0
+      ? { ...item, name: `${item.name} ${names.join(' ')}` }
+      : item;
+  });
+}
+
 export function fuzzySearch<T extends { name: string }>(
   items: T[],
   searchTerm: string,

@@ -13,7 +13,7 @@ import { useIntl } from 'react-intl';
 import { SOURCE_LABEL_IDS } from '@/constants';
 import { recitersSortAtom } from '@/jotai/atom';
 import { LinkSource, Reciter, Riwaya } from '@/types';
-import { fuzzySearch, generateFavId } from '@/utils';
+import { fuzzySearch, generateFavId, withNameAliases } from '@/utils';
 
 // Define parsers for URL state management
 // Using descriptive keys (query, riwaya, source) for clarity
@@ -43,6 +43,8 @@ type UseFilterSortParams = {
   showOnlyFavorites: boolean;
   favoriteCounts?: Record<string, number>;
   viewCounts?: Record<string, number>;
+  /** Alternative names keyed by generateFavId, e.g. stored offline reciter names. */
+  nameAliases?: Record<string, string[]>;
 };
 
 export function useFilterSort({
@@ -51,6 +53,7 @@ export function useFilterSort({
   showOnlyFavorites,
   favoriteCounts = {},
   viewCounts = {},
+  nameAliases = {},
 }: UseFilterSortParams) {
   // Use nuqs for URL state management with descriptive keys
   const [
@@ -108,9 +111,16 @@ export function useFilterSort({
       return true;
     });
 
-    // Apply fuzzy search if there's a search term
+    // Apply fuzzy search if there's a search term. Search an alias-augmented
+    // copy, then map the matches back to the original reciter objects.
     if (searchTerm && searchTerm.trim() !== '') {
-      filtered = fuzzySearch(filtered, searchTerm);
+      const searchable = withNameAliases(filtered, nameAliases, generateFavId);
+      const originals = new Map(
+        filtered.map((reciter) => [generateFavId(reciter), reciter])
+      );
+      filtered = fuzzySearch(searchable, searchTerm).map(
+        (match) => originals.get(generateFavId(match)) ?? match
+      );
     }
 
     // Sort the filtered results
@@ -149,6 +159,7 @@ export function useFilterSort({
     sortMode,
     favoriteCounts,
     viewCounts,
+    nameAliases,
   ]);
 
   return {
