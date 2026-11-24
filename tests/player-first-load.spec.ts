@@ -90,7 +90,7 @@ test('a corrupt stored reciter does not break the home page', async ({
     );
   });
 
-  await page.goto('/');
+  await page.goto('/en');
 
   await expect(
     page.getByRole('button', { name: 'Open reciter selector' })

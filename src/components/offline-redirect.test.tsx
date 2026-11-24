@@ -122,6 +122,21 @@ describe('OfflineRedirect', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it('redirects to the locale carried by the lang query on a bare offline URL', () => {
+    const store = createStore();
+    store.set(offlineModeAtom, 'auto');
+    mockPathname = '/offline';
+    setLocation('/offline?lang=en');
+    vi.mocked(useNetworkStatusDetails).mockReturnValue({
+      online: true,
+      ready: true,
+    });
+
+    render(<OfflineRedirect />, { wrapper: wrapperFor(store) });
+
+    expect(mockReplace).toHaveBeenCalledWith('/en');
+  });
+
   it('redirects to the locale home when the derived hook reports online', () => {
     const store = createStore();
     store.set(offlineModeAtom, 'auto');

@@ -6,7 +6,12 @@ import { useEffect } from 'react';
 
 import { useNetworkStatusDetails } from '@/hooks/use-network-status';
 import { offlineModeAtom } from '@/jotai/offline-mode';
-import { localeFromPath, stripLocale, withLocale } from '@/lib/seo/routes';
+import {
+  localeFromPath,
+  type SeoLocale,
+  stripLocale,
+  withLocale,
+} from '@/lib/seo/routes';
 
 export default function OfflineRedirect() {
   const pathname = usePathname();
@@ -17,7 +22,18 @@ export default function OfflineRedirect() {
   // genuinely-offline user off the /offline shell before the probe settles.
   const { online, ready } = useNetworkStatusDetails();
   const barePath = stripLocale(pathname);
-  const homePath = withLocale(localeFromPath(pathname), '/');
+  const pathLocale = localeFromPath(pathname);
+  const lang =
+    typeof window === 'undefined'
+      ? null
+      : new URLSearchParams(window.location.search).get('lang');
+  const resolvedLocale: SeoLocale =
+    pathLocale !== 'ar'
+      ? pathLocale
+      : lang === 'en' || lang === 'de'
+        ? lang
+        : 'ar';
+  const homePath = withLocale(resolvedLocale, '/');
 
   useEffect(() => {
     let cancelled = false;
