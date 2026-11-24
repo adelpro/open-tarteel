@@ -1,6 +1,9 @@
 // next.config.mjs
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import withSerwistInit from '@serwist/next';
+import { createHash } from 'node:crypto';
+import { readFileSync, readdirSync } from 'node:fs';
+import path from 'node:path';
 import type { NextConfig } from 'next';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -32,6 +35,31 @@ if (
   );
 }
 
+// Serwist's default public-folder scan includes `_headers`, which Netlify
+// serves but the Cloudflare Worker asset binding does not. A precache 404
+// aborts the worker install, so build the manifest explicitly without it.
+const publicDir = path.join(process.cwd(), 'public');
+const listPublicFiles = (directory: string, prefix = ''): string[] =>
+  readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) {
+      return listPublicFiles(path.join(directory, entry.name), relative);
+    }
+    return entry.isFile() ? [relative] : [];
+  });
+
+const precacheEntries = listPublicFiles(publicDir)
+  .filter(
+    (file) =>
+      file !== '_headers' && file !== 'sw.js' && !file.startsWith('swe-worker-')
+  )
+  .map((file) => ({
+    url: `/${file.split(path.sep).join('/')}`,
+    revision: createHash('sha256')
+      .update(readFileSync(path.join(publicDir, file)))
+      .digest('hex'),
+  }));
+
 const withSerwist = withSerwistInit({
   swSrc: 'src/sw.ts',
   swDest: 'public/sw.js',
@@ -43,6 +71,7 @@ const withSerwist = withSerwistInit({
   // Only build assets are precached; keep the limit small so a stray large
   // file cannot inflate the service worker install.
   maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB
+  additionalPrecacheEntries: precacheEntries,
   // These exist in the Next/Netlify output but not in the Cloudflare Worker's
   // static assets. Serwist's precache install fails on a 404, which prevented
   // the worker from ever activating on the live deploy.
