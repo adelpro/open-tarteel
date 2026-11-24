@@ -17,10 +17,10 @@ import { useLocalePath } from '@/hooks/use-locale-path';
 import {
   ahkamTagsAtom,
   enabledSourcesAtom,
-  forcedOfflineAtom,
   spectrumEnabledAtom,
   visualizerModelAtom,
 } from '@/jotai/atom';
+import { type OfflineMode, offlineModeAtom } from '@/jotai/offline-mode';
 import { isMp3QuranV4Enabled } from '@/services/reciters/flags';
 import { LinkSource } from '@/types';
 
@@ -78,7 +78,7 @@ export default function SettingsPage() {
   const router = useRouter();
   const localePath = useLocalePath();
   const [enabledSources, setEnabledSources] = useAtom(enabledSourcesAtom);
-  const [forcedOffline, setForcedOffline] = useAtom(forcedOfflineAtom);
+  const [offlineMode, setOfflineMode] = useAtom(offlineModeAtom);
   const [visualizerModel, setVisualizerModel] = useAtom(visualizerModelAtom);
   const [spectrumEnabled, setSpectrumEnabled] = useAtom(spectrumEnabledAtom);
   const [ahkamTags, setAhkamTags] = useAtom(ahkamTagsAtom);
@@ -217,27 +217,46 @@ export default function SettingsPage() {
                 id: 'settings.offlineMode',
                 defaultMessage: 'Offline mode',
               })}
-              description={
-                forcedOffline
-                  ? formatMessage({
-                      id: 'settings.offlineModeActive',
-                      defaultMessage:
-                        'Offline mode is on. Only downloaded reciters and surahs are available.',
-                    })
-                  : formatMessage({
-                      id: 'settings.offlineModeDescription',
-                      defaultMessage:
-                        'Use downloaded content only and hide network-only actions.',
-                    })
-              }
+              description={formatMessage({
+                id: `settings.offlineModeDescription${
+                  offlineMode === 'on'
+                    ? 'On'
+                    : offlineMode === 'off'
+                      ? 'Off'
+                      : 'Auto'
+                }`,
+              })}
             >
-              <Switch
-                checked={forcedOffline}
-                onCheckedChange={setForcedOffline}
+              <Segmented<OfflineMode>
+                value={offlineMode}
+                onChange={setOfflineMode}
                 label={formatMessage({
                   id: 'settings.offlineMode',
                   defaultMessage: 'Offline mode',
                 })}
+                options={[
+                  {
+                    value: 'auto',
+                    label: formatMessage({
+                      id: 'settings.offlineModeAuto',
+                      defaultMessage: 'Auto',
+                    }),
+                  },
+                  {
+                    value: 'on',
+                    label: formatMessage({
+                      id: 'settings.offlineModeOn',
+                      defaultMessage: 'On',
+                    }),
+                  },
+                  {
+                    value: 'off',
+                    label: formatMessage({
+                      id: 'settings.offlineModeOff',
+                      defaultMessage: 'Off',
+                    }),
+                  },
+                ]}
               />
             </Row>
           </Group>

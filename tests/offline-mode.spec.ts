@@ -1,35 +1,60 @@
 import { expect, test } from '@playwright/test';
 
-test('manual offline mode gates network content', async ({ page }) => {
-  await page.addInitScript(() => {
-    localStorage.setItem('locale', JSON.stringify('en'));
-  });
+test('three-level offline mode gates network content', async ({ page }) => {
+  await page.goto('/en/settings');
 
-  await page.goto('/settings');
-  const toggle = page.getByRole('switch', { name: 'Offline mode' });
-  await expect(toggle).toHaveAttribute('aria-checked', 'false');
+  const mode = page.getByRole('group', { name: 'Offline mode' });
+  await expect(mode.getByRole('button', { name: 'Auto' })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
 
-  await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-checked', 'true');
+  await mode.getByRole('button', { name: 'On' }).click();
+  await expect(mode.getByRole('button', { name: 'On' })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
   await expect(
-    page.getByText('Offline mode — downloaded content only')
+    page.getByText(
+      'Offline mode is on. Only downloaded reciters and surahs are available.'
+    )
   ).toBeVisible();
 
-  // The reciter selector falls back to downloaded-only content.
-  await page.goto('/');
-  await page.waitForTimeout(800);
+  // Downloads-only filtering and the banner appear on the home screen.
+  await page.goto('/en/');
+  await expect(page.getByText('Offline: downloads only')).toBeVisible();
   await page.getByRole('button', { name: 'Open reciter selector' }).click();
-  await expect(page.getByText('No downloaded reciters found')).toBeVisible();
+  const scope = page.getByRole('group', { name: 'Reciter scope' });
+  await expect(scope.getByRole('button', { name: 'Downloaded' })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
+  await expect(scope.getByRole('button', { name: 'All' })).toBeDisabled();
+  await expect(page.getByText('0 reciters', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Close' }).first().click();
 
-  // The banner offers a quick way back online.
+  // The banner returns to automatic mode.
   await page.getByRole('button', { name: 'Go online' }).click();
-  await expect(
-    page.getByText('Offline mode — downloaded content only')
-  ).toBeHidden();
+  await expect(page.getByText('Offline: downloads only')).toBeHidden();
 
-  await page.goto('/settings');
+  await page.goto('/en/settings');
   await expect(
-    page.getByRole('switch', { name: 'Offline mode' })
-  ).toHaveAttribute('aria-checked', 'false');
+    page.getByRole('group', { name: 'Offline mode' }).getByRole('button', {
+      name: 'Auto',
+    })
+  ).toHaveAttribute('aria-pressed', 'true');
+
+  // Off removes downloads-only filtering even with the network genuinely up.
+  await page
+    .getByRole('group', { name: 'Offline mode' })
+    .getByRole('button', {
+      name: 'Off',
+    })
+    .click();
+  await expect(page.getByText('Offline: downloads only')).toBeHidden();
+  await expect(
+    page.getByText(
+      'Offline mode is off. Always use the network when it is available.'
+    )
+  ).toBeVisible();
 });

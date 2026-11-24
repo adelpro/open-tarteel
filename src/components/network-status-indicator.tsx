@@ -5,8 +5,11 @@ import React from 'react';
 import { MdCloudOff } from 'react-icons/md';
 import { FormattedMessage } from 'react-intl';
 
-import { useNetworkStatus } from '@/hooks/use-network-status';
-import { forcedOfflineAtom } from '@/jotai/atom';
+import {
+  retryConnectivityCheck,
+  useNetworkStatus,
+} from '@/hooks/use-network-status';
+import { offlineModeAtom } from '@/jotai/offline-mode';
 import { cn } from '@/utils';
 
 /**
@@ -15,7 +18,8 @@ import { cn } from '@/utils';
  */
 export default function NetworkStatusIndicator() {
   const isOnline = useNetworkStatus();
-  const [forcedOffline, setForcedOffline] = useAtom(forcedOfflineAtom);
+  const [offlineMode, setOfflineMode] = useAtom(offlineModeAtom);
+  const forcedOffline = offlineMode === 'on';
 
   if (isOnline) return null;
 
@@ -56,13 +60,21 @@ export default function NetworkStatusIndicator() {
         {forcedOffline ? (
           <button
             type="button"
-            onClick={() => setForcedOffline(false)}
+            onClick={() => setOfflineMode('auto')}
             className="-me-2 flex h-11 shrink-0 items-center rounded-[8px] px-2 text-[13px] font-bold text-primary transition-colors duration-120 hover:bg-surface"
           >
             <FormattedMessage
               id="offline.goOnline"
               defaultMessage="Go online"
             />
+          </button>
+        ) : offlineMode === 'auto' ? (
+          <button
+            type="button"
+            onClick={() => void retryConnectivityCheck()}
+            className="-me-2 flex h-11 shrink-0 items-center rounded-[8px] px-2 text-[13px] font-bold text-primary transition-colors duration-120 hover:bg-surface"
+          >
+            <FormattedMessage id="offline.retry" defaultMessage="Retry" />
           </button>
         ) : null}
       </div>
