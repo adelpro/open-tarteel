@@ -128,9 +128,24 @@ describe('canUseFollowAlong', () => {
     );
   });
 
-  it('keeps the audited v4 set explicit', () => {
-    expect(FOLLOW_ALONG_V4_RECITER_IDS.size).toBe(12);
-    expect([...FOLLOW_ALONG_V4_RECITER_IDS]).toContain('118');
+  it('keeps every originally audited v4 recitation in the probed set', () => {
+    expect(FOLLOW_ALONG_V4_RECITER_IDS.size).toBeGreaterThanOrEqual(12);
+    for (const id of [
+      '4',
+      '5',
+      '24',
+      '29',
+      '30',
+      '49',
+      '52',
+      '86',
+      '89',
+      '107',
+      '113',
+      '118',
+    ]) {
+      expect(FOLLOW_ALONG_V4_RECITER_IDS).toContain(id);
+    }
   });
 });
 

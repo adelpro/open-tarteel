@@ -1,6 +1,10 @@
 import type { Moshaf } from '@/types';
 import { LinkSource, Riwaya } from '@/types';
 
+import { FOLLOW_ALONG_V4_RECITER_IDS } from './follow-along-v4-ids.generated';
+
+export { FOLLOW_ALONG_V4_RECITER_IDS } from './follow-along-v4-ids.generated';
+
 export type TimingLevel = 'none' | 'ayah' | 'word' | 'letter' | 'phoneme';
 
 export type ProviderCapabilities = {
@@ -138,28 +142,6 @@ export const canUseRangeMode = (
 
 export const canDownload = (source?: LinkSource | null): boolean =>
   Boolean(source && getCapabilities(source).download);
-
-/**
- * MP3Quran v4 recitations audited end to end for word timings: all 114 surahs,
- * 929,148 words, 99.99% of words timed, 0 malformed rows. The v4 catalogue
- * carries no word-timing flag, so availability can only be established by
- * probing; everything outside this set stays out of the follow-along mode.
- * See docs/follow-along/audit-results.md.
- */
-export const FOLLOW_ALONG_V4_RECITER_IDS: ReadonlySet<string> = new Set([
-  '4', // أبو بكر الشاطري
-  '5', // أحمد بن علي العجمي
-  '24', // خليفة الطنيجي
-  '29', // سعد الغامدي
-  '30', // سعود الشريم
-  '49', // عبدالباسط عبدالصمد
-  '52', // عبدالرحمن السديس
-  '86', // هاني الرفاعي
-  '89', // ياسر الدوسري
-  '107', // محمد صديق المنشاوي
-  '113', // محمود خليل الحصري
-  '118', // مشاري العفاسي
-]);
 
 /**
  * Recitations excluded from follow-along even though the provider numbers
