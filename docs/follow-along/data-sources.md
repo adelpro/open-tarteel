@@ -96,6 +96,19 @@ content with integer times.
 `flag` was `1` in every sampled row and `estimated` was always empty; both are
 undocumented, so neither is relied upon.
 
+## Provider logos (About page)
+
+The four marks in `public/images/providers/` are local typographic wordmarks
+drawn for this app, not copied trademark artwork. They are served from the app
+so the credits section works offline.
+
+| File                  | Provider         | Source        |
+| --------------------- | ---------------- | ------------- |
+| `mp3quran.svg`        | MP3Quran         | local wordmark |
+| `quran-foundation.svg`| Quran Foundation | local wordmark |
+| `itqan.svg`           | Itqan            | local wordmark |
+| `qurani-ai.svg`       | Qurani.ai        | local wordmark |
+
 ## Attribution block (About page)
 
 - Tanzil Quran Text (Uthmani v1.0.2): CC BY 3.0 + Tanzil terms.

@@ -20,6 +20,7 @@ Open Tarteel is an open-source Quran application designed to provide an optimal 
 - **Tailwind CSS Styling**: Utilizes Tailwind CSS for efficient and customizable styling.
 - **Improved UI/UX**: Redesigned interface with better accessibility, smoother animations, and enhanced user interactions.
 - **Advanced Audio Player**: New player controls with playlist management, repeat, shuffle, and visual audio feedback.
+- **Follow-along**: Word-by-word recitation highlighting for Quran Foundation and probe-verified MP3Quran v4 recitations, with an optional reciter-list filter.
 
 ## Technologies Used
 

@@ -74,6 +74,35 @@ The 36 are the segmentation divergence documented in
 index keeps four words there, so that verse no longer produces an out-of-range
 row. Coverage percentages are unchanged.
 
+## MP3Quran v4: ten-surah probe (2026-11-24)
+
+The original 12-recitation audit above remains the gold standard. To widen
+coverage without re-running 1,368 requests per recitation, the whole Hafs
+catalogue was probed on ten surahs — 1, 2, 9, 18, 36, 49, 55, 67, 87 and 114.
+
+| Metric                          | Value                                   |
+| ------------------------------- | --------------------------------------- |
+| Hafs recitations in the catalogue | 235                                     |
+| Sampled surahs                  | 10                                      |
+| Maximum word-timing requests    | 2,350 (fewer: missing surahs short-circuit) |
+| Recitations passing             | **168**                                 |
+| Original 12 still included      | yes                                     |
+| Blocked                         | 67                                      |
+
+A recitation passes only if every sampled surah returns word-timing data and
+the aggregate timed/total word count across those surahs is at least 85%. The
+aggregate is deliberate: surah 114 has six ayat, so one un-timed ayah alone
+gives 83%, which the app's per-ayah fallback handles. A recitation is skipped
+when a sampled surah has no word-timing endpoint or its aggregate falls below
+the threshold. The probe paces requests at 500 per minute against the staging
+host's 600-per-minute ceiling and exits non-zero on transport or HTTP errors,
+so a partial run cannot publish a truncated allowlist.
+
+The resulting IDs are checked in at
+`src/services/reciters/follow-along-v4-ids.generated.ts` and consumed by
+`canUseFollowAlong`. This is availability verification, not a full-census
+accuracy audit; the 99.99% figure above applies only to the original 12.
+
 ## What is not proven
 
 - Timing _accuracy_: no ground truth exists. Only coverage and index validity.
