@@ -2,7 +2,9 @@
 
 import { useAtomValue } from 'jotai';
 import { useEffect } from 'react';
+import { useIntl } from 'react-intl';
 
+import type { Language } from '@/constants/language';
 import { selectedReciterAtom } from '@/jotai/atom';
 import {
   RECITER_ROUTE_COOKIE,
@@ -21,6 +23,7 @@ export function clearReciterRouteCookie() {
  */
 export default function ReciterRouteCookie() {
   const reciter = useAtomValue(selectedReciterAtom);
+  const locale = useIntl().locale as Language;
 
   useEffect(() => {
     if (!reciter) {
@@ -28,9 +31,9 @@ export default function ReciterRouteCookie() {
       return;
     }
 
-    const value = encodeURIComponent(reciterRouteFor(reciter));
+    const value = encodeURIComponent(reciterRouteFor(reciter, locale));
     document.cookie = `${RECITER_ROUTE_COOKIE}=${value}; path=/; max-age=${RECITER_ROUTE_MAX_AGE}; SameSite=Lax`;
-  }, [reciter]);
+  }, [reciter, locale]);
 
   return null;
 }

@@ -12,6 +12,18 @@ describe('reciterRouteFor', () => {
     ).toBe('/reciter/mp3quran.net-1?moshafId=1');
   });
 
+  it('appends the interface locale for non-Arabic readers', () => {
+    expect(
+      reciterRouteFor(
+        {
+          id: 'mp3quran.net-1',
+          moshaf: { id: '1' },
+        },
+        'en'
+      )
+    ).toBe('/reciter/mp3quran.net-1?moshafId=1&lang=en');
+  });
+
   it('encodes ids that contain URL characters', () => {
     expect(
       reciterRouteFor({
@@ -35,6 +47,18 @@ describe('isReciterRoute', () => {
 
   it('rejects a protocol-relative URL', () => {
     expect(isReciterRoute('//evil.test/reciter/x?moshafId=1')).toBe(false);
+  });
+
+  it('accepts a same-origin route carrying the interface locale', () => {
+    expect(isReciterRoute('/reciter/mp3quran.net-1?moshafId=1&lang=en')).toBe(
+      true
+    );
+  });
+
+  it('rejects an unsupported interface locale', () => {
+    expect(isReciterRoute('/reciter/mp3quran.net-1?moshafId=1&lang=fr')).toBe(
+      false
+    );
   });
 
   it('rejects a route without a moshaf', () => {
