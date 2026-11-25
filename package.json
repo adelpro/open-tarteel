@@ -35,6 +35,7 @@
     "deploy:cf": "opennextjs-cloudflare deploy --upload-source-maps=false",
     "analyze": "ANALYZE=true next build",
     "build": "next build",
+    "check": "yarn format:check && yarn data:verify && yarn lint && yarn knip && yarn type-check && yarn test:run && yarn build",
     "clean": "rimraf .next node_modules",
     "data:build": "node scripts/quran-data/build.mjs",
     "data:fetch": "node scripts/quran-data/fetch-sources.mjs",

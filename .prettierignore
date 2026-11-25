@@ -6,6 +6,9 @@ out
 dist
 .gstack
 .opencode
+# Local agent scratch files are gitignored, so CI never sees them. Keep the
+# local `yarn format:check` result identical to CI's.
+.superpowers
 
 # Ignore all node_modules directories
 node_modules
