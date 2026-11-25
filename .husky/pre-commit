@@ -1,2 +1,2 @@
 corepack yarn type-check
-corepack yarn lint-staged
+npx lint-staged
