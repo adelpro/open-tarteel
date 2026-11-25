@@ -55,8 +55,7 @@ function validateSurah(surah, ayahs, rows) {
       continue;
     }
     const meta = ayahs[ayah - 1];
-    const mapped =
-      storedFromMp3quranV4(`${surah}:${ayah}`, word) + meta.b;
+    const mapped = storedFromMp3quranV4(`${surah}:${ayah}`, word) + meta.b;
     if (mapped < 1 || mapped > meta.w) continue;
     seen[ayah - 1].add(mapped);
   }
@@ -81,7 +80,10 @@ function assertProbeResults(hafsCount, passing) {
     passing.size >= Math.ceil(hafsCount * 0.5),
     `probe returned ${passing.size} of ${hafsCount} Hafs recitations`
   );
-  assert.ok(passing.has('118'), 'known-good control recitation 118 did not pass');
+  assert.ok(
+    passing.has('118'),
+    'known-good control recitation 118 did not pass'
+  );
 }
 
 /**
@@ -134,10 +136,7 @@ function selfTest() {
     ]),
     true
   );
-  assert.equal(
-    passesProbe([{ coverage: 0.5, timed: 50, total: 100 }]),
-    false
-  );
+  assert.equal(passesProbe([{ coverage: 0.5, timed: 50, total: 100 }]), false);
 
   assert.equal(storedFromMp3quranV4('2:181', 4), 3);
 
@@ -172,10 +171,7 @@ const requestTimes = [];
 /** Keep the probe under the staging API's 600-per-minute ceiling. */
 async function pace() {
   const now = Date.now();
-  while (
-    requestTimes.length > 0 &&
-    now - requestTimes[0] >= RATE_WINDOW_MS
-  ) {
+  while (requestTimes.length > 0 && now - requestTimes[0] >= RATE_WINDOW_MS) {
     requestTimes.shift();
   }
   if (requestTimes.length >= RATE_LIMIT) {
@@ -213,9 +209,10 @@ async function fetchJson(url) {
     } catch (error) {
       lastError = error;
       if (attempt < MAX_ATTEMPTS - 1) {
-        const delay = error instanceof RateLimitError
-          ? retryDelayMs(error.retryAfter, attempt)
-          : retryDelayMs(null, attempt);
+        const delay =
+          error instanceof RateLimitError
+            ? retryDelayMs(error.retryAfter, attempt)
+            : retryDelayMs(null, attempt);
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
@@ -296,9 +293,7 @@ async function main() {
       }
     }
   };
-  await Promise.all(
-    Array.from({ length: CONCURRENCY }, () => worker())
-  );
+  await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
   assertProbeResults(hafs.length, passing);
   await emitAllowlist(passing);
 }

@@ -13,9 +13,7 @@ beforeAll(() => {
   ) {
     this.open = true;
   });
-  HTMLDialogElement.prototype.close = vi.fn(function (
-    this: HTMLDialogElement
-  ) {
+  HTMLDialogElement.prototype.close = vi.fn(function (this: HTMLDialogElement) {
     this.open = false;
   });
 });
@@ -86,8 +84,9 @@ describe('ReciterFilters', () => {
     const summary = screen.getByText('Riwaya').closest('summary');
     expect(summary).toBeInTheDocument();
     expect(summary?.parentElement).toHaveAttribute('open');
-    expect(summary?.parentElement?.querySelector('input[type=checkbox]'))
-      .toBeInTheDocument();
+    expect(
+      summary?.parentElement?.querySelector('input[type=checkbox]')
+    ).toBeInTheDocument();
   });
 
   it('still toggles a riwaya checkbox inside the disclosure', () => {

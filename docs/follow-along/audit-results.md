@@ -112,14 +112,14 @@ The original 12-recitation audit above remains the gold standard. To widen
 coverage without re-running 1,368 requests per recitation, the whole Hafs
 catalogue was probed on ten surahs — 1, 2, 9, 18, 36, 49, 55, 67, 87 and 114.
 
-| Metric                          | Value                                   |
-| ------------------------------- | --------------------------------------- |
-| Hafs recitations in the catalogue | 235                                     |
-| Sampled surahs                  | 10                                      |
-| Maximum word-timing requests    | 2,350 (fewer: missing surahs short-circuit) |
-| Recitations passing             | **168**                                 |
-| Original 12 still included      | yes                                     |
-| Blocked                         | 67                                      |
+| Metric                            | Value                                       |
+| --------------------------------- | ------------------------------------------- |
+| Hafs recitations in the catalogue | 235                                         |
+| Sampled surahs                    | 10                                          |
+| Maximum word-timing requests      | 2,350 (fewer: missing surahs short-circuit) |
+| Recitations passing               | **168**                                     |
+| Original 12 still included        | yes                                         |
+| Blocked                           | 67                                          |
 
 A recitation passes only if every sampled surah returns word-timing data and
 the aggregate timed/total word count across those surahs is at least 85%.

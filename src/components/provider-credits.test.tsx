@@ -32,9 +32,10 @@ describe('ProviderCredits', () => {
       expect(link).toHaveAttribute('href', provider.href);
       expect(link).toHaveAttribute('target', '_blank');
       expect(link).toHaveAttribute('rel', 'noopener noreferrer');
-      expect(
-        screen.getByRole('img', { name: provider.name })
-      ).toHaveAttribute('src', `/images/providers/${provider.logo}`);
+      expect(screen.getByRole('img', { name: provider.name })).toHaveAttribute(
+        'src',
+        `/images/providers/${provider.logo}`
+      );
     }
   });
 });

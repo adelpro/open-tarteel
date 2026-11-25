@@ -150,10 +150,7 @@ export default function ReciterFilters({
             ))}
           </FilterSection>
 
-          <details
-            open
-            className="group mt-2 border-t border-border px-2 pt-3"
-          >
+          <details open className="group mt-2 border-t border-border px-2 pt-3">
             <summary className="focus-ring flex cursor-pointer list-none items-center gap-1.5 rounded-[8px] px-2 py-2 text-xs font-bold text-ink-muted transition-colors duration-120 hover:bg-surface-sunken [&::-webkit-details-marker]:hidden">
               <span>
                 {formatMessage({

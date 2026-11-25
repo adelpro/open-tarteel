@@ -102,12 +102,12 @@ The four marks in `public/images/providers/` are local typographic wordmarks
 drawn for this app, not copied trademark artwork. They are served from the app
 so the credits section works offline.
 
-| File                  | Provider         | Source        |
-| --------------------- | ---------------- | ------------- |
-| `mp3quran.svg`        | MP3Quran         | local wordmark |
-| `quran-foundation.svg`| Quran Foundation | local wordmark |
-| `itqan.svg`           | Itqan            | local wordmark |
-| `qurani-ai.svg`       | Qurani.ai        | local wordmark |
+| File                   | Provider         | Source         |
+| ---------------------- | ---------------- | -------------- |
+| `mp3quran.svg`         | MP3Quran         | local wordmark |
+| `quran-foundation.svg` | Quran Foundation | local wordmark |
+| `itqan.svg`            | Itqan            | local wordmark |
+| `qurani-ai.svg`        | Qurani.ai        | local wordmark |
 
 ## Attribution block (About page)
 

@@ -36,12 +36,14 @@
 ### Task 1: Probe v4 and generate the follow-along allowlist
 
 **Files:**
+
 - Create: `scripts/follow-along/probe-v4.mjs`
 - Create: `src/services/reciters/follow-along-v4-ids.generated.ts`
 - Modify: `src/services/reciters/capabilities.ts:142-162` and `:203-208`
 - Modify: `src/services/reciters/capabilities.test.ts:131-134`
 
 **Interfaces:**
+
 - Consumes: `public/data/quran/{surah}.json` (`ayahs[i].w` word count, `.b` basmala words), `MP3QURAN_V4_SPLITS` from `src/services/quran-text/words.ts:91-95`.
 - Produces: `FOLLOW_ALONG_V4_RECITER_IDS: ReadonlySet<string>` exported from `follow-along-v4-ids.generated.ts` and re-exported from `capabilities.ts`.
 
@@ -91,12 +93,14 @@ git commit -m "feat(follow-along): probe v4 word timings and generate reciter al
 ### Task 2: Add the follow-along provider capability and badge
 
 **Files:**
+
 - Modify: `src/services/reciters/capabilities.ts:6-24` and `:28-120`
 - Modify: `src/components/provider-badge.tsx:26-104`
 - Modify: `src/components/provider-badge.test.tsx`
 - Modify: `src/locales/ar.json`, `src/locales/en.json`, `src/locales/de.json`
 
 **Interfaces:**
+
 - Consumes: nothing new.
 - Produces: `ProviderCapabilities.followAlong: boolean`, badge key `'follow-along'`, message id `provider.badge.followAlong`.
 
@@ -132,12 +136,14 @@ git commit -m "feat(follow-along): expose follow-along provider capability and b
 ### Task 3: Add the reciter-list follow-along filter
 
 **Files:**
+
 - Modify: `src/components/reciters-list.tsx:34`, `:62`, `:136-161`, `:163-171`, `:354-363`
 - Modify: `src/components/reciter-filters.tsx:16-26`, `:55-72`, `:172-195`
 - Modify: `src/locales/ar.json`, `src/locales/en.json`, `src/locales/de.json`
 - Create: `src/components/reciter-filters.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `canUseFollowAlong` from `src/services/reciters/capabilities.ts`.
 - Produces: `ReciterFilters` props `followAlongOnly: boolean` and `onFollowAlongOnlyChange: (value: boolean) => void`.
 
@@ -182,6 +188,7 @@ git commit -m "feat(follow-along): filter reciters by follow-along support"
 ### Task 4: Credit the API providers on the About page
 
 **Files:**
+
 - Create: `src/components/provider-credits.tsx`
 - Create: `src/components/provider-credits.test.tsx`
 - Create: `public/images/providers/mp3quran.svg`, `public/images/providers/quran-foundation.svg`, `public/images/providers/itqan.svg`, `public/images/providers/qurani-ai.svg`
@@ -189,6 +196,7 @@ git commit -m "feat(follow-along): filter reciters by follow-along support"
 - Modify: `src/locales/ar.json`, `src/locales/en.json`, `src/locales/de.json`
 
 **Interfaces:**
+
 - Consumes: nothing new.
 - Produces: `<ProviderCredits />` with no props.
 
@@ -228,6 +236,7 @@ git commit -m "feat(follow-along): credit API providers on the About page"
 ### Task 5: Rewrite follow-along copy and feature docs
 
 **Files:**
+
 - Modify: `src/components/follow-along-about.tsx:45-57`
 - Modify: `src/locales/ar.json`, `src/locales/en.json`, `src/locales/de.json`
 - Modify: `docs/follow-along/README.md:26`, `:44-45`, `:58-63`
@@ -236,6 +245,7 @@ git commit -m "feat(follow-along): credit API providers on the About page"
 - Modify: `README.md:17-23`
 
 **Interfaces:**
+
 - Consumes: the final allowlist size and probe date from Task 1.
 - Produces: no code interfaces.
 
