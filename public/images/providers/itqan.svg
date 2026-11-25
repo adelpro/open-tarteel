@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40" viewBox="0 0 120 40" role="img" aria-label="Itqan">
+  <rect width="120" height="40" rx="8" fill="#fbf5e8"/>
+  <circle cx="20" cy="20" r="11" fill="#a46a12"/>
+  <text x="20" y="24" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#fff">I</text>
+  <text x="36" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#78420a">Itqan</text>
+</svg>

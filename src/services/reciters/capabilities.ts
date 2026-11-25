@@ -1,6 +1,10 @@
 import type { Moshaf } from '@/types';
 import { LinkSource, Riwaya } from '@/types';
 
+import { FOLLOW_ALONG_V4_RECITER_IDS } from './follow-along-v4-ids.generated';
+
+export { FOLLOW_ALONG_V4_RECITER_IDS } from './follow-along-v4-ids.generated';
+
 export type TimingLevel = 'none' | 'ayah' | 'word' | 'letter' | 'phoneme';
 
 export type ProviderCapabilities = {
@@ -11,6 +15,8 @@ export type ProviderCapabilities = {
   timingCoverage: 'all' | 'partial' | 'none';
   /** Whether the app's range/tahfeez engine supports this provider today. */
   timingIntegration: 'implemented' | 'planned';
+  /** Provider publishes word timings; per-reciter truth is canUseFollowAlong. */
+  followAlong: boolean;
   names: 'ar' | 'ar+en';
   riwayah: { multiple: boolean; qiraah: boolean };
   audioTiers: Array<'original' | 'mp3_64' | 'opus_48'>;
@@ -30,6 +36,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     id: LinkSource.MP3QURAN,
     label: { ar: 'MP3 Quran', en: 'MP3 Quran' },
     beta: false,
+    followAlong: false,
     // https://www.mp3quran.net/eng/timing-api, 115 timing reads for 299 moshafs.
     timing: 'ayah',
     timingCoverage: 'partial',
@@ -48,6 +55,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     id: LinkSource.ITQAN,
     label: { ar: 'إتقان', en: 'Itqan' },
     beta: false,
+    followAlong: false,
     // https://docs.cms.itqan.dev/docs/guides/recitations-ayah-timings/
     // Timings exist per surah, and some recitations omit them entirely.
     timing: 'ayah',
@@ -67,6 +75,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     id: LinkSource.QURANAI,
     label: { ar: 'قرآني', en: 'Qurani.ai' },
     beta: false,
+    followAlong: false,
     // `includeTimings=true` returns per-ayah start/end/duration on each ayah.
     timing: 'ayah',
     timingCoverage: 'all',
@@ -85,6 +94,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     id: LinkSource.QURAN_FOUNDATION,
     label: { ar: 'مؤسسة القرآن', en: 'Quran Foundation' },
     beta: false,
+    followAlong: true,
     // https://api-docs.quran.foundation/docs/content_apis_versioned/4.0.0/audio-reciter-timestamp/
     timing: 'word',
     timingCoverage: 'partial',
@@ -104,6 +114,7 @@ export const PROVIDER_CAPABILITIES: Record<LinkSource, ProviderCapabilities> = {
     id: LinkSource.MP3QURAN_V4,
     label: { ar: 'MP3 Quran v4', en: 'MP3 Quran v4' },
     beta: true,
+    followAlong: true,
     timing: 'word',
     timingCoverage: 'partial',
     timingIntegration: 'implemented',
@@ -138,28 +149,6 @@ export const canUseRangeMode = (
 
 export const canDownload = (source?: LinkSource | null): boolean =>
   Boolean(source && getCapabilities(source).download);
-
-/**
- * MP3Quran v4 recitations audited end to end for word timings: all 114 surahs,
- * 929,148 words, 99.99% of words timed, 0 malformed rows. The v4 catalogue
- * carries no word-timing flag, so availability can only be established by
- * probing; everything outside this set stays out of the follow-along mode.
- * See docs/follow-along/audit-results.md.
- */
-export const FOLLOW_ALONG_V4_RECITER_IDS: ReadonlySet<string> = new Set([
-  '4', // أبو بكر الشاطري
-  '5', // أحمد بن علي العجمي
-  '24', // خليفة الطنيجي
-  '29', // سعد الغامدي
-  '30', // سعود الشريم
-  '49', // عبدالباسط عبدالصمد
-  '52', // عبدالرحمن السديس
-  '86', // هاني الرفاعي
-  '89', // ياسر الدوسري
-  '107', // محمد صديق المنشاوي
-  '113', // محمود خليل الحصري
-  '118', // مشاري العفاسي
-]);
 
 /**
  * Recitations excluded from follow-along even though the provider numbers

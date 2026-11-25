@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { getCapabilities } from '@/services/reciters/capabilities';
-import { LinkSource } from '@/types';
+import {
+  canUseFollowAlong,
+  getCapabilities,
+} from '@/services/reciters/capabilities';
+import { LinkSource, Riwaya } from '@/types';
 
 import { getProviderBadges } from './provider-badge';
 
@@ -12,12 +15,12 @@ describe('getProviderBadges', () => {
     ).toEqual(['no-download', 'timing']);
   });
 
-  it('orders Quran Foundation as timing + word', () => {
+  it('orders Quran Foundation as follow-along, timing + word', () => {
     expect(
       getProviderBadges(getCapabilities(LinkSource.QURAN_FOUNDATION)).map(
         (b) => b.key
       )
-    ).toEqual(['timing', 'word']);
+    ).toEqual(['follow-along', 'timing', 'word']);
   });
 
   it('keeps MP3Quran and Qurani.ai concise', () => {
@@ -45,6 +48,16 @@ describe('getProviderBadges', () => {
       getProviderBadges(getCapabilities(LinkSource.MP3QURAN_V4)).map(
         (b) => b.key
       )
-    ).toEqual(['beta', 'timing', 'word']);
+    ).toEqual(['beta', 'follow-along', 'timing', 'word']);
+  });
+
+  it('does not let the provider badge imply every reciter is enabled', () => {
+    expect(getCapabilities(LinkSource.MP3QURAN_V4).followAlong).toBe(true);
+    expect(
+      canUseFollowAlong(LinkSource.MP3QURAN_V4, {
+        id: '999',
+        riwaya: Riwaya.Hafs,
+      } as never)
+    ).toBe(false);
   });
 });

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { FiAlertTriangle, FiDownload, FiType } from 'react-icons/fi';
+import { FiAlertTriangle, FiDownload, FiPlay, FiType } from 'react-icons/fi';
 import { MdGraphicEq } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
@@ -38,6 +38,16 @@ const BETA = () =>
     'Beta',
     <FiAlertTriangle size={11} aria-hidden="true" />,
     'neutral'
+  );
+
+/** Provider publishes word timings; not every reciter is necessarily enabled. */
+const FOLLOW_ALONG = () =>
+  badge(
+    'follow-along',
+    'provider.badge.followAlong',
+    'Follow-along',
+    <FiPlay size={11} aria-hidden="true" />,
+    'success'
   );
 
 const TIMING = (coverage: 'all' | 'partial' | 'none') =>
@@ -87,6 +97,7 @@ export const getProviderBadges = (
   const badges: ProviderBadge[] = [];
 
   if (capabilities.beta) badges.push(BETA());
+  if (capabilities.followAlong) badges.push(FOLLOW_ALONG());
   if (!capabilities.download) badges.push(NO_DOWNLOAD());
   if (capabilities.timing !== 'none')
     badges.push(TIMING(capabilities.timingCoverage));

@@ -23,7 +23,8 @@ mode no longer draws pitch at all; see [D21](decisions.md).
 - One mode inside the existing player, reachable from the mode switcher.
 - Word-level highlight and tajweed colouring, shown under the spectrum. The
   mode itself can be switched off in settings, which hides it entirely.
-- Word timings from Quran Foundation and a curated MP3Quran v4 set.
+- Word timings from Quran Foundation and the MP3Quran v4 recitations that pass
+  the sampled word-timing probe.
 - Hafs ʿan ʿĀṣim only. Every other riwayah sees the mode disabled with a reason.
 
 ## Non-goals
@@ -42,7 +43,7 @@ mode no longer draws pitch at all; see [D21](decisions.md).
 | Tajweed      | cpfair/quran-tajweed | commit `6689c33`, CC BY 4.0              |
 | English      | Itqan CMS asset 9    | Al-Hilali & Khan, v1.1.1-csv.1, CC BY-ND |
 | Word timings | Quran Foundation     | 13 chapter reciters, OAuth               |
-| Word timings | MP3Quran v4          | 12 audited recitations, staging host     |
+| Word timings | MP3Quran v4          | 168 probe-verified recitations, staging  |
 
 Hashes, URLs and licences: [data-sources.md](data-sources.md).
 
@@ -57,7 +58,9 @@ Hashes, URLs and licences: [data-sources.md](data-sources.md).
 
 ## Honest accuracy
 
-Word timings cover 99.45% of words for the locked Quran Foundation set and
-99.99% for the audited MP3Quran v4 set. Colours mark where a rule applies, not
-whether it was applied correctly. These numbers ship in the About page and are
-computed from the data, never typed by hand.
+Word timings cover 99.45% of words for the locked Quran Foundation set. The
+MP3Quran v4 set was verified by a ten-surah probe over 168 recitations, not by a
+full-census audit, so no single coverage percentage is claimed for it; per-ayah
+coverage is checked again during playback. Colours mark where a rule applies,
+not whether it was applied correctly. The Quran Foundation figure ships in the
+About page and is computed from the data, never typed by hand.

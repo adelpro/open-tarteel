@@ -31,7 +31,10 @@ import {
   reciterListPinnedAtom,
   selectedReciterAtom,
 } from '@/jotai/atom';
-import { canDownload } from '@/services/reciters/capabilities';
+import {
+  canDownload,
+  canUseFollowAlong,
+} from '@/services/reciters/capabilities';
 import { Reciter } from '@/types';
 import { cn, generateFavId } from '@/utils';
 import { getRiwayaKeyFromValue } from '@/utils/get-riwaya-from-mushaf';
@@ -61,6 +64,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
   const [showRecentOnly, setShowRecentOnly] = useState(false);
   const [showDownloadedOnly, setShowDownloadedOnly] = useState(false);
   const [showDownloadableOnly, setShowDownloadableOnly] = useState(false);
+  const [showFollowAlongOnly, setShowFollowAlongOnly] = useState(false);
   const [pinned, setPinned] = useAtom(reciterListPinnedAtom);
   const skipHistoryBack = useRef(false);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -150,6 +154,9 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
     if (showDownloadableOnly) {
       result = result.filter((r) => canDownload(r.source));
     }
+    if (showFollowAlongOnly) {
+      result = result.filter((r) => canUseFollowAlong(r.source, r.moshaf));
+    }
     return result;
   }, [
     baseFilteredReciters,
@@ -158,6 +165,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
     isDownloadedOnlyEffective,
     isReciterDownloaded,
     showDownloadableOnly,
+    showFollowAlongOnly,
   ]);
 
   // A filter change starts the list from the top again.
@@ -171,6 +179,7 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
     showRecentOnly,
     showDownloadedOnly,
     showDownloadableOnly,
+    showFollowAlongOnly,
   ]);
 
   useEffect(() => {
@@ -360,6 +369,8 @@ export default function RecitersList({ isOpen, setIsOpen }: Props) {
             onRiwiyatChange={setSelectedRiwiyat}
             downloadableOnly={showDownloadableOnly}
             onDownloadableOnlyChange={setShowDownloadableOnly}
+            followAlongOnly={showFollowAlongOnly}
+            onFollowAlongOnlyChange={setShowFollowAlongOnly}
             resultCount={filteredReciters.length}
           />
 
