@@ -117,6 +117,17 @@ export const spectrumEnabledAtom = createAtomWithStorage<boolean>(
  */
 export const ahkamTagsAtom = createAtomWithStorage<boolean>('ahkam-tags', true);
 
+/** Which checkbox groups stay expanded in the filters sheet. Preferences,
+ * not view state, so the sheet reopens the way the user last left it. */
+export const filtersSourcesOpenAtom = createAtomWithStorage<boolean>(
+  'filters-sources-open',
+  true
+);
+export const filtersRiwayatOpenAtom = createAtomWithStorage<boolean>(
+  'filters-riwayat-open',
+  true
+);
+
 export type PlayerMode = 'listening' | 'tahfeez';
 
 /**

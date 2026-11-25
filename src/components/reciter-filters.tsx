@@ -1,9 +1,11 @@
 'use client';
 
+import { useAtom } from 'jotai';
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { MdClose, MdExpandMore, MdTune } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
+import { filtersRiwayatOpenAtom, filtersSourcesOpenAtom } from '@/jotai/atom';
 import { LinkSource, Riwaya } from '@/types';
 import { cn } from '@/utils';
 
@@ -46,6 +48,8 @@ export default function ReciterFilters({
 }: Props) {
   const { formatMessage } = useIntl();
   const [open, setOpen] = useState(false);
+  const [sourcesOpen, setSourcesOpen] = useAtom(filtersSourcesOpenAtom);
+  const [riwayatOpen, setRiwayatOpen] = useAtom(filtersRiwayatOpenAtom);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
 
@@ -127,11 +131,13 @@ export default function ReciterFilters({
         </div>
 
         <div className="max-h-[60dvh] overflow-y-auto overflow-x-hidden overscroll-contain px-2 py-2 lg:max-h-[calc(80dvh-7rem)]">
-          <FilterSection
+          <FilterAccordion
             title={formatMessage({
               id: 'filters.sources',
               defaultMessage: 'Source',
             })}
+            open={sourcesOpen}
+            onOpenChange={setSourcesOpen}
           >
             {availableSources.map((source) => (
               <CheckRow
@@ -148,40 +154,34 @@ export default function ReciterFilters({
                 }
               />
             ))}
-          </FilterSection>
+          </FilterAccordion>
 
-          <details open className="group mt-2 border-t border-border px-2 pt-3">
-            <summary className="focus-ring flex cursor-pointer list-none items-center gap-1.5 rounded-[8px] px-2 py-2 text-xs font-bold text-ink-muted transition-colors duration-120 hover:bg-surface-sunken [&::-webkit-details-marker]:hidden">
-              <span>
-                {formatMessage({
-                  id: 'filters.riwayat',
-                  defaultMessage: 'Riwaya',
-                })}
-              </span>
-              <MdExpandMore
-                className="size-4 shrink-0 transition-transform duration-120 group-open:rotate-180"
-                aria-hidden="true"
+          <FilterAccordion
+            title={formatMessage({
+              id: 'filters.riwayat',
+              defaultMessage: 'Riwaya',
+            })}
+            open={riwayatOpen}
+            onOpenChange={setRiwayatOpen}
+            className="mt-2 border-t border-border pt-3"
+          >
+            {availableRiwiyat.map((riwaya) => (
+              <CheckRow
+                key={riwaya.value}
+                checked={selectedRiwiyat.includes(riwaya.value as Riwaya)}
+                onChange={() =>
+                  onRiwiyatChange(
+                    selectedRiwiyat.includes(riwaya.value as Riwaya)
+                      ? selectedRiwiyat.filter(
+                          (value) => value !== (riwaya.value as Riwaya)
+                        )
+                      : [...selectedRiwiyat, riwaya.value as Riwaya]
+                  )
+                }
+                label={riwaya.label}
               />
-            </summary>
-            <ul className="divide-y divide-border">
-              {availableRiwiyat.map((riwaya) => (
-                <CheckRow
-                  key={riwaya.value}
-                  checked={selectedRiwiyat.includes(riwaya.value as Riwaya)}
-                  onChange={() =>
-                    onRiwiyatChange(
-                      selectedRiwiyat.includes(riwaya.value as Riwaya)
-                        ? selectedRiwiyat.filter(
-                            (value) => value !== (riwaya.value as Riwaya)
-                          )
-                        : [...selectedRiwiyat, riwaya.value as Riwaya]
-                    )
-                  }
-                  label={riwaya.label}
-                />
-              ))}
-            </ul>
-          </details>
+            ))}
+          </FilterAccordion>
 
           <div className="mt-2 flex min-h-12 items-center justify-between gap-4 border-t border-border px-2 pt-3">
             <div>
@@ -265,22 +265,34 @@ export default function ReciterFilters({
   );
 }
 
-function FilterSection({
+function FilterAccordion({
   title,
+  open,
+  onOpenChange,
   children,
   className,
 }: {
   title: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   children: React.ReactNode;
   className?: string;
 }) {
   return (
-    <section className={cn('px-2', className)}>
-      <h3 className="px-2 pb-1 pt-2 text-xs font-bold text-ink-muted">
-        {title}
-      </h3>
+    <details
+      open={open}
+      onToggle={(event) => onOpenChange(event.currentTarget.open)}
+      className={cn('group px-2', className)}
+    >
+      <summary className="focus-ring flex cursor-pointer list-none items-center gap-1.5 rounded-[8px] px-2 py-2 text-xs font-bold text-ink-muted transition-colors duration-120 hover:bg-surface-sunken [&::-webkit-details-marker]:hidden">
+        <span>{title}</span>
+        <MdExpandMore
+          className="size-4 shrink-0 transition-transform duration-120 group-open:rotate-180"
+          aria-hidden="true"
+        />
+      </summary>
       <ul className="divide-y divide-border">{children}</ul>
-    </section>
+    </details>
   );
 }
 
