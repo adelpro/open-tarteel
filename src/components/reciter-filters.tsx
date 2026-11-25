@@ -90,9 +90,9 @@ export default function ReciterFilters({
         className="focus-ring flex h-11 items-center gap-2 rounded-[8px] border border-border bg-surface px-3 text-[13px] font-bold text-ink transition-colors duration-120 hover:bg-surface-sunken"
       >
         <MdTune className="size-4 text-ink-muted" aria-hidden="true" />
-        <Tag variant="static" tone="neutral" size="sm">
+        <span className="text-ink-muted">
           {formatMessage({ id: 'filters.title', defaultMessage: 'Filters' })}
-        </Tag>
+        </span>
         {activeCount > 0 ? (
           <Tag variant="status" tone="primary" size="xs">
             {activeCount}
