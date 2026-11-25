@@ -79,4 +79,21 @@ describe('ReciterFilters', () => {
     expect(cbs.onDownloadableOnlyChange).toHaveBeenCalledWith(false);
     expect(cbs.onFollowAlongOnlyChange).toHaveBeenCalledWith(false);
   });
+
+  it('puts the riwaya checkboxes inside a closable disclosure', () => {
+    renderFilters();
+
+    const summary = screen.getByText('Riwaya').closest('summary');
+    expect(summary).toBeInTheDocument();
+    expect(summary?.parentElement).toHaveAttribute('open');
+    expect(summary?.parentElement?.querySelector('input[type=checkbox]'))
+      .toBeInTheDocument();
+  });
+
+  it('still toggles a riwaya checkbox inside the disclosure', () => {
+    const cbs = renderFilters();
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Hafs' }));
+    expect(cbs.onRiwiyatChange).toHaveBeenCalledWith([Riwaya.Hafs]);
+  });
 });

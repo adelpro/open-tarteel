@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { MdClose, MdTune } from 'react-icons/md';
+import { MdClose, MdExpandMore, MdTune } from 'react-icons/md';
 import { useIntl } from 'react-intl';
 
 import { LinkSource, Riwaya } from '@/types';
@@ -150,30 +150,41 @@ export default function ReciterFilters({
             ))}
           </FilterSection>
 
-          <FilterSection
-            title={formatMessage({
-              id: 'filters.riwayat',
-              defaultMessage: 'Riwaya',
-            })}
-            className="mt-2 border-t border-border pt-3"
+          <details
+            open
+            className="group mt-2 border-t border-border px-2 pt-3"
           >
-            {availableRiwiyat.map((riwaya) => (
-              <CheckRow
-                key={riwaya.value}
-                checked={selectedRiwiyat.includes(riwaya.value as Riwaya)}
-                onChange={() =>
-                  onRiwiyatChange(
-                    selectedRiwiyat.includes(riwaya.value as Riwaya)
-                      ? selectedRiwiyat.filter(
-                          (value) => value !== (riwaya.value as Riwaya)
-                        )
-                      : [...selectedRiwiyat, riwaya.value as Riwaya]
-                  )
-                }
-                label={riwaya.label}
+            <summary className="focus-ring flex cursor-pointer list-none items-center gap-1.5 rounded-[8px] px-2 py-2 text-xs font-bold text-ink-muted transition-colors duration-120 hover:bg-surface-sunken [&::-webkit-details-marker]:hidden">
+              <span>
+                {formatMessage({
+                  id: 'filters.riwayat',
+                  defaultMessage: 'Riwaya',
+                })}
+              </span>
+              <MdExpandMore
+                className="size-4 shrink-0 transition-transform duration-120 group-open:rotate-180"
+                aria-hidden="true"
               />
-            ))}
-          </FilterSection>
+            </summary>
+            <ul className="divide-y divide-border">
+              {availableRiwiyat.map((riwaya) => (
+                <CheckRow
+                  key={riwaya.value}
+                  checked={selectedRiwiyat.includes(riwaya.value as Riwaya)}
+                  onChange={() =>
+                    onRiwiyatChange(
+                      selectedRiwiyat.includes(riwaya.value as Riwaya)
+                        ? selectedRiwiyat.filter(
+                            (value) => value !== (riwaya.value as Riwaya)
+                          )
+                        : [...selectedRiwiyat, riwaya.value as Riwaya]
+                    )
+                  }
+                  label={riwaya.label}
+                />
+              ))}
+            </ul>
+          </details>
 
           <div className="mt-2 flex min-h-12 items-center justify-between gap-4 border-t border-border px-2 pt-3">
             <div>
