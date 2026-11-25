@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.1] - 2026-11-25
+
+### Added
+
+- collapsible Source and Riwaya groups in the filters sheet, each remembering
+  its open/closed state across reloads
+- local `yarn check` plus a pre-push hook that runs the CI checks before a push
+
+### Fixed
+
+- Prettier drift and a knip false positive on `open-next.config.ts` that kept
+  CI red
+- git hooks use Corepack, so they run on machines without a global `yarn`
+
 ## [2.1.0] - 2026-11-24
 
 ### Added
