@@ -36,6 +36,8 @@ describe('ProviderCredits', () => {
         'src',
         `/images/providers/${provider.logo}`
       );
+      // logo SVG + visible provider name text
+      expect(screen.getByText(provider.name)).toBeInTheDocument();
     }
   });
 });

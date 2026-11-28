@@ -48,7 +48,7 @@ export function ProviderCredits() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={provider.name}
-              className="focus-ring flex h-14 items-center justify-center rounded-control border border-border bg-surface p-2 transition-colors duration-120 hover:bg-surface-sunken"
+              className="focus-ring flex h-14 items-center justify-center gap-2 rounded-control border border-border bg-surface px-2 py-2 transition-colors duration-120 hover:bg-surface-sunken"
             >
               <Image
                 src={provider.logo}
@@ -56,7 +56,11 @@ export function ProviderCredits() {
                 width={96}
                 height={32}
                 unoptimized
+                className="h-8 w-auto object-contain"
               />
+              <span className="font-medium text-xs text-ink">
+                {provider.name}
+              </span>
             </a>
           </li>
         ))}
