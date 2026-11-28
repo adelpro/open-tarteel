@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.2] - 2026-11-28
+
+### Fixed
+
+- volume gauge follows the theme accent (`.seek-thumb`, `accent-color`,
+  `var(--accent)`) and the click info label no longer overlaps the slider
+- About providers show provider logo SVG with visible name text
+
+### Changed
+
+- version locked at 2.1.2 (`package.json`, `NEXT_PUBLIC_APP_VERSION`, lockfile)
+
 ## [2.1.1] - 2026-11-25
 
 ### Added
