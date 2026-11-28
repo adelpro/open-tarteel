@@ -444,6 +444,25 @@ export default function PlayerControls({
   };
 
   // ── Render ───────────────────────────────────────────
+  const volumeButton = (
+    <button
+      onClick={handleVolumeClick}
+      onPointerDown={handleVolumePointerDown}
+      onPointerUp={clearVolumeLongPress}
+      onPointerLeave={clearVolumeLongPress}
+      onPointerCancel={clearVolumeLongPress}
+      onContextMenu={(event) => event.preventDefault()}
+      className="focus-ring flex size-11 select-none items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken"
+      aria-label={messages.volumeControl}
+    >
+      {volume > 0 ? (
+        <BiVolumeFull size={ICON_SIZE} className="text-ink-muted" />
+      ) : (
+        <BiVolumeMute size={ICON_SIZE} className="text-ink-muted" />
+      )}
+    </button>
+  );
+
   return (
     <div className="flex w-full flex-col">
       {activeMode === 'tahfeez' ? (
@@ -532,24 +551,13 @@ export default function PlayerControls({
           ref={volumeRef}
           style={{ touchAction: 'none' }}
         >
-          <Tooltip content={messages.volumeHint}>
-            <button
-              onClick={handleVolumeClick}
-              onPointerDown={handleVolumePointerDown}
-              onPointerUp={clearVolumeLongPress}
-              onPointerLeave={clearVolumeLongPress}
-              onPointerCancel={clearVolumeLongPress}
-              onContextMenu={(event) => event.preventDefault()}
-              className="focus-ring flex size-11 select-none items-center justify-center rounded-[10px] transition-colors duration-120 hover:bg-surface-sunken"
-              aria-label={messages.volumeControl}
-            >
-              {volume > 0 ? (
-                <BiVolumeFull size={ICON_SIZE} className="text-ink-muted" />
-              ) : (
-                <BiVolumeMute size={ICON_SIZE} className="text-ink-muted" />
-              )}
-            </button>
-          </Tooltip>
+          {/* Suppress the hint tooltip once the slider is open so the
+              info label does not overlap / stack on the volume gauge. */}
+          {showVolumeSlider ? (
+            volumeButton
+          ) : (
+            <Tooltip content={messages.volumeHint}>{volumeButton}</Tooltip>
+          )}
 
           {showVolumeSlider && (
             <div className="absolute bottom-full left-1/2 mb-2 flex h-20 w-6 -translate-x-1/2 items-center justify-center">
@@ -562,10 +570,16 @@ export default function PlayerControls({
                 onChange={(event) =>
                   setVolume(Number((event.target as HTMLInputElement).value))
                 }
-                className="focus-ring h-full w-1 cursor-pointer appearance-none bg-surface-sunken"
+                className="focus-ring seek-thumb h-full w-1 cursor-pointer appearance-none bg-surface-sunken"
                 style={{
                   writingMode: 'vertical-lr',
-                  WebkitAppearance: 'slider-vertical',
+                  // Verticality comes from `writing-mode`; `appearance: none`
+                  // (`.seek-thumb`) removes native parts. A legacy
+                  // `-webkit-appearance: slider-vertical` alias would override
+                  // `appearance` (inline wins) and un-theme the control.
+                  // Themed thumb: `.seek-thumb`, same as the seek bar; plus
+                  // `accent-color` so any native part also uses `--accent`.
+                  accentColor: 'var(--accent)',
                   // Same fill as the seek bar: --accent to --accent-line on a
                   // --surface-sunken track, so every palette stays in sync.
                   backgroundImage:

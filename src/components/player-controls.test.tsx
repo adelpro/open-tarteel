@@ -154,6 +154,46 @@ describe('PlayerControls', () => {
     expect(store.get(volumeAtom)).toBeCloseTo(0.8);
   });
 
+  it('themes the volume slider with accent and no legacy vertical appearance', () => {
+    const { container } = renderControls();
+    const button = container.querySelector(
+      'button[aria-label="Volume control"]'
+    ) as HTMLButtonElement;
+
+    fireEvent.pointerDown(button);
+    fireEvent.pointerUp(button);
+    fireEvent.click(button);
+
+    const slider = container.querySelector(
+      'input[type="range"][aria-label="Volume control"]'
+    ) as HTMLInputElement;
+    expect(slider).toBeInTheDocument();
+    // Themed thumb (see `.seek-thumb`, same as the seek bar) + accent-color.
+    expect(slider.classList.contains('seek-thumb')).toBe(true);
+    expect(slider.style.accentColor).toBe('var(--accent)');
+    // Legacy `slider-vertical` alias conflicts with `appearance: none`.
+    expect(slider.style.webkitAppearance).not.toBe('slider-vertical');
+    // Themed track + fill are preserved.
+    expect(slider.classList.contains('bg-surface-sunken')).toBe(true);
+    expect(slider.style.backgroundImage).toContain('var(--accent)');
+    expect(slider.style.backgroundImage).toContain('var(--accent-line)');
+  });
+
+  it('does not show the volume hint tooltip once the slider is open', () => {
+    const { container } = renderControls();
+    const button = container.querySelector(
+      'button[aria-label="Volume control"]'
+    ) as HTMLButtonElement;
+
+    fireEvent.pointerOver(button);
+    fireEvent.pointerDown(button);
+    fireEvent.pointerUp(button);
+    fireEvent.click(button);
+
+    expect(container.querySelector('input[type="range"]')).toBeInTheDocument();
+    expect(container.querySelector('[role="tooltip"]')).toBeNull();
+  });
+
   it('keeps a tap for the volume slider', () => {
     const { container } = renderControls();
     const button = container.querySelector(
